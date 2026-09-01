@@ -1,0 +1,204 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-family: var(--ui-font-family, inherit);
+  /* asChild can render an <a>, which the UA underlines and colours by default.
+     Both are overridden here so a link-rendered Button is visually identical
+     to a real <button>. */
+  text-decoration: none;
+  font-weight: var(--ui-button-font-weight);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  position: relative; /* anchors the loading spinner */
+}
+
+/* All visible content in one box. While loading it is hidden with
+   visibility:hidden, which keeps its layout space - so the button is exactly
+   the same size loading or not, whatever the label and however many icons. */
+.content {
+  display: inline-flex;
+  align-items: center;
+}
+.loading .content {
+  visibility: hidden;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ui-brand);
+  outline-offset: 2px;
+}
+
+/* -- sizes -------------------------------------------------- */
+.large .content { gap: var(--ui-button-lg-gap); }
+.large {
+  height: var(--ui-button-lg-height);
+  padding-inline: var(--ui-button-lg-padding-x);
+  border-radius: var(--ui-button-lg-radius);
+  font-size: var(--ui-button-lg-font);
+  line-height: var(--ui-button-lg-line);
+}
+.medium .content { gap: var(--ui-button-md-gap); }
+.medium {
+  height: var(--ui-button-md-height);
+  padding-inline: var(--ui-button-md-padding-x);
+  border-radius: var(--ui-button-md-radius);
+  font-size: var(--ui-button-md-font);
+  line-height: var(--ui-button-md-line);
+}
+.small .content { gap: var(--ui-button-sm-gap); }
+.small {
+  height: var(--ui-button-sm-height);
+  padding-inline: var(--ui-button-sm-padding-x);
+  border-radius: var(--ui-button-sm-radius);
+  font-size: var(--ui-button-sm-font);
+  line-height: var(--ui-button-sm-line);
+}
+
+/* -- variants ----------------------------------------------- */
+/* Each var() resolves at the button element, so --ui-brand and
+   [data-theme] are picked up from wherever they are in scope.
+   The first name in each var() is the optional component-level
+   override; the fallback is the themed default. */
+.primary {
+  background: var(--ui-button-primary-bg, var(--ui-brand));
+  color: var(--ui-button-primary-text, var(--ui-text-on-brand));
+}
+.primary:hover:not(:disabled) {
+  background: var(--ui-button-primary-bg-hover,
+              color-mix(in srgb, var(--ui-brand), black 22.3%));
+}
+.primary:active:not(:disabled) {
+  background: var(--ui-button-primary-bg-active,
+              color-mix(in srgb, var(--ui-brand), black 40.7%));
+}
+
+.secondary {
+  background: var(--ui-button-secondary-bg, var(--ui-surface-inverse));
+  color: var(--ui-button-secondary-text, var(--ui-text-on-inverse));
+}
+.secondary:hover:not(:disabled) {
+  background: var(--ui-button-secondary-bg-hover,
+              color-mix(in srgb, var(--ui-brand), black 22.3%));
+  color: var(--ui-text-on-brand);
+}
+.secondary:active:not(:disabled) {
+  background: var(--ui-button-secondary-bg-active,
+              color-mix(in srgb, var(--ui-brand), black 40.7%));
+  color: var(--ui-text-on-brand);
+}
+
+.tertiary {
+  background: var(--ui-button-tertiary-bg, var(--ui-surface-muted));
+  color: var(--ui-button-tertiary-text, var(--ui-text-default));
+}
+.tertiary:hover:not(:disabled) {
+  background: var(--ui-button-tertiary-bg-hover, var(--ui-surface-muted-hover));
+}
+.tertiary:active:not(:disabled) {
+  background: var(--ui-button-tertiary-bg-active, var(--ui-surface-muted-active));
+}
+
+
+/* Ghost: no fill, 1px rule, brand-coloured label and icon.
+   Drawn with an inset box-shadow rather than a border so it matches
+   Figma's strokeAlign:INSIDE exactly - the ring sits inside the box and
+   costs no layout, so a ghost button is the same size as a filled one. */
+.ghost {
+  background: transparent;
+  color: var(--ui-button-ghost-text, var(--ui-brand));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border, var(--ui-brand));
+}
+.ghost:hover:not(:disabled) {
+  color: var(--ui-button-ghost-text-hover,
+         color-mix(in srgb, var(--ui-brand), black 22.3%));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover,
+              color-mix(in srgb, var(--ui-brand), black 22.3%));
+}
+.ghost:active:not(:disabled) {
+  color: var(--ui-button-ghost-text-active,
+         color-mix(in srgb, var(--ui-brand), black 40.7%));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active,
+              color-mix(in srgb, var(--ui-brand), black 40.7%));
+}
+
+/* -- disabled ----------------------------------------------- */
+.button:disabled {
+  background: var(--ui-button-disabled-bg, var(--ui-surface-disabled));
+  color: var(--ui-button-disabled-text, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+
+.ghost:disabled {
+  background: transparent;
+  color: var(--ui-button-ghost-text-disabled, var(--ui-text-disabled));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-disabled,
+              var(--ui-text-disabled));
+}
+
+/* -- loading ------------------------------------------------ */
+/* Three pulsing dots rather than a ring: at the small size a 10px ring has
+   too few pixels to read cleanly, while dots stay legible. Absolutely
+   positioned, so the spinner contributes nothing to layout and the button
+   keeps its exact width while loading. */
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  display: flex;
+  align-items: center;
+}
+.spinner span {
+  border-radius: 50%;
+  background: currentColor;
+  animation: ui-button-pulse 0.9s ease-in-out infinite;
+}
+.spinner span:nth-child(2) { animation-delay: 0.15s; }
+.spinner span:nth-child(3) { animation-delay: 0.3s; }
+
+.large .spinner { gap: 3px; }
+.large .spinner span { width: 5px; height: 5px; }
+.medium .spinner { gap: 2.5px; }
+.medium .spinner span { width: 4px; height: 4px; }
+.small .spinner { gap: 2px; }
+.small .spinner span { width: 3px; height: 3px; }
+
+@keyframes ui-button-pulse {
+  0%, 80%, 100% { opacity: 0.25; scale: 0.7; }
+  40% { opacity: 1; scale: 1; }
+}
+
+/* Loading is not "disabled": keep the variant's own colours rather than the
+   grey disabled treatment. */
+.button.loading:not(:disabled) {
+  cursor: progress;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button { transition: none; }
+  .spinner span { animation-duration: 1.8s; }
+}
+
+/* -- icon --------------------------------------------------- */
+.icon {
+  display: inline-flex;
+  flex: none;
+  opacity: var(--ui-button-icon-opacity, 0.65);
+}
+.large .icon { width: 16px; height: 16px; }
+.medium .icon { width: 12px; height: 12px; }
+.small .icon { width: 9px; height: 9px; }
+
+/* Icon sets ship intrinsic dimensions (lucide and heroicons both emit
+   width="24" height="24"), so the SVG ignores the slot box and renders at its
+   own size - as flex shrinks the width but not the height, the icon comes out
+   16x24 in a Large button. Make the child fill the slot instead, so the slot
+   sizes above are what actually renders. `block` avoids the inline baseline gap. */
+.icon > svg,
+.icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

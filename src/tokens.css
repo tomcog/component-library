@@ -1,0 +1,102 @@
+/* =============================================================
+   Design tokens
+
+   1. PRIMITIVE  what a colour *is*     — fixed palette
+   2. SEMANTIC   what a colour *means*  — the theming surface
+
+   There is deliberately NO component tier in this file. Component
+   tokens (--ui-button-*) exist only as optional overrides, declared
+   as fallbacks inside each component's CSS:
+
+       background: var(--ui-button-primary-bg, var(--ui-brand));
+
+   Why: a custom property substitutes var() at the element where it
+   is DECLARED. A component tier declared here on :root would resolve
+   against :root's brand/theme and freeze — so overriding --ui-brand
+   or [data-theme] on a subtree would have no effect. Resolving in the
+   component instead means every var() is evaluated at the button, and
+   picks up whatever is in scope at that point in the tree.
+
+   Consequences, all supported:
+     app rebrand      :root { --ui-brand: #2563eb }
+     app dark mode    <html data-theme="dark">
+     scoped theming   <div data-theme="dark"> or <div style="--ui-brand:…">
+   ============================================================= */
+
+:root {
+  /* -- 1. PRIMITIVE ------------------------------------------ */
+  --ui-red-500: #e51a38;          /* Figma: Color/TC Red */
+  --ui-white: #ffffff;            /* Figma: Color/White */
+  --ui-ink: #282523;              /* Figma: Color/"Black" (not true black) */
+  --ui-neutral-150: #ededed;
+  --ui-neutral-300: #d4d4d4;
+  --ui-neutral-350: #b8b8b8;
+  --ui-neutral-400: #8c8c8c;
+  /* Dark-side neutrals, tinted to match --ui-ink. Placeholders —
+     Figma has no dark mode yet, so these are not from the design. */
+  --ui-neutral-600: #6b6764;
+  --ui-neutral-700: #4a4643;
+  --ui-neutral-800: #3a3735;
+  --ui-neutral-850: #302d2b;
+
+  /* -- 2. SEMANTIC — light (default) ------------------------- */
+  --ui-brand: var(--ui-red-500);
+  --ui-text-on-brand: var(--ui-white);
+
+  --ui-surface-inverse: var(--ui-ink);
+  --ui-text-on-inverse: var(--ui-white);
+
+  --ui-surface-muted: var(--ui-neutral-300);
+  --ui-surface-muted-hover: var(--ui-neutral-350);
+  --ui-surface-muted-active: var(--ui-neutral-400);
+  --ui-text-default: var(--ui-ink);
+
+  --ui-surface-disabled: var(--ui-neutral-150);
+  --ui-text-disabled: var(--ui-neutral-300);
+
+  /* Sizing — not themed, safe to resolve here. */
+  --ui-button-lg-height: 40px;
+  --ui-button-lg-padding-x: 14px;
+  --ui-button-lg-gap: 6px;
+  --ui-button-lg-radius: 4px;
+  --ui-button-lg-font: 14px;
+  --ui-button-lg-line: 20px;
+
+  --ui-button-md-height: 32px;
+  --ui-button-md-padding-x: 12px;
+  --ui-button-md-gap: 5px;
+  --ui-button-md-radius: 3px;
+  --ui-button-md-font: 12px;
+  --ui-button-md-line: 16px;
+
+  --ui-button-sm-height: 24px;
+  --ui-button-sm-padding-x: 8px;
+  --ui-button-sm-gap: 4px;
+  --ui-button-sm-radius: 2px;
+  --ui-button-sm-font: 10px;
+  --ui-button-sm-line: 12px;
+
+  --ui-button-font-weight: 500;
+
+  /* Typography. DM Sans ships with the package but is opt-in:
+     import "@tomcoggia/ui/fonts.css". Override this token to use a
+     different face; the fallback stack keeps things sane if neither. */
+  --ui-font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* -- 2. SEMANTIC — dark ------------------------------------- */
+/* Attribute selector, NOT :root[data-theme] — so it applies to the
+   document or to any subtree. --ui-brand is intentionally untouched:
+   a brand is a brand in either theme. */
+[data-theme="dark"] {
+  --ui-surface-inverse: var(--ui-neutral-150);
+  --ui-text-on-inverse: var(--ui-ink);
+
+  --ui-surface-muted: var(--ui-neutral-800);
+  --ui-surface-muted-hover: var(--ui-neutral-700);
+  --ui-surface-muted-active: var(--ui-neutral-600);
+  --ui-text-default: var(--ui-neutral-150);
+
+  --ui-surface-disabled: var(--ui-neutral-850);
+  --ui-text-disabled: var(--ui-neutral-600);
+}

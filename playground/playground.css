@@ -1,0 +1,33 @@
+/* Playground chrome only — deliberately not using library tokens, so the
+   surrounding UI can't be mistaken for part of the design system. */
+* { box-sizing: border-box; }
+body { margin: 0; background: #f6f6f5; }
+.page {
+  min-height: 100vh;
+  padding: 32px 40px 80px;
+  font: 14px/1.5 var(--ui-font-family, system-ui);
+  color: #282523;
+  background: #f6f6f5;
+}
+.page[data-theme="dark"] { background: #1b1918; color: #ededed; }
+
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #8c8c8c; margin: 0 0 4px; }
+.note { color: #8c8c8c; font-size: 12.5px; margin: 0 0 18px; }
+
+section {
+  background: #fff; border: 1px solid #e7e5e4; border-radius: 10px;
+  padding: 22px 24px; margin-bottom: 18px;
+}
+[data-theme="dark"] section { background: #262322; border-color: #3a3735; }
+
+.row { display: flex; align-items: center; gap: 18px; padding: 9px 0; flex-wrap: wrap; }
+.rowLabel { width: 68px; flex: none; font-size: 11px; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em; }
+.rowItems { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12.5px; }
+.controls label { display: inline-flex; align-items: center; gap: 6px; color: #6b6764; }
+[data-theme="dark"] .controls label { color: #b8b8b8; }
+.controls select, .controls input[type="color"] { font: inherit; }
+.reset { font: inherit; border: 1px solid #d4d4d4; background: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
