@@ -64,6 +64,50 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
+### The theming contract: 10 semantic tokens
+
+`tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
+the public API** — those 10 names are what a consuming app overrides to make
+these components look like its own. The primitives are internal; an app should
+never alias `--ui-red-500`.
+
+Declare them unlayered on `:root` (the library's defaults live inside
+`@layer ui`, so any unlayered declaration wins regardless of import order):
+
+```css
+:root {
+  --ui-brand:                /* primary fill                          */;
+  --ui-text-on-brand:        /* text on a solid fill                  */;
+
+  --ui-surface-inverse:      /* secondary: dark fill                  */;
+  --ui-text-on-inverse:      /* text on that dark fill                */;
+
+  --ui-surface-muted:        /* tertiary: grey fill                   */;
+  --ui-surface-muted-hover:  /* tertiary hover                        */;
+  --ui-surface-muted-active: /* tertiary pressed                      */;
+  --ui-text-default:         /* text on a light/neutral fill          */;
+
+  --ui-surface-disabled:     /* disabled fill                         */;
+  --ui-text-disabled:        /* disabled text, and ghost's border     */;
+}
+```
+
+**Leave one out and it does not fail — it silently keeps the library's own
+placeholder neutral.** That looks plausible in isolation, which is exactly why
+it goes unnoticed; the app's palette and the component's drift apart one variant
+at a time. Map all 10 or none.
+
+Most palettes lack a muted hover/active pair and a disabled surface. Deriving
+them is fine and keeps the interaction feel: the library's own steps are
+`#d4d4d4 -> #b8b8b8 -> #8c8c8c`, i.e. roughly 14% and 34% black, so
+`color-mix(in srgb, var(--your-muted), black 14%)` reproduces it.
+
+Only `primary` is exercised by NextJob today, so a wrong mapping shows up later,
+in whichever app first uses `secondary`/`tertiary`/`ghost`. Check a new app by
+rendering all four variants plus a disabled one side by side, not just the one
+the app happens to use. NextJob's mapping in `src/styles/theme.css` is a worked
+example.
+
 ### Build: Vite lib mode, not tsup
 
 The brief specifies tsup with a `.module.css: "copy"` loader. **That was tried and it fails silently** — do not go back to it. esbuild (tsup's core) has no CSS Modules support, so the build "succeeds" while producing:
