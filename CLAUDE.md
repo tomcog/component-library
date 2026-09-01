@@ -75,6 +75,23 @@ The brief pre-authorized the fallback, so the build is Vite library mode with `v
 
 Vite is pinned to v5. `build.cssFileName` is a Vite 6+ option and is silently ignored on 5 — hence the CSS output is `style.css`, and `exports["./styles.css"]` points there. If Vite is upgraded to 6+, that filename can change; re-check the export path.
 
+### CSS ships inside `@layer ui`
+
+`wrapCssInLayer()` in `vite.config.ts` wraps `dist/style.css` in `@layer ui{...}`
+at `generateBundle`. **Any unlayered CSS beats any layered CSS regardless of
+source order**, so a consuming app can always override these components without
+having to get its stylesheet import order right - which is not reliably
+controllable in Next.js App Router anyway.
+
+- It also means an app's own `--ui-*` overrides on `:root` (declared unlayered)
+  beat the defaults in `tokens.css`, which is what makes per-app theming work.
+- The plugin needs `enforce: "post"`. Vite emits the CSS asset from its own
+  `generateBundle` (`vite:css-post`); without it this hook runs first and finds
+  no CSS in the bundle - it fails silently, producing unwrapped output.
+- `@import`/`@charset` cannot be nested in a layer. Neither is emitted today and
+  the plugin errors if one appears, rather than shipping broken CSS.
+- Verify with `head -c 40 dist/style.css` - a green build proves nothing here.
+
 ### Decided: one bundled stylesheet, not per-component CSS
 
 `dist/style.css` is a single file containing every component's CSS. An app that imports only `Button` still ships all of it. **This is a deliberate decision — don't "optimize" it without the trigger below.**
