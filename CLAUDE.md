@@ -92,6 +92,24 @@ controllable in Next.js App Router anyway.
   the plugin errors if one appears, rather than shipping broken CSS.
 - Verify with `head -c 40 dist/style.css` - a green build proves nothing here.
 
+**Tailwind apps must declare the layer order, or the Button loses its
+background.** Tailwind's preflight resets `button { background: transparent }`
+inside `@layer base`. Layer order beats specificity, and a layer's position is
+fixed the first time its name is seen - so if `@layer ui` is imported before
+Tailwind, `ui` sits below `base` and the reset wins. Components render with
+correct geometry and no colour, which reads like a broken build rather than a
+cascade problem. The consuming app needs, before any other CSS:
+
+```css
+@layer theme, base, ui, components, utilities;
+```
+
+`ui` after `base` so preflight cannot clobber components; before `utilities` so
+Tailwind classes passed via `className` still override them. The file carrying
+that line must be imported **before** `@tomcoggia/ui/styles.css`. Non-Tailwind
+apps need nothing: unlayered CSS beats layered, so their styles win anyway.
+Verified in NextJob - `<Button className="bg-black">` renders black.
+
 ### Decided: one bundled stylesheet, not per-component CSS
 
 `dist/style.css` is a single file containing every component's CSS. An app that imports only `Button` still ships all of it. **This is a deliberate decision — don't "optimize" it without the trigger below.**
