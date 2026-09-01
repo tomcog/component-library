@@ -28,6 +28,23 @@ Use `build:watch` only when `npm link`ed into a consuming app.
 
 There is no test or lint setup yet; don't reference scripts that aren't in `package.json`.
 
+### Consumed as a git dependency
+
+Apps depend on this repo directly rather than on a registry:
+
+```json
+"@tomcoggia/ui": "github:tomcog/component-library#v0.1.0"
+```
+
+`dist/` is gitignored, so there is nothing to install straight from a clone -
+hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
+`prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
+ships an empty package.
+
+**Releasing is a tag.** Bump `version`, commit, `git tag vX.Y.Z`, push with
+`--tags`, then move each app's `#vX.Y.Z` ref. Apps pinned to an old tag keep
+working; a moving `#main` ref would rebuild them unpredictably, so don't.
+
 Local consumption in a target app:
 
 ```bash
