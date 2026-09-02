@@ -291,10 +291,8 @@ is a **blast radius, not a prohibition**: changing Ink recolours most of the
 Figma file, so it wants the user out of the file and a deliberate push — which
 is a reason to be careful, not a reason to refuse.
 
-The two sides now disagree on Ink deliberately: `--ui-ink` is `#262626`,
-Figma's `Color/Ink` is still `#282523`. Colour values are token-shaped, so the
-code moved first and Figma follows. Until it is pushed, treat the Figma value
-as stale rather than as the source of truth.
+Ink has since been neutralised to `#262626` on both sides, which is exactly
+the change that rule would have blocked.
 
 ### The greys are neutral, deliberately
 
@@ -355,19 +353,21 @@ not the whole file.
 Kept here so they are not rediscovered. Anything on this list is a defect with
 a fix pending, per the rule above.
 
-1. **`Color/Ink`.** Code is `#262626` (neutralised); Figma is still `#282523`.
-   The push is a one-line variable edit, but it recolours ~1209 dependants, so
-   it needs the user out of the file and their explicit go-ahead.
+1. ~~`Color/Ink` disagrees.~~ **Resolved.** Both sides are `#262626`. The push
+   recoloured ~1209 dependants; the Button set was screenshotted afterwards to
+   confirm nothing broke.
 2. ~~`Neutral/600` means two different things.~~ **Resolved.** `--ui-neutral-600`
    is now Figma's `#525252`, and the four dark-mode placeholders that had
    borrowed light-ramp numbers were renumbered to sit between the real steps by
    lightness: `600 -> 550`, `700 -> 650`, `800 -> 700`, `850 -> 800`. A pure
    rename — every dark-mode token resolves to the same colour it did before.
-   The four `(code)` steps still have no Figma counterpart, but that is the
-   dark-mode gap in (4) rather than a naming collision.
+   `Neutral/550`, `/650`, `/700` and `/800` were then created in Figma, so
+   both sides hold the same ramp even though no Figma mode uses them yet.
 3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
-   `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`. Some may
-   belong to the other projects sharing this file; check before importing.
+   `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`. No
+   component uses any of them, and some may belong to the other projects
+   sharing this file — so this is the one gap worth leaving open until a
+   component actually needs the value. Check ownership before importing.
 4. **Dark mode.** The Figma collection has one mode. Now that the dark values
    are real neutrals rather than invented warm tints, a second mode is
    feasible — it was previously ruled out as needing design work.
