@@ -277,8 +277,44 @@ side: `TextSecondary` -> `Text/Muted`, `Surface/Muted Pressed` ->
 `Surface/Muted Active` (CSS is stuck with `active`, the pseudo-class), and
 `Color/Black` -> `Color/Ink` (the value `#282523` is not black; Figma keeps a
 separate `True Black` at `#000000`). `Color/Ink` had 1209 dependants — a
-rename preserves every binding, so this was safe, but **never change its
-value**. Don't reintroduce a name that has to be hand-mapped.
+rename preserves every binding, so this was safe. Don't reintroduce a name
+that has to be hand-mapped.
+
+**The two sides now disagree on Ink's value, deliberately.** The palette was
+neutralised (see below) and `--ui-ink` is `#262626`; Figma's `Color/Ink` is
+still `#282523`. That is a token-shaped change, so the code moved first and
+Figma has to follow — but with ~1209 dependants, editing that one variable
+recolours most of the file, which is the point and is also why it needs the
+user out of the file and the Desktop Bridge running. Until it is pushed,
+treat `#282523` in Figma as stale rather than as the source of truth.
+
+### The greys are neutral, deliberately
+
+Every grey in the palette is a true neutral — `R = G = B`. The palette used to
+be split: the light-side neutrals (`100`-`500`) were neutral, while `--ui-ink`
+and the four dark-side neutrals (`600`-`850`) carried a warm tint (`#282523`,
+`#6b6764`, `#4a4643`, `#3a3735`, `#302d2b`). Mixing the two families is what
+made a dark surface read slightly brown next to a light one.
+
+Each was replaced by the neutral of the **same perceptual lightness** (CIE
+L*), so only hue moved and nothing changed weight:
+
+    #282523 -> #262626   L* 14.9    (--ui-ink)
+    #6b6764 -> #686868   L* 43.9
+    #4a4643 -> #474747   L* 30.0
+    #302d2b -> #2e2e2e   L* 18.7
+
+`--ui-neutral-800` is the exception: its neutral equivalent is `#383838`, and
+it ships as `#3d3d3d` — that value lightened again by ~10% in L* (23.3 ->
+25.8), because it carries the dark tertiary fill and read too heavy.
+
+**It cannot go much lighter.** `--ui-surface-muted-hover` is `--ui-neutral-700`
+at L* 30.0, so a fill much above L* ~27 would be lighter than its own hover
+state and the interaction would read backwards. Lightening it further means
+restructuring the whole dark muted ramp, not editing one value.
+
+The playground chrome was neutralised to match. It deliberately does not use
+library tokens, so its greys are separate literals and drift on their own.
 
 ### Geometry is variable-bound too
 

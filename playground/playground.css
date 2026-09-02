@@ -1,15 +1,16 @@
 /* Playground chrome only — deliberately not using library tokens, so the
-   surrounding UI can't be mistaken for part of the design system. */
+   surrounding UI can't be mistaken for part of the design system.
+   Greys here are true neutrals, matching the palette. */
 * { box-sizing: border-box; }
 body { margin: 0; background: #f6f6f5; }
 .page {
   min-height: 100vh;
   padding: 32px 40px 80px;
   font: 14px/1.5 var(--ui-font-family, system-ui);
-  color: #282523;
+  color: #262626;
   background: #f6f6f5;
 }
-.page[data-theme="dark"] { background: #1b1918; color: #ededed; }
+.page[data-theme="dark"] { background: #191919; color: #ededed; }
 
 header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
 h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
@@ -17,17 +18,17 @@ h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: 
 .note { color: #8c8c8c; font-size: 12.5px; margin: 0 0 18px; }
 
 section {
-  background: #fff; border: 1px solid #e7e5e4; border-radius: 10px;
+  background: #fff; border: 1px solid #e5e5e5; border-radius: 10px;
   padding: 22px 24px; margin-bottom: 18px;
 }
-[data-theme="dark"] section { background: #262322; border-color: #3a3735; }
+[data-theme="dark"] section { background: #242424; border-color: #383838; }
 
 .row { display: flex; align-items: center; gap: 18px; padding: 9px 0; flex-wrap: wrap; }
 .rowLabel { width: 68px; flex: none; font-size: 11px; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em; }
 .rowItems { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 
 .controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12.5px; }
-.controls label { display: inline-flex; align-items: center; gap: 6px; color: #6b6764; }
+.controls label { display: inline-flex; align-items: center; gap: 6px; color: #686868; }
 [data-theme="dark"] .controls label { color: #b8b8b8; }
 .controls select, .controls input[type="color"] { font: inherit; }
 .reset { font: inherit; border: 1px solid #d4d4d4; background: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
@@ -35,8 +36,8 @@ section {
 /* -- token swatches ----------------------------------------- */
 .groupLabel { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #a3a3a3; margin: 18px 0 10px; }
 .groupLabel:first-of-type { margin-top: 0; }
-.groupLabel span { text-transform: none; letter-spacing: 0; color: #c4c0bd; }
-[data-theme="dark"] .groupLabel span { color: #6b6764; }
+.groupLabel span { text-transform: none; letter-spacing: 0; color: #c1c1c1; }
+[data-theme="dark"] .groupLabel span { color: #686868; }
 
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; }
 .swatch { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -51,11 +52,5 @@ section {
 [data-theme="dark"] .pair { border-color: rgba(255,255,255,0.14); }
 
 /* -- card specimens ------------------------------------------ */
-/* Tinted backdrop: the cards are white on a white panel otherwise, which
-   hides the one thing all three variants share. */
-.cards {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
-  background: #f0efee; border-radius: 8px; padding: 26px 24px 20px;
-}
-[data-theme="dark"] .cards { background: #201e1d; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .cardLabel { margin: 9px 0 0; font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }

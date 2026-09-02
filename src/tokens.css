@@ -30,19 +30,29 @@
      SEMANTIC --ui-primary below, never this. */
   --ui-tc-red: #e51a38;           /* Figma: Color/TC Red */
   --ui-white: #ffffff;            /* Figma: Color/White */
-  --ui-ink: #282523;              /* Figma: Color/"Black" (not true black) */
+  /* Neutralised: was #282523, a warm near-black. #262626 is the same
+     perceptual lightness (L* 14.9) with no hue. NOTE: Figma's Color/Ink is
+     still #282523 and has ~1209 dependants - this is a token-shaped change,
+     so the code moves first and Figma has to follow. */
+  --ui-ink: #262626;              /* Figma: Color/Ink - value now diverges */
   --ui-neutral-100: #f5f5f5;
   --ui-neutral-150: #ededed;
   --ui-neutral-300: #d4d4d4;
   --ui-neutral-350: #b8b8b8;
   --ui-neutral-400: #8c8c8c;
   --ui-neutral-500: #737373;   /* Figma: TextSecondary */
-  /* Dark-side neutrals, tinted to match --ui-ink. Placeholders —
-     Figma has no dark mode yet, so these are not from the design. */
-  --ui-neutral-600: #6b6764;
-  --ui-neutral-700: #4a4643;
-  --ui-neutral-800: #3a3735;
-  --ui-neutral-850: #302d2b;
+  /* Dark-side neutrals. Placeholders — Figma has no dark mode yet, so these
+     are not from the design. Previously tinted warm to match --ui-ink; now
+     true neutrals at the same lightness, except 800 (see below). */
+  --ui-neutral-600: #686868;   /* was #6b6764 */
+  --ui-neutral-700: #474747;   /* was #4a4643 */
+  /* Neutralised AND lightened: the neutral equivalent of #3a3735 is #383838,
+     and this is that ~10% lighter again in L* (23.3 -> 25.8). It carries the
+     dark tertiary fill, which read too heavy. It cannot go much further -
+     --ui-surface-muted-hover is neutral-700 at L* 30.0, and a fill lighter
+     than its own hover state inverts the interaction. */
+  --ui-neutral-800: #3d3d3d;   /* was #3a3735 */
+  --ui-neutral-850: #2e2e2e;   /* was #302d2b */
 
   /* -- 2. SEMANTIC — light (default) ------------------------- */
   /* The colour scheme an app owns. Defaults to TC Red; override this one
