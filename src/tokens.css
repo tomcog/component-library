@@ -35,24 +35,28 @@
      still #282523 and has ~1209 dependants - this is a token-shaped change,
      so the code moves first and Figma has to follow. */
   --ui-ink: #262626;              /* Figma: Color/Ink - value now diverges */
+  /* One neutral ramp, ordered light to dark, shared with Figma.
+     Steps marked (code) have no Figma counterpart: they exist only to carry
+     dark mode, which the Figma collection cannot express with a single mode.
+     They are numbered to sit between the real steps by lightness rather than
+     to reuse a number Figma already means something else by - the code's old
+     600 was #686868 against Figma's #525252, one name for two colours. */
   --ui-neutral-100: #f5f5f5;
   --ui-neutral-150: #ededed;
   --ui-neutral-300: #d4d4d4;
   --ui-neutral-350: #b8b8b8;
   --ui-neutral-400: #8c8c8c;
-  --ui-neutral-500: #737373;   /* Figma: TextSecondary */
-  /* Dark-side neutrals. Placeholders — Figma has no dark mode yet, so these
-     are not from the design. Previously tinted warm to match --ui-ink; now
-     true neutrals at the same lightness, except 800 (see below). */
-  --ui-neutral-600: #686868;   /* was #6b6764 */
-  --ui-neutral-700: #474747;   /* was #4a4643 */
-  /* Neutralised AND lightened: the neutral equivalent of #3a3735 is #383838,
-     and this is that ~10% lighter again in L* (23.3 -> 25.8). It carries the
-     dark tertiary fill, which read too heavy. It cannot go much further -
-     --ui-surface-muted-hover is neutral-700 at L* 30.0, and a fill lighter
-     than its own hover state inverts the interaction. */
-  --ui-neutral-800: #3d3d3d;   /* was #3a3735 */
-  --ui-neutral-850: #2e2e2e;   /* was #302d2b */
+  --ui-neutral-500: #737373;   /* Figma: Neutral/500 (also Text/Muted)      */
+  --ui-neutral-550: #686868;   /* (code) was 600, and #6b6764 before that   */
+  --ui-neutral-600: #525252;   /* Figma: Neutral/600                        */
+  --ui-neutral-650: #474747;   /* (code) was 700, and #4a4643 before that   */
+  /* (code) Neutralised AND lightened: the neutral equivalent of #3a3735 is
+     #383838, and this is that ~10% lighter again in L* (23.3 -> 25.8). It
+     carries the dark tertiary fill, which read too heavy. It cannot go much
+     further - --ui-surface-muted-hover is neutral-650 at L* 30.0, and a fill
+     lighter than its own hover state inverts the interaction. */
+  --ui-neutral-700: #3d3d3d;   /* (code) was 800, and #3a3735 before that   */
+  --ui-neutral-800: #2e2e2e;   /* (code) was 850, and #302d2b before that   */
 
   /* -- 2. SEMANTIC — light (default) ------------------------- */
   /* The colour scheme an app owns. Defaults to TC Red; override this one
@@ -147,15 +151,15 @@
   --ui-surface-inverse: var(--ui-neutral-150);
   --ui-text-on-inverse: var(--ui-ink);
 
-  --ui-surface-muted: var(--ui-neutral-800);
-  --ui-surface-muted-hover: var(--ui-neutral-700);
-  --ui-surface-muted-active: var(--ui-neutral-600);
+  --ui-surface-muted: var(--ui-neutral-700);
+  --ui-surface-muted-hover: var(--ui-neutral-650);
+  --ui-surface-muted-active: var(--ui-neutral-550);
   --ui-text-default: var(--ui-neutral-150);
   --ui-text-muted: var(--ui-neutral-400);
 
-  --ui-surface-raised: var(--ui-neutral-850);
-  --ui-border-subtle: var(--ui-neutral-800);
+  --ui-surface-raised: var(--ui-neutral-800);
+  --ui-border-subtle: var(--ui-neutral-700);
 
-  --ui-surface-disabled: var(--ui-neutral-850);
-  --ui-text-disabled: var(--ui-neutral-600);
+  --ui-surface-disabled: var(--ui-neutral-800);
+  --ui-text-disabled: var(--ui-neutral-550);
 }

@@ -358,12 +358,13 @@ a fix pending, per the rule above.
 1. **`Color/Ink`.** Code is `#262626` (neutralised); Figma is still `#282523`.
    The push is a one-line variable edit, but it recolours ~1209 dependants, so
    it needs the user out of the file and their explicit go-ahead.
-2. **`Neutral/600` means two different things.** Figma's is `#525252`, part of
-   the light-side ramp (50/100/200/300/500/600/900). The code's is `#686868`, a
-   dark-mode placeholder that borrowed a number already in use. The transform
-   rule says these are the same token, so one of the two scales has to be
-   renumbered — a decision, not a sync. The same question hangs over `700`,
-   `800` and `850`, which exist only in code.
+2. ~~`Neutral/600` means two different things.~~ **Resolved.** `--ui-neutral-600`
+   is now Figma's `#525252`, and the four dark-mode placeholders that had
+   borrowed light-ramp numbers were renumbered to sit between the real steps by
+   lightness: `600 -> 550`, `700 -> 650`, `800 -> 700`, `850 -> 800`. A pure
+   rename — every dark-mode token resolves to the same colour it did before.
+   The four `(code)` steps still have no Figma counterpart, but that is the
+   dark-mode gap in (4) rather than a naming collision.
 3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
    `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`. Some may
    belong to the other projects sharing this file; check before importing.
