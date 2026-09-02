@@ -350,6 +350,27 @@ Note this Figma file is shared with other work — `PacketEditorHeader`,
 `Primary/*`, `Text/*`, `Surface/*`, `Button*`, `Nav/*`, `Motion/*`, `Card*`),
 not the whole file.
 
+### Open divergences
+
+Kept here so they are not rediscovered. Anything on this list is a defect with
+a fix pending, per the rule above.
+
+1. **`Color/Ink`.** Code is `#262626` (neutralised); Figma is still `#282523`.
+   The push is a one-line variable edit, but it recolours ~1209 dependants, so
+   it needs the user out of the file and their explicit go-ahead.
+2. **`Neutral/600` means two different things.** Figma's is `#525252`, part of
+   the light-side ramp (50/100/200/300/500/600/900). The code's is `#686868`, a
+   dark-mode placeholder that borrowed a number already in use. The transform
+   rule says these are the same token, so one of the two scales has to be
+   renumbered — a decision, not a sync. The same question hangs over `700`,
+   `800` and `850`, which exist only in code.
+3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
+   `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`. Some may
+   belong to the other projects sharing this file; check before importing.
+4. **Dark mode.** The Figma collection has one mode. Now that the dark values
+   are real neutrals rather than invented warm tints, a second mode is
+   feasible — it was previously ruled out as needing design work.
+
 ### Which direction to make a change
 
 - **Token-shaped changes** (radius, spacing, weights, colour values, sizing): change the code first, then push to Figma. One token edit, provable via build + screenshot + pixel measurement, then synced.
@@ -541,9 +562,20 @@ system-level, and a second component inventing its own shadow is how depth
 drifts apart. Both are two-layer - a soft cast plus a tight contact shadow -
 so a card reads as lifted rather than blurred.
 
-Neither shadow is a Figma variable; only `White` is bound on this component
-set. Reconciling that is a token-shaped change: add `Elevation/Float 1` and
-`Float 2` in Figma and bind the variants to them.
+Figma shadows cannot be variables — variables are only BOOLEAN, FLOAT, STRING
+and COLOR — so the two elevations are **effect styles**, `Shadow/Float 1` and
+`Shadow/Float 2`, named so the transform still holds
+(`Shadow/Float 1` -> `--ui-shadow-float-1`). Effect styles are the Figma-native
+equivalent of a shadow token; don't try to model them as variables.
+
+The component set is fully bound: fill -> `Surface/Raised`, all four corners ->
+`Card/Radius`, and on flat, stroke -> `Border/Subtle` with weight ->
+`Card/Border Width`. No property on any variant is a raw value.
+
+**Flat's stroke was `CENTER`-aligned and is now `INSIDE`.** At 3px, centred put
+1.5px outside the frame, so the flat variant measured 353x203 against the float
+variants' 350x200. The code draws the rule fully inside (an inset box-shadow),
+so Figma was the side that moved.
 
 ## Component API conventions
 
