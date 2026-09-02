@@ -8,30 +8,34 @@
    tokens (--ui-button-*) exist only as optional overrides, declared
    as fallbacks inside each component's CSS:
 
-       background: var(--ui-button-primary-bg, var(--ui-brand));
+       background: var(--ui-button-primary-bg, var(--ui-primary));
 
    Why: a custom property substitutes var() at the element where it
    is DECLARED. A component tier declared here on :root would resolve
-   against :root's brand/theme and freeze — so overriding --ui-brand
+   against :root's brand/theme and freeze — so overriding --ui-primary
    or [data-theme] on a subtree would have no effect. Resolving in the
    component instead means every var() is evaluated at the button, and
    picks up whatever is in scope at that point in the tree.
 
    Consequences, all supported:
-     app rebrand      :root { --ui-brand: #2563eb }
+     app recolour     :root { --ui-primary: #2563eb }
      app dark mode    <html data-theme="dark">
-     scoped theming   <div data-theme="dark"> or <div style="--ui-brand:…">
+     scoped theming   <div data-theme="dark"> or <div style="--ui-primary:…">
    ============================================================= */
 
 :root {
   /* -- 1. PRIMITIVE ------------------------------------------ */
-  --ui-red-500: #e51a38;          /* Figma: Color/TC Red */
+  /* TC Red - the fixed brand identity. This value is the brand; it does not
+     change per app. An app that wants different colours overrides the
+     SEMANTIC --ui-primary below, never this. */
+  --ui-tc-red: #e51a38;           /* Figma: Color/TC Red */
   --ui-white: #ffffff;            /* Figma: Color/White */
   --ui-ink: #282523;              /* Figma: Color/"Black" (not true black) */
   --ui-neutral-150: #ededed;
   --ui-neutral-300: #d4d4d4;
   --ui-neutral-350: #b8b8b8;
   --ui-neutral-400: #8c8c8c;
+  --ui-neutral-500: #737373;   /* Figma: TextSecondary */
   /* Dark-side neutrals, tinted to match --ui-ink. Placeholders —
      Figma has no dark mode yet, so these are not from the design. */
   --ui-neutral-600: #6b6764;
@@ -40,8 +44,11 @@
   --ui-neutral-850: #302d2b;
 
   /* -- 2. SEMANTIC — light (default) ------------------------- */
-  --ui-brand: var(--ui-red-500);
-  --ui-text-on-brand: var(--ui-white);
+  /* The colour scheme an app owns. Defaults to TC Red; override this one
+     name to recolour every primary surface - buttons, active nav, focus
+     rings - without touching the palette:  :root { --ui-primary: #634509 } */
+  --ui-primary: var(--ui-tc-red);
+  --ui-text-on-primary: var(--ui-white);
 
   --ui-surface-inverse: var(--ui-ink);
   --ui-text-on-inverse: var(--ui-white);
@@ -50,6 +57,9 @@
   --ui-surface-muted-hover: var(--ui-neutral-350);
   --ui-surface-muted-active: var(--ui-neutral-400);
   --ui-text-default: var(--ui-ink);
+  --ui-text-muted: var(--ui-neutral-500);
+
+  --ui-surface-raised: var(--ui-white);
 
   --ui-surface-disabled: var(--ui-neutral-150);
   --ui-text-disabled: var(--ui-neutral-300);
@@ -59,35 +69,55 @@
   --ui-button-lg-padding-x: 14px;
   --ui-button-lg-gap: 6px;
   --ui-button-lg-radius: 4px;
-  --ui-button-lg-font: 14px;
-  --ui-button-lg-line: 20px;
+  --ui-button-lg-font-size: 14px;
+  --ui-button-lg-line-height: 20px;
 
   --ui-button-md-height: 32px;
   --ui-button-md-padding-x: 12px;
   --ui-button-md-gap: 5px;
   --ui-button-md-radius: 3px;
-  --ui-button-md-font: 12px;
-  --ui-button-md-line: 16px;
+  --ui-button-md-font-size: 12px;
+  --ui-button-md-line-height: 16px;
 
   --ui-button-sm-height: 24px;
   --ui-button-sm-padding-x: 8px;
   --ui-button-sm-gap: 4px;
   --ui-button-sm-radius: 2px;
-  --ui-button-sm-font: 10px;
-  --ui-button-sm-line: 12px;
+  --ui-button-sm-font-size: 10px;
+  --ui-button-sm-line-height: 12px;
 
   --ui-button-font-weight: 500;
+
+  /* Nav. Figma: TextNav = DM Sans Medium 14/20, Nav gap 32,
+     accent rule 4, dropdown gap 12 + 8 indent. Text only - no icon variant. */
+  --ui-nav-gap: 32px;
+  --ui-nav-font-size: 14px;
+  --ui-nav-line-height: 20px;
+  --ui-nav-font-weight: 500;
+  --ui-nav-accent-size: 4px;
+  --ui-nav-dropdown-gap: 12px;
+  --ui-nav-dropdown-inset: 8px;      /* how far a sub item indents on hover */
+  --ui-nav-panel-offset: 12px;       /* trigger -> panel gap */
+  --ui-nav-panel-padding-y: 16px;
+  --ui-nav-panel-padding-x: 20px;
+  --ui-nav-panel-radius: 0px;
+  --ui-nav-pipe-radius: 1px;
 
   /* Typography. DM Sans ships with the package but is opt-in:
      import "@tomcoggia/ui/fonts.css". Override this token to use a
      different face; the fallback stack keeps things sane if neither. */
+  /* Motion. System-level, not per component: two components inventing their
+     own timings is how interaction feel drifts apart. */
+  --ui-motion-fast: 150ms;   /* state changes: colour, fills, the nav pipe */
+  --ui-motion-base: 200ms;   /* travelling motion: the nav underline wipe */
+
   --ui-font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* -- 2. SEMANTIC — dark ------------------------------------- */
 /* Attribute selector, NOT :root[data-theme] — so it applies to the
-   document or to any subtree. --ui-brand is intentionally untouched:
-   a brand is a brand in either theme. */
+   document or to any subtree. --ui-primary is intentionally untouched: an
+   app's primary colour is its primary colour in either theme. */
 [data-theme="dark"] {
   --ui-surface-inverse: var(--ui-neutral-150);
   --ui-text-on-inverse: var(--ui-ink);
@@ -96,6 +126,9 @@
   --ui-surface-muted-hover: var(--ui-neutral-700);
   --ui-surface-muted-active: var(--ui-neutral-600);
   --ui-text-default: var(--ui-neutral-150);
+  --ui-text-muted: var(--ui-neutral-400);
+
+  --ui-surface-raised: var(--ui-neutral-850);
 
   --ui-surface-disabled: var(--ui-neutral-850);
   --ui-text-disabled: var(--ui-neutral-600);

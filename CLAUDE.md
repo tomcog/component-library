@@ -21,8 +21,8 @@ npm run typecheck    # tsc --noEmit
 `npm run dev` serves `playground/` (config: `vite.playground.config.ts`, separate
 from the library build config). It imports from `src/`, not `dist/`, so edits
 hot-reload, and it renders the real components — a hand-written preview drifts
-from the component the moment its DOM changes. It has theme and live brand-colour
-controls, so a rebrand can be auditioned without editing a file.
+from the component the moment its DOM changes. It has theme and live primary-colour
+controls, so a recolour can be auditioned without editing a file.
 
 Use `build:watch` only when `npm link`ed into a consuming app.
 
@@ -41,6 +41,14 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.1.x -> 0.2.0 renamed three public tokens.** `--ui-brand` ->
+`--ui-primary`, `--ui-text-on-brand` -> `--ui-text-on-primary`, and the
+primitive `--ui-red-500` -> `--ui-tc-red`. An app still setting `--ui-brand`
+does not error — it silently falls back to the library default, i.e. reverts
+to TC Red. Apps pin a tag, so nothing breaks until a ref is bumped: update
+the app's theme file in the same commit that moves it to `#v0.2.0`.
+NextJob's `src/styles/theme.css` maps this token and needs that edit.
+
 **Releasing is a tag.** Bump `version`, commit, `git tag vX.Y.Z`, push with
 `--tags`, then move each app's `#vX.Y.Z` ref. Apps pinned to an old tag keep
 working; a moving `#main` ref would rebuild them unpredictably, so don't.
@@ -56,7 +64,20 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 
 ## Architecture
 
-- **Two-layer styling.** `src/tokens.css` defines global CSS custom properties on `:root`; component `*.module.css` files consume those variables and never hardcode values. A new visual constant means adding a token first. Token values are still the brief's placeholders — replace with real brand values.
+- **Two-layer styling.** `src/tokens.css` defines global CSS custom properties on `:root`; component `*.module.css` files consume those variables and never hardcode values. A new visual constant means adding a token first. Neutral token values are still the brief's placeholders; `--ui-tc-red` is real.
+- **A token name carries its type whenever the name alone is ambiguous.**
+  `--ui-nav-accent-size` (a length) sits beside `--ui-nav-accent-color` (a
+  colour); `--ui-button-lg-font-size` beside `--ui-font-family` and
+  `--ui-button-font-weight`. An earlier pass had `--ui-nav-accent: 4px` next
+  to `--ui-nav-accent-color`, so the shorter, more obvious name held the
+  length — read `height: var(--ui-nav-accent)` and you assume a colour. Don't
+  reintroduce bare `-accent`, `-font` or `-line` names.
+- **Motion is system-level, not per component.** `--ui-motion-fast` (150ms,
+  state changes) and `--ui-motion-base` (200ms, travelling motion) live in
+  `tokens.css` and are used by both Button and Nav. A per-component
+  `--ui-nav-motion` existed briefly; two components inventing their own
+  timings is how interaction feel drifts apart. Component CSS must not
+  hardcode a transition duration.
 - **All tokens are `--ui-` prefixed** (`--ui-color-primary`, `--ui-space-2`). This is deliberate: `:root` is global, and unprefixed names like `--color-primary` would collide with a consuming app's own tokens, with load order deciding the winner. Never add an unprefixed token.
 - **Barrel exports.** `src/index.ts` is the single public entry (`lib.entry` in `vite.config.ts`). Each component directory has its own `index.ts` re-export; `src/index.ts` re-exports those and imports `tokens.css`.
 - **CSS is not auto-injected.** Styles are emitted to a separate `dist/style.css`, exposed as the `@tomcoggia/ui/styles.css` subpath export. **Consumers must import it once** (`import "@tomcoggia/ui/styles.css"`) or components render unstyled. This is deliberate, per the brief.
@@ -64,20 +85,36 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
-### The theming contract: 10 semantic tokens
+### The theming contract: 12 semantic tokens
 
 `tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
-the public API** — those 10 names are what a consuming app overrides to make
+the public API** — those 12 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
-never alias `--ui-red-500`.
+never alias `--ui-tc-red`.
+
+#### Identity vs role: `--ui-tc-red` and `--ui-primary`
+
+These two are easy to conflate and must not be.
+
+- **`--ui-tc-red` (primitive) is the brand.** `#e51a38`, Tom Coggia's brand
+  red. It is a fixed fact and never varies per app or per theme.
+- **`--ui-primary` (semantic) is the role** — the colour scheme an app owns.
+  It defaults to `--ui-tc-red`, and an app recolours everything primary
+  (buttons, active nav, focus rings) by overriding this one name.
+
+An earlier version called the overridable token `--ui-brand`, which had the
+mutability backwards: it asked consumers to "override the brand colour with
+your brand colour". Don't reintroduce `--ui-brand` in either tier, and don't
+let an app alias `--ui-tc-red` — overriding the primitive moves every role
+built on it, which today is `--ui-primary` but need not stay that way.
 
 Declare them unlayered on `:root` (the library's defaults live inside
 `@layer ui`, so any unlayered declaration wins regardless of import order):
 
 ```css
 :root {
-  --ui-brand:                /* primary fill                          */;
-  --ui-text-on-brand:        /* text on a solid fill                  */;
+  --ui-primary:                /* primary fill                          */;
+  --ui-text-on-primary:        /* text on a solid fill                  */;
 
   --ui-surface-inverse:      /* secondary: dark fill                  */;
   --ui-text-on-inverse:      /* text on that dark fill                */;
@@ -86,6 +123,8 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-surface-muted-hover:  /* tertiary hover                        */;
   --ui-surface-muted-active: /* tertiary pressed                      */;
   --ui-text-default:         /* text on a light/neutral fill          */;
+  --ui-text-muted:           /* de-emphasised text (nav sub items)    */;
+  --ui-surface-raised:       /* floating panel fill (nav dropdown)    */;
 
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
@@ -95,7 +134,14 @@ Declare them unlayered on `:root` (the library's defaults live inside
 **Leave one out and it does not fail — it silently keeps the library's own
 placeholder neutral.** That looks plausible in isolation, which is exactly why
 it goes unnoticed; the app's palette and the component's drift apart one variant
-at a time. Map all 10 or none.
+at a time. Map all 12 or none.
+
+`--ui-text-muted` (Figma `TextSecondary`, `#737373`) and `--ui-surface-raised`
+(the dropdown panel's fill) were both added with Nav. They are the only
+semantic tokens no Button variant uses, so a consuming app that themed
+the library before Nav existed will not have mapped it — and per the rule above
+it fails silently, leaving dropdown sub items in the library's placeholder grey.
+Check it when adopting Nav.
 
 Most palettes lack a muted hover/active pair and a disabled surface. Deriving
 them is fine and keeps the interaction feel: the library's own steps are
@@ -182,11 +228,53 @@ A green `npm run build` does not mean the CSS pipeline works. After any change t
 
 ## Figma sync
 
-Source of truth is the `Button` component set (`135:9598`) in the **iconAtomic Components** file, page `Components`. It is edited via the Figma Console MCP Desktop Bridge plugin, which needs Figma Desktop open with the plugin running. The REST token is expired, so REST-backed tools (`figma_get_component_for_development`, component images) fail with 403 — use `figma_execute` and `figma_capture_screenshot`, which go through the plugin and need no token.
+Source of truth is the `Button` component set (`135:9598`) in the **iconAtomic Components** file, page `Components`. It is edited via the Figma Console MCP Desktop Bridge plugin, which needs Figma Desktop open with the plugin running. The REST token is expired, so `figma-console`'s REST-backed tools (`figma_get_component_for_development`, component images) fail with 403 — use `figma_execute` and `figma_capture_screenshot`, which go through the plugin and need no token.
+
+**For reading, prefer the official Figma MCP server instead** (`get_design_context`, `get_screenshot`, `get_variable_defs`). It is authenticated separately, needs neither the Desktop Bridge nor the expired REST token, and returns the variant matrix, component properties and bound variable values in one call — that is how the Nav spec was read. The Desktop Bridge is still required for *writing*, and is worth the setup only then; it also binds to a fallback port when stale instances hold 9223, so `figma_get_status` reporting "no plugin connected" while the plugin looks open usually means it attached to a different port.
 
 Code and Figma were reconciled and currently match on every modelled property: heights 40/32/24, padding 14/10, 12/8, 8/6, gaps 6/5/4, radii 4/3/2, font 14/12/9 DM Sans **Medium**, line heights 20/16/12, icon 16/12/9 at 0.65 opacity.
 
 Figma's variables were restructured to mirror `tokens.css`: every Button variant now binds to a `Button/*` token which aliases a semantic token which aliases a primitive (e.g. `Button/Tertiary/Hover -> Surface/Muted Hover -> Neutral/350`). Before this, hover/pressed states bound straight to `Brand/Dark` and `Neutral/*`, skipping the component tier — that was the inconsistency that motivated the whole token design. **Don't reintroduce direct primitive bindings on component variants.**
+
+The Nav sets were reconciled the same way later: `Nav/Item` Default and Hover
+text had been bound to a variable literally named `"Black"` (`#171717`, quote
+characters included) rather than `Text/Default` (`#282523`), and `State=On`
+bound straight to the `Color/TC Red` primitive. Both were repointed onto the
+semantic tier. **`"Black"` itself was left alone — 589 nodes across the file
+use it**, so changing its value would recolour far more than this library.
+Fixing its malformed name is safe; changing its value is not.
+
+The semantic tier was also renamed to match the code's identity/role split:
+`Brand/*` -> `Primary/*` and `Text/OnBrand` -> `Text/OnPrimary`,
+`TextSecondary` -> `Text/Muted`. `Surface/Raised`, ten `Nav/*` geometry floats
+and `Motion/Fast` / `Motion/Base` were added. **`Color/TC Red` already existed
+and was not renamed** — it is the Figma counterpart of `--ui-tc-red`, and
+`Primary/Base` aliases to it exactly as `--ui-primary` does in code.
+
+#### Names need not match, but they must be *derivable*
+
+The two sides keep their own conventions — Figma `Group/Title Case`, CSS
+`--ui-kebab-case`. What matters is the tier, the alias target and the value.
+But a name that cannot be transformed by rule has to be hand-mapped forever,
+and hand-maps are where drift starts — it is how the file ended up with
+`Color/Black` at `#282523` and `"Black"` at `#171717`, Button on one and Nav
+on the other.
+
+The transform is: lowercase, spaces and `/` to `-`, prefix `--ui-`, drop a
+trailing `-base`.
+
+    Color/TC Red          -> --ui-tc-red
+    Surface/Muted Hover   -> --ui-surface-muted-hover
+    Text/OnPrimary        -> --ui-text-on-primary
+    Primary/Base          -> --ui-primary
+
+Three pairs used to break that rule and were fixed by renaming the *Figma*
+side: `TextSecondary` -> `Text/Muted`, `Surface/Muted Pressed` ->
+`Surface/Muted Active` (CSS is stuck with `active`, the pseudo-class), and
+`Color/Black` -> `Color/Ink` (the value `#282523` is not black; Figma keeps a
+separate `True Black` at `#000000`). `Color/Ink` had 1209 dependants — a
+rename preserves every binding, so this was safe, but **never change its
+value**. Don't reintroduce a name that has to be hand-mapped.
 
 ### Geometry is variable-bound too
 
@@ -234,12 +322,115 @@ In Figma this is `State=Loading` (60 variants), **not** a boolean. A Figma boole
 
 ### Deliberate divergences — do not "fix" these
 
-- **Focus is code-only.** `.button:focus-visible` has a 2px brand outline with 2px offset. Figma models no Focus state, and the buttons carry **no strokes in any variant** — that is the design's intent. Figma also has no equivalent of `outline-offset`, so an `OUTSIDE` stroke misrepresents the ring (it reads as invisible on Primary, brand-on-brand). Don't add focus variants or strokes to the Figma file.
+- **Focus is code-only.** `.button:focus-visible` has a 2px primary outline with 2px offset. Figma models no Focus state, and the buttons carry **no strokes in any variant** — that is the design's intent. Figma also has no equivalent of `outline-offset`, so an `OUTSIDE` stroke misrepresents the ring (it reads as invisible on Primary, primary-on-primary). Don't add focus variants or strokes to the Figma file.
 - **Dark mode is code-only.** `tokens.css` has a `[data-theme="dark"]` block; the Figma collection has a single mode, and its dark values would need to be designed rather than invented.
 
 ### Editing the Figma file safely
 
 Plugin edits are undoable from the canvas, and the user may be working in the file at the same time — node state can change between calls. Never bulk-delete by name pattern or assume an unfamiliar variant is leftover scaffolding (doing so destroyed a `Level=Ghost` variant the user was creating). Remove only ids created in the same call, and re-read state rather than trusting a previous call's snapshot.
+
+## Nav
+
+Sitewide navigation. Figma: `Navigation Components` (node `342:4239`) — the
+component sets `Nav`, `Nav/Item`, `Nav/Dropdown`, `Nav/Dropdown/Item`.
+**The logo is not part of it** — it sits beside the nav in the page header.
+
+```tsx
+<Nav aria-label="Main">
+  <NavItem asChild active={pathname === "/"}><Link href="/">Home</Link></NavItem>
+  <NavDropdown label="My work">
+    <NavDropdownItem asChild><Link href="/simplescreen">SimpleScreen</Link></NavDropdownItem>
+  </NavDropdown>
+</Nav>
+```
+
+### NavDropdown is a hover/focus disclosure
+
+Figma shows only a static column, so the behaviour was taken from the working
+implementation on tomcoggia.com (dev server, port 5170) and matches it:
+
+| | value |
+|---|---|
+| panel enter | `opacity 0 -> 1`, `translateY(-4px) -> 0` |
+| panel | `right: -20px`, `12px` below trigger, white, `16px 20px` padding, `12px` gap, right-aligned |
+| sub item hover | label indents `8px`; red pipe **drawn top to bottom** (`scale: 1 0 -> 1 1`, `transform-origin: top`), `4px` wide, `20px` tall, `1px` radius |
+| sub item current | red label **only** — no pipe, no indent |
+| duration | `150ms` (`--ui-nav-motion`) |
+
+Three things not to "simplify":
+
+- **The trigger-to-panel offset is padding on the panel, not a `top` gap.** A
+  real gap leaves a strip where the pointer is over neither element, so the
+  menu closes as you reach for it. Transparent `padding-top` keeps the hover
+  region contiguous and needs no close-timer.
+- **The indent lives on the label, not as padding on the link.** Padding would
+  slide the pipe with the text; the pipe has to stay pinned to the right edge.
+- **The pipe is drawn top to bottom** — it scales vertically from its top edge
+  like a stroke being laid down. Use the standalone `scale` property with
+  `transform-origin: top`, not `transform`, so it composes with anything a
+  consumer sets on `transform`. Width animates `0 -> 4px` alongside it so the
+  pipe takes no horizontal room until drawn. Note Tailwind v4 emits `scale-y-*`
+  as the `scale` property: reading `transform` on the reference implementation
+  shows `none` and makes the vertical draw look absent when it is not.
+- **The current sub item is red text only** — no pipe, no indent, and hovering
+  it adds neither, so the two states never compound. Mirrors NavItem's
+  `State=Current`, which likewise drops its rule.
+
+The panel is hidden with `visibility`, not `display`, so it stays out of the
+tab order while closed *and* can still transition out — the same trick Button
+uses for its loading content.
+
+### State names
+
+| Figma | Code |
+|---|---|
+| `State=Default` | resting |
+| `State=Hover` | `:hover`, or `underlined` to pin it (NavDropdown pins it while open) |
+| `State=Current` | `active` — primary-coloured label, rule suppressed |
+
+The prop is `active`; the CSS class and component token are `current`
+(`.current`, `--ui-nav-item-text-current`). Not an oversight: `-active` was
+unavailable because in CSS it already means *pressed* (`:active`), so a token
+named `-active` would read as the pressed state. `current` matches the
+`aria-current` the prop emits. `active` stays as the public prop because that
+is what a nav prop is conventionally called. Figma's variant was renamed from
+`State=On` to `State=Current` to match, so there are now two vocabularies, not
+three: `active` at the API boundary, `current` everywhere else.
+
+`active` also sets **`aria-current="page"`**. Active detection is the app's job
+(`active={pathname === "/resume"}`), not a `currentPath` prop: with `asChild`
+the `href` lives on the `next/link` child, so `Nav` cannot read it, and
+per-app matching rules don't belong in a library. A `currentPath` layer could
+be added over `active` later; the reverse cannot.
+
+### Divergences — do not "fix" these
+
+- **There is no icon variant, deliberately.** `Nav/Item` used to carry an
+  `Icon?` boolean and a `Nav Icon` instance swap, and an earlier pass modelled
+  them in code. No nav in use has an icon, so the prop, its CSS slot and the
+  `--ui-nav-icon-size` / `--ui-nav-item-gap` tokens were removed — and the
+  property and its three icon layers were then deleted from Figma too. Neither
+  side has it now; don't add it back to either.
+- **The dropdown trigger is a `<button>`** with `aria-expanded`/`aria-haspopup`,
+  and the panel opens on focus as well as hover, with Escape closing it and
+  restoring focus. tomcoggia.com uses a `<span>`, which no keyboard user can
+  reach. Don't downgrade it to match.
+- **Sub items rest at `--ui-text-muted` and darken to `--ui-text-default` on
+  hover**, per Figma; the current one is `--ui-primary`.
+  tomcoggia.com rests them at `#1c1917` and hovers to `#171717` — a transition
+  too small to see, which looks like an oversight rather than a decision.
+- **Three different blacks exist.** Figma's nav binds to a variable literally
+  named `"Black"` (with the quote characters — a naming bug in the file) =
+  `#171717`; tomcoggia.com uses `#1c1917`; the library's `--ui-text-default`
+  is `#282523`. The component uses `--ui-text-default` so a themed app's nav
+  matches its Buttons. Reconciling Figma is a token-shaped change.
+- **The top-level rule sits directly under the line box** (`top: 100%`), per
+  Figma. tomcoggia.com sits it 2px lower; reproduce that with
+  `--ui-nav-item-underline-offset: 2px`.
+- **No mobile/hamburger.** tomcoggia.com has `hidden md:flex` plus a toggle
+  button; Figma specs neither. Design it before building it.
+- **Focus rings are code-only**, matching Button.
+
 
 ## Component API conventions
 

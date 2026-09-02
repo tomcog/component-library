@@ -10,7 +10,7 @@
   text-decoration: none;
   font-weight: var(--ui-button-font-weight);
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--ui-motion-fast) ease;
   position: relative; /* anchors the loading spinner */
 }
 
@@ -26,7 +26,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--ui-brand);
+  outline: 2px solid var(--ui-primary);
   outline-offset: 2px;
 }
 
@@ -36,42 +36,42 @@
   height: var(--ui-button-lg-height);
   padding-inline: var(--ui-button-lg-padding-x);
   border-radius: var(--ui-button-lg-radius);
-  font-size: var(--ui-button-lg-font);
-  line-height: var(--ui-button-lg-line);
+  font-size: var(--ui-button-lg-font-size);
+  line-height: var(--ui-button-lg-line-height);
 }
 .medium .content { gap: var(--ui-button-md-gap); }
 .medium {
   height: var(--ui-button-md-height);
   padding-inline: var(--ui-button-md-padding-x);
   border-radius: var(--ui-button-md-radius);
-  font-size: var(--ui-button-md-font);
-  line-height: var(--ui-button-md-line);
+  font-size: var(--ui-button-md-font-size);
+  line-height: var(--ui-button-md-line-height);
 }
 .small .content { gap: var(--ui-button-sm-gap); }
 .small {
   height: var(--ui-button-sm-height);
   padding-inline: var(--ui-button-sm-padding-x);
   border-radius: var(--ui-button-sm-radius);
-  font-size: var(--ui-button-sm-font);
-  line-height: var(--ui-button-sm-line);
+  font-size: var(--ui-button-sm-font-size);
+  line-height: var(--ui-button-sm-line-height);
 }
 
 /* -- variants ----------------------------------------------- */
-/* Each var() resolves at the button element, so --ui-brand and
+/* Each var() resolves at the button element, so --ui-primary and
    [data-theme] are picked up from wherever they are in scope.
    The first name in each var() is the optional component-level
    override; the fallback is the themed default. */
 .primary {
-  background: var(--ui-button-primary-bg, var(--ui-brand));
-  color: var(--ui-button-primary-text, var(--ui-text-on-brand));
+  background: var(--ui-button-primary-bg, var(--ui-primary));
+  color: var(--ui-button-primary-text, var(--ui-text-on-primary));
 }
 .primary:hover:not(:disabled) {
   background: var(--ui-button-primary-bg-hover,
-              color-mix(in srgb, var(--ui-brand), black 22.3%));
+              color-mix(in srgb, var(--ui-primary), black 22.3%));
 }
 .primary:active:not(:disabled) {
   background: var(--ui-button-primary-bg-active,
-              color-mix(in srgb, var(--ui-brand), black 40.7%));
+              color-mix(in srgb, var(--ui-primary), black 40.7%));
 }
 
 .secondary {
@@ -80,13 +80,13 @@
 }
 .secondary:hover:not(:disabled) {
   background: var(--ui-button-secondary-bg-hover,
-              color-mix(in srgb, var(--ui-brand), black 22.3%));
-  color: var(--ui-text-on-brand);
+              color-mix(in srgb, var(--ui-primary), black 22.3%));
+  color: var(--ui-text-on-primary);
 }
 .secondary:active:not(:disabled) {
   background: var(--ui-button-secondary-bg-active,
-              color-mix(in srgb, var(--ui-brand), black 40.7%));
-  color: var(--ui-text-on-brand);
+              color-mix(in srgb, var(--ui-primary), black 40.7%));
+  color: var(--ui-text-on-primary);
 }
 
 .tertiary {
@@ -101,26 +101,26 @@
 }
 
 
-/* Ghost: no fill, 1px rule, brand-coloured label and icon.
+/* Ghost: no fill, 1px rule, primary-coloured label and icon.
    Drawn with an inset box-shadow rather than a border so it matches
    Figma's strokeAlign:INSIDE exactly - the ring sits inside the box and
    costs no layout, so a ghost button is the same size as a filled one. */
 .ghost {
   background: transparent;
-  color: var(--ui-button-ghost-text, var(--ui-brand));
-  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border, var(--ui-brand));
+  color: var(--ui-button-ghost-text, var(--ui-primary));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border, var(--ui-primary));
 }
 .ghost:hover:not(:disabled) {
   color: var(--ui-button-ghost-text-hover,
-         color-mix(in srgb, var(--ui-brand), black 22.3%));
+         color-mix(in srgb, var(--ui-primary), black 22.3%));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover,
-              color-mix(in srgb, var(--ui-brand), black 22.3%));
+              color-mix(in srgb, var(--ui-primary), black 22.3%));
 }
 .ghost:active:not(:disabled) {
   color: var(--ui-button-ghost-text-active,
-         color-mix(in srgb, var(--ui-brand), black 40.7%));
+         color-mix(in srgb, var(--ui-primary), black 40.7%));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active,
-              color-mix(in srgb, var(--ui-brand), black 40.7%));
+              color-mix(in srgb, var(--ui-primary), black 40.7%));
 }
 
 /* -- disabled ----------------------------------------------- */

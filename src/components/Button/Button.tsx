@@ -4,9 +4,9 @@ import type {
   MouseEvent,
   ReactElement,
   ReactNode,
-  Ref,
 } from "react";
 import styles from "./Button.module.css";
+import { assignRef } from "../../internal/assignRef";
 
 // Written as the exact expression `process.env.NODE_ENV` because that is the
 // literal string bundlers substitute - an optional chain (process.env?.NODE_ENV)
@@ -50,11 +50,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * components (next/link and friends) without per-element typing.
    */
   asChild?: boolean;
-}
-
-function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === "function") ref(value);
-  else if (ref && typeof ref === "object") (ref as { current: T | null }).current = value;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

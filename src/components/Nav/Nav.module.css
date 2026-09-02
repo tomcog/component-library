@@ -1,0 +1,213 @@
+/* Sitewide navigation. Figma: `Nav`, `Nav/Item`, `Nav/Dropdown`,
+   `Nav/Dropdown/Item` (node 342:4239).
+
+   Every colour resolves at the link element, so --ui-primary and [data-theme]
+   are picked up from wherever they sit in the tree - same rule as Button.
+   The first name in each var() is the optional component-level override. */
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Figma: justify-end - nav sits top-right */
+  gap: var(--ui-nav-gap);
+  font-family: var(--ui-font-family, inherit);
+}
+
+/* -- item --------------------------------------------------- */
+.item {
+  position: relative; /* anchors the accent rule */
+  display: inline-flex;
+  align-items: flex-start; /* Figma: items-start */
+  font-family: var(--ui-font-family, inherit);
+  font-size: var(--ui-nav-font-size);
+  line-height: var(--ui-nav-line-height);
+  font-weight: var(--ui-nav-font-weight);
+  color: var(--ui-nav-item-text, var(--ui-text-default));
+  /* Nav items are <a> by default, which the UA underlines and colours. */
+  text-decoration: none;
+  white-space: nowrap; /* Figma: whitespace-nowrap */
+  cursor: pointer;
+  transition: color var(--ui-motion-fast) ease;
+}
+
+/* The 4px rule. Figma models it as border-b-4, but a real border would add
+   4px to the item's height on hover and shove the row around. An absolutely
+   positioned bar costs no layout, so the nav is the same height in every
+   state - and it can animate, which a border cannot. */
+.item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + var(--ui-nav-item-underline-offset, 0px));
+  height: var(--ui-nav-accent-size);
+  background: var(--ui-nav-accent-color, var(--ui-primary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ui-motion-base) ease;
+}
+.item:hover::after {
+  transform: scaleX(1);
+}
+
+/* Figma: State=On. The current page - red label, and no rule. Suppressed
+   rather than overridden so hovering the current item does not draw one. */
+.current {
+  color: var(--ui-nav-item-text-current, var(--ui-primary));
+}
+.current::after {
+  content: none;
+}
+
+/* Persistent rule. Figma composes `Nav/Dropdown` with its heading pinned to
+   State=Hover, marking the open section. */
+.underlined::after {
+  transform: scaleX(1);
+}
+
+/* Focus is code-only, matching Button: Figma models no focus state. */
+.item:focus-visible,
+.subItem:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+/* -- dropdown ---------------------------------------------- */
+/* A hover/focus disclosure, not a static column. */
+.dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+/* The trigger is a <button>, not a link - it opens a menu, it does not
+   navigate. Reset the UA button chrome so it matches .item exactly. */
+.trigger {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  /* Matches the reference implementation: it is not a link, so no pointer. */
+  cursor: default;
+}
+
+/* Panel positioning. The offset is *padding on the panel*, not a `top` gap:
+   a real gap leaves a dead strip where the pointer is over neither trigger
+   nor panel, and the menu closes as you reach for it. Transparent padding
+   keeps the hover region contiguous without a close-timer. */
+.panel {
+  position: absolute;
+  top: 100%;
+  right: calc(var(--ui-nav-panel-padding-x) * -1);
+  padding-top: var(--ui-nav-panel-offset);
+  min-width: calc(100% + var(--ui-nav-panel-padding-x) * 2);
+  z-index: 10;
+
+  opacity: 0;
+  translate: 0 -4px;
+  /* visibility (not display) so the panel keeps out of the tab order while
+     closed *and* can still transition out. Same trick as Button's loading. */
+  visibility: hidden;
+  transition:
+    opacity var(--ui-motion-fast) ease,
+    translate var(--ui-motion-fast) ease,
+    visibility 0s linear var(--ui-motion-fast);
+}
+.open .panel {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  transition:
+    opacity var(--ui-motion-fast) ease,
+    translate var(--ui-motion-fast) ease,
+    visibility 0s;
+}
+
+.panelInner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--ui-nav-dropdown-gap);
+  padding: var(--ui-nav-panel-padding-y) var(--ui-nav-panel-padding-x);
+  background: var(--ui-nav-panel-bg, var(--ui-surface-raised));
+  border-radius: var(--ui-nav-panel-radius);
+}
+
+/* -- sub item ----------------------------------------------- */
+.subItem {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: var(--ui-font-family, inherit);
+  font-size: var(--ui-nav-font-size);
+  line-height: var(--ui-nav-line-height);
+  font-weight: var(--ui-nav-font-weight);
+  color: var(--ui-nav-sub-item-text, var(--ui-text-muted));
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* The label carries the indent so the pipe stays pinned to the right edge. */
+.subLabel {
+  margin-right: 0;
+  transition:
+    margin-right var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+
+/* The pipe is DRAWN top to bottom: it scales vertically from its top edge,
+   like a stroke being laid down. `scale` (the standalone property) rather than
+   `transform`, so it composes with anything a consumer puts on `transform`.
+   Width animates alongside it, as in the reference implementation, so the pipe
+   takes no horizontal room until it is drawn. */
+.pipe {
+  flex: none;
+  width: 0;
+  height: var(--ui-nav-line-height);
+  border-radius: var(--ui-nav-pipe-radius);
+  background: var(--ui-nav-accent-color, var(--ui-primary));
+  scale: 1 0;
+  transform-origin: top;
+  transition:
+    width var(--ui-motion-fast) ease,
+    scale var(--ui-motion-fast) ease;
+}
+
+/* Hover: the label indents and the pipe is drawn in. */
+.subItem:hover {
+  color: var(--ui-nav-sub-item-text-hover, var(--ui-text-default));
+}
+.subItem:hover .subLabel {
+  margin-right: var(--ui-nav-dropdown-inset);
+}
+.subItem:hover .pipe {
+  width: var(--ui-nav-accent-size);
+  scale: 1 1;
+}
+
+/* Current page: red label and nothing else - no pipe, no indent. Mirrors
+   NavItem's State=On, which likewise drops its rule. Hovering the current
+   item adds nothing, so the two states never compound. */
+.subItemCurrent,
+.subItemCurrent:hover {
+  color: var(--ui-nav-sub-item-text-current, var(--ui-primary));
+}
+.subItemCurrent:hover .subLabel {
+  margin-right: 0;
+}
+.subItemCurrent:hover .pipe {
+  width: 0;
+  scale: 1 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .item::after,
+  .subItem,
+  .subLabel,
+  .pipe,
+  .panel,
+  .open .panel {
+    transition: none;
+  }
+}

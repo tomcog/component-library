@@ -1,13 +1,49 @@
-import { StrictMode, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button } from "../src";
+import { Button, Nav, NavItem, NavDropdown, NavDropdownItem } from "../src";
 import type { ButtonVariant, ButtonSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["large", "medium", "small"];
+
+// Tier 1: fixed palette, internal. An app should never alias these.
+const PRIMITIVE_TOKENS = [
+  "--ui-tc-red", "--ui-white", "--ui-ink",
+  "--ui-neutral-150", "--ui-neutral-300", "--ui-neutral-350", "--ui-neutral-400",
+  "--ui-neutral-500", "--ui-neutral-600", "--ui-neutral-700", "--ui-neutral-800",
+  "--ui-neutral-850",
+];
+// Tier 2: the theming contract. These 12 are the public API - map all or none.
+const SEMANTIC_TOKENS = [
+  "--ui-primary", "--ui-text-on-primary",
+  "--ui-surface-inverse", "--ui-text-on-inverse",
+  "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
+  "--ui-text-default", "--ui-text-muted", "--ui-surface-raised",
+  "--ui-surface-disabled", "--ui-text-disabled",
+];
+// Fill + the text meant to sit on it. A recolour that breaks contrast shows here.
+const TOKEN_PAIRS: [string, string, string][] = [
+  ["--ui-primary", "--ui-text-on-primary", "On primary"],
+  ["--ui-surface-inverse", "--ui-text-on-inverse", "On inverse"],
+  ["--ui-surface-muted", "--ui-text-default", "On muted"],
+  ["--ui-surface-raised", "--ui-text-default", "On raised"],
+  ["--ui-surface-disabled", "--ui-text-disabled", "Disabled"],
+];
+
+const PAGES = [
+  { href: "/", label: "Home" },
+  { href: "/resume", label: "Resume" },
+  { href: "/projects", label: "My Work" },
+];
+const SUB_PAGES = [
+  { href: "/work/a", label: "Discovery Brief" },
+  { href: "/work/b", label: "CampPal" },
+  { href: "/work/c", label: "PodcastPal" },
+  { href: "/work/d", label: "NextJob" },
+];
 
 const House = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
@@ -20,6 +56,34 @@ const Chevron = () => (
     <path d="M9 18l6-6-6-6" />
   </svg>
 );
+
+/* Resolved from the themed element, not from :root, so dark mode and a live
+   primary override are reflected exactly as the components see them. */
+function useTokenValues(names: string[], deps: unknown[]) {
+  const [values, setValues] = useState<Record<string, string>>({});
+  useEffect(() => {
+    const el = document.querySelector(".page");
+    if (!el) return;
+    const cs = getComputedStyle(el);
+    const next: Record<string, string> = {};
+    for (const n of names) next[n] = cs.getPropertyValue(n).trim();
+    setValues(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+  return values;
+}
+
+function Swatch({ name, value }: { name: string; value?: string }) {
+  return (
+    <div className="swatch">
+      <span className="chip" style={{ background: `var(${name})` }} />
+      <span className="swatchMeta">
+        <span className="swatchName">{name.replace("--ui-", "")}</span>
+        <span className="swatchValue">{value || "unset"}</span>
+      </span>
+    </div>
+  );
+}
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -42,14 +106,18 @@ function Section({ title, note, children }: { title: string; note?: string; chil
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [brand, setBrand] = useState("#e51a38");
+  const [primary, setPrimary] = useState("#e51a38");
   const [size, setSize] = useState<ButtonSize>("large");
   const [loading, setLoading] = useState(false);
   const [lead, setLead] = useState(true);
+  const [page, setPage] = useState("/");
+  const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, primary]);
+  const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, primary]);
+  const [subPage, setSubPage] = useState("/work/b");
   const [trail, setTrail] = useState(false);
 
   return (
-    <div className="page" data-theme={theme} style={{ ["--ui-brand" as string]: brand }}>
+    <div className="page" data-theme={theme} style={{ ["--ui-primary" as string]: primary }}>
       <header>
         <h1>@tomcoggia/ui</h1>
         <div className="controls">
@@ -61,12 +129,42 @@ function App() {
             </select>
           </label>
           <label>
-            brand
-            <input type="color" value={brand} onChange={(e) => setBrand(e.target.value)} />
+            primary
+            <input type="color" value={primary} onChange={(e) => setPrimary(e.target.value)} />
           </label>
-          <button className="reset" onClick={() => setBrand("#e51a38")}>reset</button>
+          <button className="reset" onClick={() => setPrimary("#e51a38")}>reset</button>
         </div>
       </header>
+
+      <Section
+        title="Colour tokens"
+        note="Live values, read off the themed element - switch theme or pick a primary above and every semantic value follows."
+      >
+        <p className="groupLabel">
+          Semantic <span>- the public API, 12 names an app overrides</span>
+        </p>
+        <div className="swatches">
+          {SEMANTIC_TOKENS.map((t) => <Swatch key={t} name={t} value={semantic[t]} />)}
+        </div>
+
+        <p className="groupLabel">
+          Pairings <span>- fill with the text meant to sit on it</span>
+        </p>
+        <div className="pairs">
+          {TOKEN_PAIRS.map(([bg, fg, label]) => (
+            <div key={label} className="pair" style={{ background: `var(${bg})`, color: `var(${fg})` }}>
+              {label}
+            </div>
+          ))}
+        </div>
+
+        <p className="groupLabel">
+          Primitive <span>- internal, never aliased by an app</span>
+        </p>
+        <div className="swatches">
+          {PRIMITIVE_TOKENS.map((t) => <Swatch key={t} name={t} value={primitive[t]} />)}
+        </div>
+      </Section>
 
       <Section title="Button" note="Every variant at every size. Hover and press to see the interaction states.">
         {SIZES.map((s) => (
@@ -118,6 +216,85 @@ function App() {
           <Button asChild variant="ghost" iconEnd={<Chevron />}>
             <a href="https://example.com" target="_blank" rel="noreferrer">Ghost link</a>
           </Button>
+        </Row>
+      </Section>
+
+      <Section
+        title="Nav"
+        note="Figma: Nav + Nav/Item. Hover a resting item to draw the 4px rule; the current page is red and carries aria-current=page."
+      >
+        <Row label="live">
+          <Nav aria-label="Example">
+            {PAGES.map((p) => (
+              <NavItem
+                key={p.href}
+                href={p.href}
+                active={page === p.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(p.href);
+                }}
+              >
+                {p.label}
+              </NavItem>
+            ))}
+            <NavDropdown label="My work">
+              {SUB_PAGES.map((sp) => (
+                <NavDropdownItem
+                  key={sp.href}
+                  href={sp.href}
+                  active={subPage === sp.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSubPage(sp.href);
+                  }}
+                >
+                  {sp.label}
+                </NavDropdownItem>
+              ))}
+            </NavDropdown>
+          </Nav>
+        </Row>
+        <p className="note">
+          Click an item - the current page moves, and so does aria-current. Now on
+          <code> {page} </code>.
+        </p>
+        <Row label="pinned">
+          <Nav aria-label="Pinned rule example">
+            <NavItem href="#">Default</NavItem>
+            <NavItem href="#" underlined>Underlined</NavItem>
+            <NavItem href="#" active>On</NavItem>
+          </Nav>
+        </Row>
+        <Row label="asChild">
+          <Nav aria-label="asChild example">
+            <NavItem asChild>
+              <a href="https://example.com" target="_blank" rel="noreferrer">Real link</a>
+            </NavItem>
+          </Nav>
+        </Row>
+      </Section>
+
+      <Section
+        title="NavDropdown"
+        note="Hover or tab to the trigger to open. On a sub item the label indents and the red pipe is drawn top to bottom; the current page is red text only."
+      >
+        <Row label="dropdown">
+          <NavDropdown label="My Work">
+            {SUB_PAGES.map((sp) => (
+              <NavDropdownItem
+                key={sp.href}
+                href={sp.href}
+                active={subPage === sp.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSubPage(sp.href);
+                }}
+              >
+                {sp.label}
+              </NavDropdownItem>
+            ))}
+          </NavDropdown>
         </Row>
       </Section>
 

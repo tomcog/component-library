@@ -31,3 +31,21 @@ section {
 [data-theme="dark"] .controls label { color: #b8b8b8; }
 .controls select, .controls input[type="color"] { font: inherit; }
 .reset { font: inherit; border: 1px solid #d4d4d4; background: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+
+/* -- token swatches ----------------------------------------- */
+.groupLabel { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #a3a3a3; margin: 18px 0 10px; }
+.groupLabel:first-of-type { margin-top: 0; }
+.groupLabel span { text-transform: none; letter-spacing: 0; color: #c4c0bd; }
+[data-theme="dark"] .groupLabel span { color: #6b6764; }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; }
+.swatch { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.chip { width: 42px; height: 36px; flex: none; border-radius: 5px; border: 1px solid rgba(0,0,0,0.13); }
+[data-theme="dark"] .chip { border-color: rgba(255,255,255,0.18); }
+.swatchMeta { display: flex; flex-direction: column; min-width: 0; }
+.swatchName { font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.swatchValue { font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; text-transform: uppercase; }
+
+.pairs { display: flex; gap: 10px; flex-wrap: wrap; }
+.pair { padding: 11px 15px; border-radius: 6px; font-size: 12.5px; font-weight: 500; border: 1px solid rgba(0,0,0,0.10); }
+[data-theme="dark"] .pair { border-color: rgba(255,255,255,0.14); }
