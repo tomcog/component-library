@@ -41,14 +41,12 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
-**0.2.0 -> 0.3.0 adds Card, a 13th semantic token, and moves colour values.**
-`--ui-border-subtle` is new: an app that does not map it silently falls back to
-the library placeholder, per the rule below. The greys were neutralised
+**0.2.0 -> 0.3.0 adds Card and moves colour values.** The greys were neutralised
 (`--ui-ink` `#282523` -> `#262626`) and the dark-side neutrals renumbered
 (`600/700/800/850` -> `550/650/700/800`) — an app aliasing a primitive by
 number would be affected, though none should be. NextJob's
-`src/styles/theme.css` needs the `--ui-border-subtle` line in the same commit
-that moves it to `#v0.3.0`.
+The semantic contract stays at 12 names: `--ui-border-subtle` was added with
+Card and removed again when the flat variant lost its rule.
 
 **0.1.x -> 0.2.0 renamed three public tokens.** `--ui-brand` ->
 `--ui-primary`, `--ui-text-on-brand` -> `--ui-text-on-primary`, and the
@@ -94,10 +92,10 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
-### The theming contract: 13 semantic tokens
+### The theming contract: 12 semantic tokens
 
 `tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
-the public API** — those 13 names are what a consuming app overrides to make
+the public API** — those 12 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
 never alias `--ui-tc-red`.
 
@@ -134,7 +132,6 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-text-default:         /* text on a light/neutral fill          */;
   --ui-text-muted:           /* de-emphasised text (nav sub items)    */;
   --ui-surface-raised:       /* floating panel fill (nav dropdown)    */;
-  --ui-border-subtle:        /* flat Card's rule: your page bg         */;
 
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
@@ -144,10 +141,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
 **Leave one out and it does not fail — it silently keeps the library's own
 placeholder neutral.** That looks plausible in isolation, which is exactly why
 it goes unnoticed; the app's palette and the component's drift apart one variant
-at a time. Map all 13 or none.
-
-`--ui-border-subtle` (`#f5f5f5`) was added with Card, and is the 13th name -
-an app themed against the Nav-era contract will not have it.
+at a time. Map all 12 or none.
 
 `--ui-text-muted` (Figma `TextSecondary`, `#737373`) and `--ui-surface-raised`
 (the dropdown panel's fill) were both added with Nav. They are the only
@@ -382,7 +376,6 @@ theme.
     Text/Default          Color/Ink    -> Neutral/150
     Text/Muted            Neutral/500  -> Neutral/400
     Surface/Raised        Color/White  -> Neutral/800
-    Border/Subtle         Neutral/100  -> Neutral/700
     Surface/Disabled      Neutral/150  -> Neutral/800
     Text/Disabled         Neutral/300  -> Neutral/550
 
@@ -592,10 +585,11 @@ else. No padding, no internal layout, no width or height.
 - **No padding.** What goes inside has not been designed yet. Adding padding
   now would be inventing a decision the Figma file has not made, and every
   consumer would then have to undo it.
-- **The flat variant's 3px rule is an inset `box-shadow`, not a `border`** -
-  same reasoning as Button's ghost. It costs no layout, so a flat card and a
-  floating one are exactly the same size, and it does not depend on the
-  consuming app's `box-sizing`, which this library never sets.
+- **Flat has no rule at all** - fill and radius only. It carried a 3px
+  hairline briefly; that went, and `--ui-border-subtle` and
+  `--ui-card-border-width` went with it since nothing else used them. `flat`
+  still sets `box-shadow: none` rather than being an empty rule, so the
+  variant always puts a class on the element.
 
 ### `float1` / `float2` are Figma's names, not good ones
 
@@ -619,13 +613,12 @@ and COLOR — so the two elevations are **effect styles**, `Shadow/Float 1` and
 equivalent of a shadow token; don't try to model them as variables.
 
 The component set is fully bound: fill -> `Surface/Raised`, all four corners ->
-`Card/Radius`, and on flat, stroke -> `Border/Subtle` with weight ->
-`Card/Border Width`. No property on any variant is a raw value.
+`Card/Radius`. Flat carries no stroke at all. No property on any variant is a
+raw value.
 
-**Flat's stroke was `CENTER`-aligned and is now `INSIDE`.** At 3px, centred put
-1.5px outside the frame, so the flat variant measured 353x203 against the float
-variants' 350x200. The code draws the rule fully inside (an inset box-shadow),
-so Figma was the side that moved.
+Flat's stroke was briefly `CENTER`-aligned (1.5px of it outside the frame,
+making the variant 353x203 against the float variants' 350x200), then
+`INSIDE`, and is now removed entirely along with the rule it drew.
 
 ## Component API conventions
 

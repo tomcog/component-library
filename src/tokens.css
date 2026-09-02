@@ -78,11 +78,6 @@
   --ui-text-muted: var(--ui-neutral-500);
 
   --ui-surface-raised: var(--ui-white);
-  /* Hairline rule on a raised surface - the flat Card's stroke.
-     Deliberately the page-background grey, so the rule reads as the page
-     showing through the card's edge rather than as a drawn line. An app
-     should map this to its own page background, not to a border colour. */
-  --ui-border-subtle: var(--ui-neutral-100);
 
   --ui-surface-disabled: var(--ui-neutral-150);
   --ui-text-disabled: var(--ui-neutral-300);
@@ -126,10 +121,9 @@
   --ui-nav-panel-radius: 0px;
   --ui-nav-pipe-radius: 1px;
 
-  /* Card. Figma: 8px radius, 3px stroke on the flat variant. No width or
-     height - see Card.module.css for why the 350x200 frame is not modelled. */
+  /* Card. Figma: 8px radius. No width or height - see Card.module.css for
+     why the 350x200 frame is not modelled. */
   --ui-card-radius: 8px;
-  --ui-card-border-width: 3px;
 
   /* Typography. DM Sans ships with the package but is opt-in:
      import "@tomcoggia/ui/fonts.css". Override this token to use a
@@ -163,7 +157,6 @@
   --ui-text-muted: var(--ui-neutral-400);
 
   --ui-surface-raised: var(--ui-neutral-800);
-  --ui-border-subtle: var(--ui-neutral-700);
 
   --ui-surface-disabled: var(--ui-neutral-800);
   --ui-text-disabled: var(--ui-neutral-550);
