@@ -244,9 +244,10 @@ The Nav sets were reconciled the same way later: `Nav/Item` Default and Hover
 text had been bound to a variable literally named `"Black"` (`#171717`, quote
 characters included) rather than `Text/Default` (`#282523`), and `State=On`
 bound straight to the `Color/TC Red` primitive. Both were repointed onto the
-semantic tier. **`"Black"` itself was left alone — 589 nodes across the file
-use it**, so changing its value would recolour far more than this library.
-Fixing its malformed name is safe; changing its value is not.
+semantic tier. `"Black"` itself was left alone — 589 nodes across the file use it, so
+changing its value reaches well beyond this library and is the user's call
+rather than a side effect of a library change. Fixing its malformed name
+costs nothing and is safe either way.
 
 The semantic tier was also renamed to match the code's identity/role split:
 `Brand/*` -> `Primary/*` and `Text/OnBrand` -> `Text/OnPrimary`,
@@ -280,13 +281,20 @@ separate `True Black` at `#000000`). `Color/Ink` had 1209 dependants — a
 rename preserves every binding, so this was safe. Don't reintroduce a name
 that has to be hand-mapped.
 
-**The two sides now disagree on Ink's value, deliberately.** The palette was
-neutralised (see below) and `--ui-ink` is `#262626`; Figma's `Color/Ink` is
-still `#282523`. That is a token-shaped change, so the code moved first and
-Figma has to follow — but with ~1209 dependants, editing that one variable
-recolours most of the file, which is the point and is also why it needs the
-user out of the file and the Desktop Bridge running. Until it is pushed,
-treat `#282523` in Figma as stale rather than as the source of truth.
+**Only one colour is fixed: `--ui-tc-red`.** Everything else is a value that
+can be revised like any other design decision — see the identity/role split
+above. An earlier version of this file said `Color/Ink` must "never change its
+value". That was not an instruction from the user; it was inferred from the
+1209-dependant count and overstated into a rule, and it then sat here
+contradicting a legitimate request to revise the palette. The dependant count
+is a **blast radius, not a prohibition**: changing Ink recolours most of the
+Figma file, so it wants the user out of the file and a deliberate push — which
+is a reason to be careful, not a reason to refuse.
+
+The two sides now disagree on Ink deliberately: `--ui-ink` is `#262626`,
+Figma's `Color/Ink` is still `#282523`. Colour values are token-shaped, so the
+code moved first and Figma follows. Until it is pushed, treat the Figma value
+as stale rather than as the source of truth.
 
 ### The greys are neutral, deliberately
 
