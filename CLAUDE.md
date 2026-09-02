@@ -330,6 +330,26 @@ library tokens, so its greys are separate literals and drift on their own.
 
 Corner radius binds per-corner (`topLeftRadius` etc.), not via `cornerRadius`. Height is *not* a variable: the frames hug vertically, so height is derived from Padding Y plus line height. The code expresses the same geometry as explicit `height` plus `padding-inline`; both produce 40/32/24.
 
+### The two sides must match
+
+**The library and the Figma file are meant to be identical, to the extent the
+two media allow.** This is the user's standing instruction, not a preference to
+be traded off. Any change to a token — a value, a name, a new one, a deleted
+one — is only half done until the other side carries it too. A divergence is a
+defect with a fix pending, never a resting state, and it must be recorded in
+this file with the direction it still has to travel.
+
+Only a handful of things genuinely cannot match, and each is listed under the
+component that owns it: focus rings (Figma models no focus state), `asChild`
+(an element change, not a visual one), and dark mode (Figma's collection has
+one mode). Everything else that differs is drift.
+
+Note this Figma file is shared with other work — `PacketEditorHeader`,
+`StepperWell`, `Checkbox`, `TabBarBG` and friends belong to other projects.
+"Identical" covers the design-system subset (`Color/*`, `Neutral/*`,
+`Primary/*`, `Text/*`, `Surface/*`, `Button*`, `Nav/*`, `Motion/*`, `Card*`),
+not the whole file.
+
 ### Which direction to make a change
 
 - **Token-shaped changes** (radius, spacing, weights, colour values, sizing): change the code first, then push to Figma. One token edit, provable via build + screenshot + pixel measurement, then synced.
