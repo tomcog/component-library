@@ -41,6 +41,15 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.2.0 -> 0.3.0 adds Card, a 13th semantic token, and moves colour values.**
+`--ui-border-subtle` is new: an app that does not map it silently falls back to
+the library placeholder, per the rule below. The greys were neutralised
+(`--ui-ink` `#282523` -> `#262626`) and the dark-side neutrals renumbered
+(`600/700/800/850` -> `550/650/700/800`) — an app aliasing a primitive by
+number would be affected, though none should be. NextJob's
+`src/styles/theme.css` needs the `--ui-border-subtle` line in the same commit
+that moves it to `#v0.3.0`.
+
 **0.1.x -> 0.2.0 renamed three public tokens.** `--ui-brand` ->
 `--ui-primary`, `--ui-text-on-brand` -> `--ui-text-on-primary`, and the
 primitive `--ui-red-500` -> `--ui-tc-red`. An app still setting `--ui-brand`
