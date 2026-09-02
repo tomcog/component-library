@@ -134,7 +134,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-text-default:         /* text on a light/neutral fill          */;
   --ui-text-muted:           /* de-emphasised text (nav sub items)    */;
   --ui-surface-raised:       /* floating panel fill (nav dropdown)    */;
-  --ui-border-subtle:        /* hairline rule (flat Card)             */;
+  --ui-border-subtle:        /* flat Card's rule: your page bg         */;
 
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
