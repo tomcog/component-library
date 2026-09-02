@@ -31,6 +31,7 @@
   --ui-tc-red: #e51a38;           /* Figma: Color/TC Red */
   --ui-white: #ffffff;            /* Figma: Color/White */
   --ui-ink: #282523;              /* Figma: Color/"Black" (not true black) */
+  --ui-neutral-100: #f5f5f5;
   --ui-neutral-150: #ededed;
   --ui-neutral-300: #d4d4d4;
   --ui-neutral-350: #b8b8b8;
@@ -60,6 +61,9 @@
   --ui-text-muted: var(--ui-neutral-500);
 
   --ui-surface-raised: var(--ui-white);
+  /* Hairline rule on a raised surface. Figma binds the flat Card's stroke to
+     a raw #f5f5f5; this is that value given a role. */
+  --ui-border-subtle: var(--ui-neutral-100);
 
   --ui-surface-disabled: var(--ui-neutral-150);
   --ui-text-disabled: var(--ui-neutral-300);
@@ -103,11 +107,22 @@
   --ui-nav-panel-radius: 0px;
   --ui-nav-pipe-radius: 1px;
 
+  /* Card. Figma: 8px radius, 3px stroke on the flat variant. No width or
+     height - see Card.module.css for why the 350x200 frame is not modelled. */
+  --ui-card-radius: 8px;
+  --ui-card-border-width: 3px;
+
   /* Typography. DM Sans ships with the package but is opt-in:
      import "@tomcoggia/ui/fonts.css". Override this token to use a
      different face; the fallback stack keeps things sane if neither. */
   /* Motion. System-level, not per component: two components inventing their
      own timings is how interaction feel drifts apart. */
+  /* Elevation. Two steps, both two-layer: a soft cast below plus a tight
+     contact shadow, so a card reads as lifted rather than blurred. Named for
+     the Figma variants (Style=Float1/Float2) so the two sides stay derivable. */
+  --ui-shadow-float-1: 0 6px 18px 0 rgb(0 0 0 / 0.1), 0 0 6px 0 rgb(0 0 0 / 0.1);
+  --ui-shadow-float-2: 0 12px 18px 0 rgb(0 0 0 / 0.1), 0 -1px 10px 0 rgb(0 0 0 / 0.1);
+
   --ui-motion-fast: 150ms;   /* state changes: colour, fills, the nav pipe */
   --ui-motion-base: 200ms;   /* travelling motion: the nav underline wipe */
 
@@ -129,6 +144,7 @@
   --ui-text-muted: var(--ui-neutral-400);
 
   --ui-surface-raised: var(--ui-neutral-850);
+  --ui-border-subtle: var(--ui-neutral-800);
 
   --ui-surface-disabled: var(--ui-neutral-850);
   --ui-text-disabled: var(--ui-neutral-600);

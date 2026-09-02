@@ -1,13 +1,14 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, Nav, NavItem, NavDropdown, NavDropdownItem } from "../src";
-import type { ButtonVariant, ButtonSize } from "../src";
+import { Button, Card, Nav, NavItem, NavDropdown, NavDropdownItem } from "../src";
+import type { ButtonVariant, ButtonSize, CardVariant } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["large", "medium", "small"];
+const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 
 // Tier 1: fixed palette, internal. An app should never alias these.
 const PRIMITIVE_TOKENS = [
@@ -296,6 +297,20 @@ function App() {
             ))}
           </NavDropdown>
         </Row>
+      </Section>
+
+      <Section
+        title="Card"
+        note="Container only - fill, radius and elevation. No padding and no internal layout: what goes inside has not been designed yet. Sized by its parent, so these are stretched by the grid rather than fixed at Figma's 350x200."
+      >
+        <div className="cards">
+          {CARDS.map((v) => (
+            <div key={v}>
+              <Card variant={v} style={{ height: 120 }} />
+              <p className="cardLabel">{v}</p>
+            </div>
+          ))}
+        </div>
       </Section>
 
       <Section title="Playground" note="Toggle props against a single instance.">

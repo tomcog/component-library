@@ -49,3 +49,13 @@ section {
 .pairs { display: flex; gap: 10px; flex-wrap: wrap; }
 .pair { padding: 11px 15px; border-radius: 6px; font-size: 12.5px; font-weight: 500; border: 1px solid rgba(0,0,0,0.10); }
 [data-theme="dark"] .pair { border-color: rgba(255,255,255,0.14); }
+
+/* -- card specimens ------------------------------------------ */
+/* Tinted backdrop: the cards are white on a white panel otherwise, which
+   hides the one thing all three variants share. */
+.cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+  background: #f0efee; border-radius: 8px; padding: 26px 24px 20px;
+}
+[data-theme="dark"] .cards { background: #201e1d; }
+.cardLabel { margin: 9px 0 0; font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }

@@ -85,10 +85,10 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
-### The theming contract: 12 semantic tokens
+### The theming contract: 13 semantic tokens
 
 `tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
-the public API** — those 12 names are what a consuming app overrides to make
+the public API** — those 13 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
 never alias `--ui-tc-red`.
 
@@ -125,6 +125,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-text-default:         /* text on a light/neutral fill          */;
   --ui-text-muted:           /* de-emphasised text (nav sub items)    */;
   --ui-surface-raised:       /* floating panel fill (nav dropdown)    */;
+  --ui-border-subtle:        /* hairline rule (flat Card)             */;
 
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
@@ -134,7 +135,10 @@ Declare them unlayered on `:root` (the library's defaults live inside
 **Leave one out and it does not fail — it silently keeps the library's own
 placeholder neutral.** That looks plausible in isolation, which is exactly why
 it goes unnoticed; the app's palette and the component's drift apart one variant
-at a time. Map all 12 or none.
+at a time. Map all 13 or none.
+
+`--ui-border-subtle` (`#f5f5f5`) was added with Card, and is the 13th name -
+an app themed against the Nav-era contract will not have it.
 
 `--ui-text-muted` (Figma `TextSecondary`, `#737373`) and `--ui-surface-raised`
 (the dropdown panel's fill) were both added with Nav. They are the only
@@ -431,6 +435,51 @@ be added over `active` later; the reverse cannot.
   button; Figma specs neither. Design it before building it.
 - **Focus rings are code-only**, matching Button.
 
+
+## Card
+
+A raised surface that groups content. Figma: the `Card` component set
+(`395:14848`), one variant axis `Style` = `Float1` | `Float2` | `Flat`.
+
+```tsx
+<Card variant="float1">…</Card>
+```
+
+**Container only.** It sets a fill, a radius and an elevation, and nothing
+else. No padding, no internal layout, no width or height.
+
+### Divergences — do not "fix" these
+
+- **The 350x200 frame is not modelled.** Figma poses all three variants at that
+  size; it is the frame the design sits in, not a property of the component. A
+  card in an app is whatever size its grid cell gives it, so `Card` has no
+  width or height and stretches to its parent.
+- **No padding.** What goes inside has not been designed yet. Adding padding
+  now would be inventing a decision the Figma file has not made, and every
+  consumer would then have to undo it.
+- **The flat variant's 3px rule is an inset `box-shadow`, not a `border`** -
+  same reasoning as Button's ghost. It costs no layout, so a flat card and a
+  floating one are exactly the same size, and it does not depend on the
+  consuming app's `box-sizing`, which this library never sets.
+
+### `float1` / `float2` are Figma's names, not good ones
+
+The variants say nothing about what they are for; they are elevation steps,
+and `Style=Float1` reads as a style rather than a height. They are kept
+because the transform rule holds - `Style=Float1` -> `variant="float1"` -
+and renaming one side alone is how the two drift apart. If they are ever
+renamed (`raised`/`lifted`, say), rename the **Figma** side first: that is a
+design-shaped change, and the code follows.
+
+The two shadows are `--ui-shadow-float-1` / `--ui-shadow-float-2` in
+`tokens.css`, alongside motion rather than in a component tier: elevation is
+system-level, and a second component inventing its own shadow is how depth
+drifts apart. Both are two-layer - a soft cast plus a tight contact shadow -
+so a card reads as lifted rather than blurred.
+
+Neither shadow is a Figma variable; only `White` is bound on this component
+set. Reconciling that is a token-shaped change: add `Elevation/Float 1` and
+`Float 2` in Figma and bind the variants to them.
 
 ## Component API conventions
 

@@ -1,0 +1,24 @@
+/* Card - a raised surface that groups content.
+   Geometry and elevation only: no padding, no internal layout, no width or
+   height. Figma draws the variants at 350x200, but that is the frame the
+   design is posed in, not a property of the component - a card in an app is
+   whatever size its grid cell gives it. Padding is left out for the same
+   reason: it belongs to whatever eventually goes inside. */
+.card {
+  background: var(--ui-card-bg, var(--ui-surface-raised));
+  border-radius: var(--ui-card-radius);
+}
+
+/* Flat: no elevation, a rule instead.
+   Drawn with an inset box-shadow rather than a real border, matching Button's
+   ghost variant: the rule sits inside the box and costs no layout, so a flat
+   card and a floating one are exactly the same size. A real 3px border would
+   also depend on the consuming app's box-sizing, which this library does not
+   set. */
+.flat {
+  box-shadow: inset 0 0 0 var(--ui-card-border-width)
+              var(--ui-card-border-color, var(--ui-border-subtle));
+}
+
+.float1 { box-shadow: var(--ui-card-shadow, var(--ui-shadow-float-1)); }
+.float2 { box-shadow: var(--ui-card-shadow, var(--ui-shadow-float-2)); }
