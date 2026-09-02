@@ -35,9 +35,9 @@
      Color/Ink carries the same value across its ~1209 dependants. */
   --ui-ink: #262626;              /* Figma: Color/Ink */
   /* One neutral ramp, ordered light to dark, shared with Figma.
-     Steps marked (dark) exist to carry dark mode, which the Figma collection
-     cannot express with its single mode - but they are declared in Figma too,
-     so both sides hold the same ramp. They are numbered to sit between the
+     Steps marked (dark) exist to carry dark mode. They are declared in Figma
+     too, and its collection now has Light and Dark modes, so both sides hold
+     the same ramp and the same themes. They are numbered to sit between the
      real steps by lightness rather than to reuse a number Figma already means
      something else by - the code's old 600 was #686868 against Figma's
      #525252, one name for two colours.

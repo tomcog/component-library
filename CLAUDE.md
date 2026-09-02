@@ -338,15 +338,55 @@ defect with a fix pending, never a resting state, and it must be recorded in
 this file with the direction it still has to travel.
 
 Only a handful of things genuinely cannot match, and each is listed under the
-component that owns it: focus rings (Figma models no focus state), `asChild`
-(an element change, not a visual one), and dark mode (Figma's collection has
-one mode). Everything else that differs is drift.
+component that owns it: focus rings (Figma models no focus state) and
+`asChild` (an element change, not a visual one). Everything else that differs
+is drift.
 
 Note this Figma file is shared with other work — `PacketEditorHeader`,
 `StepperWell`, `Checkbox`, `TabBarBG` and friends belong to other projects.
 "Identical" covers the design-system subset (`Color/*`, `Neutral/*`,
 `Primary/*`, `Text/*`, `Surface/*`, `Button*`, `Nav/*`, `Motion/*`, `Card*`),
 not the whole file.
+
+### Light and dark are a semantic-tier concern
+
+**Only the semantic tier varies by mode. Primitives are identical in Light and
+Dark.** A primitive states what a colour *is* — `Neutral/300` is `#d4d4d4` —
+and giving it a second value per mode moves everything built on it invisibly,
+which collapses the two-tier split for the same reason an app must never alias
+`--ui-tc-red`. What changes per mode is the **alias**: `Surface/Muted` points
+at `Neutral/300` in Light and `Neutral/700` in Dark.
+
+The code says this already: `:root` declares the primitives once and
+`[data-theme="dark"]` re-declares only semantics. Figma's Light/Dark modes
+mirror it exactly.
+
+Eleven of the thirteen semantics move. `Primary/Base` and `Text/OnPrimary` do
+not, deliberately — an app's primary colour is its primary colour in either
+theme.
+
+    Surface/Inverse       Color/Ink    -> Neutral/150
+    Text/OnInverse        Color/White  -> Color/Ink
+    Surface/Muted         Neutral/300  -> Neutral/700
+    Surface/Muted Hover   Neutral/350  -> Neutral/650
+    Surface/Muted Active  Neutral/400  -> Neutral/550
+    Text/Default          Color/Ink    -> Neutral/150
+    Text/Muted            Neutral/500  -> Neutral/400
+    Surface/Raised        Color/White  -> Neutral/800
+    Border/Subtle         Neutral/100  -> Neutral/700
+    Surface/Disabled      Neutral/150  -> Neutral/800
+    Text/Disabled         Neutral/300  -> Neutral/550
+
+**The structural caveat.** Modes belong to a *collection*, and this file has
+one collection holding primitives, semantics, component tokens and other
+projects' variables. So all 93 variables carry a Dark value whether they
+should or not, and primitives staying identical is upheld by discipline rather
+than by structure. The textbook arrangement is two collections — `Primitives`
+with a single mode, `Semantic` with Light/Dark — which makes the invariant
+impossible to break. Splitting means re-pointing every binding in a shared
+file, so it has not been done; if it ever is, check the other projects first.
+Until then, after any mode work, assert that no primitive differs between
+modes.
 
 ### Open divergences
 
@@ -368,9 +408,9 @@ a fix pending, per the rule above.
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
-4. **Dark mode.** The Figma collection has one mode. Now that the dark values
-   are real neutrals rather than invented warm tints, a second mode is
-   feasible — it was previously ruled out as needing design work.
+4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
+   the eleven semantics that move are aliased to the same primitives
+   `tokens.css` uses. Verified: no primitive differs between the modes.
 
 ### Which direction to make a change
 
@@ -413,7 +453,7 @@ In Figma this is `State=Loading` (60 variants), **not** a boolean. A Figma boole
 ### Deliberate divergences — do not "fix" these
 
 - **Focus is code-only.** `.button:focus-visible` has a 2px primary outline with 2px offset. Figma models no Focus state, and the buttons carry **no strokes in any variant** — that is the design's intent. Figma also has no equivalent of `outline-offset`, so an `OUTSIDE` stroke misrepresents the ring (it reads as invisible on Primary, primary-on-primary). Don't add focus variants or strokes to the Figma file.
-- **Dark mode is code-only.** `tokens.css` has a `[data-theme="dark"]` block; the Figma collection has a single mode, and its dark values would need to be designed rather than invented.
+- ~~Dark mode is code-only.~~ No longer true: the Figma collection has Light and Dark modes, carrying the same mapping as `tokens.css`. See "Light and dark are a semantic-tier concern" below.
 
 ### Editing the Figma file safely
 
