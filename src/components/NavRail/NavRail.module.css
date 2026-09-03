@@ -21,12 +21,15 @@
   position: relative; /* anchors the pipe */
   display: flex;
   align-items: center;
-  height: var(--ui-nav-rail-slat-height);
+  /* No height - the slat hugs its line box, which is what Figma draws (the
+     frame has no padding-block). Setting one would fight the type the moment
+     the scale moved; the pipe stretches to whatever the box turns out to be.
+     Same reasoning as Pill. */
   padding-inline: var(--ui-nav-rail-slat-padding-x);
   font-family: var(--ui-font-family, inherit);
   font-size: var(--ui-nav-rail-font-size);
   font-weight: var(--ui-nav-rail-font-weight);
-  line-height: var(--ui-nav-rail-slat-height);
+  line-height: var(--ui-nav-rail-line-height);
   color: var(--ui-nav-rail-text, var(--ui-text-default));
   /* Slats are <a> by default, which the UA underlines and colours. */
   text-decoration: none;

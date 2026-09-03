@@ -505,6 +505,14 @@ a fix pending, per the rule above.
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
+5. **NavRail's type is 14/20 in code and still 16/24 in Figma.** A
+   token-shaped change, so it went code-first per the rule above; the push
+   back was blocked because the Desktop Bridge was disconnected. **Direction:
+   Figma to follow** - the three `Level=Primary` variants' `Nav Label` nodes
+   need font size 14 and line height 20, and the frames will then hug to 20
+   tall (Default 196 wide, Hover 208, at 16 - those widths will shrink too).
+   Nothing else moves: the weight is already Medium, and the 12px indent is
+   pipe width plus gap, not a function of the type.
 4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
    the eleven semantics that move are aliased to the same primitives
    `tokens.css` uses. Verified: no primitive differs between the modes.
@@ -679,9 +687,9 @@ from history wholesale - the set has been redrawn since (slats are 24 tall
 now, not 40).
 
     gap       10   between slats
-    height    24   = the line box; no padding-block
     padding   12   inline
-    type      DM Sans Medium 16 / 24
+    type      DM Sans Medium 14 / 20
+    height         none - the slat hugs its line box, so 20
     pipe      2 wide, full height, --ui-primary
     indent    12   = pipe width + the 10 gap Figma sets after it
 
