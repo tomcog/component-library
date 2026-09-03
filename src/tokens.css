@@ -149,7 +149,11 @@
   --ui-nav-rail-font-size: 14px;
   --ui-nav-rail-line-height: 20px;
   --ui-nav-rail-font-weight: 500;
-  --ui-nav-rail-pipe-width: 2px;
+  /* 4px, the same weight as the horizontal nav's accent rule
+     (--ui-nav-accent-size). Deliberately its own token rather than an alias:
+     the two are the same figure today, but one component's thickness should
+     not move because another's did. */
+  --ui-nav-rail-pipe-width: 4px;
   --ui-nav-rail-pipe-gap: 10px;      /* pipe -> label; the indent is both together */
 
   /* Pill. Figma: 999 radius, 7/14 padding, DM Sans Medium 13. The 31px

@@ -505,14 +505,18 @@ a fix pending, per the rule above.
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
-5. **NavRail's type is 14/20 in code and still 16/24 in Figma.** A
-   token-shaped change, so it went code-first per the rule above; the push
+5. **NavRail's type and pipe moved in code and not yet in Figma.** Both are
+   token-shaped changes, so they went code-first per the rule above; the push
    back was blocked because the Desktop Bridge was disconnected. **Direction:
-   Figma to follow** - the three `Level=Primary` variants' `Nav Label` nodes
-   need font size 14 and line height 20, and the frames will then hug to 20
-   tall (Default 196 wide, Hover 208, at 16 - those widths will shrink too).
-   Nothing else moves: the weight is already Medium, and the 12px indent is
-   pipe width plus gap, not a function of the type.
+   Figma to follow**, on the three `Level=Primary` variants:
+   - `Nav Label` font size 16 -> 14, line height 24 -> 20. The frames then hug
+     to 20 tall, and the 196/208 widths shrink with the type.
+   - the Hover variant's pipe rectangle, width 2 -> 4. Its 10px gap to the
+     label is unchanged, so the variant widens by 2 on top of whatever the
+     type change takes off.
+
+   Nothing else moves: the weight is already Medium, and the indent is pipe
+   width plus gap rather than a fixed number, so it follows the pipe.
 4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
    the eleven semantics that move are aliased to the same primitives
    `tokens.css` uses. Verified: no primitive differs between the modes.
@@ -690,8 +694,8 @@ now, not 40).
     padding   12   inline
     type      DM Sans Medium 14 / 20
     height         none - the slat hugs its line box, so 20
-    pipe      2 wide, full height, --ui-primary
-    indent    12   = pipe width + the 10 gap Figma sets after it
+    pipe      4 wide, full height, --ui-primary
+    indent    14   = pipe width + the 10 gap Figma sets after it
 
 | Figma state | here | label | pipe | indent |
 |---|---|---|---|---|
@@ -719,8 +723,14 @@ It draws with the standalone `scale` property (`1 0` -> `1 1`,
 `transform-origin: top`), not `transform`, so it composes with anything a
 consumer sets on `transform` - the same rule as the dropdown's pipe.
 
-**The indent is `calc(pipe-width + pipe-gap)`**, not a flat 12px, so widening
-the pipe keeps the gap after it rather than eating into it.
+**The indent is `calc(pipe-width + pipe-gap)`**, not a flat number, so
+widening the pipe keeps the gap after it rather than eating into it. That is
+not academic - the pipe went 2px -> 4px to match the horizontal nav's accent
+rule, and the indent followed to 14px on its own.
+
+The pipe is 4px because `--ui-nav-accent-size` is, but it is **its own token,
+not an alias**. The two are the same figure today; one component's thickness
+should not move because another's did.
 
 ### Divergences - do not "fix" these
 
