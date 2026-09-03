@@ -362,6 +362,32 @@ not the whole file. One explicit exception inside that pattern:
 of the library**, so its absence from the code is not drift and must not be
 "fixed" by building a component for it.
 
+### There is a third copy: the published library
+
+Editing the Figma file is only half of a Figma-side change. **A consuming file
+sees the last *published* snapshot, not the file** — so publish after any
+change to a component, variable or style, and treat that as part of the edit
+rather than a later tidy-up.
+
+This is not theoretical. The snapshot was found roughly five renames behind:
+`Button` published 36 variants where the file had 60, `ButtonRound` 3 where it
+had 12, `Card` was absent entirely, and `Primary/Base` and `Color/Ink` still
+resolved to their pre-rename names `Brand/Brand` and `Color/"Black"` — the
+quote bug included. None of it was visible from either the code or the Figma
+file; it only showed up when a consuming file tried to import by key.
+
+Two follow-ons, both easy to miss:
+
+- **Publishing does not update consumers.** A file that already has instances
+  keeps rendering the old ones until someone accepts the update in its Assets
+  panel. After changing a component, check a consumer rather than assuming.
+- **Publishing is UI-only.** There is no plugin API for it, so it is always a
+  step to hand back to the user — as is accepting the update on the far side.
+
+The corollary for this file's rules: "the two sides must match" is really
+three, and the published one is the only one that drifts without either side
+looking wrong.
+
 ### Light and dark are a semantic-tier concern
 
 **Only the semantic tier varies by mode. Primitives are identical in Light and
