@@ -264,6 +264,51 @@ changing its value reaches well beyond this library and is the user's call
 rather than a side effect of a library change. Fixing its malformed name
 costs nothing and is safe either way.
 
+`NavSlat` was reconciled the same way when it was fetched into code. As drawn
+it bound four things it should not have, none of which looked wrong on the
+canvas because every one resolved to the right colour *in Light*:
+
+    Primary Default icon    Button/Tertiary/Label     -> Text/Default
+    Primary Active icon     Color/White               -> Text/OnPrimary
+    Secondary Default icon  Button/Secondary/Default  -> Text/Default
+    Secondary Hover icon    IconDefault               -> Text/Default
+    Secondary Active icon   IconDefault               -> Primary/Base
+
+Three lessons, each already recorded elsewhere and each repeated here:
+
+- **`Button/Tertiary/Label` and `Button/Secondary/Default` are Button's
+  component tokens.** Reusing either would have made NavSlat's appearance a
+  side effect of Button's - exactly the trap Pill hit, with the very same
+  `Button/Secondary/Default`. It reappeared here mid-session, which is a fair
+  sign this is the easiest binding in the file to reach for by accident.
+- **`Color/White` is a primitive**, so it could not follow the theme - the
+  same reason ButtonRound's pressed state was moved off `Color/Ink`.
+- **`IconDefault` aliases `Neutral/500` in *both* modes**, so it is frozen
+  against the theme, and its name cannot be produced by the transform rule
+  (it has no group). It is **not** the same thing as `Text/Muted`, which is
+  `Neutral/500` in Light but `Neutral/400` in Dark - so in dark mode the sub
+  item icons would have sat at `#737373` while every other muted thing moved
+  to `#8c8c8c`. Verified after the fix: they now resolve to `#8c8c8c`.
+
+**A sub item's glyph is a single `Union`, and only its fill paints.** The
+three vectors beneath it are the boolean operation's operands and never render
+on their own - so reading their bindings tells you nothing about what the icon
+looks like, and an early pass here "fixed" them while the colour that actually
+showed sat elsewhere. Check `children` before trusting a binding list. They
+were set to match the Union anyway, so un-grouping it cannot surprise anyone.
+
+`IconDefault` itself was **left alone** - 4443 nodes across the file bind it,
+so it belongs to the other projects sharing this file and repointing it is the
+user's call. Only NavSlat's own bindings moved. Likewise `Button/Tertiary/Label`
+(38 bindings) and `Color/White` (602) were not touched as variables.
+
+Secondary Active was also internally inconsistent: its icon's `Union` fill was
+on `Primary/Base` while the three stroke shapes under it were still on
+`IconDefault`. Invisible, because the Union is drawn over them - but it would
+have surfaced the moment anyone edited the glyph. Checked that all four nodes
+were visible before touching them, per the rule below about not assuming an
+unfamiliar node is scaffolding.
+
 The semantic tier was also renamed to match the code's identity/role split:
 `Brand/*` -> `Primary/*` and `Text/OnBrand` -> `Text/OnPrimary`,
 `TextSecondary` -> `Text/Muted`. `Surface/Raised`, ten `Nav/*` geometry floats
@@ -360,8 +405,8 @@ is drift.
 Note this Figma file is shared with other work — `PacketEditorHeader`,
 `StepperWell`, `Checkbox`, `TabBarBG` and friends belong to other projects.
 "Identical" covers the design-system subset (`Color/*`, `Neutral/*`,
-`Primary/*`, `Text/*`, `Surface/*`, `Button*`, `Nav/*`, `Motion/*`, `Card*`),
-not the whole file. One explicit exception inside that pattern:
+`Primary/*`, `Text/*`, `Surface/*`, `Button*`, `Nav/*`, `NavSlat`, `Motion/*`,
+`Card*`), not the whole file. One explicit exception inside that pattern:
 `Button/Round-Deprecated` is used by the file's own screens but is **not part
 of the library**, so its absence from the code is not drift and must not be
 "fixed" by building a component for it.
@@ -436,9 +481,16 @@ modes.
 Kept here so they are not rediscovered. Anything on this list is a defect with
 a fix pending, per the rule above.
 
-1. ~~`Color/Ink` disagrees.~~ **Resolved.** Both sides are `#262626`. The push
-   recoloured ~1209 dependants; the Button set was screenshotted afterwards to
-   confirm nothing broke.
+1. ~~`Color/Ink` disagrees.~~ **Resolved, then it regressed, then resolved
+   again.** Both sides are `#262626`. The first push recoloured ~1209
+   dependants; the Button set was screenshotted afterwards to confirm nothing
+   broke. It was later found back at `#333333` **in Light only**, with Dark
+   still holding `#262626` - so it was simultaneously drift against the code
+   *and* a break of the primitives-identical-across-modes invariant. Restored
+   with NavRail. The lesson: that invariant is upheld by discipline, not
+   structure (see the structural caveat above), so **assert it rather than
+   assume it** - `Color/Ink` was the only primitive that differed, and nothing
+   about either side looked wrong until it was queried.
 2. ~~`Neutral/600` means two different things.~~ **Resolved.** `--ui-neutral-600`
    is now Figma's `#525252`, and the four dark-mode placeholders that had
    borrowed light-ramp numbers were renumbered to sit between the real steps by
@@ -603,6 +655,87 @@ be added over `active` later; the reverse cannot.
 - **No mobile/hamburger.** tomcoggia.com has `hidden md:flex` plus a toggle
   button; Figma specs neither. Design it before building it.
 - **Focus rings are code-only**, matching Button.
+
+
+## NavRail
+
+Left rail navigation - a vertical column of sections, each optionally
+disclosing its own sub items. Figma: the `NavSlat` set (`444:791`), axes
+`Level` = Primary | Secondary and `State` = Default | Hover | Active, plus an
+`Icon?` boolean and a `Text` string property. Assembled into a worked example
+at `442:17349`.
+
+```tsx
+<NavRail aria-label="Sections">
+  <NavSlat asChild icon={<Briefcase />}><Link href="/jobs">Jobs</Link></NavSlat>
+  <NavSlat asChild active icon={<Briefcase />}><Link href="/work">Work</Link></NavSlat>
+  <NavSlat asChild level="secondary" icon={<SquareCode />}><Link href="/work/api">API</Link></NavSlat>
+</NavRail>
+```
+
+**A separate component from `Nav`, not a variant of it.** Different anatomy,
+different Figma set, and a different type scale - 16/600 against the
+horizontal nav's 14/500. It reuses `Nav`'s internal `NavLink` for `asChild`,
+ref merging and `aria-current`, which is the only thing the two share.
+
+    section   40 tall,  icon in a 40 round chip
+    sub item  42 tall,  icon against the pipe
+    gutter    40        the chip's box, and what the pipe centres in
+    gap       10        between sections; sub items sit flush
+    icon      24 at stroke 2, both levels
+
+### Sub items are siblings, not children
+
+Figma wraps a section and its sub items in a frame purely to hold them at gap
+0. In code the rail is a **flat list** and the 10px is a margin before each
+section (`.primary + .primary`, `.secondary + .primary`) rather than a gap on
+the container. A container gap would also open a hole between consecutive sub
+items and break the pipe.
+
+That keeps the rail something a consumer can build by mapping over routes, and
+rendering the sub items only while their section is current stays the app's
+call - the same division as `active`. A grouping wrapper could be added over a
+flat list later; the reverse could not.
+
+**The pipe is drawn per sub item at full slat height**, centred in the same
+40px gutter the chip occupies. Consecutive segments abut at 0px and read as
+one line running out of the section's chip - verified: both centre at x=32.
+
+### Divergences - do not "fix" these
+
+- **The chip is a `<span>`, not `<ButtonRound>`.** Figma composes an instance
+  of `Button/Round` there, but a slat is a link and a `<button>` cannot be
+  nested inside one. Same geometry, drawn from this component's own tokens so
+  the chip and the pipe below it cannot drift out of alignment with each
+  other. Note the chip's states are offset one step from ButtonRound's: a
+  slat rests transparent, hovers to `--ui-primary-lighter` and goes
+  `--ui-primary` when current, where ButtonRound *rests* at lighter.
+- **A sub item's icon stays grey on hover** - only its label turns. It goes
+  primary on the current page. Per Figma's Secondary states.
+- **Icons rest at 65% opacity**, the same figure Button uses, and go fully
+  opaque only once they carry the primary colour - so a hovered or current
+  section and a current sub item are opaque, and everything else is not.
+  Figma expresses it as `opacity` on the icon frame rather than as a lighter
+  colour, and the code follows: one token covers both levels and it stays
+  right whatever `--ui-text-default` is themed to. Both levels therefore rest
+  at the *same* colour, not two greys.
+- **The chip's colour reaches its glyph via `inherit`.** `.icon` sets a colour
+  of its own for the sub items, and without `.chip .icon { color: inherit }`
+  that wins inside the chip - drawing a text-coloured briefcase on a red
+  circle. Caught by reading the computed colour, not the screenshot: at rail
+  size the two are hard to tell apart.
+- **`icon` is optional, and leaving it out drops the chip** rather than
+  leaving an empty 40px one, so the label closes up. That is what Figma's
+  `Icon?` boolean does - it is bound to the whole `Button/Round` instance on a
+  section, and to the 24px icon on a sub item. **A sub item keeps its pipe
+  either way**: the pipe is the rail, not part of the icon, and is not bound
+  to the boolean.
+- **Figma's `State=Active` is `active` in code and `current` in CSS**, the
+  same split as `NavItem` - `-active` is unavailable because in CSS it already
+  means pressed. Figma's Nav/Item variant was renamed `State=On` ->
+  `State=Current` for this; **`NavSlat` still says `State=Active`** and should
+  be renamed to match. Open, Figma side.
+- **Focus rings are code-only**, matching Nav and Button.
 
 
 ## ButtonRound

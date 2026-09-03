@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, Pill, Logo } from "../src";
+import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, Pill, Logo } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -48,10 +48,33 @@ const SUB_PAGES = [
   { href: "/work/d", label: "NextJob" },
 ];
 
+const RAIL: { href: string; label: string; level?: "secondary" }[] = [
+  { href: "/jobs", label: "Navigation item" },
+  { href: "/resources", label: "Navigation item" },
+  { href: "/work", label: "Active page" },
+  { href: "/work/a", label: "Subnav item", level: "secondary" },
+  { href: "/work/b", label: "Subnav item", level: "secondary" },
+  { href: "/you", label: "Navigation item" },
+  { href: "/search", label: "Navigation item" },
+];
+
 const House = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
     <path d="M9 22V12h6v10" />
+  </svg>
+);
+const Briefcase = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
+    <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+  </svg>
+);
+const SquareCode = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
+    <path d="M10 9.5 8 12l2 2.5" />
+    <path d="m14 9.5 2 2.5-2 2.5" />
+    <rect width="18" height="18" x="3" y="3" rx="2" />
   </svg>
 );
 const Chevron = () => (
@@ -119,6 +142,7 @@ function App() {
   const [subPage, setSubPage] = useState("/work/b");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
+  const [rail, setRail] = useState("/jobs");
 
   return (
     <div className="page" data-theme={theme} style={{ ["--ui-primary" as string]: primary }}>
@@ -308,6 +332,53 @@ function App() {
               </NavDropdownItem>
             ))}
           </NavDropdown>
+        </Row>
+      </Section>
+
+      <Section
+        title="NavRail"
+        note="Left rail. Figma: the NavSlat set - Level = Primary | Secondary. Click a row to move the current page. Sub items sit flush under their section so their pipes join into one line; sections are 10px apart."
+      >
+        <Row label="rail">
+          <NavRail aria-label="Sections" style={{ width: 218 }}>
+            {RAIL.map((r) =>
+              r.level === "secondary" ? (
+                <NavSlat
+                  key={r.href}
+                  level="secondary"
+                  icon={<SquareCode />}
+                  href={r.href}
+                  active={rail === r.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setRail(r.href);
+                  }}
+                >
+                  {r.label}
+                </NavSlat>
+              ) : (
+                <NavSlat
+                  key={r.href}
+                  icon={<Briefcase />}
+                  href={r.href}
+                  active={rail === r.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setRail(r.href);
+                  }}
+                >
+                  {r.label}
+                </NavSlat>
+              ),
+            )}
+          </NavRail>
+        </Row>
+        <Row label="no icon">
+          <NavRail aria-label="Sections, no icons" style={{ width: 218 }}>
+            <NavSlat href="#" onClick={(e) => e.preventDefault()}>Navigation item</NavSlat>
+            <NavSlat href="#" active onClick={(e) => e.preventDefault()}>Active page</NavSlat>
+            <NavSlat level="secondary" href="#" onClick={(e) => e.preventDefault()}>Subnav item</NavSlat>
+          </NavRail>
         </Row>
       </Section>
 

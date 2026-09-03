@@ -1,0 +1,166 @@
+/* Left rail navigation. Figma: the `NavSlat` set (444:791), assembled into a
+   rail at 442:17349.
+
+   Colours resolve at the link element, so --ui-primary and [data-theme] are
+   picked up from wherever they sit in the tree - same rule as Nav and Button.
+   The first name in each var() is the optional component-level override. */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  font-family: var(--ui-font-family, inherit);
+}
+
+/* Figma spaces top-level slats 10px apart and sits sub items flush under
+   their section, which is what lets consecutive pipes join into one unbroken
+   line. Expressed as a margin before each section rather than a gap on the
+   rail, because a gap would also open a hole between sub items and break
+   that line. */
+.primary + .primary,
+.secondary + .primary {
+  margin-top: var(--ui-nav-rail-gap);
+}
+
+/* -- slat ----------------------------------------------------- */
+.slat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ui-nav-rail-slat-gap);
+  padding-inline: var(--ui-nav-rail-slat-padding-x);
+  font-family: var(--ui-font-family, inherit);
+  font-size: var(--ui-nav-rail-font-size);
+  font-weight: var(--ui-nav-rail-font-weight);
+  color: var(--ui-nav-rail-text, var(--ui-text-default));
+  /* Slats are <a> by default, which the UA underlines and colours. */
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--ui-motion-fast) ease;
+}
+
+.primary {
+  height: var(--ui-nav-rail-primary-height);
+}
+.secondary {
+  height: var(--ui-nav-rail-secondary-height);
+}
+
+.slat:hover,
+.current {
+  color: var(--ui-nav-rail-text-current, var(--ui-primary));
+}
+
+/* -- the icon chip, on a primary slat ------------------------- */
+/* Figma composes an instance of `Button/Round` here. In code it is a <span>,
+   not <ButtonRound>: a slat is a link, and a <button> cannot be nested inside
+   one. It is the same geometry, drawn by this component's own tokens so the
+   chip and the pipe below it stay centred on each other. */
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-nav-rail-gutter);
+  height: var(--ui-nav-rail-gutter);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ui-nav-rail-icon, var(--ui-text-default));
+  transition:
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+.primary:hover .chip {
+  background: var(--ui-primary-lighter);
+  color: var(--ui-primary);
+}
+/* Current wins over hover - Figma has no hovered-current variant, and the two
+   must not compound. Higher specificity, so it holds whatever the order. */
+.primary.current .chip {
+  background: var(--ui-primary);
+  color: var(--ui-text-on-primary);
+}
+
+/* -- the pipe, on a secondary slat ---------------------------- */
+/* Full slat height and centred in the same gutter the chip occupies, so the
+   segments of consecutive sub items abut and read as one line running out of
+   the section's chip. A gap on the rail would break it - see above. */
+.pipe {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: var(--ui-nav-rail-gutter);
+}
+.pipe::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: var(--ui-nav-rail-pipe-width);
+  margin-left: calc(var(--ui-nav-rail-pipe-width) / -2);
+  background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
+}
+
+/* -- icons ---------------------------------------------------- */
+/* Icons rest at 65% opacity, the same figure Button uses, and go fully opaque
+   only once they are carrying the primary colour. Figma sets this on the icon
+   frame rather than lightening the colour, so one token covers both levels and
+   it stays right whatever --ui-text-default is themed to. */
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-nav-rail-icon-size);
+  height: var(--ui-nav-rail-icon-size);
+  color: var(--ui-nav-rail-icon, var(--ui-text-default));
+  opacity: var(--ui-nav-rail-icon-opacity, 0.65);
+  transition:
+    color var(--ui-motion-fast) ease,
+    opacity var(--ui-motion-fast) ease;
+}
+
+/* Inside the chip the glyph takes the chip's colour, which is the thing that
+   changes per state - otherwise .icon's own colour would win and a current
+   section would draw a text-coloured briefcase on a red circle. */
+.chip .icon {
+  color: inherit;
+}
+
+/* A sub item's icon stays grey on hover - only its label turns. It goes
+   primary on the current page. Matches Figma's Secondary states. */
+.secondary.current .icon {
+  color: var(--ui-nav-rail-icon-current, var(--ui-primary));
+  opacity: 1;
+}
+.primary:hover .icon,
+.primary.current .icon {
+  opacity: 1;
+}
+
+/* Stroke weight, set on the shapes as well as the <svg>: a presentation
+   attribute on a <path> beats a value inherited from the root, so an
+   svg-only rule loses silently. non-scaling-stroke pins it to rendered px
+   whatever the icon's viewBox. Same reasoning as ButtonRound. */
+.icon svg * {
+  vector-effect: non-scaling-stroke;
+}
+.icon svg,
+.icon svg * {
+  stroke-width: var(--ui-nav-rail-icon-stroke);
+}
+.slat .icon > *,
+.slat .icon svg,
+.slat .icon img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+}
+
+/* Focus is code-only, matching Nav and Button: Figma models no focus state. */
+.slat:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
