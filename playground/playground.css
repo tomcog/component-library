@@ -52,5 +52,7 @@ section {
 [data-theme="dark"] .pair { border-color: rgba(255,255,255,0.14); }
 
 /* -- card specimens ------------------------------------------ */
+.cardSection { background: #f6f6f5; }
+[data-theme="dark"] .cardSection { background: #191919; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .cardLabel { margin: 9px 0 0; font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }

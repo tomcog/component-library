@@ -1,25 +1,26 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, Card, Nav, NavItem, NavDropdown, NavDropdownItem } from "../src";
-import type { ButtonVariant, ButtonSize, CardVariant } from "../src";
+import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["large", "medium", "small"];
+const ROUND_SIZES: ButtonRoundSize[] = ["large", "medium", "small"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 
 // Tier 1: fixed palette, internal. An app should never alias these.
 const PRIMITIVE_TOKENS = [
   "--ui-tc-red", "--ui-white", "--ui-ink",
-  "--ui-neutral-150", "--ui-neutral-300", "--ui-neutral-350", "--ui-neutral-400",
-  "--ui-neutral-500", "--ui-neutral-600", "--ui-neutral-700", "--ui-neutral-800",
-  "--ui-neutral-850",
+  "--ui-neutral-100", "--ui-neutral-150", "--ui-neutral-300", "--ui-neutral-350",
+  "--ui-neutral-400", "--ui-neutral-500", "--ui-neutral-550", "--ui-neutral-600",
+  "--ui-neutral-650", "--ui-neutral-700", "--ui-neutral-800",
 ];
-// Tier 2: the theming contract. These 12 are the public API - map all or none.
+// Tier 2: the theming contract. Map all semantic tokens or none.
 const SEMANTIC_TOKENS = [
-  "--ui-primary", "--ui-text-on-primary",
+  "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
   "--ui-surface-inverse", "--ui-text-on-inverse",
   "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
   "--ui-text-default", "--ui-text-muted", "--ui-surface-raised",
@@ -95,9 +96,9 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
-function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+function Section({ title, note, className, children }: { title: string; note?: string; className?: string; children: React.ReactNode }) {
   return (
-    <section>
+    <section className={className}>
       <h2>{title}</h2>
       {note ? <p className="note">{note}</p> : null}
       {children}
@@ -142,7 +143,7 @@ function App() {
         note="Live values, read off the themed element - switch theme or pick a primary above and every semantic value follows."
       >
         <p className="groupLabel">
-          Semantic <span>- the public API, 12 names an app overrides</span>
+          Semantic <span>- the public API, 13 names an app overrides</span>
         </p>
         <div className="swatches">
           {SEMANTIC_TOKENS.map((t) => <Swatch key={t} name={t} value={semantic[t]} />)}
@@ -178,6 +179,15 @@ function App() {
             <Button variant="primary" size={s} icon={<House />} disabled>
               Disabled
             </Button>
+          </Row>
+        ))}
+      </Section>
+
+      <Section title="ButtonRound" note="Figma sizes and interaction states. Hover and press each icon button.">
+        {ROUND_SIZES.map((s) => (
+          <Row key={s} label={s}>
+            <ButtonRound size={s} icon={<House />} aria-label={`${s} home action`} />
+            <ButtonRound size={s} icon={<House />} aria-label={`${s} disabled action`} disabled />
           </Row>
         ))}
       </Section>
@@ -301,6 +311,7 @@ function App() {
 
       <Section
         title="Card"
+        className="cardSection"
         note="Container only - fill, radius and elevation. No padding and no internal layout: what goes inside has not been designed yet. Sized by its parent, so these are stretched by the grid rather than fixed at Figma's 350x200."
       >
         <div className="cards">

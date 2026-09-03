@@ -92,10 +92,10 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
-### The theming contract: 12 semantic tokens
+### The theming contract: 13 semantic tokens
 
 `tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
-the public API** — those 12 names are what a consuming app overrides to make
+the public API** — those 13 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
 never alias `--ui-tc-red`.
 
@@ -121,6 +121,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
 ```css
 :root {
   --ui-primary:                /* primary fill                          */;
+  --ui-primary-lighter:        /* subtle primary fill                   */;
   --ui-text-on-primary:        /* text on a solid fill                  */;
 
   --ui-surface-inverse:      /* secondary: dark fill                  */;
@@ -141,7 +142,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
 **Leave one out and it does not fail — it silently keeps the library's own
 placeholder neutral.** That looks plausible in isolation, which is exactly why
 it goes unnoticed; the app's palette and the component's drift apart one variant
-at a time. Map all 12 or none.
+at a time. Map all 13 or none.
 
 `--ui-text-muted` (Figma `TextSecondary`, `#737373`) and `--ui-surface-raised`
 (the dropdown panel's fill) were both added with Nav. They are the only

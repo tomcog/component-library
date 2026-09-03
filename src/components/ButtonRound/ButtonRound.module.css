@@ -1,0 +1,86 @@
+.button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--ui-button-round-bg, var(--ui-primary-lighter));
+  color: var(--ui-button-round-icon, var(--ui-primary));
+  cursor: pointer;
+  transition:
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--ui-button-round-bg-hover, var(--ui-primary));
+  color: var(--ui-button-round-icon-hover, var(--ui-text-on-primary));
+}
+
+.button:active:not(:disabled) {
+  background: var(--ui-button-round-bg-active, var(--ui-ink));
+  color: var(--ui-button-round-icon-active, var(--ui-white));
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+/* The disabled icon is --ui-neutral-350, not --ui-text-disabled: an icon
+   needs more weight than text to read at the same lightness, and Figma
+   specifies #b8b8b8 here against Button's #d4d4d4 label. This is the one
+   place ButtonRound reaches past the semantic tier - there is no semantic
+   role for it - so an app's theme cannot move it. Override
+   --ui-button-round-icon-disabled if that matters. */
+.button:disabled {
+  background: var(--ui-button-round-bg-disabled, var(--ui-surface-disabled));
+  color: var(--ui-button-round-icon-disabled, var(--ui-neutral-350));
+  cursor: not-allowed;
+}
+
+.large { width: var(--ui-button-round-lg-size); height: var(--ui-button-round-lg-size); }
+.medium { width: var(--ui-button-round-md-size); height: var(--ui-button-round-md-size); }
+.small { width: var(--ui-button-round-sm-size); height: var(--ui-button-round-sm-size); }
+
+.icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.large .icon { width: var(--ui-button-round-lg-icon-size); height: var(--ui-button-round-lg-icon-size); }
+.medium .icon { width: var(--ui-button-round-md-icon-size); height: var(--ui-button-round-md-icon-size); }
+.small .icon { width: var(--ui-button-round-sm-icon-size); height: var(--ui-button-round-sm-icon-size); }
+
+/* Icon stroke. Without non-scaling-stroke, stroke-width is in the icon's own
+   user units, so a lucide 24-viewBox glyph drawn at 12px would halve its
+   stroke - the rendered weight would depend on the size AND the viewBox.
+   non-scaling-stroke pins it to the rendered px the design specifies. */
+.icon svg { stroke-width: var(--ui-button-round-md-icon-stroke); }
+.icon svg * { vector-effect: non-scaling-stroke; }
+.large .icon svg  { stroke-width: var(--ui-button-round-lg-icon-stroke); }
+.medium .icon svg { stroke-width: var(--ui-button-round-md-icon-stroke); }
+.small .icon svg  { stroke-width: var(--ui-button-round-sm-icon-stroke); }
+
+/* Keep both a direct Lucide SVG and an optional consumer wrapper inside the
+   component's icon box. The extra specificity prevents wrapper classes from
+   restoring their own intrinsic dimensions. */
+.button .icon > *,
+.button .icon svg,
+.button .icon img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button { transition: none; }
+}
