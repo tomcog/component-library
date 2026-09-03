@@ -931,6 +931,26 @@ control means to a caller and what `aria-pressed` reports. The class stays
 plus a 17px line box — set a height and the two would fight the moment the
 type scale moved.
 
+**`Pill/Radius` (999) and `Pill/Line Height` (17) are FLOAT variables**, bound
+across both variants - four corners and the label - so each is one edit rather
+than several nodes, matching how `Card/Radius` and the `Button Size/*` set
+already work. Both hold the same value in Light and Dark: geometry never
+varies by mode, only the semantic colour tier does.
+
+The line height was `AUTO` until then. It *resolved* to 17 for DM Sans Medium
+13, so the two sides agreed - by luck. A font change would have moved Figma
+and not the code, and nothing would have looked wrong on either side. Pinning
+it is what makes the agreement real rather than coincidental.
+
+`Pill/Padding X` (14), `Pill/Padding Y` (7) and `Pill/Font Size` (13) are
+still raw values on the variants. Worth binding if Pill's geometry ever needs
+editing as a set; nothing depends on it today.
+
+Note when reading bindings back: **a text node's `lineHeight` binding is an
+array**, where a corner radius binding is a single object. A check written for
+the scalar shape reads `undefined` and reports the binding missing when it is
+in fact there.
+
 ### It was rebound to the semantic tier on arrival
 
 As drawn, `State=Off` filled with `Color/White` and `State=On` with
