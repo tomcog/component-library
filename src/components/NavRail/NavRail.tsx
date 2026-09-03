@@ -17,9 +17,9 @@ export type NavRailProps = HTMLAttributes<HTMLElement>;
  *     </NavRail>
  *
  * Text only, deliberately - no icons and no sub items. This is a separate
- * component from `Nav`, not a variant of it: different anatomy, different
- * Figma set, and a different type scale (16/600 on a 24 line against the
- * horizontal nav's 14/500 on 20).
+ * component from `Nav`, not a variant of it: different anatomy and a
+ * different Figma set. Both sit at weight 500; the rail is 16 on a 24 line
+ * against the horizontal nav's 14 on 20.
  */
 export const NavRail = forwardRef<HTMLElement, NavRailProps>(function NavRail(
   { className, children, ...props },

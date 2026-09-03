@@ -681,7 +681,7 @@ now, not 40).
     gap       10   between slats
     height    24   = the line box; no padding-block
     padding   12   inline
-    type      DM Sans SemiBold 16 / 24
+    type      DM Sans Medium 16 / 24
     pipe      2 wide, full height, --ui-primary
     indent    12   = pipe width + the 10 gap Figma sets after it
 
