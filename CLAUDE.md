@@ -445,6 +445,13 @@ Two follow-ons, both easy to miss:
 - **Publishing does not update consumers.** A file that already has instances
   keeps rendering the old ones until someone accepts the update in its Assets
   panel. After changing a component, check a consumer rather than assuming.
+- **The snapshot cannot be verified from inside the source file.**
+  `importComponentSetByKeyAsync(key)` run in component-library resolves the
+  key to the *local* set and returns it, so every variant count matches and
+  the check proves nothing. Compare `imported.id` against the local node's id:
+  if they are equal, that is what happened. This is why the five-renames-behind
+  snapshot only surfaced when a consuming file tried to import - the check has
+  to run from the consumer.
 - **Publishing is UI-only.** There is no plugin API for it, so it is always a
   step to hand back to the user — as is accepting the update on the far side.
 
@@ -539,6 +546,22 @@ a fix pending, per the rule above.
    `Text/Default`, `Text/Muted` and `Text/OnPrimary` - no primitives, no
    Button component tokens - and no primitive differs between modes.
    **Still needs publishing.**
+6. **`Button/Round` has a 13th variant: `Size=Large, State=Ghost`.** The set
+   is documented here as `Size` x `State` = 3 x 4; the `State` axis now also
+   carries `Ghost`, at Large only. It is 40x40 with no fill and no stroke, and
+   its glyph binds to `Button/Tertiary/Label` - Button's component token,
+   which is the binding this file keeps reaching for by accident.
+
+   **Left alone deliberately.** An incomplete variant at one size reads as
+   work in progress, and a previous session destroyed a `Level=Ghost` the user
+   was creating by assuming exactly this was leftover scaffolding. Ask before
+   touching it. If it is intended, the code needs a `ghost` state on
+   `ButtonRound` and the glyph wants repointing to a semantic token.
+
+7. **`Button` and `logo-tc` have no Figma description**, where `NavSlat`,
+   `Card`, `Pill` and `Button/Round` now do. `Button` is the 60-variant set
+   and the most valuable one to document.
+
 4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
    the eleven semantics that move are aliased to the same primitives
    `tokens.css` uses. Verified: no primitive differs between the modes.
