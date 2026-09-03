@@ -3,6 +3,5 @@ export * from "./components/ButtonRound";
 export * from "./components/Card";
 export * from "./components/Logo";
 export * from "./components/Nav";
-export * from "./components/NavRail";
 export * from "./components/Pill";
 import "./tokens.css";

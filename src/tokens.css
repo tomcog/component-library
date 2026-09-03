@@ -138,24 +138,6 @@
   --ui-nav-panel-radius: 0px;
   --ui-nav-pipe-radius: 1px;
 
-  /* NavRail. Figma: the `NavSlat` set (444:791), assembled at 442:17349.
-     A separate component from Nav, and a separate scale: 16/600 against the
-     horizontal nav's 14/500. The gutter is what makes the rail read as one
-     column - the primary's icon chip and the secondary's pipe are both
-     centred in it, so the pipe runs straight down out of the chip. */
-  --ui-nav-rail-gap: 10px;              /* between sections; sub items sit flush */
-  --ui-nav-rail-slat-padding-x: 12px;
-  --ui-nav-rail-slat-gap: 8px;
-  --ui-nav-rail-font-size: 16px;
-  --ui-nav-rail-font-weight: 600;
-  --ui-nav-rail-primary-height: 40px;
-  --ui-nav-rail-secondary-height: 42px;
-  --ui-nav-rail-gutter: 40px;           /* the chip's box, and what the pipe centres in */
-  --ui-nav-rail-pipe-width: 2px;
-  --ui-nav-rail-icon-size: 24px;
-  --ui-nav-rail-icon-stroke: 2;
-  --ui-nav-rail-icon-opacity: 0.65;     /* resting; full once it turns primary */
-
   /* Pill. Figma: 999 radius, 7/14 padding, DM Sans Medium 13. The 31px
      height is padding plus line height, not a set height. */
   --ui-pill-radius: 999px;
