@@ -505,24 +505,25 @@ a fix pending, per the rule above.
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
-5. **NavRail's type and pipe moved in code and not yet in Figma.** Both are
-   token-shaped changes, so they went code-first per the rule above; the push
-   back was blocked because the Desktop Bridge was disconnected. **Direction:
-   Figma to follow**, on the three `Level=Primary` variants:
-   - `Nav Label` font size 16 -> 14, line height 24 -> 20. The frames then hug
-     to 20 tall, and the 196/208 widths shrink with the type.
-   - `Nav Label` line height 24 -> 20. Figma took the size to 14 but left the
-     leading at 24, so this half is still outstanding; it also sets the pipe's
-     height, which is 20 in code and would be 24 in Figma.
-   - the Hover variant's pipe rectangle is already 4 wide in Figma.
+5. ~~NavRail's type and pipe moved in code and not yet in Figma.~~
+   **Resolved.** Pushed once the Desktop Bridge came back: the three
+   `Level=Primary` labels went to 14/20, and the Hover chip's glyph off the
+   `Color/White` primitive onto `Text/OnPrimary` - the same defect fixed
+   earlier in the session and reintroduced when the set was redrawn, which is
+   a fair sign that binding is easy to reach for by accident.
 
-   Separately, the Hover chip's glyph is bound to the **`Color/White`
-   primitive** and should be `Text/OnPrimary` - the same defect fixed earlier
-   this session, reintroduced when the set was redrawn. A primitive cannot
-   follow the theme. The code already uses `--ui-text-on-primary`.
+   The pipe rectangles were also set to `layoutAlign: STRETCH`, so they take
+   the label group's height instead of being pinned at a number. That is what
+   the code does (`height: var(--ui-nav-rail-line-height)`), and it is why
+   this particular divergence cannot recur: move the type and the pipe
+   follows on both sides. The two hidden rectangles needed resizing by hand as
+   well - a hidden node is out of auto-layout, so STRETCH does not reach it
+   until it is shown.
 
-   Nothing else moves: the weight is already Medium, and the indent is pipe
-   width plus gap rather than a fixed number, so it follows the pipe.
+   Verified after: the set uses only `Primary/Base`, `Primary/Lighter`,
+   `Text/Default`, `Text/Muted` and `Text/OnPrimary` - no primitives, no
+   Button component tokens - and no primitive differs between modes.
+   **Still needs publishing.**
 4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
    the eleven semantics that move are aliased to the same primitives
    `tokens.css` uses. Verified: no primitive differs between the modes.
@@ -790,8 +791,14 @@ circle.
   where its text reaches.
 - **The pipe is the height of the label's line box, not the slat's.** With an
   icon the slat is 40 tall and the pipe stays 20, centred - the pipe lives in
-  the label's group in Figma, not in the slat. It is centred with a margin
-  rather than a translate so the standalone `scale` stays the only transform.
+  the label's group in Figma, not in the slat, and its rectangles are
+  `layoutAlign: STRETCH` so they follow the type on that side too. It is
+  centred with a margin rather than a translate so the standalone `scale`
+  stays the only transform.
+- **Default and Active carry a hidden pipe rectangle in Figma**, which is how
+  Figma expresses "no pipe" inside an auto-layout - hiding it removes it from
+  the flow, which is why those variants are 177 wide against Hover's 191
+  (4 + the 10 gap). They are not grey pipes; don't model them.
 - **The example frame's `Surface/Pale` background is not modelled.** It is the
   page the rail sits on, not part of the rail - same call as Card's 350x200
   frame.
