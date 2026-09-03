@@ -18,9 +18,13 @@
   color: var(--ui-button-round-icon-hover, var(--ui-text-on-primary));
 }
 
+/* The pressed state is the inverse surface, not raw ink. Identical in light
+   (--ui-surface-inverse IS --ui-ink there), but it flips with the theme:
+   ink-on-dark would be #262626 sitting on a #2e2e2e panel, which is all but
+   invisible. Same pair Button's secondary variant uses. */
 .button:active:not(:disabled) {
-  background: var(--ui-button-round-bg-active, var(--ui-ink));
-  color: var(--ui-button-round-icon-active, var(--ui-white));
+  background: var(--ui-button-round-bg-active, var(--ui-surface-inverse));
+  color: var(--ui-button-round-icon-active, var(--ui-text-on-inverse));
 }
 
 .button:focus-visible {
@@ -32,12 +36,7 @@
    Text/Disabled - the same token Button's disabled label uses. It briefly
    pointed at Surface/Muted Hover (#b8b8b8) instead, which is why this once
    read --ui-neutral-350.
-
-   Note :active above is still on primitives, --ui-ink / --ui-white, and so is
-   Figma (Color/Ink, Color/White). The two sides agree, but both skip the
-   semantic tier, so an app's theme cannot move the pressed state.
-   --ui-surface-inverse / --ui-text-on-inverse are the semantic equivalents if
-   that is ever wanted - a design call, since they flip in dark mode. */
+ */
 .button:disabled {
   background: var(--ui-button-round-bg-disabled, var(--ui-surface-disabled));
   color: var(--ui-button-round-icon-disabled, var(--ui-text-disabled));

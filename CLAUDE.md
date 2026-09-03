@@ -565,6 +565,45 @@ be added over `active` later; the reverse cannot.
 - **Focus rings are code-only**, matching Button.
 
 
+## ButtonRound
+
+Circular icon-only action button. Figma: the `Button/Round` set (`220:11857`),
+axes `Size` = Large | Medium | Small and `State` = Default | Hover | Active |
+Disabled.
+
+    box    icon   stroke
+    40     24     2
+    32     20     1.5
+    24     16     1
+
+The icon grows faster than the container (60% / 62.5% / 67%) so the glyph
+stays legible at Small — that ratio is deliberate, not a rounding artefact.
+
+**Stroke is set on the shapes, not just the `<svg>`.** Lucide puts
+`stroke-width` on the root and lets it inherit, but plenty of icons set it on
+each `<path>`, and a presentation attribute on an element beats a value
+inherited from its parent — an svg-only rule loses to those silently.
+`vector-effect: non-scaling-stroke` then pins the weight to rendered px
+whatever the icon's viewBox, so a 24-viewBox glyph drawn at 12px does not
+halve its stroke.
+
+### Every colour is on the semantic tier, deliberately
+
+    Default   --ui-primary-lighter  / --ui-primary
+    Hover     --ui-primary          / --ui-text-on-primary
+    Active    --ui-surface-inverse  / --ui-text-on-inverse
+    Disabled  --ui-surface-disabled / --ui-text-disabled
+
+Active used to be `--ui-ink` / `--ui-white`, and Figma likewise bound it to
+`Color/Ink` / `Color/White`. The two sides agreed, so it did not read as
+drift — but both skipped the semantic tier, and a primitive does not move with
+the theme. In dark mode that put a `#262626` circle on a `#2e2e2e` panel:
+present, and invisible. `--ui-surface-inverse` is `--ui-ink` in light, so the
+swap changed nothing there, and flips to `--ui-neutral-150` in dark. Don't
+reintroduce the primitives; the same reasoning is why Button's `secondary`
+uses this pair.
+
+
 ## Card
 
 A raised surface that groups content. Figma: the `Card` component set
