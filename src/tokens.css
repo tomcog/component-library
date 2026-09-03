@@ -138,6 +138,16 @@
   --ui-nav-panel-radius: 0px;
   --ui-nav-pipe-radius: 1px;
 
+  /* NavRail. Figma: the `NavSlat` set (444:791), assembled text-only at
+     458:2467. Its own scale, not the horizontal nav's: 16/600 on a 24 line. */
+  --ui-nav-rail-gap: 10px;
+  --ui-nav-rail-slat-height: 24px;
+  --ui-nav-rail-slat-padding-x: 12px;
+  --ui-nav-rail-font-size: 16px;
+  --ui-nav-rail-font-weight: 600;
+  --ui-nav-rail-pipe-width: 2px;
+  --ui-nav-rail-pipe-gap: 10px;      /* pipe -> label; the indent is both together */
+
   /* Pill. Figma: 999 radius, 7/14 padding, DM Sans Medium 13. The 31px
      height is padding plus line height, not a set height. */
   --ui-pill-radius: 999px;

@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, Pill, Logo } from "../src";
+import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, Pill, Logo } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -46,6 +46,14 @@ const SUB_PAGES = [
   { href: "/work/b", label: "CampPal" },
   { href: "/work/c", label: "PodcastPal" },
   { href: "/work/d", label: "NextJob" },
+];
+
+const RAIL = [
+  { href: "/", label: "Navigation label" },
+  { href: "/work", label: "Navigation label" },
+  { href: "/resume", label: "Navigation label" },
+  { href: "/writing", label: "Navigation label" },
+  { href: "/contact", label: "Navigation label" },
 ];
 
 const House = () => (
@@ -119,6 +127,7 @@ function App() {
   const [subPage, setSubPage] = useState("/work/b");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
+  const [rail, setRail] = useState("/work");
 
   return (
     <div className="page" data-theme={theme} style={{ ["--ui-primary" as string]: primary }}>
@@ -308,6 +317,29 @@ function App() {
               </NavDropdownItem>
             ))}
           </NavDropdown>
+        </Row>
+      </Section>
+
+      <Section
+        title="NavRail"
+        note="Left rail, text only. Figma: the NavSlat set at Level=Primary. Hover a row - the pipe draws top to bottom and the label indents past it. The current page is red, with no pipe and no indent, and hovering it adds neither."
+      >
+        <Row label="rail">
+          <NavRail aria-label="Sections" style={{ width: 218 }}>
+            {RAIL.map((r) => (
+              <NavSlat
+                key={r.href}
+                href={r.href}
+                active={rail === r.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setRail(r.href);
+                }}
+              >
+                {r.label}
+              </NavSlat>
+            ))}
+          </NavRail>
         </Row>
       </Section>
 

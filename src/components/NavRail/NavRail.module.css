@@ -1,0 +1,104 @@
+/* Left rail navigation. Figma: the `NavSlat` set (444:791), assembled
+   text-only at 458:2467.
+
+   Colours resolve at the link element, so --ui-primary and [data-theme] are
+   picked up from wherever they sit in the tree - same rule as Nav and Button.
+   The first name in each var() is the optional component-level override. */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  /* Stretch, not flex-start: a slat that fills the rail is hoverable across
+     the whole row rather than only where its text happens to reach. Figma
+     hugs in the component and sets w-full on the instances, which is the
+     same intent expressed the way Figma has to express it. */
+  align-items: stretch;
+  gap: var(--ui-nav-rail-gap);
+  font-family: var(--ui-font-family, inherit);
+}
+
+.slat {
+  position: relative; /* anchors the pipe */
+  display: flex;
+  align-items: center;
+  height: var(--ui-nav-rail-slat-height);
+  padding-inline: var(--ui-nav-rail-slat-padding-x);
+  font-family: var(--ui-font-family, inherit);
+  font-size: var(--ui-nav-rail-font-size);
+  font-weight: var(--ui-nav-rail-font-weight);
+  line-height: var(--ui-nav-rail-slat-height);
+  color: var(--ui-nav-rail-text, var(--ui-text-default));
+  /* Slats are <a> by default, which the UA underlines and colours. */
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--ui-motion-fast) ease;
+}
+
+/* The pipe, drawn top to bottom.
+
+   Absolutely positioned, so it takes no space at rest. Figma has it in flow
+   before the label - which is how Figma has to draw it - but in flow a 2px
+   bar would already be holding the label 12px over before anything is
+   hovered, and there would be nothing to indent. Out of flow, the label's
+   own margin does the indenting and the two animate independently.
+
+   Uses the standalone `scale` property with transform-origin: top, not
+   `transform`, so it composes with anything a consumer sets on transform -
+   the same rule as the dropdown's pipe. */
+.pipe {
+  position: absolute;
+  left: var(--ui-nav-rail-slat-padding-x);
+  top: 0;
+  bottom: 0;
+  width: var(--ui-nav-rail-pipe-width);
+  background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
+  scale: 1 0;
+  transform-origin: top;
+  transition: scale var(--ui-motion-base) ease;
+}
+
+/* The indent is the pipe's own width plus the gap Figma sets between it and
+   the label - so widening the pipe keeps that gap rather than eating it. */
+.label {
+  transition: margin-inline-start var(--ui-motion-fast) ease;
+}
+
+.slat:hover .pipe,
+.slat:focus-visible .pipe {
+  scale: 1 1;
+}
+.slat:hover .label,
+.slat:focus-visible .label {
+  margin-inline-start: calc(var(--ui-nav-rail-pipe-width) + var(--ui-nav-rail-pipe-gap));
+}
+
+/* Figma: State=Active. The current page - red label, and nothing else. No
+   pipe and no indent, and hovering it adds neither, so the two states never
+   compound. Mirrors NavItem and NavDropdownItem, which likewise drop their
+   rule when current. */
+.current {
+  color: var(--ui-nav-rail-text-current, var(--ui-primary));
+}
+.current .pipe {
+  display: none;
+}
+.current:hover .label,
+.current:focus-visible .label {
+  margin-inline-start: 0;
+}
+
+/* Focus is code-only, matching Nav and Button: Figma models no focus state. */
+.slat:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+/* The pipe travels and the label shifts; a request for less motion gets the
+   same states without either moving. */
+@media (prefers-reduced-motion: reduce) {
+  .pipe,
+  .label {
+    transition: none;
+  }
+}

@@ -499,7 +499,9 @@ a fix pending, per the rule above.
    `Neutral/550`, `/650`, `/700` and `/800` were then created in Figma, so
    both sides hold the same ramp even though no Figma mode uses them yet.
 3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
-   `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`. No
+   `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`,
+   `Surface/Pale` (`#f5f5f5`, the value of `--ui-neutral-100`; it backs the
+   NavRail assembly frame, and no component uses it). No
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
@@ -655,6 +657,83 @@ be added over `active` later; the reverse cannot.
 - **No mobile/hamburger.** tomcoggia.com has `hidden md:flex` plus a toggle
   button; Figma specs neither. Design it before building it.
 - **Focus rings are code-only**, matching Button.
+
+
+## NavRail
+
+Left rail navigation - a vertical column of links. Figma: the `NavSlat` set
+(`444:791`) at `Level=Primary`, assembled text-only at `458:2467`.
+
+```tsx
+<NavRail aria-label="Sections">
+  <NavSlat asChild active={pathname === "/"}><Link href="/">Home</Link></NavSlat>
+  <NavSlat asChild><Link href="/work">Work</Link></NavSlat>
+</NavRail>
+```
+
+**Text only, deliberately** - no icons, no sub items. The `NavSlat` set also
+carries a `Level=Secondary` and an `Icon?` boolean; neither is modelled yet.
+A first pass built both plus a hover-disclosed sub item group, and it was
+deleted to start again from the simplest thing that works. Don't restore it
+from history wholesale - the set has been redrawn since (slats are 24 tall
+now, not 40).
+
+    gap       10   between slats
+    height    24   = the line box; no padding-block
+    padding   12   inline
+    type      DM Sans SemiBold 16 / 24
+    pipe      2 wide, full height, --ui-primary
+    indent    12   = pipe width + the 10 gap Figma sets after it
+
+| Figma state | here | label | pipe | indent |
+|---|---|---|---|---|
+| Default | resting | `--ui-text-default` | - | - |
+| Hover | `:hover`, `:focus-visible` | unchanged | drawn | 12px |
+| Active | `active` | `--ui-primary` | - | - |
+
+Verified against the assembly: slat tops `0/34/68/102/136`, heights 24, and
+the indent settles at exactly 12px - Figma's Default variant is 196 wide and
+its Hover 208.
+
+### The pipe is out of flow
+
+Figma draws it in flow, before the label, because that is how Figma has to
+draw it. **In code it is absolutely positioned**, and the label's own
+`margin-inline-start` does the indenting.
+
+In flow, a 2px bar plus its gap would already be holding the label 12px over
+before anything is hovered, and there would be nothing left to indent. Out of
+flow the pipe costs no layout at rest, and the two halves of the effect
+animate independently: the pipe draws over `--ui-motion-base`, the label
+slides over `--ui-motion-fast`.
+
+It draws with the standalone `scale` property (`1 0` -> `1 1`,
+`transform-origin: top`), not `transform`, so it composes with anything a
+consumer sets on `transform` - the same rule as the dropdown's pipe.
+
+**The indent is `calc(pipe-width + pipe-gap)`**, not a flat 12px, so widening
+the pipe keeps the gap after it rather than eating into it.
+
+### Divergences - do not "fix" these
+
+- **`:focus-visible` gets the hover treatment too**, not just the outline. A
+  keyboard user should see the same "this row is highlighted" affordance a
+  pointer user gets. Figma models no focus state, so this is code-only,
+  matching Nav and Button.
+- **Current suppresses hover entirely** - hovering the current page adds
+  neither pipe nor indent, so the two states never compound. Figma has no
+  hovered-current variant; this mirrors what `NavItem` and `NavDropdownItem`
+  already do.
+- **The rail stretches its slats**, where the Figma component hugs its text.
+  Figma sets `w-full` on the instances, which is the same intent - and a slat
+  that fills the rail is hoverable across the whole row rather than only
+  where its text reaches.
+- **The example frame's `Surface/Pale` background is not modelled.** It is the
+  page the rail sits on, not part of the rail - same call as Card's 350x200
+  frame.
+- **`prefers-reduced-motion` is honoured**, which is still new for this
+  library: the states all still apply, the pipe just stops drawing and the
+  label stops sliding. Button and Nav do not have it yet.
 
 
 ## ButtonRound
