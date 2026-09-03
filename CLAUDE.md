@@ -511,9 +511,15 @@ a fix pending, per the rule above.
    Figma to follow**, on the three `Level=Primary` variants:
    - `Nav Label` font size 16 -> 14, line height 24 -> 20. The frames then hug
      to 20 tall, and the 196/208 widths shrink with the type.
-   - the Hover variant's pipe rectangle, width 2 -> 4. Its 10px gap to the
-     label is unchanged, so the variant widens by 2 on top of whatever the
-     type change takes off.
+   - `Nav Label` line height 24 -> 20. Figma took the size to 14 but left the
+     leading at 24, so this half is still outstanding; it also sets the pipe's
+     height, which is 20 in code and would be 24 in Figma.
+   - the Hover variant's pipe rectangle is already 4 wide in Figma.
+
+   Separately, the Hover chip's glyph is bound to the **`Color/White`
+   primitive** and should be `Text/OnPrimary` - the same defect fixed earlier
+   this session, reintroduced when the set was redrawn. A primitive cannot
+   follow the theme. The code already uses `--ui-text-on-primary`.
 
    Nothing else moves: the weight is already Medium, and the indent is pipe
    width plus gap rather than a fixed number, so it follows the pipe.
@@ -683,18 +689,22 @@ Left rail navigation - a vertical column of links. Figma: the `NavSlat` set
 </NavRail>
 ```
 
-**Text only, deliberately** - no icons, no sub items. The `NavSlat` set also
-carries a `Level=Secondary` and an `Icon?` boolean; neither is modelled yet.
-A first pass built both plus a hover-disclosed sub item group, and it was
+**No sub items.** The `NavSlat` set also carries a `Level=Secondary`; it is
+not modelled yet. A first pass built it plus a hover-disclosed group, and was
 deleted to start again from the simplest thing that works. Don't restore it
-from history wholesale - the set has been redrawn since (slats are 24 tall
-now, not 40).
+from history wholesale - the set has been redrawn since.
+
+`icon` is optional. Without one the slat is text alone and closes up, which is
+what hiding the layer does to Figma's auto-layout; with one the slat is 40 tall
+rather than hugging its line box, because the chip is the taller child.
 
     gap       10   between slats
     padding   12   inline
     type      DM Sans Medium 14 / 20
-    height         none - the slat hugs its line box, so 20
-    pipe      4 wide, full height, --ui-primary
+    height         none - the slat hugs its tallest child: 20, or 40 with a chip
+    chip      40   a Button/Round Large; icon 24 at stroke 2
+    chip gap  8    chip -> label
+    pipe      4 wide, the height of the label's line box, --ui-primary
     indent    14   = pipe width + the 10 gap Figma sets after it
 
 | Figma state | here | label | pipe | indent |
@@ -732,6 +742,38 @@ The pipe is 4px because `--ui-nav-accent-size` is, but it is **its own token,
 not an alias**. The two are the same figure today; one component's thickness
 should not move because another's did.
 
+### The chip borrows ButtonRound, but is not one
+
+Figma composes an actual instance of `Button/Round` here. **In code it is an
+inert `<span>`, not `<ButtonRound>`** - a slat is an `<a>`, and a `<button>`
+cannot be nested inside one. That is invalid HTML rather than a style
+preference: interactive content does not nest, the button would swallow the
+link's clicks, and the accessible name gets confused. `asChild` does not
+rescue it either, since it replaces the button with its child rather than
+making the chip passive.
+
+**The geometry is aliased, the colours are not**, and that split mirrors what
+Figma does with the instance:
+
+    --ui-nav-rail-chip-size        -> --ui-button-round-lg-size
+    --ui-nav-rail-chip-icon-size   -> --ui-button-round-lg-icon-size
+    --ui-nav-rail-chip-icon-stroke -> --ui-button-round-lg-icon-stroke
+
+Resize ButtonRound and the rail's chip follows, exactly as the instance does.
+The fills are overridden per state on the Figma instance, so in code they are
+the rail's own - which they have to be, because **the states sit one step off
+ButtonRound's**:
+
+| slat state | chip | ButtonRound's equivalent |
+|---|---|---|
+| Default | transparent, `--ui-text-muted` glyph | none - ButtonRound has no transparent state |
+| Hover | `--ui-primary` / `--ui-text-on-primary` | its Hover |
+| Active | `--ui-primary-lighter` / `--ui-primary` | its Default |
+
+The glyph takes the chip's colour by inheritance and sets none of its own -
+otherwise it wins inside the chip and draws a text-coloured icon on a red
+circle.
+
 ### Divergences - do not "fix" these
 
 - **`:focus-visible` gets the hover treatment too**, not just the outline. A
@@ -746,6 +788,10 @@ should not move because another's did.
   Figma sets `w-full` on the instances, which is the same intent - and a slat
   that fills the rail is hoverable across the whole row rather than only
   where its text reaches.
+- **The pipe is the height of the label's line box, not the slat's.** With an
+  icon the slat is 40 tall and the pipe stays 20, centred - the pipe lives in
+  the label's group in Figma, not in the slat. It is centred with a margin
+  rather than a translate so the standalone `scale` stays the only transform.
 - **The example frame's `Surface/Pale` background is not modelled.** It is the
   page the rail sits on, not part of the rail - same call as Card's 350x200
   frame.

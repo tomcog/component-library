@@ -155,6 +155,19 @@
      not move because another's did. */
   --ui-nav-rail-pipe-width: 4px;
   --ui-nav-rail-pipe-gap: 10px;      /* pipe -> label; the indent is both together */
+  --ui-nav-rail-slat-gap: 8px;       /* chip -> label */
+
+  /* The icon chip IS a Button/Round Large - Figma composes an actual instance
+     of it - so the geometry is aliased rather than restated. Resize
+     ButtonRound and the rail's chip follows, exactly as it does in the file.
+
+     The colours are deliberately NOT aliased: Figma overrides the instance's
+     fill per state, so they are the rail's own, and they sit one step off
+     ButtonRound's anyway (the rail rests transparent, where ButtonRound rests
+     at primary-lighter). */
+  --ui-nav-rail-chip-size: var(--ui-button-round-lg-size);
+  --ui-nav-rail-chip-icon-size: var(--ui-button-round-lg-icon-size);
+  --ui-nav-rail-chip-icon-stroke: var(--ui-button-round-lg-icon-stroke);
 
   /* Pill. Figma: 999 radius, 7/14 padding, DM Sans Medium 13. The 31px
      height is padding plus line height, not a set height. */

@@ -21,10 +21,11 @@
   position: relative; /* anchors the pipe */
   display: flex;
   align-items: center;
-  /* No height - the slat hugs its line box, which is what Figma draws (the
+  gap: var(--ui-nav-rail-slat-gap);
+  /* No height - the slat hugs its tallest child: the line box on its own, or
+     the 40px chip when there is an icon. Figma draws it the same way (the
      frame has no padding-block). Setting one would fight the type the moment
-     the scale moved; the pipe stretches to whatever the box turns out to be.
-     Same reasoning as Pill. */
+     the scale moved. Same reasoning as Pill. */
   padding-inline: var(--ui-nav-rail-slat-padding-x);
   font-family: var(--ui-font-family, inherit);
   font-size: var(--ui-nav-rail-font-size);
@@ -51,9 +52,16 @@
    the same rule as the dropdown's pipe. */
 .pipe {
   position: absolute;
-  left: var(--ui-nav-rail-slat-padding-x);
-  top: 0;
-  bottom: 0;
+  /* Sits at the padding edge, or past the chip when there is one. */
+  left: var(--ui-nav-rail-pipe-x, var(--ui-nav-rail-slat-padding-x));
+  /* Sized to the label's line box and centred, NOT to the slat. With an icon
+     the slat is 40 tall but the pipe stays the height of the text beside it,
+     which is what Figma draws - the pipe lives in the label's group, not in
+     the slat. Centred with margin rather than a translate so the standalone
+     `scale` below is the only transform in play. */
+  top: 50%;
+  height: var(--ui-nav-rail-line-height);
+  margin-top: calc(var(--ui-nav-rail-line-height) / -2);
   width: var(--ui-nav-rail-pipe-width);
   background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
   scale: 1 0;
@@ -76,6 +84,76 @@
   margin-inline-start: calc(var(--ui-nav-rail-pipe-width) + var(--ui-nav-rail-pipe-gap));
 }
 
+/* -- the icon chip ------------------------------------------- */
+/* Figma composes an instance of `Button/Round` here. In code it is a <span>,
+   not <ButtonRound>: a slat is a link, and a <button> cannot be nested inside
+   an <a> - invalid HTML, and the button would swallow the link's clicks.
+   `asChild` does not help, since it replaces the button with its child rather
+   than making it passive. So the geometry is borrowed via tokens and the
+   element is inert.
+
+   The states are one step off ButtonRound's own: the rail rests transparent,
+   which ButtonRound has no equivalent for, and its hover and current are
+   ButtonRound's hover and default respectively. */
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-nav-rail-chip-size);
+  height: var(--ui-nav-rail-chip-size);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ui-nav-rail-chip-icon, var(--ui-text-muted));
+  transition:
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+.slat:hover .chip,
+.slat:focus-visible .chip {
+  background: var(--ui-nav-rail-chip-bg-hover, var(--ui-primary));
+  color: var(--ui-nav-rail-chip-icon-hover, var(--ui-text-on-primary));
+}
+
+/* The glyph. No colour of its own - it inherits the chip's, which is the part
+   that changes per state. Setting one here would win inside the chip and draw
+   a text-coloured icon on a red circle. */
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-nav-rail-chip-icon-size);
+  height: var(--ui-nav-rail-chip-icon-size);
+}
+/* Stroke set on the shapes as well as the <svg>: a presentation attribute on
+   a <path> beats a value inherited from the root, so an svg-only rule loses
+   silently. non-scaling-stroke pins it to rendered px whatever the icon's
+   viewBox. Same reasoning, and same tokens, as ButtonRound. */
+.icon svg * {
+  vector-effect: non-scaling-stroke;
+}
+.icon svg,
+.icon svg * {
+  stroke-width: var(--ui-nav-rail-chip-icon-stroke);
+}
+.chip .icon > *,
+.chip .icon svg,
+.chip .icon img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+}
+
+/* With an icon the pipe clears the chip and the gap after it. */
+.withIcon {
+  --ui-nav-rail-pipe-x: calc(
+    var(--ui-nav-rail-slat-padding-x) + var(--ui-nav-rail-chip-size) +
+      var(--ui-nav-rail-slat-gap)
+  );
+}
+
 /* Figma: State=Active. The current page - red label, and nothing else. No
    pipe and no indent, and hovering it adds neither, so the two states never
    compound. Mirrors NavItem and NavDropdownItem, which likewise drop their
@@ -85,6 +163,13 @@
 }
 .current .pipe {
   display: none;
+}
+/* Current beats hover on the chip too - higher specificity, so it holds
+   whatever the source order. Figma's current chip is ButtonRound's *default*
+   pair, not its hover pair. */
+.slat.current .chip {
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-primary-lighter));
+  color: var(--ui-nav-rail-chip-icon-current, var(--ui-primary));
 }
 .current:hover .label,
 .current:focus-visible .label {

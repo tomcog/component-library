@@ -56,6 +56,13 @@ const RAIL = [
   { href: "/contact", label: "Navigation label" },
 ];
 
+const Briefcase = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
+    <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+  </svg>
+);
+
 const House = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -329,6 +336,24 @@ function App() {
             {RAIL.map((r) => (
               <NavSlat
                 key={r.href}
+                href={r.href}
+                active={rail === r.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setRail(r.href);
+                }}
+              >
+                {r.label}
+              </NavSlat>
+            ))}
+          </NavRail>
+        </Row>
+        <Row label="with icon">
+          <NavRail aria-label="Sections with icons" style={{ width: 218 }}>
+            {RAIL.map((r) => (
+              <NavSlat
+                key={r.href}
+                icon={<Briefcase />}
                 href={r.href}
                 active={rail === r.href}
                 onClick={(e) => {
