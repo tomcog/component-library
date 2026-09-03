@@ -652,6 +652,21 @@ and COLOR — so the two elevations are **effect styles**, `Shadow/Float 1` and
 (`Shadow/Float 1` -> `--ui-shadow-float-1`). Effect styles are the Figma-native
 equivalent of a shadow token; don't try to model them as variables.
 
+**The shadow colour is a variable, though**, and that is what makes elevation
+theme-aware. `--ui-shadow-color` / `Shadow/Color` is `rgb(0 0 0 / 0.1)` in
+light and `0.5` in dark: a 10% black shadow does almost nothing on a dark
+surface, where the card and its shadow are already close in lightness. The
+geometry is identical in both modes; only the alpha moves. In Figma each
+effect's colour is bound to that variable, so the two modes follow it.
+
+**The composed tokens must be redeclared in the `[data-theme="dark"]` block.**
+A `var()` inside a custom property resolves at the element that *declares* it,
+so `--ui-shadow-float-1: … var(--ui-shadow-color) …` written once on `:root`
+freezes against `:root`'s colour and a `[data-theme]` on a subtree cannot move
+it — the same trap the header of `tokens.css` describes for the component
+tier. Repeating the two lines in the dark block is the cost of keeping one
+public token name; don't "tidy" them away.
+
 The component set is fully bound: fill -> `Surface/Raised`, all four corners ->
 `Card/Radius`. Flat carries no stroke at all. No property on any variant is a
 raw value.

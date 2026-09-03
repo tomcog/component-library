@@ -150,8 +150,15 @@
   /* Elevation. Two steps, both two-layer: a soft cast below plus a tight
      contact shadow, so a card reads as lifted rather than blurred. Named for
      the Figma variants (Style=Float1/Float2) so the two sides stay derivable. */
-  --ui-shadow-float-1: 0 6px 18px 0 rgb(0 0 0 / 0.1), 0 0 6px 0 rgb(0 0 0 / 0.1);
-  --ui-shadow-float-2: 0 12px 18px 0 rgb(0 0 0 / 0.1), 0 -1px 10px 0 rgb(0 0 0 / 0.1);
+  /* The colour is its own token so a consumer can retint elevation without
+     restating the geometry. Note the two shadows below must ALSO be
+     redeclared in the dark block: a var() inside a custom property resolves
+     at the element that DECLARES it, so composing them here freezes them
+     against :root's --ui-shadow-color and [data-theme] on a subtree cannot
+     move them. Same trap the header of this file describes. */
+  --ui-shadow-color: rgb(0 0 0 / 0.1);
+  --ui-shadow-float-1: 0 6px 18px 0 var(--ui-shadow-color), 0 0 6px 0 var(--ui-shadow-color);
+  --ui-shadow-float-2: 0 12px 18px 0 var(--ui-shadow-color), 0 -1px 10px 0 var(--ui-shadow-color);
 
   --ui-motion-fast: 150ms;   /* state changes: colour, fills, the nav pipe */
   --ui-motion-base: 200ms;   /* travelling motion: the nav underline wipe */
@@ -177,4 +184,13 @@
 
   --ui-surface-disabled: var(--ui-neutral-800);
   --ui-text-disabled: var(--ui-neutral-550);
+
+  /* A 10% black shadow does almost nothing on a dark surface - the card and
+     its shadow are already close in lightness. Deepening the alpha restores
+     the separation; the offsets and blurs are identical to light, and are
+     repeated here only because the composed tokens resolve where they are
+     declared (see the note beside --ui-shadow-color above). */
+  --ui-shadow-color: rgb(0 0 0 / 0.5);
+  --ui-shadow-float-1: 0 6px 18px 0 var(--ui-shadow-color), 0 0 6px 0 var(--ui-shadow-color);
+  --ui-shadow-float-2: 0 12px 18px 0 var(--ui-shadow-color), 0 -1px 10px 0 var(--ui-shadow-color);
 }
