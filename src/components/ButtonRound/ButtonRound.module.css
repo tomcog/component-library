@@ -59,11 +59,15 @@
    user units, so a lucide 24-viewBox glyph drawn at 12px would halve its
    stroke - the rendered weight would depend on the size AND the viewBox.
    non-scaling-stroke pins it to the rendered px the design specifies. */
-.icon svg { stroke-width: var(--ui-button-round-md-icon-stroke); }
 .icon svg * { vector-effect: non-scaling-stroke; }
-.large .icon svg  { stroke-width: var(--ui-button-round-lg-icon-stroke); }
-.medium .icon svg { stroke-width: var(--ui-button-round-md-icon-stroke); }
-.small .icon svg  { stroke-width: var(--ui-button-round-sm-icon-stroke); }
+/* Set on the shapes as well as the <svg>, not on the <svg> alone. Lucide puts
+   stroke-width on the root <svg> and lets it inherit, but plenty of icons set
+   stroke-width="2" on each <path> - and a presentation attribute on an element
+   beats a value inherited from its parent, so an svg-only rule silently loses
+   to those. Targeting the descendants is what makes the token authoritative. */
+.large .icon svg,  .large .icon svg *  { stroke-width: var(--ui-button-round-lg-icon-stroke); }
+.medium .icon svg, .medium .icon svg * { stroke-width: var(--ui-button-round-md-icon-stroke); }
+.small .icon svg,  .small .icon svg *  { stroke-width: var(--ui-button-round-sm-icon-stroke); }
 
 /* Keep both a direct Lucide SVG and an optional consumer wrapper inside the
    component's icon box. The extra specificity prevents wrapper classes from
