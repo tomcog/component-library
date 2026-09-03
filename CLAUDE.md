@@ -684,25 +684,74 @@ ref merging and `aria-current`, which is the only thing the two share.
     gap       10        between sections; sub items sit flush
     icon      24 at stroke 2, both levels
 
-### Sub items are siblings, not children
+### Sub items live in a `NavSlatGroup`
 
-Figma wraps a section and its sub items in a frame purely to hold them at gap
-0. In code the rail is a **flat list** and the 10px is a margin before each
-section (`.primary + .primary`, `.secondary + .primary`) rather than a gap on
-the container. A container gap would also open a hole between consecutive sub
-items and break the pipe.
+The rail was briefly a flat list, with sub items as siblings of their section
+and the 10px expressed as a margin. That could not survive the sub items being
+*disclosed* by their section: hovering a section has to reveal its own sub
+items, and `~` cannot say "the secondaries belonging to this primary" - it
+would open every one that follows, including the next section's.
 
-That keeps the rail something a consumer can build by mapping over routes, and
-rendering the sub items only while their section is current stays the app's
-call - the same division as `active`. A grouping wrapper could be added over a
-flat list later; the reverse could not.
+So a section and its sub items are wrapped:
 
-**The pipe is drawn per sub item at full slat height**, centred in the same
-40px gutter the chip occupies. Consecutive segments abut at 0px and read as
-one line running out of the section's chip - verified: both centre at x=32.
+```tsx
+<NavSlatGroup>
+  <NavSlat asChild active icon={<Briefcase />}><Link href="/work">Work</Link></NavSlat>
+  <NavSlat asChild level="secondary"><Link href="/work/api">API</Link></NavSlat>
+</NavSlatGroup>
+```
+
+**The first child is the section; the rest are what it discloses.** Splitting
+on position rather than on `level` keeps the reveal a property of where a slat
+sits, not of a prop that could disagree with it - and a group of one is just a
+section. This is the migration the earlier note said could only go this
+direction, and it went.
+
+The rail now carries a plain `gap: 10px` because every child is a section or a
+group; the group is `gap: 0` inside, so sub items sit flush under their
+section.
+
+### The reveal
+
+Open on `:hover`, on `:focus-within`, and on `:has(.current)`. The third is
+what keeps a section you have navigated into from collapsing as the pointer
+leaves, and it needs nothing from the app - the group can see the current page
+for itself. An `open` prop remains for what it cannot see, such as a sub-route
+that is not itself a slat.
+
+`:focus-within` is what makes the group keyboard-reachable at all: the sub
+items are `visibility: hidden` while closed, so they are out of the tab order
+and cannot be focused to open the thing that contains them. Focusing the
+*section* opens the group, which makes them focusable, and focus then stays
+within. Same reason, and same `visibility` trick, as Nav's dropdown.
+
+Three things not to "simplify":
+
+- **The row opens at once - the height is not animated.** An animated
+  `grid-template-rows` slides the words down as it grows, and the words must
+  only fade. Verified frame by frame: the first sub item's `top` holds at the
+  same pixel for the whole transition.
+- **The pipe is one bar on the block, not one per sub item.** Figma models it
+  per variant because it has no other way, but two per-item bars would each
+  grow from their own top at the same moment, which reads as two lines
+  appearing rather than one being drawn. `.subItems::before` spans the whole
+  block and draws once, top to bottom.
+- **It draws with the standalone `scale` property** (`1 0` -> `1 1`,
+  `transform-origin: top`), not `transform`, so it composes with anything a
+  consumer sets on `transform`. Same rule as the dropdown's pipe.
+
+Measured: bar `1 0` -> `1 1` over `--ui-motion-base`, content opacity 0 -> 1
+over `--ui-motion-fast`, label `top` unchanged throughout.
+
+**`prefers-reduced-motion` is honoured**, which is new for this library - the
+sub items still appear and disappear, the line just stops drawing. If that
+convention is wanted elsewhere, Button and Nav do not have it yet.
 
 ### Divergences - do not "fix" these
 
+- **A sub item's `.pipe` span is a spacer, not the line.** It reserves the
+  same 40px the chip occupies so the icons line up; the visible bar is drawn
+  once on the block. Both centre at x=32 - verified.
 - **The chip is a `<span>`, not `<ButtonRound>`.** Figma composes an instance
   of `Button/Round` there, but a slat is a link and a `<button>` cannot be
   nested inside one. Same geometry, drawn from this component's own tokens so

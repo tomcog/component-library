@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, Pill, Logo } from "../src";
+import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, NavSlatGroup, Pill, Logo } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -337,47 +337,28 @@ function App() {
 
       <Section
         title="NavRail"
-        note="Left rail. Figma: the NavSlat set - Level = Primary | Secondary. Click a row to move the current page. Sub items sit flush under their section so their pipes join into one line; sections are 10px apart."
+        note="Left rail. Figma: the NavSlat set - Level = Primary | Secondary. Hover a section to reveal its sub items; they stay open while the current page is inside one. Click a row to move the current page."
       >
         <Row label="rail">
           <NavRail aria-label="Sections" style={{ width: 218 }}>
-            {RAIL.map((r) =>
-              r.level === "secondary" ? (
-                <NavSlat
-                  key={r.href}
-                  level="secondary"
-                  icon={<SquareCode />}
-                  href={r.href}
-                  active={rail === r.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setRail(r.href);
-                  }}
-                >
-                  {r.label}
-                </NavSlat>
-              ) : (
-                <NavSlat
-                  key={r.href}
-                  icon={<Briefcase />}
-                  href={r.href}
-                  active={rail === r.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setRail(r.href);
-                  }}
-                >
-                  {r.label}
-                </NavSlat>
-              ),
-            )}
+            <NavSlat icon={<Briefcase />} href="#" active={rail === "/jobs"} onClick={(e) => { e.preventDefault(); setRail("/jobs"); }}>Navigation item</NavSlat>
+            <NavSlat icon={<Briefcase />} href="#" active={rail === "/resources"} onClick={(e) => { e.preventDefault(); setRail("/resources"); }}>Navigation item</NavSlat>
+            <NavSlatGroup>
+              <NavSlat icon={<Briefcase />} href="#" active={rail === "/work"} onClick={(e) => { e.preventDefault(); setRail("/work"); }}>Active page</NavSlat>
+              <NavSlat level="secondary" icon={<SquareCode />} href="#" active={rail === "/work/a"} onClick={(e) => { e.preventDefault(); setRail("/work/a"); }}>Subnav item</NavSlat>
+              <NavSlat level="secondary" icon={<SquareCode />} href="#" active={rail === "/work/b"} onClick={(e) => { e.preventDefault(); setRail("/work/b"); }}>Subnav item</NavSlat>
+            </NavSlatGroup>
+            <NavSlat icon={<Briefcase />} href="#" active={rail === "/you"} onClick={(e) => { e.preventDefault(); setRail("/you"); }}>Navigation item</NavSlat>
+            <NavSlat icon={<Briefcase />} href="#" active={rail === "/search"} onClick={(e) => { e.preventDefault(); setRail("/search"); }}>Navigation item</NavSlat>
           </NavRail>
         </Row>
         <Row label="no icon">
           <NavRail aria-label="Sections, no icons" style={{ width: 218 }}>
             <NavSlat href="#" onClick={(e) => e.preventDefault()}>Navigation item</NavSlat>
-            <NavSlat href="#" active onClick={(e) => e.preventDefault()}>Active page</NavSlat>
-            <NavSlat level="secondary" href="#" onClick={(e) => e.preventDefault()}>Subnav item</NavSlat>
+            <NavSlatGroup>
+              <NavSlat href="#" active onClick={(e) => e.preventDefault()}>Active page</NavSlat>
+              <NavSlat level="secondary" href="#" onClick={(e) => e.preventDefault()}>Subnav item</NavSlat>
+            </NavSlatGroup>
           </NavRail>
         </Row>
       </Section>

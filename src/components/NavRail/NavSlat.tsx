@@ -61,15 +61,24 @@ export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavS
       active={active}
       wrap={(label) => (
         <>
-          {level === "secondary" ? <span className={styles.pipe} aria-hidden="true" /> : null}
-          {icon && level === "primary" ? (
-            <span className={styles.chip} aria-hidden="true">
-              <span className={styles.icon}>{icon}</span>
-            </span>
+          {level === "secondary" ? (
+            <>
+              <span className={styles.pipe} aria-hidden="true" />
+              <span className={styles.content}>
+                {iconNode}
+                {label}
+              </span>
+            </>
           ) : (
-            iconNode
+            <>
+              {icon ? (
+                <span className={styles.chip} aria-hidden="true">
+                  <span className={styles.icon}>{icon}</span>
+                </span>
+              ) : null}
+              {label}
+            </>
           )}
-          {label}
         </>
       )}
       {...props}

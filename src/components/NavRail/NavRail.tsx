@@ -16,19 +16,19 @@ export type NavRailProps = HTMLAttributes<HTMLElement>;
  *       <NavSlat asChild icon={<Briefcase />}>
  *         <Link href="/jobs">Jobs</Link>
  *       </NavSlat>
- *       <NavSlat asChild active icon={<Briefcase />}>
- *         <Link href="/work">Work</Link>
- *       </NavSlat>
- *       <NavSlat asChild level="secondary" icon={<SquareCode />}>
- *         <Link href="/work/api">API</Link>
- *       </NavSlat>
+ *       <NavSlatGroup>
+ *         <NavSlat asChild active icon={<Briefcase />}>
+ *           <Link href="/work">Work</Link>
+ *         </NavSlat>
+ *         <NavSlat asChild level="secondary" icon={<SquareCode />}>
+ *           <Link href="/work/api">API</Link>
+ *         </NavSlat>
+ *       </NavSlatGroup>
  *     </NavRail>
  *
- * Sub items are siblings of their section, not children of it. That is what
- * Figma draws, and it keeps the rail a flat list a consumer can build by
- * mapping over routes - the pipe joins up on its own because consecutive sub
- * items sit flush. Rendering them only while their section is current is the
- * app's call, the same way `active` is.
+ * A section that discloses sub items wraps them in a `NavSlatGroup`, which
+ * owns the reveal. Every direct child of the rail is therefore a section or a
+ * group, which is why the rail can carry a plain gap.
  *
  * This is a separate component from `Nav`, not a variant of it: different
  * type scale, different anatomy, different Figma set.

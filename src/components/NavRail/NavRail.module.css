@@ -9,17 +9,103 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  gap: var(--ui-nav-rail-gap);
   font-family: var(--ui-font-family, inherit);
 }
 
-/* Figma spaces top-level slats 10px apart and sits sub items flush under
-   their section, which is what lets consecutive pipes join into one unbroken
-   line. Expressed as a margin before each section rather than a gap on the
-   rail, because a gap would also open a hole between sub items and break
-   that line. */
-.primary + .primary,
-.secondary + .primary {
-  margin-top: var(--ui-nav-rail-gap);
+/* -- a section and the sub items it discloses ----------------- */
+/* Two grid rows - the section, then a track that grows from 0fr to 1fr. That
+   animates a height nobody has to know in advance, which is the whole point:
+   the sub items can be any number and any length. A max-height guess would
+   either clip them or ease against a value they never reach.
+
+   The rail's 10px gap does not apply in here, so sub items sit flush under
+   their section and consecutive pipes join into one unbroken line. */
+.group {
+  display: grid;
+  grid-template-rows: auto 0fr;
+}
+
+/* Open on hover, on focus, and whenever the current page is inside - so a
+   section you have navigated into does not collapse as the pointer leaves.
+   :has() means the app never has to tell the group what it can see for
+   itself; `open` stays available for what it cannot. */
+.group:hover,
+.group:focus-within,
+.group:has(.current),
+.open {
+  grid-template-rows: auto 1fr;
+}
+
+/* The track opens at once and nothing translates - the reveal is the pipe
+   drawing and the words fading, per the design. An animated height would slide
+   the words down, which is the one thing this must not do.
+
+   visibility switches immediately on the way in and is held to the end of the
+   fade on the way out. Hidden rather than display:none so the sub items stay
+   out of the tab order while closed but can still animate - the same trick
+   Nav's dropdown and Button's loading content use. */
+.subItems {
+  position: relative;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear var(--ui-motion-base);
+}
+.group:hover .subItems,
+.group:focus-within .subItems,
+.group:has(.current) .subItems,
+.open .subItems {
+  visibility: visible;
+  transition: visibility 0s;
+}
+
+/* One bar for the whole block, not one per sub item. Per-item bars would each
+   grow from their own top at the same moment, which reads as two lines
+   appearing rather than one being drawn. This is a single line, drawn top to
+   bottom out of the section's chip.
+
+   Uses the standalone `scale` property with transform-origin: top, not
+   `transform`, so it composes with anything a consumer sets on transform -
+   same reasoning as the dropdown's pipe. */
+.subItems::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--ui-nav-rail-slat-padding-x) + var(--ui-nav-rail-gutter) / 2);
+  width: var(--ui-nav-rail-pipe-width);
+  margin-left: calc(var(--ui-nav-rail-pipe-width) / -2);
+  background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
+  scale: 1 0;
+  transform-origin: top;
+  transition: scale var(--ui-motion-base) ease;
+}
+.group:hover .subItems::before,
+.group:focus-within .subItems::before,
+.group:has(.current) .subItems::before,
+.open .subItems::before {
+  scale: 1 1;
+}
+
+/* The words fade, and only fade. */
+.subItems .content {
+  opacity: 0;
+  transition: opacity var(--ui-motion-fast) ease;
+}
+.group:hover .content,
+.group:focus-within .content,
+.group:has(.current) .content,
+.open .content {
+  opacity: 1;
+}
+
+/* The disclosure moves layout, so honour a request for less of it: the sub
+   items still appear and disappear, they just stop sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .subItems::before,
+  .subItems .content {
+    transition: none;
+  }
 }
 
 /* -- slat ----------------------------------------------------- */
@@ -42,6 +128,8 @@
 
 .primary {
   height: var(--ui-nav-rail-primary-height);
+  /* Figma: Primary Default rests at Text/Muted - label and icon alike. */
+  color: var(--ui-nav-rail-text, var(--ui-text-muted));
 }
 .secondary {
   height: var(--ui-nav-rail-secondary-height);
@@ -66,7 +154,7 @@
   height: var(--ui-nav-rail-gutter);
   border-radius: 50%;
   background: transparent;
-  color: var(--ui-nav-rail-icon, var(--ui-text-default));
+  color: var(--ui-nav-rail-icon, var(--ui-text-muted));
   transition:
     background-color var(--ui-motion-fast) ease,
     color var(--ui-motion-fast) ease;
@@ -82,31 +170,31 @@
   color: var(--ui-text-on-primary);
 }
 
-/* -- the pipe, on a secondary slat ---------------------------- */
-/* Full slat height and centred in the same gutter the chip occupies, so the
-   segments of consecutive sub items abut and read as one line running out of
-   the section's chip. A gap on the rail would break it - see above. */
+/* -- a sub item's leading gutter ------------------------------ */
+/* Reserves the same 40px the section's chip occupies, so a sub item's icon
+   lines up under the chip's right edge. The red bar itself is drawn once on
+   the block above, not here - see .subItems::before. */
 .pipe {
-  position: relative;
   flex: none;
   align-self: stretch;
   width: var(--ui-nav-rail-gutter);
 }
-.pipe::before {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  left: 50%;
-  width: var(--ui-nav-rail-pipe-width);
-  margin-left: calc(var(--ui-nav-rail-pipe-width) / -2);
-  background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
+
+/* Icon and label together, so they can fade as one without taking the pipe
+   with them. A real box, not display:contents - opacity needs something to
+   apply to. */
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-nav-rail-slat-gap);
+  min-width: 0;
 }
 
 /* -- icons ---------------------------------------------------- */
-/* Icons rest at 65% opacity, the same figure Button uses, and go fully opaque
-   only once they are carrying the primary colour. Figma sets this on the icon
-   frame rather than lightening the colour, so one token covers both levels and
-   it stays right whatever --ui-text-default is themed to. */
+/* A resting icon is muted by colour, not by opacity. Opacity would tie the
+   icon's apparent colour to whatever it happens to sit on, so the same token
+   would land differently on a white page and a raised card - and it cannot be
+   themed. Text/Muted says the thing directly. */
 .icon {
   flex: none;
   display: inline-flex;
@@ -134,8 +222,8 @@
   color: var(--ui-nav-rail-icon-current, var(--ui-primary));
   opacity: 1;
 }
-.primary:hover .icon,
-.primary.current .icon {
+/* Primary is muted by colour throughout, so its icon is never faded. */
+.primary .icon {
   opacity: 1;
 }
 
