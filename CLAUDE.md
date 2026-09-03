@@ -411,6 +411,21 @@ Note this Figma file is shared with other work — `PacketEditorHeader`,
 of the library**, so its absence from the code is not drift and must not be
 "fixed" by building a component for it.
 
+### A component's Figma description is part of the spec
+
+`Button/Round` carries a description in the file; it surfaces in every
+`get_design_context` read, so it is what a consuming designer - or a later
+fetch - actually sees. Pushing property values across is only half of a sync:
+**a component whose values match but whose description is empty is still only
+half documented.** `NavSlat`, `Card` and `Pill` were all empty and have since
+been written.
+
+What belongs in one: the React usage line, the states and the tokens each
+binds, the geometry, and - most valuable - the things that read as odd in the
+file and are not. NavSlat's hidden pipe rectangles, Card's unmodelled 350x200
+frame, Pill's absent height token. Those are exactly what someone would
+otherwise "fix".
+
 ### There is a third copy: the published library
 
 Editing the Figma file is only half of a Figma-side change. **A consuming file
