@@ -41,6 +41,10 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.6.0 -> 0.7.0 adds Pill and Logo.** Purely additive — no token renamed or
+removed, so an app on 0.6.0 needs no theme edits and nothing already rendered
+changes.
+
 **0.5.0 -> 0.6.0 makes elevation and ButtonRound's pressed state theme-aware,
 and adds ButtonRound.** No token was renamed or removed, so an app on 0.5.0
 needs no theme edits. Two values move in dark mode only: the float shadows
