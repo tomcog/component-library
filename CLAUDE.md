@@ -243,7 +243,7 @@ A green `npm run build` does not mean the CSS pipeline works. After any change t
 
 ## Figma sync
 
-Source of truth is the `Button` component set (`135:9598`) in the **iconAtomic Components** file, page `Components`. It is edited via the Figma Console MCP Desktop Bridge plugin, which needs Figma Desktop open with the plugin running. The REST token is expired, so `figma-console`'s REST-backed tools (`figma_get_component_for_development`, component images) fail with 403 — use `figma_execute` and `figma_capture_screenshot`, which go through the plugin and need no token.
+Source of truth is the `Button` component set (`135:9598`) in the **component-library** file (key `l0022oDH82HhLclD3s3q9z`; formerly named *iconAtomic Components* — a rename does not change the key), page `Components`. It is edited via the Figma Console MCP Desktop Bridge plugin, which needs Figma Desktop open with the plugin running. The REST token is expired, so `figma-console`'s REST-backed tools (`figma_get_component_for_development`, component images) fail with 403 — use `figma_execute` and `figma_capture_screenshot`, which go through the plugin and need no token.
 
 **For reading, prefer the official Figma MCP server instead** (`get_design_context`, `get_screenshot`, `get_variable_defs`). It is authenticated separately, needs neither the Desktop Bridge nor the expired REST token, and returns the variant matrix, component properties and bound variable values in one call — that is how the Nav spec was read. The Desktop Bridge is still required for *writing*, and is worth the setup only then; it also binds to a fallback port when stale instances hold 9223, so `figma_get_status` reporting "no plugin connected" while the plugin looks open usually means it attached to a different port.
 
@@ -593,6 +593,20 @@ inherited from its parent — an svg-only rule loses to those silently.
 `vector-effect: non-scaling-stroke` then pins the weight to rendered px
 whatever the icon's viewBox, so a 24-viewBox glyph drawn at 12px does not
 halve its stroke.
+
+### There are two round-button sets; only one is live
+
+`Button/Round` (`220:11857`, `Size` x `State`, 12 variants) is the one this
+component models. Beside it sits `Button/Round-Deprecated` (`66:2077`,
+`Level` x `State` — Primary, Secondary, Tertiary, Ghost, Destroy), which is on
+its way out but **still has ~247 instances in the file** against the live
+set's 9. It is not scaffolding: deleting it breaks every one of those, so
+leave it alone until the user has migrated them.
+
+The two shared the name `Button/Round` until the deprecated one was renamed,
+and that ambiguity is the likely reason consuming files resolved the key to a
+third, older shape (a `State=On` axis) no matter how often the library was
+published. Re-check a consumer after any publish rather than assuming it took.
 
 ### Every colour is on the semantic tier, deliberately
 
