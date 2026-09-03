@@ -1,8 +1,8 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, Pill } from "../src";
-import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant } from "../src";
+import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, Pill, Logo } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
@@ -10,6 +10,7 @@ const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["large", "medium", "small"];
 const ROUND_SIZES: ButtonRoundSize[] = ["large", "medium", "small"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
+const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
 // Tier 1: fixed palette, internal. An app should never alias these.
 const PRIMITIVE_TOKENS = [
@@ -307,6 +308,30 @@ function App() {
               </NavDropdownItem>
             ))}
           </NavDropdown>
+        </Row>
+      </Section>
+
+      <Section
+        title="Logo"
+        note="The brand mark at five weights. Drawn in currentColor, so it takes the colour of whatever it sits in - shown here in text colour, brand red, and reversed on ink."
+      >
+        <Row label="weights">
+          {LOGO_WEIGHTS.map((w) => (
+            <div key={w} style={{ textAlign: "center" }}>
+              <Logo weight={w} size={56} />
+              <p className="cardLabel">{w}</p>
+            </div>
+          ))}
+        </Row>
+        <Row label="colour">
+          <Logo weight="medium" size={44} />
+          <Logo weight="medium" size={44} style={{ color: "var(--ui-primary)" }} />
+          <span style={{ background: "var(--ui-surface-inverse)", padding: 10, borderRadius: 8, display: "inline-flex" }}>
+            <Logo weight="medium" size={44} style={{ color: "var(--ui-text-on-inverse)" }} />
+          </span>
+        </Row>
+        <Row label="named">
+          <Logo weight="heavy" size={44} label="Tom Coggia" />
         </Row>
       </Section>
 

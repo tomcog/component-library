@@ -659,6 +659,39 @@ reintroduce the primitives; the same reasoning is why Button's `secondary`
 uses this pair.
 
 
+## Logo
+
+Tom Coggia's brand mark. Figma: the `logo-tc` set (`107:7630`), one axis
+`Weight` = `x-light` | `light` | `medium` | `heavy` | `x-heavy`.
+
+```tsx
+<Logo weight="medium" size={40} label="Tom Coggia" />
+```
+
+**The paths are exported from Figma, not redrawn.** Each weight is two paths —
+the open ring and the T — pulled straight out of the component with
+`exportAsync`, so the curves are the artwork's. If a weight is ever redrawn in
+Figma, re-export rather than nudging the `d` strings by hand.
+
+### `currentColor`, deliberately
+
+The mark carries no colour of its own. It is used on light grounds, reversed
+on ink, and in the brand red, and none of those is more correct than the
+others — so it inherits, and `--ui-logo-color` only sets a starting point
+(`--ui-text-default`) for when nothing up the tree has set one.
+
+This is the one place `--ui-tc-red` would be the *wrong* default even though
+the mark is the brand: the identity is the shape, not the colour it happens to
+be printed in.
+
+### Naming is opt-in
+
+`label` sets `role="img"` and `aria-label`; without it the mark renders
+`aria-hidden`. A logo beside a wordmark is decorative and should not be
+announced twice, but one standing alone as the page's identity must be — the
+component cannot tell which, so the caller says.
+
+
 ## Pill
 
 A filter toggle — the row of choices above a list. Figma: the `Pill` set

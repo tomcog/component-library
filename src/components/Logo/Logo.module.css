@@ -1,0 +1,8 @@
+/* The mark takes its colour from context via currentColor, so there is no
+   fill here to override it. --ui-ink is only the starting point, and only
+   when nothing up the tree has set a colour. */
+.logo {
+  display: block;
+  flex: none;
+  color: var(--ui-logo-color, var(--ui-text-default));
+}
