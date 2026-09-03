@@ -41,6 +41,13 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.5.0 -> 0.6.0 makes elevation and ButtonRound's pressed state theme-aware,
+and adds ButtonRound.** No token was renamed or removed, so an app on 0.5.0
+needs no theme edits. Two values move in dark mode only: the float shadows
+deepen to 50% black, and a pressed ButtonRound flips to `--ui-surface-inverse`
+instead of staying near-black. ButtonRound's icons also grew (24/20/16 from
+22/16/12).
+
 **0.2.0 -> 0.3.0 adds Card and moves colour values.** The greys were neutralised
 (`--ui-ink` `#282523` -> `#262626`) and the dark-side neutrals renumbered
 (`600/700/800/850` -> `550/650/700/800`) — an app aliasing a primitive by
