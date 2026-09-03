@@ -357,7 +357,10 @@ Note this Figma file is shared with other work — `PacketEditorHeader`,
 `StepperWell`, `Checkbox`, `TabBarBG` and friends belong to other projects.
 "Identical" covers the design-system subset (`Color/*`, `Neutral/*`,
 `Primary/*`, `Text/*`, `Surface/*`, `Button*`, `Nav/*`, `Motion/*`, `Card*`),
-not the whole file.
+not the whole file. One explicit exception inside that pattern:
+`Button/Round-Deprecated` is used by the file's own screens but is **not part
+of the library**, so its absence from the code is not drift and must not be
+"fixed" by building a component for it.
 
 ### Light and dark are a semantic-tier concern
 
@@ -598,10 +601,15 @@ halve its stroke.
 
 `Button/Round` (`220:11857`, `Size` x `State`, 12 variants) is the one this
 component models. Beside it sits `Button/Round-Deprecated` (`66:2077`,
-`Level` x `State` — Primary, Secondary, Tertiary, Ghost, Destroy), which is on
-its way out but **still has ~247 instances in the file** against the live
-set's 9. It is not scaffolding: deleting it breaks every one of those, so
-leave it alone until the user has migrated them.
+`Level` x `State` — Primary, Secondary, Tertiary, Ghost, Destroy).
+
+**That one is deliberately not in the library.** It is used by the file's own
+screens — ~247 instances against the live set's 9 — and the user has said it
+will not be part of the library, so there is nothing to model in code and no
+divergence to close. Do not build a `Level`-based round button to "match" it,
+and do not delete it: those instances are real, and it is the set that carries
+the `Level=Ghost` variant a previous session destroyed by assuming exactly
+this kind of thing was leftover scaffolding.
 
 The two shared the name `Button/Round` until the deprecated one was renamed,
 and that ambiguity is the likely reason consuming files resolved the key to a
