@@ -107,14 +107,15 @@
 
   --ui-button-font-weight: 500;
 
-  /* ButtonRound. Figma: 40/32/24 containers, 22/16/12 icon boxes,
-     2/1.5/1 icon stroke. */
+  /* ButtonRound. Figma: 40/32/24 containers, 24/20/16 icon boxes,
+     2/1.5/1 icon stroke. The icon grows faster than the container
+     (60% / 62.5% / 67%) so the glyph stays legible at Small. */
   --ui-button-round-lg-size: 40px;
   --ui-button-round-md-size: 32px;
   --ui-button-round-sm-size: 24px;
-  --ui-button-round-lg-icon-size: 22px;
-  --ui-button-round-md-icon-size: 16px;
-  --ui-button-round-sm-icon-size: 12px;
+  --ui-button-round-lg-icon-size: 24px;
+  --ui-button-round-md-icon-size: 20px;
+  --ui-button-round-sm-icon-size: 16px;
   /* Rendered stroke, in px. Unitless because SVG stroke-width is a number;
      `vector-effect: non-scaling-stroke` in ButtonRound.module.css is what
      makes these render as literal px whatever the icon's viewBox. */

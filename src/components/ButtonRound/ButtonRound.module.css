@@ -28,15 +28,19 @@
   outline-offset: 2px;
 }
 
-/* The disabled icon is --ui-neutral-350, not --ui-text-disabled: an icon
-   needs more weight than text to read at the same lightness, and Figma
-   specifies #b8b8b8 here against Button's #d4d4d4 label. This is the one
-   place ButtonRound reaches past the semantic tier - there is no semantic
-   role for it - so an app's theme cannot move it. Override
-   --ui-button-round-icon-disabled if that matters. */
+/* Figma binds this to Button/Disabled/Label, which resolves through
+   Text/Disabled - the same token Button's disabled label uses. It briefly
+   pointed at Surface/Muted Hover (#b8b8b8) instead, which is why this once
+   read --ui-neutral-350.
+
+   Note :active above is still on primitives, --ui-ink / --ui-white, and so is
+   Figma (Color/Ink, Color/White). The two sides agree, but both skip the
+   semantic tier, so an app's theme cannot move the pressed state.
+   --ui-surface-inverse / --ui-text-on-inverse are the semantic equivalents if
+   that is ever wanted - a design call, since they flip in dark mode. */
 .button:disabled {
   background: var(--ui-button-round-bg-disabled, var(--ui-surface-disabled));
-  color: var(--ui-button-round-icon-disabled, var(--ui-neutral-350));
+  color: var(--ui-button-round-icon-disabled, var(--ui-text-disabled));
   cursor: not-allowed;
 }
 
