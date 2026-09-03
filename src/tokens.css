@@ -138,6 +138,15 @@
   --ui-nav-panel-radius: 0px;
   --ui-nav-pipe-radius: 1px;
 
+  /* Pill. Figma: 999 radius, 7/14 padding, DM Sans Medium 13. The 31px
+     height is padding plus line height, not a set height. */
+  --ui-pill-radius: 999px;
+  --ui-pill-padding-x: 14px;
+  --ui-pill-padding-y: 7px;
+  --ui-pill-font-size: 13px;
+  --ui-pill-line-height: 17px;
+  --ui-pill-font-weight: 500;
+
   /* Card. Figma: 8px radius. No width or height - see Card.module.css for
      why the 350x200 frame is not modelled. */
   --ui-card-radius: 8px;

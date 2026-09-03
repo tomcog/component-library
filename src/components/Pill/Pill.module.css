@@ -1,0 +1,51 @@
+/* Pill - a filter toggle. Figma: the Pill set, one axis State = On | Off.
+
+   Off binds to Color/White in Figma, a primitive that cannot flip with the
+   theme; this uses --ui-surface-raised, which is #ffffff in light and so
+   identical there, but becomes the dark panel fill in dark mode.
+   On is Surface/Inverse either way. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  flex: none;
+  font-family: var(--ui-font-family, inherit);
+  font-size: var(--ui-pill-font-size);
+  line-height: var(--ui-pill-line-height);
+  font-weight: var(--ui-pill-font-weight);
+  padding: var(--ui-pill-padding-y) var(--ui-pill-padding-x);
+  border-radius: var(--ui-pill-radius);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--ui-motion-fast) ease,
+              color var(--ui-motion-fast) ease;
+}
+
+.off {
+  background: var(--ui-pill-bg, var(--ui-surface-raised));
+  color: var(--ui-pill-text, var(--ui-text-muted));
+}
+.off:hover:not(:disabled) {
+  color: var(--ui-pill-text-hover, var(--ui-text-default));
+}
+
+.on {
+  background: var(--ui-pill-bg-on, var(--ui-surface-inverse));
+  color: var(--ui-pill-text-on, var(--ui-text-on-inverse));
+}
+
+.pill:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+.pill:disabled {
+  background: var(--ui-pill-bg-disabled, var(--ui-surface-disabled));
+  color: var(--ui-pill-text-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill { transition: none; }
+}

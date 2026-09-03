@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem } from "../src";
+import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, Pill } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -117,6 +117,7 @@ function App() {
   const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, primary]);
   const [subPage, setSubPage] = useState("/work/b");
   const [trail, setTrail] = useState(false);
+  const [pill, setPill] = useState("All");
 
   return (
     <div className="page" data-theme={theme} style={{ ["--ui-primary" as string]: primary }}>
@@ -306,6 +307,20 @@ function App() {
               </NavDropdownItem>
             ))}
           </NavDropdown>
+        </Row>
+      </Section>
+
+      <Section
+        title="Pill"
+        note="Filter toggle. Figma: State = On | Off. Click to toggle - aria-pressed follows, and Off darkens its label on hover."
+      >
+        <Row label="filters">
+          {["All", "Remote", "Hybrid", "On-site"].map((f) => (
+            <Pill key={f} selected={pill === f} onClick={() => setPill(f)}>{f}</Pill>
+          ))}
+        </Row>
+        <Row label="disabled">
+          <Pill disabled>Unavailable</Pill>
         </Row>
       </Section>
 

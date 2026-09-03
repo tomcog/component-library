@@ -659,6 +659,41 @@ reintroduce the primitives; the same reasoning is why Button's `secondary`
 uses this pair.
 
 
+## Pill
+
+A filter toggle — the row of choices above a list. Figma: the `Pill` set
+(`432:17267`), one axis `State` = `On` | `Off`.
+
+```tsx
+<Pill selected={filter === "Remote"} onClick={() => setFilter("Remote")}>Remote</Pill>
+```
+
+Renders a real `<button>` with `aria-pressed`, so it is announced as a toggle
+rather than a link or a tab. The prop is `selected`, not `on`: that is what the
+control means to a caller and what `aria-pressed` reports. The class stays
+`.on`, so `State=On` still transforms.
+
+**No height token.** Figma draws the pill 31px tall, but that is 7px padding
+plus a 17px line box — set a height and the two would fight the moment the
+type scale moved.
+
+### It was rebound to the semantic tier on arrival
+
+As drawn, `State=Off` filled with `Color/White` and `State=On` with
+`Button/Secondary/Default`. Both were repointed in Figma — Off to
+`Surface/Raised`, On to `Surface/Inverse` — and the code uses those.
+
+Two separate problems, worth recognising again elsewhere:
+
+- `Color/White` is a **primitive**, so it could not follow the theme; the pill
+  would have stayed white on a dark page. `Surface/Raised` is `#ffffff` in
+  light, so nothing changed there.
+- `Button/Secondary/Default` is **Button's component token**. Reusing it would
+  have made Pill's appearance a side effect of Button's, so that a later change
+  to the secondary button silently moved the filter row. It resolved to
+  `Surface/Inverse` anyway; Pill now says so directly.
+
+
 ## Card
 
 A raised surface that groups content. Figma: the `Card` component set
