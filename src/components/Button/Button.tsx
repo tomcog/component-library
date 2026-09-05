@@ -14,7 +14,7 @@ import { assignRef } from "../../internal/assignRef";
 declare const process: { env: { NODE_ENV?: string } };
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
-export type ButtonSize = "large" | "medium" | "small";
+export type ButtonSize = "jumbo" | "large" | "medium" | "small";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Figma: Level */

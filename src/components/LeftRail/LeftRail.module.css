@@ -1,0 +1,42 @@
+/* LeftRail. Figma: `LeftRail-NoIcons` (482:2517) and `LeftRail-Icons`
+   (458:2612).
+
+   Colours resolve at the element, so --ui-primary and [data-theme] are picked
+   up from wherever they sit in the tree - the same rule as NavRail and Button.
+   The first name in each var() is the optional component-level override. */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--ui-left-rail-padding);
+  background: var(--ui-left-rail-bg, var(--ui-surface-pale));
+  font-family: var(--ui-font-family, inherit);
+  /* No width and no height. The rail is whatever column the app's layout
+     gives it, exactly as Card takes its grid cell; Figma poses it at 200x500
+     because a frame has to have a size. Stretching to the full column height
+     is what makes the ground read as the rail rather than as a card. */
+  box-sizing: border-box;
+}
+
+/* The brand slot. A fixed height rather than one derived from its contents,
+   so the nav below starts on the same line whatever is dropped in - a 50px
+   logo, a taller wordmark lockup, or nothing at all.
+
+   It is a plain block, not a link: whether the brand navigates home is the
+   app's decision, so the caller passes whatever element it wants. */
+.brand {
+  display: flex;
+  align-items: center;
+  min-height: var(--ui-left-rail-brand-size);
+  margin-block-end: var(--ui-left-rail-brand-gap);
+  /* The mark inherits its colour, per Logo's currentColor contract. Setting
+     the text colour here rather than a logo-specific token means a brand
+     dropped into a dark-themed rail follows the theme. */
+  color: var(--ui-left-rail-brand-color, var(--ui-text-default));
+}
+
+/* Nothing passed - no slot, and no 32px hole above the nav either. */
+.brand:empty {
+  display: none;
+}

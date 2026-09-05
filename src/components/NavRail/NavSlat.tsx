@@ -4,7 +4,18 @@ import styles from "./NavRail.module.css";
 import { NavLink } from "../Nav/NavLink";
 import type { NavLinkBaseProps } from "../Nav/NavLink";
 
+export type NavSlatLevel = "primary" | "secondary";
+
 export interface NavSlatProps extends NavLinkBaseProps {
+  /**
+   * Figma: the `Level` axis. `secondary` is a sub item - muted, indented
+   * under its parent, and never carrying a chip even if one is passed.
+   *
+   * Sub items belong inside a `NavSlatGroup`, which closes the gap between
+   * them and supplies the indent. On its own a `secondary` slat still reads
+   * correctly, it is just not grouped with a parent.
+   */
+  level?: NavSlatLevel;
   /**
    * Decorative icon, e.g. any Lucide React icon. Figma: the `Icon?` property.
    * Optional - without one the slat is text alone and closes up, which is what
@@ -36,10 +47,20 @@ export interface NavSlatProps extends NavLinkBaseProps {
  * `-active` is unavailable in CSS, where it already means pressed.
  */
 export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavSlat(
-  { active = false, icon, children, ...props },
+  { active = false, level = "primary", icon, children, ...props },
   ref,
 ) {
-  const classes = [styles.slat, icon ? styles.withIcon : null, active ? styles.current : null]
+  // Figma draws no chip on a sub item, and there is no Level=Secondary
+  // variant carrying one - so the slot is dropped rather than rendered small.
+  const sub = level === "secondary";
+  const chip = sub ? null : icon;
+
+  const classes = [
+    styles.slat,
+    sub ? styles.secondary : null,
+    chip ? styles.withIcon : null,
+    active ? styles.current : null,
+  ]
     .filter(Boolean)
     .join(" ");
 
@@ -51,9 +72,9 @@ export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavS
       active={active}
       wrap={(label) => (
         <>
-          {icon ? (
+          {chip ? (
             <span className={styles.chip} aria-hidden="true">
-              <span className={styles.icon}>{icon}</span>
+              <span className={styles.icon}>{chip}</span>
             </span>
           ) : null}
           <span className={styles.pipe} aria-hidden="true" />

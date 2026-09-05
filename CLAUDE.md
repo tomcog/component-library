@@ -41,6 +41,18 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.7.0 -> 0.8.0 adds LeftRail and NavSlat sub items, and moves NavRail's
+geometry.** Not additive: the `NavSlat` set was redrawn in Figma and the code
+followed, so **any app already using `NavRail` will see its rail change** -
+slats 20 -> 32 tall, gap 14 -> 8, inline padding 12 -> 0, and the icon chip
+40 -> 32 (Button/Round Large -> Medium). Nothing renamed, so no theme file
+breaks, but the rhythm is visibly different; check a rail after bumping.
+
+It also adds a **14th semantic token**, `--ui-surface-pale`. An app that
+mapped the other thirteen keeps working - it silently falls back to the
+library's `#f5f5f5`, which is right in light and wrong in dark, so map it
+before shipping a dark theme.
+
 **0.6.0 -> 0.7.0 adds Pill and Logo.** Purely additive — no token renamed or
 removed, so an app on 0.6.0 needs no theme edits and nothing already rendered
 changes.
@@ -103,10 +115,10 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
-### The theming contract: 13 semantic tokens
+### The theming contract: 14 semantic tokens
 
 `tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
-the public API** — those 13 names are what a consuming app overrides to make
+the public API** — those 14 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
 never alias `--ui-tc-red`.
 
@@ -144,6 +156,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-text-default:         /* text on a light/neutral fill          */;
   --ui-text-muted:           /* de-emphasised text (nav sub items)    */;
   --ui-surface-raised:       /* floating panel fill (nav dropdown)    */;
+  --ui-surface-pale:         /* the page under a rail or panel        */;
 
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
@@ -153,7 +166,15 @@ Declare them unlayered on `:root` (the library's defaults live inside
 **Leave one out and it does not fail — it silently keeps the library's own
 placeholder neutral.** That looks plausible in isolation, which is exactly why
 it goes unnoticed; the app's palette and the component's drift apart one variant
-at a time. Map all 13 or none.
+at a time. Map all 14 or none.
+
+`--ui-surface-pale` was added with `LeftRail`, the first component to paint
+its own ground. It is the counterpart of `--ui-surface-raised`, not a synonym:
+`raised` is what floats (a dropdown, a card), `pale` is what those float over.
+The pair keeps that order in both themes — in dark, `pale` is `--ui-ink`
+(`#262626`) *below* `raised`'s `#2e2e2e`, rather than inverting. An app that
+themed the library before `LeftRail` existed will not have mapped it, and per
+the rule above that fails silently.
 
 `--ui-text-muted` (Figma `TextSecondary`, `#737373`) and `--ui-surface-raised`
 (the dropdown panel's fill) were both added with Nav. They are the only
@@ -521,12 +542,17 @@ a fix pending, per the rule above.
    `Neutral/550`, `/650`, `/700` and `/800` were then created in Figma, so
    both sides hold the same ramp even though no Figma mode uses them yet.
 3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
-   `True Black`, `Primary/Dark`, `Primary/Lighter`, `Primary/Darker`,
-   `Surface/Pale` (`#f5f5f5`, the value of `--ui-neutral-100`; it backs the
-   NavRail assembly frame, and no component uses it). No
+   `True Black`, `Primary/Dark`, `Primary/Darker`. No
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
+
+   `Surface/Pale` came off this list when `LeftRail` needed it, which is
+   exactly the trigger the rule describes. It is now `--ui-surface-pale`, the
+   14th semantic token, with a dark value (`--ui-ink`) that Figma does not
+   have yet — so it travels code -> Figma on the next Bridge session.
+   (`Primary/Lighter` was already in code as `--ui-primary-lighter`; it should
+   not have been on this list.)
 5. ~~NavRail's type and pipe moved in code and not yet in Figma.~~
    **Resolved.** Pushed once the Desktop Bridge came back: the three
    `Level=Primary` labels went to 14/20, and the Hover chip's glyph off the
@@ -557,6 +583,39 @@ a fix pending, per the rule above.
    was creating by assuming exactly this was leftover scaffolding. Ask before
    touching it. If it is intended, the code needs a `ghost` state on
    `ButtonRound` and the glyph wants repointing to a semantic token.
+
+8. ~~NavRail's slat gap moved in code and not yet in Figma.~~
+   **Superseded.** The 14px gap lasted one session. Reading the `LeftRail`
+   frames showed the `NavSlat` set had been redrawn to a 32 line box with an
+   8 gap, and the code took those numbers instead - so the question of
+   whether the slat box or the line box was the thing being spaced answered
+   itself: both sides are now 32 + 8.
+
+   The `Nav/Rail/Gap` **variable** is still 10 in Figma and is now used by
+   nothing - the `LeftRail` frames hardcode their 8. Either repoint it to 8
+   and bind the frames to it, or delete it; leaving a stale geometry variable
+   in the file is how the next reader gets a wrong number confidently.
+
+9. **Figma's `NavSlat` description is stale**, and it is the most-read
+   surface on the component - it comes back with every `get_design_context`.
+   It still says the chip is a Button/Round **Large** (40/24/2), the type is
+   14/**20**, padding-inline is **12**, the gap is **10**, and that
+   "Level=Secondary is drawn here but not yet modelled". Every one of those is
+   now wrong: the artwork itself moved to 32/8/0 with a Medium chip, and the
+   code models Secondary. The description was written against the old
+   drawing and never updated when the set was redrawn.
+
+   Rewriting it needs the Desktop Bridge, which was not connected this
+   session. Worth doing in the same pass as #8, and worth re-reading the
+   description against the artwork rather than against this file - the two
+   disagreed here and the artwork was right.
+
+10. **`LeftRail` exists only in code as a component.** Figma has two frames,
+   `LeftRail-NoIcons` and `LeftRail-Icons`, neither of which is a component
+   set - so there is nothing to instance, and the "two sides must match" rule
+   has nothing to compare against beyond the drawn pixels (which do match,
+   measured). Promoting them to a set with an `Icon?` boolean would close it;
+   that is a design-shaped change, so it happens in Figma first.
 
 7. **`Button` and `logo-tc` have no Figma description**, where `NavSlat`,
    `Card`, `Pill` and `Button/Round` now do. `Button` is the 60-variant set
@@ -728,23 +787,24 @@ Left rail navigation - a vertical column of links. Figma: the `NavSlat` set
 </NavRail>
 ```
 
-**No sub items.** The `NavSlat` set also carries a `Level=Secondary`; it is
-not modelled yet. A first pass built it plus a hover-disclosed group, and was
-deleted to start again from the simplest thing that works. Don't restore it
-from history wholesale - the set has been redrawn since.
+**Sub items are modelled**, as `level="secondary"` plus a `NavSlatGroup`
+wrapper. An early pass built them as a hover-disclosed group and was deleted;
+this one was built fresh off the redrawn set rather than restored from
+history, which is what that warning was for.
 
 `icon` is optional. Without one the slat is text alone and closes up, which is
-what hiding the layer does to Figma's auto-layout; with one the slat is 40 tall
-rather than hugging its line box, because the chip is the taller child.
+what hiding the layer does to Figma's auto-layout. It no longer changes the
+slat's height: the line box and the chip are both 32.
 
-    gap       10   between slats
-    padding   12   inline
-    type      DM Sans Medium 14 / 20
-    height         none - the slat hugs its tallest child: 20, or 40 with a chip
-    chip      40   a Button/Round Large; icon 24 at stroke 2
+    gap       8    between slats
+    padding   0    inline - the rail's own padding sets the inset
+    type      DM Sans Medium 14 / 32
+    height         none - the slat hugs its line box: 32, with a chip or without
+    chip      32   a Button/Round Medium; icon 20 at stroke 1.5
     chip gap  8    chip -> label
     pipe      4 wide, the height of the label's line box, --ui-primary
     indent    14   = pipe width + the 10 gap Figma sets after it
+    sub       16   indent, or 32 + 8 = 40 once icons are on; 0 gap within a group
 
 | Figma state | here | label | pipe | indent |
 |---|---|---|---|---|
@@ -752,9 +812,29 @@ rather than hugging its line box, because the chip is the taller child.
 | Hover | `:hover`, `:focus-visible` | unchanged | drawn | 12px |
 | Active | `active` | `--ui-primary` | - | - |
 
-Verified against the assembly: slat tops `0/34/68/102/136`, heights 24, and
-the indent settles at exactly 12px - Figma's Default variant is 196 wide and
-its Hover 208.
+### The geometry moved when the set was redrawn
+
+The numbers above are not the ones this component was first built to. The
+`NavSlat` set was redrawn in Figma between the first fetch and `LeftRail`, and
+all four variants are now 32 tall where they were 20 on their own and 40 with
+a chip. Three things followed from that one change:
+
+- **The chip dropped a size.** A 40px `Button/Round` Large no longer fits a 32
+  line, so it is Medium (32/20/1.5) and the slat is one height throughout -
+  `--ui-nav-rail-chip-*` alias the `-md-` tokens now, not `-lg-`.
+- **The gap went 14 -> 8**, and padding-inline 12 -> 0. Both were read off the
+  `LeftRail` frames, where the slats sit flush against the rail's own 24
+  padding and the hover pipe wants the slat's leading edge to *be* that inset.
+- **A brief 34px pitch agreement is gone.** For one session the code stacked a
+  20 line box on a 14 gap while Figma stacked a 24 box on a 10, and every slat
+  top still landed on the same pixel. That coincidence is what made the two
+  gap numbers look like a divergence when the rhythm actually matched. Both
+  sides are now 32 + 8 = 40 outright, so the agreement is stated rather than
+  arrived at.
+
+Verified live against both `LeftRail` frames: slat tops `0/40/72/104/136/176/
+216/256` and sub labels at 40 (text-only) / 64 (icons) from the rail's edge,
+which is what Figma draws at `pl-16` and `pl-40` inside its 24 padding.
 
 ### The pipe is out of flow
 
@@ -843,7 +923,129 @@ circle.
 - **`prefers-reduced-motion` is honoured**, which is still new for this
   library: the states all still apply, the pipe just stops drawing and the
   label stops sliding. Button and Nav do not have it yet.
+- **A sub item's hover and current are code-only.** The set draws exactly one
+  secondary variant, `Level=Secondary, State=Default`. Left literally, a sub
+  item would not respond to the pointer at all, which reads as disabled rather
+  than quiet - so they rest at `--ui-text-muted` and darken to
+  `--ui-text-default`, which is what `NavDropdownItem` already does with the
+  horizontal nav's sub items, and go `--ui-primary` when current.
+- **A sub item draws the hover pipe, exactly as a primary slat does** - the
+  same 4px bar drawn top to bottom, the same 14px indent after it. Figma has
+  no hovered secondary variant, so this is code-only, and it is a deliberate
+  request rather than an inference: an earlier pass left sub items with a
+  colour change alone, on the reasoning that a second pipe under the parent's
+  would read as a nested rule. In practice the pipe is what makes a row feel
+  live, and dropping it made sub items feel like labels rather than links.
 
+  It needs no rules of its own. The pipe is positioned from the slat's own
+  leading edge, and a sub item's leading edge is already the indented one, so
+  the bar lands against its own label rather than under the parent's - which
+  is what that earlier reasoning was actually worried about.
+
+  The current sub item still suppresses both, so hover and current never
+  compound - the same rule primary slats and `NavDropdownItem` follow.
+- **A sub item drops an `icon` if one is passed.** Figma draws no chip on
+  `Level=Secondary` and offers no variant carrying one, so the slot is
+  dropped rather than rendered at some smaller size.
+
+### `NavSlatGroup` picks its own indent
+
+Figma expresses the sub indent as two hand-set frames - `pl-16` on the
+text-only rail, `pl-40` on the one with icons, that 40 being the chip plus its
+gap. Copying both numbers into code would mean a prop saying which rail this
+is, and a rail that gains icons would then be wrong until someone remembered
+to change it.
+
+The group reads the condition off its own contents instead:
+
+    .group:has(.withIcon) .secondary { margin-inline-start: calc(chip + gap) }
+
+So the sub labels line up under the parent's label either way - verified at
+64/64 with icons on. The group also sets `gap: 0`, which is the other half of
+its job: a parent and its children want to read as one block, and the rail's
+own 8 still separates the group from its neighbours.
+
+
+## LeftRail
+
+The app shell's left column - a brand slot over a `NavRail`. Figma:
+`LeftRail-NoIcons` (`482:2517`) and `LeftRail-Icons` (`458:2612`).
+
+```tsx
+<LeftRail brand={<Logo weight="medium" size={50} label="Acme" />}>
+  <NavRail aria-label="Sections">
+    <NavSlat asChild icon={<Home />}><Link href="/">Dashboard</Link></NavSlat>
+    <NavSlatGroup>
+      <NavSlat asChild active icon={<Settings />}><Link href="/settings">Settings</Link></NavSlat>
+      <NavSlat asChild level="secondary"><Link href="/settings/members">Members</Link></NavSlat>
+    </NavSlatGroup>
+  </NavRail>
+</LeftRail>
+```
+
+    padding    24   all round
+    brand      50   min-height, then 32 to the nav
+    fill            --ui-surface-pale
+    width           none - whatever column the layout gives it
+
+### It is a shell, not a nav
+
+It renders a `<div>` and takes the `NavRail` as **children** rather than
+building one internally. Two reasons, and neither is style:
+
+- The `<nav>` landmark and its `aria-label` belong on the element that holds
+  the links. Wrapping would have meant forwarding a `navLabel` prop down, and
+  a page with more than one nav needs that label to be obvious, not plumbed.
+- The column carries more than nav sooner or later - a workspace switcher
+  under the brand, a user block pinned to the bottom. Children leave room for
+  that; a `items` prop would not.
+
+`brand` is a **slot, not a `logo` prop**. What belongs there varies per app:
+the mark alone, a mark beside a wordmark, or a link home. The slot is rendered
+even when empty and collapsed with `:empty`, so omitting it leaves no 32px
+hole and no second code path.
+
+### The fill is the one place a frame background IS the component
+
+`Card`'s 350x200 frame and `NavRail`'s own example frame are both "the page
+the design sits on", and neither is modelled. This one is different and the
+distinction is worth keeping straight: the pale ground travels with the rail,
+and it is the thing separating the rail from the content beside it. A left
+rail with no fill is not a left rail, it is a list.
+
+That is what made `--ui-surface-pale` worth adding to code - it had sat in
+Figma unused, as open divergence #3 records, precisely because no component
+had needed it.
+
+**`--ui-left-rail-bg` is deliberately not declared in `tokens.css`.** Composing
+it there as `var(--ui-surface-pale)` looks tidier and is wrong: a `var()`
+inside a custom property resolves at the element that *declares* it, so the
+fill would freeze against `:root`'s light value and `[data-theme="dark"]` on a
+subtree could not move it. This was caught by rendering it, not by reading it
+- the build is green either way and light mode looks perfect. The module
+carries `var(--ui-left-rail-bg, var(--ui-surface-pale))` instead, resolving at
+the rail, which is what every other component colour in this library already
+does. Card's shadow tokens describe the same trap and solve it the other way,
+by redeclaring in the dark block; the fallback form is preferred where a
+component token has no reason to exist on `:root` at all.
+
+### The spacer is not modelled
+
+Figma reaches the 32px between brand and nav as an 8 gap, a 16 `Spacer`
+rectangle and another 8 gap. The spacer is an auto-layout idiom for "leave a
+hole here", the same class of thing as `NavSlat`'s hidden pipe rectangles, so
+code carries one number - `--ui-left-rail-brand-gap: 32px` - rather than
+three nodes. Measured live at 32.
+
+### Divergences - do not "fix" these
+
+- **The 200x500 frame is not modelled.** Same call as `Card`: the rail has no
+  width and no height, and stretches to the column it is given. Figma poses it
+  at 200x500 because a frame must have a size.
+- **`LeftRail` is a plain frame in Figma, not a component set.** There is
+  nothing to instance and no variant axis; the two frames are `Icon?` on and
+  off, which in code is just whether the caller passes `icon`. If it is ever
+  promoted to a component, the code name already matches.
 
 ## ButtonRound
 

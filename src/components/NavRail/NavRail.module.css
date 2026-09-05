@@ -154,6 +154,56 @@
   );
 }
 
+/* -- sub items ------------------------------------------------ */
+/* Figma: `NavSlat` at `Level=Secondary`. A muted label, no chip, no pipe.
+
+   The set draws one variant - Level=Secondary, State=Default - so hover and
+   current are code-only. They follow NavDropdownItem, the horizontal nav's
+   sub items, which rest muted and darken to the default text colour: a sub
+   item that does not respond at all reads as disabled rather than quiet. */
+.secondary {
+  color: var(--ui-nav-rail-sub-text, var(--ui-text-muted));
+}
+.secondary:hover,
+.secondary:focus-visible {
+  color: var(--ui-nav-rail-sub-text-hover, var(--ui-text-default));
+}
+/* A sub item draws the pipe on hover exactly as a primary slat does - same
+   4px bar, same top-to-bottom draw, same 14px indent after it. It needs no
+   rules of its own: the pipe is positioned from the slat's own leading edge,
+   and a sub item's leading edge is already the indented one, so the bar lands
+   against its label rather than under the parent's.
+
+   Figma draws no hovered secondary variant, so this is code-only - see the
+   divergence note. It is the same call Nav's dropdown already makes, where
+   sub items get the pipe their parents do. */
+
+/* Current beats the hover colour above, as it does on a primary slat. */
+.secondary.current {
+  color: var(--ui-nav-rail-text-current, var(--ui-primary));
+}
+
+/* -- a parent and its sub items ------------------------------- */
+/* Figma: the `With sub` frame. Flush, so the block reads as one group; the
+   rail's gap still separates it from its neighbours. */
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ui-nav-rail-sub-gap);
+}
+
+/* The indent lines a sub label up under its parent's. Figma sets it by hand
+   per frame - 16 text-only, 40 once icons are on - which is chip + gap. The
+   :has() reads the same condition off the group's own contents, so a rail
+   that gains icons re-aligns without anyone editing a second number. */
+.group .secondary {
+  margin-inline-start: var(--ui-nav-rail-sub-indent);
+}
+.group:has(.withIcon) .secondary {
+  margin-inline-start: calc(var(--ui-nav-rail-chip-size) + var(--ui-nav-rail-slat-gap));
+}
+
 /* Figma: State=Active. The current page - red label, and nothing else. No
    pipe and no indent, and hovering it adds neither, so the two states never
    compound. Mirrors NavItem and NavDropdownItem, which likewise drop their
@@ -168,7 +218,7 @@
    whatever the source order. Figma's current chip is ButtonRound's *default*
    pair, not its hover pair. */
 .slat.current .chip {
-  background: var(--ui-nav-rail-chip-bg-current, var(--ui-primary-lighter));
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
   color: var(--ui-nav-rail-chip-icon-current, var(--ui-primary));
 }
 .current:hover .label,

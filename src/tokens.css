@@ -66,7 +66,14 @@
      name to recolour every primary surface - buttons, active nav, focus
      rings - without touching the palette:  :root { --ui-primary: #634509 } */
   --ui-primary: var(--ui-tc-red);
-  --ui-primary-lighter: #f7dce0; /* Figma: Primary/Lighter */
+  /* Figma: Primary/Lighter. Deliberately NOT declared here. Composed at
+     :root it would freeze against :root's --ui-primary, so recolouring the
+     brand on a subtree would leave the tint behind - the same trap the
+     --ui-button-* overrides avoid. The components derive it themselves, at
+     the element, and read this name first so an app can still pin it:
+         color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))
+     At 15% that reproduces Figma's #f7dce0 for the default red to within a
+     point on one channel. */
   --ui-text-on-primary: var(--ui-white);
 
   --ui-surface-inverse: var(--ui-ink);
@@ -79,46 +86,69 @@
   --ui-text-muted: var(--ui-neutral-500);
 
   --ui-surface-raised: var(--ui-white);
+  /* The page a rail or panel sits on - below `raised`, not above it. Figma:
+     Surface/Pale. Added with LeftRail, which paints its own ground; until
+     then no component needed the value, so it lived only in Figma. */
+  --ui-surface-pale: var(--ui-neutral-100);
 
   --ui-surface-disabled: var(--ui-neutral-150);
   --ui-text-disabled: var(--ui-neutral-300);
 
   /* Sizing — not themed, safe to resolve here. */
+  /* Jumbo exists for touch: at 48 it clears both the 44pt iOS and 48dp
+     Android minimum target, which Large at 40 does not. Its type steps up to
+     18/24 because a phone is held closer but read at a glance, and its icon
+     is 20 — the same box ButtonRound Medium uses. */
+  --ui-button-jumbo-height: 48px;
+  --ui-button-jumbo-padding-x: 24px;
+  --ui-button-jumbo-gap: 10px;
+  --ui-button-jumbo-radius: 4px;
+  --ui-button-jumbo-font-size: 18px;
+  --ui-button-jumbo-line-height: 24px;
+  --ui-button-jumbo-icon-size: 24px;
+
   --ui-button-lg-height: 40px;
-  --ui-button-lg-padding-x: 14px;
-  --ui-button-lg-gap: 6px;
+  --ui-button-lg-padding-x: 16px;
+  --ui-button-lg-gap: 8px;
   --ui-button-lg-radius: 4px;
   --ui-button-lg-font-size: 14px;
   --ui-button-lg-line-height: 20px;
+  --ui-button-lg-icon-size: 18px;
 
   --ui-button-md-height: 32px;
   --ui-button-md-padding-x: 12px;
-  --ui-button-md-gap: 5px;
-  --ui-button-md-radius: 3px;
+  --ui-button-md-gap: 8px;
+  --ui-button-md-radius: 4px;
   --ui-button-md-font-size: 12px;
   --ui-button-md-line-height: 16px;
+  --ui-button-md-icon-size: 14px;
 
   --ui-button-sm-height: 24px;
   --ui-button-sm-padding-x: 8px;
   --ui-button-sm-gap: 4px;
-  --ui-button-sm-radius: 2px;
+  --ui-button-sm-radius: 4px;
   --ui-button-sm-font-size: 10px;
   --ui-button-sm-line-height: 12px;
+  --ui-button-sm-icon-size: 12px;
 
   --ui-button-font-weight: 500;
 
-  /* ButtonRound. Figma: 40/32/24 containers, 24/20/16 icon boxes,
-     2/1.5/1 icon stroke. The icon grows faster than the container
-     (60% / 62.5% / 67%) so the glyph stays legible at Small. */
+  /* ButtonRound. Figma: 48/40/32/24 containers, 28/24/20/16 icon boxes,
+     2.5/2/1.5/1 icon stroke. The icon grows faster than the container
+     (58% / 60% / 62.5% / 67%) so the glyph stays legible at Small.
+     Jumbo matches Button's 48 so the two sit level in a touch layout. */
+  --ui-button-round-jumbo-size: 48px;
   --ui-button-round-lg-size: 40px;
   --ui-button-round-md-size: 32px;
   --ui-button-round-sm-size: 24px;
+  --ui-button-round-jumbo-icon-size: 28px;
   --ui-button-round-lg-icon-size: 24px;
   --ui-button-round-md-icon-size: 20px;
   --ui-button-round-sm-icon-size: 16px;
   /* Rendered stroke, in px. Unitless because SVG stroke-width is a number;
      `vector-effect: non-scaling-stroke` in ButtonRound.module.css is what
      makes these render as literal px whatever the icon's viewBox. */
+  --ui-button-round-jumbo-icon-stroke: 2.5;
   --ui-button-round-lg-icon-stroke: 2;
   --ui-button-round-md-icon-stroke: 1.5;
   --ui-button-round-sm-icon-stroke: 1;
@@ -138,16 +168,22 @@
   --ui-nav-panel-radius: 0px;
   --ui-nav-pipe-radius: 1px;
 
-  /* NavRail. Figma: the `NavSlat` set (444:791), assembled text-only at
-     458:2467. DM Sans Medium 14/20 - the same type as the horizontal nav, so
-     the two read as one system.
+  /* NavRail. Figma: the `NavSlat` set (444:791), assembled at 458:2467 and
+     composed into LeftRail at 482:2517 / 458:2612. DM Sans Medium 14 on a 32
+     line.
 
      There is no height token: a slat hugs its line box, exactly as Pill does,
-     so a height would fight the type the moment the scale moved. */
-  --ui-nav-rail-gap: 10px;
-  --ui-nav-rail-slat-padding-x: 12px;
+     so a height would fight the type the moment the scale moved. The 32 line
+     and the 32 chip are the same figure, so a slat is 32 tall with an icon or
+     without - it no longer grows to 40 when the chip appears.
+
+     Padding-inline is 0: the rail's own padding sets the inset, and the
+     hover pipe wants the slat's leading edge to BE that inset. A slat
+     padding would push every label in past the pipe. */
+  --ui-nav-rail-gap: 8px;
+  --ui-nav-rail-slat-padding-x: 0px;
   --ui-nav-rail-font-size: 14px;
-  --ui-nav-rail-line-height: 20px;
+  --ui-nav-rail-line-height: 32px;
   --ui-nav-rail-font-weight: 500;
   /* 4px, the same weight as the horizontal nav's accent rule
      (--ui-nav-accent-size). Deliberately its own token rather than an alias:
@@ -157,17 +193,78 @@
   --ui-nav-rail-pipe-gap: 10px;      /* pipe -> label; the indent is both together */
   --ui-nav-rail-slat-gap: 8px;       /* chip -> label */
 
-  /* The icon chip IS a Button/Round Large - Figma composes an actual instance
+  /* The icon chip IS a Button/Round Medium - Figma composes an actual instance
      of it - so the geometry is aliased rather than restated. Resize
      ButtonRound and the rail's chip follows, exactly as it does in the file.
+
+     It was Large (40/24/2) while the slat was a 20 line box and grew to 40 to
+     hold the chip. On a 32 line the chip is Medium (32/20/1.5) and the slat
+     is one height throughout.
 
      The colours are deliberately NOT aliased: Figma overrides the instance's
      fill per state, so they are the rail's own, and they sit one step off
      ButtonRound's anyway (the rail rests transparent, where ButtonRound rests
      at primary-lighter). */
-  --ui-nav-rail-chip-size: var(--ui-button-round-lg-size);
-  --ui-nav-rail-chip-icon-size: var(--ui-button-round-lg-icon-size);
-  --ui-nav-rail-chip-icon-stroke: var(--ui-button-round-lg-icon-stroke);
+  --ui-nav-rail-chip-size: var(--ui-button-round-md-size);
+  --ui-nav-rail-chip-icon-size: var(--ui-button-round-md-icon-size);
+  --ui-nav-rail-chip-icon-stroke: var(--ui-button-round-md-icon-stroke);
+
+  /* Sub items. Figma: `NavSlat` at `Level=Secondary`, grouped under their
+     parent with no gap between them - the group is one block, so the rail's
+     8 would read as five loose rows rather than a parent and its children.
+
+     The indent aligns a sub label under its parent's label, so it is 16 on a
+     text-only rail and chip + gap (40) once icons are on. NavSlatGroup picks
+     between them itself rather than taking a prop, which is what Figma's two
+     frames do by hand at pl-16 and pl-40. */
+  --ui-nav-rail-sub-indent: 16px;
+  --ui-nav-rail-sub-gap: 0px;
+
+  /* BottomNav. The mobile counterpart to NavRail: the same destinations, the
+     same chip, stacked with a caption instead of set beside a label.
+
+     64 is the row, on the 8 grid and comfortably over the 48dp Android and
+     44pt iOS minimums once the 8 of padding above it is counted. The chip is
+     aliased to ButtonRound Medium exactly as the rail's is, so the two navs
+     cannot drift apart.
+
+     No colours here: like the rail's, they are component-side fallbacks so a
+     [data-theme] or a scoped --ui-primary can still move them. */
+  --ui-bottom-nav-height: 64px;
+  --ui-bottom-nav-padding-x: 8px;
+  --ui-bottom-nav-padding-y: 8px;
+  --ui-bottom-nav-item-gap: 6px;    /* chip -> caption */
+  --ui-bottom-nav-font-size: 10px;
+  --ui-bottom-nav-line-height: 12px;
+  --ui-bottom-nav-font-weight: 500;
+  --ui-bottom-nav-chip-size: var(--ui-button-round-md-size);
+  --ui-bottom-nav-chip-icon-size: var(--ui-button-round-md-icon-size);
+  --ui-bottom-nav-chip-icon-stroke: var(--ui-button-round-md-icon-stroke);
+
+  /* LeftRail. Figma: `LeftRail-NoIcons` (482:2517) and `LeftRail-Icons`
+     (458:2612) - the app shell's left column: a brand slot over a NavRail.
+
+     The rail paints its own ground. That is the one place it differs from
+     how Card's 350x200 frame and NavRail's own example frame are treated -
+     those are the page the design sits on, where this fill travels with the
+     component and is what separates the rail from the content beside it.
+
+     No width token: the rail is whatever column its layout gives it, exactly
+     as Card takes its grid cell. Figma poses it at 200. */
+  /* --ui-left-rail-bg is deliberately NOT declared here. A var() inside a
+     custom property resolves at the element that DECLARES it, so composing
+     it on :root would freeze the fill against :root's light value and a
+     [data-theme] on a subtree could not move it - the same trap the shadow
+     tokens describe above. The module carries it as
+     var(--ui-left-rail-bg, var(--ui-surface-pale)) instead, which resolves at
+     the rail. Same reason every other component colour is a fallback rather
+     than a declaration. */
+  --ui-left-rail-padding: 24px;
+  /* Brand -> nav. Figma reaches 32 as an 8 gap, a 16 spacer rectangle and
+     another 8 gap; the spacer is an auto-layout idiom, not a thing to model,
+     so this is the one number. Same call as NavSlat's hidden pipe rects. */
+  --ui-left-rail-brand-gap: 32px;
+  --ui-left-rail-brand-size: 50px;
 
   /* Pill. Figma: 999 radius, 7/14 padding, DM Sans Medium 13. The 31px
      height is padding plus line height, not a set height. */
@@ -221,6 +318,9 @@
   --ui-text-muted: var(--ui-neutral-400);
 
   --ui-surface-raised: var(--ui-neutral-800);
+  /* Stays below `raised` as it does in light: the page reads darker than the
+     panels floating on it, so the pair does not invert with the theme. */
+  --ui-surface-pale: var(--ui-ink);
 
   --ui-surface-disabled: var(--ui-neutral-800);
   --ui-text-disabled: var(--ui-neutral-550);

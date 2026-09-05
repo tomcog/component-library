@@ -51,6 +51,12 @@ export interface LogoProps extends Omit<SVGAttributes<SVGSVGElement>, "children"
  * Drawn in `currentColor`, so it takes the colour of whatever it sits in
  * rather than carrying one of its own — the mark is used on light and dark
  * grounds and in the brand red, and none of those is more "correct".
+ *
+ * When it IS drawn in the brand red, that red is `--ui-tc-red`, never
+ * `--ui-primary`. The mark is a personal identity, not a themeable surface:
+ * an app that recolours its primary recolours its buttons and its nav, and
+ * this stays TC red regardless. That is exactly why the two are separate
+ * names in tokens.css, with --ui-primary merely defaulting to the brand.
  */
 export const Logo = forwardRef<SVGSVGElement, LogoProps>(function Logo(
   { weight = "medium", size = 40, label, className, ...props },

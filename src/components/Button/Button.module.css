@@ -31,6 +31,14 @@
 }
 
 /* -- sizes -------------------------------------------------- */
+.jumbo .content { gap: var(--ui-button-jumbo-gap); }
+.jumbo {
+  height: var(--ui-button-jumbo-height);
+  padding-inline: var(--ui-button-jumbo-padding-x);
+  border-radius: var(--ui-button-jumbo-radius);
+  font-size: var(--ui-button-jumbo-font-size);
+  line-height: var(--ui-button-jumbo-line-height);
+}
 .large .content { gap: var(--ui-button-lg-gap); }
 .large {
   height: var(--ui-button-lg-height);
@@ -158,6 +166,8 @@
 .spinner span:nth-child(2) { animation-delay: 0.15s; }
 .spinner span:nth-child(3) { animation-delay: 0.3s; }
 
+.jumbo .spinner { gap: 4px; }
+.jumbo .spinner span { width: 6px; height: 6px; }
 .large .spinner { gap: 3px; }
 .large .spinner span { width: 5px; height: 5px; }
 .medium .spinner { gap: 2.5px; }
@@ -187,9 +197,12 @@
   flex: none;
   opacity: var(--ui-button-icon-opacity, 0.65);
 }
-.large .icon { width: 16px; height: 16px; }
-.medium .icon { width: 12px; height: 12px; }
-.small .icon { width: 9px; height: 9px; }
+/* Tokenised like ButtonRound's, so a consumer can retune a slot without
+   restating the rule - and so a size swap carries its icon with it. */
+.jumbo .icon { width: var(--ui-button-jumbo-icon-size); height: var(--ui-button-jumbo-icon-size); }
+.large .icon { width: var(--ui-button-lg-icon-size); height: var(--ui-button-lg-icon-size); }
+.medium .icon { width: var(--ui-button-md-icon-size); height: var(--ui-button-md-icon-size); }
+.small .icon { width: var(--ui-button-sm-icon-size); height: var(--ui-button-sm-icon-size); }
 
 /* Icon sets ship intrinsic dimensions (lucide and heroicons both emit
    width="24" height="24"), so the SVG ignores the slot box and renders at its

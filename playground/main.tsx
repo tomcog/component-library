@@ -1,14 +1,14 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Button, ButtonRound, Card, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, Pill, Logo } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, LeftRail, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, NavSlatGroup, Pill, Logo } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
-const SIZES: ButtonSize[] = ["large", "medium", "small"];
-const ROUND_SIZES: ButtonRoundSize[] = ["large", "medium", "small"];
+const SIZES: ButtonSize[] = ["jumbo", "large", "medium", "small"];
+const ROUND_SIZES: ButtonRoundSize[] = ["jumbo", "large", "medium", "small"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
@@ -56,6 +56,24 @@ const RAIL = [
   { href: "/contact", label: "Navigation label" },
 ];
 
+// The two LeftRail frames, 482:2517 and 458:2612: five destinations, with
+// Settings carrying three sub items.
+const SHELL = [
+  { href: "/dashboard", label: "Dashboard" },
+  {
+    href: "/settings",
+    label: "Settings",
+    sub: [
+      { href: "/settings/overview", label: "Overview" },
+      { href: "/settings/members", label: "Members" },
+      { href: "/settings/billing", label: "Billing" },
+    ],
+  },
+  { href: "/projects", label: "Projects" },
+  { href: "/messages", label: "Messages" },
+  { href: "/analytics", label: "Analytics" },
+];
+
 const Briefcase = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
@@ -75,16 +93,61 @@ const Chevron = () => (
   </svg>
 );
 
+/* The playground draws its own icons rather than taking a dependency, so all
+   five tabs share the two that exist. */
+const BOTTOM_TABS = [
+  { href: "/", label: "JOBS", icon: Briefcase },
+  { href: "/resources", label: "RESOURCES", icon: House },
+  { href: "/tasks", label: "TASKS", icon: Briefcase },
+  { href: "/you", label: "YOU", icon: House },
+  { href: "/search", label: "SEARCH", icon: Briefcase },
+];
+
+
+/* Some semantic colours are deliberately not declared on :root - composing a
+   var() there freezes it against :root and a subtree override could never move
+   it. Those live as fallbacks inside each component instead, so the panel has
+   to resolve them the same way a component does rather than reading a name
+   that is not there. Keep this in step with the component CSS. */
+const DERIVED_TOKENS: Record<string, string> = {
+  "--ui-primary-lighter": "color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))",
+};
+
+const tokenValue = (name: string) =>
+  `var(${name}${DERIVED_TOKENS[name] ? `, ${DERIVED_TOKENS[name]}` : ""})`;
+
 /* Resolved from the themed element, not from :root, so dark mode and a live
-   primary override are reflected exactly as the components see them. */
+   primary override are reflected exactly as the components see them. A token
+   with no declaration is read back off a probe carrying its component-side
+   fallback, so the panel shows the colour that actually renders. */
 function useTokenValues(names: string[], deps: unknown[]) {
   const [values, setValues] = useState<Record<string, string>>({});
   useEffect(() => {
     const el = document.querySelector(".page");
     if (!el) return;
     const cs = getComputedStyle(el);
+
+    const probe = document.createElement("span");
+    probe.style.display = "none";
+    el.appendChild(probe);
+
     const next: Record<string, string> = {};
-    for (const n of names) next[n] = cs.getPropertyValue(n).trim();
+    for (const n of names) {
+      const declared = cs.getPropertyValue(n).trim();
+      if (declared) {
+        next[n] = declared;
+        continue;
+      }
+      if (DERIVED_TOKENS[n]) {
+        probe.style.backgroundColor = "";
+        probe.style.backgroundColor = tokenValue(n);
+        next[n] = `${getComputedStyle(probe).backgroundColor} (derived)`;
+      } else {
+        next[n] = "";
+      }
+    }
+
+    probe.remove();
     setValues(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
@@ -94,7 +157,7 @@ function useTokenValues(names: string[], deps: unknown[]) {
 function Swatch({ name, value }: { name: string; value?: string }) {
   return (
     <div className="swatch">
-      <span className="chip" style={{ background: `var(${name})` }} />
+      <span className="chip" style={{ background: tokenValue(name) }} />
       <span className="swatchMeta">
         <span className="swatchName">{name.replace("--ui-", "")}</span>
         <span className="swatchValue">{value || "unset"}</span>
@@ -124,7 +187,9 @@ function Section({ title, note, className, children }: { title: string; note?: s
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [shell, setShell] = useState("/settings");
   const [primary, setPrimary] = useState("#e51a38");
+  const [bottomTab, setBottomTab] = useState("JOBS");
   const [size, setSize] = useState<ButtonSize>("large");
   const [loading, setLoading] = useState(false);
   const [lead, setLead] = useState(true);
@@ -369,8 +434,126 @@ function App() {
       </Section>
 
       <Section
+        title="LeftRail"
+        note="The app shell's left column - a brand slot over a NavRail. Figma: LeftRail-NoIcons (482:2517) and LeftRail-Icons (458:2612). Sub items sit flush under their parent and indent to line up with its label, which is 16 text-only and 40 once icons are on. Click a row to move the current page."
+      >
+        <Row label="text only">
+          <LeftRail
+            brand={<Logo weight="medium" size={50} label="Acme" />}
+            style={{ width: 200, height: 500 }}
+          >
+            <NavRail aria-label="Shell sections">
+              {SHELL.map((s) => {
+                const slat = (
+                  <NavSlat
+                    key={s.href}
+                    href={s.href}
+                    active={shell === s.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShell(s.href);
+                    }}
+                  >
+                    {s.label}
+                  </NavSlat>
+                );
+                if (!s.sub) return slat;
+                return (
+                  <NavSlatGroup key={s.href}>
+                    {slat}
+                    {s.sub.map((c) => (
+                      <NavSlat
+                        key={c.href}
+                        level="secondary"
+                        href={c.href}
+                        active={shell === c.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShell(c.href);
+                        }}
+                      >
+                        {c.label}
+                      </NavSlat>
+                    ))}
+                  </NavSlatGroup>
+                );
+              })}
+            </NavRail>
+          </LeftRail>
+        </Row>
+        <Row label="with icons">
+          <LeftRail
+            brand={<Logo weight="medium" size={50} label="Acme" />}
+            style={{ width: 200, height: 500 }}
+          >
+            <NavRail aria-label="Shell sections with icons">
+              {SHELL.map((s) => {
+                const slat = (
+                  <NavSlat
+                    key={s.href}
+                    icon={<Briefcase />}
+                    href={s.href}
+                    active={shell === s.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShell(s.href);
+                    }}
+                  >
+                    {s.label}
+                  </NavSlat>
+                );
+                if (!s.sub) return slat;
+                return (
+                  <NavSlatGroup key={s.href}>
+                    {slat}
+                    {s.sub.map((c) => (
+                      <NavSlat
+                        key={c.href}
+                        level="secondary"
+                        href={c.href}
+                        active={shell === c.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShell(c.href);
+                        }}
+                      >
+                        {c.label}
+                      </NavSlat>
+                    ))}
+                  </NavSlatGroup>
+                );
+              })}
+            </NavRail>
+          </LeftRail>
+        </Row>
+      </Section>
+
+      <Section
+        title="BottomNav"
+        note="The mobile counterpart to NavRail - the same destinations and the same chip, stacked with a caption. The bar paints itself but does not place itself, so it is shown docked in a 375-wide frame rather than pinned. Tap a tab to move the current page."
+      >
+        <Row label="tab bar">
+          <div style={{ width: 375, border: "1px solid var(--ui-neutral-150)", borderRadius: 8, overflow: "hidden" }}>
+            <BottomNav aria-label="Sections">
+              {BOTTOM_TABS.map((t) => (
+                <BottomNavItem
+                  key={t.label}
+                  href={t.href}
+                  icon={<t.icon />}
+                  current={bottomTab === t.label}
+                  onClick={(e) => { e.preventDefault(); setBottomTab(t.label); }}
+                >
+                  {t.label}
+                </BottomNavItem>
+              ))}
+            </BottomNav>
+          </div>
+        </Row>
+      </Section>
+
+      <Section
         title="Logo"
-        note="The brand mark at five weights. Drawn in currentColor, so it takes the colour of whatever it sits in - shown here in text colour, brand red, and reversed on ink."
+        note="The brand mark at five weights. Drawn in currentColor, so it takes the colour of whatever it sits in - shown here in text colour, brand red, and reversed on ink. The red is --ui-tc-red, the fixed personal brand, not --ui-primary: change the primary above and the mark stays TC red while everything else follows."
       >
         <Row label="weights">
           {LOGO_WEIGHTS.map((w) => (
@@ -382,7 +565,7 @@ function App() {
         </Row>
         <Row label="colour">
           <Logo weight="medium" size={44} />
-          <Logo weight="medium" size={44} style={{ color: "var(--ui-primary)" }} />
+          <Logo weight="medium" size={44} style={{ color: "var(--ui-tc-red)" }} />
           <span style={{ background: "var(--ui-surface-inverse)", padding: 10, borderRadius: 8, display: "inline-flex" }}>
             <Logo weight="medium" size={44} style={{ color: "var(--ui-text-on-inverse)" }} />
           </span>

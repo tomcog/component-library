@@ -1,0 +1,118 @@
+/* Bottom navigation - the mobile counterpart to NavRail.
+
+   Colours resolve at the element, so --ui-primary and [data-theme] are picked
+   up from wherever they sit in the tree - same rule as Nav, NavRail and
+   Button. The first name in each var() is the optional component override.
+
+   The bar paints itself but does not place itself: no `position: fixed`, and
+   no bottom inset. An app pins it to the viewport - or docks it inside a
+   phone frame, as the playground does - exactly as LeftRail takes whatever
+   column its layout gives it and Card takes its grid cell. */
+
+.bar {
+  width: 100%;
+  background: var(--ui-bottom-nav-bg, var(--ui-surface-raised));
+  /* A rule, not a shadow: the bar sits ON the content rather than above it. */
+  border-top: 1px solid var(--ui-bottom-nav-rule, var(--ui-neutral-150));
+  padding-top: var(--ui-bottom-nav-padding-y);
+  padding-inline: var(--ui-bottom-nav-padding-x);
+  font-family: var(--ui-font-family, inherit);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--ui-bottom-nav-height);
+}
+
+.item {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-bottom-nav-item-gap);
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--ui-bottom-nav-text, var(--ui-text-muted));
+}
+.item:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+/* The chip IS a Button/Round Medium by geometry - aliased, as NavRail does, so
+   resizing ButtonRound carries both. Its fills are the rail's, not
+   ButtonRound's: there is no transparent resting state in ButtonRound.
+
+   Deliberately NOT transitioned, where NavRail eases its chip. A tab bar is
+   touched, not hovered: the state has already changed by the time a finger
+   lifts, so the fade only ever shows as lag. */
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-bottom-nav-chip-size);
+  height: var(--ui-bottom-nav-chip-size);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ui-bottom-nav-chip-icon, var(--ui-text-muted));
+}
+
+.icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-bottom-nav-chip-icon-size);
+  height: var(--ui-bottom-nav-chip-icon-size);
+}
+/* Stroke on the shapes as well as the <svg>: a presentation attribute on a
+   <path> beats a value inherited from the root. non-scaling-stroke pins it to
+   rendered px whatever the icon's viewBox. Same reasoning as ButtonRound. */
+.icon svg * { vector-effect: non-scaling-stroke; }
+.icon svg,
+.icon svg * { stroke-width: var(--ui-bottom-nav-chip-icon-stroke); }
+.chip .icon > *,
+.chip .icon svg,
+.chip .icon img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--ui-bottom-nav-font-size);
+  line-height: var(--ui-bottom-nav-line-height);
+  font-weight: var(--ui-bottom-nav-font-weight);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hover fills the chip. Hovering the current tab adds nothing, so the two
+   never compound - the rule NavRail, NavItem and NavDropdownItem all follow. */
+.item:not(.current):hover .chip,
+.item:not(.current):focus-visible .chip {
+  background: var(--ui-bottom-nav-chip-bg-hover, var(--ui-primary));
+  color: var(--ui-bottom-nav-chip-icon-hover, var(--ui-text-on-primary));
+}
+
+/* Current: the tinted chip and the primary label. Figma's current chip is
+   ButtonRound's *default* pair, as it is in the rail. */
+.item.current {
+  color: var(--ui-bottom-nav-text-current, var(--ui-primary));
+}
+.item.current .chip {
+  background: var(--ui-bottom-nav-chip-bg-current,
+              var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
+  color: var(--ui-bottom-nav-chip-icon-current, var(--ui-primary));
+}
