@@ -1,12 +1,9 @@
 import { forwardRef } from "react";
 import type { SVGAttributes } from "react";
 import { LOGO_PATHS } from "../../internal/logoPaths";
-import type { LogoWeight } from "../../internal/logoPaths";
 import styles from "./Spinner.module.css";
 
 export interface SpinnerProps extends Omit<SVGAttributes<SVGSVGElement>, "children"> {
-  /** Stroke weight of the mark, matching `Logo`. */
-  weight?: LogoWeight;
   /** Rendered size in px, or any CSS length. Square. */
   size?: number | string;
   /**
@@ -23,15 +20,21 @@ export interface SpinnerProps extends Omit<SVGAttributes<SVGSVGElement>, "childr
  * Taken from the working implementation on tomcoggia.com, which draws exactly
  * these paths — so it shares `Logo`'s artwork rather than carrying a copy.
  *
+ * **Medium weight only, deliberately.** `Logo` has five because a mark is set
+ * at whatever weight its surroundings want; a spinner is one thing the app
+ * shows while it waits, and offering five ways to draw it invites a choice
+ * nobody needs to make. If a second weight is ever genuinely wanted, the
+ * artwork is already shared — it is a prop, not an export.
+ *
  * This is the page- and section-level loader. It is deliberately NOT what
  * `Button` uses: at button sizes a ring has too few pixels to read, which is
  * why that spinner is three pulsing dots. Don't unify them.
  */
 export const Spinner = forwardRef<SVGSVGElement, SpinnerProps>(function Spinner(
-  { weight = "medium", size = 64, label, className, ...props },
+  { size = 64, label, className, ...props },
   ref,
 ) {
-  const [ring, stem] = LOGO_PATHS[weight];
+  const [ring, stem] = LOGO_PATHS.medium;
   const classes = [styles.spinner, className].filter(Boolean).join(" ");
 
   return (

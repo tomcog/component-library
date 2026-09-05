@@ -1381,17 +1381,26 @@ way Nav's dropdown behaviour was.
 <Spinner size={64} label="Loading" />
 ```
 
+Two props: `size` and `label`. `--ui-spinner-color` stays as the override
+hook — the playground demos only sizes now, but a spinner on a dark surface
+still needs to be able to reverse.
+
 ### It shares Logo's artwork, it does not copy it
 
 The site's spinner draws two `d` strings that are **byte-identical to
 `Logo`'s `medium` weight** — it is the mark, not a lookalike. So the paths
 moved to `src/internal/logoPaths.ts` and both components import them.
 
-Two copies would mean two things to re-export the next time a weight is
+Two copies would mean two things to re-export the next time the mark is
 redrawn in Figma, and only one of them would get done. That is the same
 reasoning the Logo section already gives for exporting rather than redrawing.
-Because they are shared, `Spinner` gets all five weights for free, where the
-site only ever had `medium`.
+
+**Medium weight only, and there is no `weight` prop.** Sharing the artwork
+made all five available for nothing, and offering them was still wrong:
+`Logo` has five because a mark is set at whatever weight its surroundings
+want, whereas a spinner is the one thing an app shows while it waits. Five
+ways to draw it is a choice nobody needs to make. The cost of reversing this
+is a prop, not an export — the other four paths are already imported.
 
 ### It is not Button's loader, deliberately
 

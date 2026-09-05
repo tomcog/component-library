@@ -645,7 +645,7 @@ function App() {
 
       <Section
         title="Spinner"
-        note="The brand mark as a loading indicator - the ring turns, the T stays put. Shares Logo's artwork rather than a copy of it. This is the page-level loader; Button's inline one is three pulsing dots, because a ring has too few pixels to read at button sizes."
+        note="The brand mark as a loading indicator - the ring turns, the T stays put. Medium weight only: a spinner is one thing an app shows while it waits, not a choice to make. Shares Logo's artwork rather than a copy of it. This is the page-level loader; Button's inline one is three pulsing dots, because a ring has too few pixels to read at button sizes."
       >
         <Row label="sizes">
           {[24, 40, 64, 96].map((n) => (
@@ -654,28 +654,6 @@ function App() {
               <p className="cardLabel">{n}</p>
             </div>
           ))}
-        </Row>
-        <Row label="weights">
-          {LOGO_WEIGHTS.map((w) => (
-            <div key={w} style={{ textAlign: "center" }}>
-              <Spinner weight={w} size={48} />
-              <p className="cardLabel">{w}</p>
-            </div>
-          ))}
-        </Row>
-        <Row label="colour">
-          <Spinner size={48} />
-          <span style={{ ["--ui-spinner-color" as string]: "var(--ui-text-default)" } as React.CSSProperties}>
-            <Spinner size={48} />
-          </span>
-          <span
-            style={{
-              background: "var(--ui-surface-inverse)", padding: 10, borderRadius: 8, display: "inline-flex",
-              ["--ui-spinner-color" as string]: "var(--ui-text-on-inverse)",
-            } as React.CSSProperties}
-          >
-            <Spinner size={48} />
-          </span>
         </Row>
       </Section>
 
