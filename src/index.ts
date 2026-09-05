@@ -7,4 +7,5 @@ export * from "./components/Logo";
 export * from "./components/Nav";
 export * from "./components/NavRail";
 export * from "./components/Pill";
+export * from "./components/Spinner";
 import "./tokens.css";

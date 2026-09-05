@@ -1,0 +1,39 @@
+/* The brand mark with its ring rotating. Colour resolves at the element, so
+   --ui-tc-red and [data-theme] are picked up from wherever they sit in the
+   tree - same rule as every other component here. */
+.spinner {
+  display: block;
+  flex: none;
+  /* Its own token rather than reusing --ui-logo-color: the two are the same
+     red today, but a spinner tinted to match a surface should not drag the
+     logo with it. Same reasoning as --ui-nav-rail-pipe-width vs
+     --ui-nav-accent-size. */
+  color: var(--ui-spinner-color, var(--ui-tc-red));
+}
+
+/* transform-box: view-box pins the origin to the 100x100 viewBox, so 50% 50%
+   is (50,50) - the ring's own centre. Without it an SVG child resolves
+   transform-origin against its own bounding box and the ring wobbles.
+
+   Animated with the standalone `rotate` property, not `transform`, so it
+   composes with anything a consumer sets on transform - the same rule the nav
+   and rail pipes follow with `scale`. */
+.ring {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: ui-spinner-rotate var(--ui-spinner-duration) linear infinite;
+}
+
+@keyframes ui-spinner-rotate {
+  from { rotate: 0deg; }
+  to   { rotate: 360deg; }
+}
+
+/* Slowed, not stopped. Elsewhere in this library reduced-motion removes the
+   effect outright - the rail's pipe stops drawing, the label stops sliding -
+   because those are decoration. Here the motion IS the information: a frozen
+   spinner reads as a hung app rather than a calm one. So it keeps turning,
+   far enough below the vestibular trigger threshold to be comfortable. */
+@media (prefers-reduced-motion: reduce) {
+  .ring { animation-duration: var(--ui-spinner-duration-reduced); }
+}

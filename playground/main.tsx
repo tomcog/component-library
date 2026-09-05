@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, LeftRail, Nav, NavItem, NavDropdown, NavDropdownItem, NavRail, NavSlat, NavSlatGroup, Pill, Logo } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -640,6 +640,42 @@ function App() {
         </Row>
         <Row label="named">
           <Logo weight="heavy" size={44} label="Tom Coggia" />
+        </Row>
+      </Section>
+
+      <Section
+        title="Spinner"
+        note="The brand mark as a loading indicator - the ring turns, the T stays put. Shares Logo's artwork rather than a copy of it. This is the page-level loader; Button's inline one is three pulsing dots, because a ring has too few pixels to read at button sizes."
+      >
+        <Row label="sizes">
+          {[24, 40, 64, 96].map((n) => (
+            <div key={n} style={{ textAlign: "center" }}>
+              <Spinner size={n} label="Loading" />
+              <p className="cardLabel">{n}</p>
+            </div>
+          ))}
+        </Row>
+        <Row label="weights">
+          {LOGO_WEIGHTS.map((w) => (
+            <div key={w} style={{ textAlign: "center" }}>
+              <Spinner weight={w} size={48} />
+              <p className="cardLabel">{w}</p>
+            </div>
+          ))}
+        </Row>
+        <Row label="colour">
+          <Spinner size={48} />
+          <span style={{ ["--ui-spinner-color" as string]: "var(--ui-text-default)" } as React.CSSProperties}>
+            <Spinner size={48} />
+          </span>
+          <span
+            style={{
+              background: "var(--ui-surface-inverse)", padding: 10, borderRadius: 8, display: "inline-flex",
+              ["--ui-spinner-color" as string]: "var(--ui-text-on-inverse)",
+            } as React.CSSProperties}
+          >
+            <Spinner size={48} />
+          </span>
         </Row>
       </Section>
 

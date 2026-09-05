@@ -333,6 +333,14 @@
   --ui-pill-line-height: var(--ui-type-label-lg-line-height);
   --ui-pill-font-weight: var(--ui-type-label-font-weight);
 
+  /* Spinner. The brand mark with its ring turning, from tomcoggia.com.
+     These are animation periods, not state transitions, which is why they do
+     not use --ui-motion-fast/base: those two describe how quickly a thing
+     settles after an interaction, and a loop that never settles is a
+     different quantity. Reusing 150/200ms here would spin it absurdly fast. */
+  --ui-spinner-duration: 800ms;
+  --ui-spinner-duration-reduced: 2400ms;
+
   /* Card. Figma: 8px radius. No width or height - see Card.module.css for
      why the 350x200 frame is not modelled. */
   --ui-card-radius: 8px;
