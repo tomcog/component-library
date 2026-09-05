@@ -735,13 +735,25 @@ a fix pending, per the rule above.
    for a loader finds one. Not drift in the usual sense — there is no value
    disagreeing — but recorded so it is not mistaken for an oversight.
 
-15. **Pill's padding-inline disagrees: Figma 16, code 14.** Pre-existing, found
-   while moving Pill onto the LG step, and not caused by it — nothing in this
-   session touched padding. `Pill/Padding X` is still a raw value on the
-   variants, which is how it drifted unnoticed; padding Y agrees at 7. This
-   file previously recorded Figma as holding 14, so the note was wrong as well.
-   Left alone rather than guessed at: 16 may be a deliberate edit. Binding it
-   as a variable when it is settled would stop it drifting again.
+15. ~~Pill's padding-inline disagrees: Figma 16, code 14.~~ **Resolved.**
+   Figma took the code's 14, and `Pill/Padding X` and `Pill/Padding Y` now
+   exist as FLOAT variables bound across both variants, so it cannot drift
+   silently again — a raw value on the variants is exactly how it drifted.
+   Both variants went 68x34 -> 64x34.
+
+   **This should not have been raised as a question**, and it was, twice.
+   Padding is spacing, which this file lists under token-shaped changes:
+   "change the code first, then push to Figma." Design-shaped is new
+   variants, layout restructure, visual exploration — not a padding value.
+   The hesitation was a guess that Figma's 16 might be a deliberate edit
+   worth preserving, plus a second guess that 14 might be a holdout from the
+   base-8 move and therefore a real design call. The second was checked and
+   is false: `--ui-bottom-nav-item-gap` is 6 and `--ui-nav-rail-pipe-gap` is
+   10, so the palette was never uniformly base-8 and 14 is not an outlier.
+
+   The lesson is narrow and worth keeping: **the direction rule already
+   decides most of these.** Reach for the user when the two sides disagree
+   about something the rule does not cover, not when it does.
 
 16. ~~Pill's frame had a fixed height.~~ **Resolved, and it was a live trap.**
    `layoutSizingVertical` was `FIXED` at 32 while the code hugs, so when the
