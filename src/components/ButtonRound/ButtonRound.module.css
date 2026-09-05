@@ -44,9 +44,9 @@
 }
 
 .xl { width: var(--ui-button-round-xl-size); height: var(--ui-button-round-xl-size); }
-.large { width: var(--ui-button-round-lg-size); height: var(--ui-button-round-lg-size); }
-.medium { width: var(--ui-button-round-md-size); height: var(--ui-button-round-md-size); }
-.small { width: var(--ui-button-round-sm-size); height: var(--ui-button-round-sm-size); }
+.lg { width: var(--ui-button-round-lg-size); height: var(--ui-button-round-lg-size); }
+.md { width: var(--ui-button-round-md-size); height: var(--ui-button-round-md-size); }
+.sm { width: var(--ui-button-round-sm-size); height: var(--ui-button-round-sm-size); }
 
 .icon {
   display: inline-flex;
@@ -56,9 +56,9 @@
   overflow: hidden;
 }
 .xl .icon { width: var(--ui-button-round-xl-icon-size); height: var(--ui-button-round-xl-icon-size); }
-.large .icon { width: var(--ui-button-round-lg-icon-size); height: var(--ui-button-round-lg-icon-size); }
-.medium .icon { width: var(--ui-button-round-md-icon-size); height: var(--ui-button-round-md-icon-size); }
-.small .icon { width: var(--ui-button-round-sm-icon-size); height: var(--ui-button-round-sm-icon-size); }
+.lg .icon { width: var(--ui-button-round-lg-icon-size); height: var(--ui-button-round-lg-icon-size); }
+.md .icon { width: var(--ui-button-round-md-icon-size); height: var(--ui-button-round-md-icon-size); }
+.sm .icon { width: var(--ui-button-round-sm-icon-size); height: var(--ui-button-round-sm-icon-size); }
 
 /* Icon stroke. Without non-scaling-stroke, stroke-width is in the icon's own
    user units, so a lucide 24-viewBox glyph drawn at 12px would halve its
@@ -71,9 +71,9 @@
    beats a value inherited from its parent, so an svg-only rule silently loses
    to those. Targeting the descendants is what makes the token authoritative. */
 .xl .icon svg,  .xl .icon svg *  { stroke-width: var(--ui-button-round-xl-icon-stroke); }
-.large .icon svg,  .large .icon svg *  { stroke-width: var(--ui-button-round-lg-icon-stroke); }
-.medium .icon svg, .medium .icon svg * { stroke-width: var(--ui-button-round-md-icon-stroke); }
-.small .icon svg,  .small .icon svg *  { stroke-width: var(--ui-button-round-sm-icon-stroke); }
+.lg .icon svg,  .lg .icon svg *  { stroke-width: var(--ui-button-round-lg-icon-stroke); }
+.md .icon svg, .md .icon svg * { stroke-width: var(--ui-button-round-md-icon-stroke); }
+.sm .icon svg,  .sm .icon svg *  { stroke-width: var(--ui-button-round-sm-icon-stroke); }
 
 /* Keep both a direct Lucide SVG and an optional consumer wrapper inside the
    component's icon box. The extra specificity prevents wrapper classes from

@@ -44,13 +44,23 @@ ships an empty package.
 **0.8.0 -> 0.9.0 adds a type scale and renames Button's largest size.**
 Three breaking changes, all small but none silent:
 
-- **`size="jumbo"` is now `size="xl"`**, on both `Button` and `ButtonRound`.
-  TypeScript catches it; the CSS tokens moved with it
-  (`--ui-button-jumbo-*` -> `--ui-button-xl-*`, likewise
-  `--ui-button-round-jumbo-*`). The prop union is now
-  `"xl" | "large" | "medium" | "small"` - mixed, because only the largest
-  size was renamed. Finishing the job (`lg`/`md`/`sm`) is a bigger break
-  across four apps and has not been done.
+- **The size axis is now two-letter throughout: `"xl" | "lg" | "md" | "sm"`**,
+  on both `Button` and `ButtonRound`. Was `jumbo | large | medium | small`.
+  TypeScript catches every call site.
+
+  This closes a three-way split that had been sitting there: the prop and the
+  CSS module class said `large`, the tokens said `-lg-`, and Figma said
+  `Large` — so `.large` hand-mapped to `--ui-button-lg-*`, which is exactly
+  the drift-by-hand-map this file warns about elsewhere. All three now agree,
+  Figma's variant axis included (`Size = XL | LG | MD | SM`).
+
+  **Blast radius, measured rather than guessed: NextJob only.** It is the one
+  `package.json` in `~/Sites` depending on `@tomcoggia/ui`, pinned at
+  `#v0.8.0`, with 34 call sites across 24 files — 7 `large`, 14 `medium`, 13
+  `small`, and zero `jumbo`. An earlier version of this entry said the rename
+  was "a bigger break across four apps"; that was wrong. The four Next.js apps
+  named under the `"use client"` banner are the reason for that directive, not
+  current consumers. Check before repeating the claim.
 - **Pill is 3px taller** (31 -> 34). It moved from 13/17 to 14/20 to sit on
   the same scale step as everything else at that size, and it has no height
   token by design, so height is padding plus leading.
@@ -62,6 +72,12 @@ Three breaking changes, all small but none silent:
 Additive alongside those: **four `--ui-type-label-*` steps** that every
 component's type tokens now alias, and six -> four Figma text styles. An app
 that overrides no type tokens needs no edit.
+
+The rename went code-first then to Figma, per the direction rule. Verified
+after: all four sizes still render 48/40/32/24 with padding 24/16/12/8, gaps
+10/8/8/4, radii 4, type 18/14/12/10; the Figma variants resolve the same
+through their bindings, which survived the rename; and neither mode invariant
+moved.
 
 **0.7.0 -> 0.8.0 adds LeftRail and NavSlat sub items, and moves NavRail's
 geometry.** Not additive: the `NavSlat` set was redrawn in Figma and the code
@@ -1506,10 +1522,17 @@ it is what makes the agreement real rather than coincidental.
 still raw values on the variants. Worth binding if Pill's geometry ever needs
 editing as a set; nothing depends on it today.
 
-Note when reading bindings back: **a text node's `lineHeight` binding is an
-array**, where a corner radius binding is a single object. A check written for
-the scalar shape reads `undefined` and reports the binding missing when it is
-in fact there.
+Note when reading bindings back: **a text node's binding is an array**, where
+a corner radius binding is a single object. A check written for the scalar
+shape reads `undefined` and reports the binding missing when it is in fact
+there.
+
+This is not only `lineHeight` — **`fontSize` is array-shaped too**, and it
+caught a verification pass during the two-letter rename: the check reported
+Button's font-size bindings as absent when all 80 variants still carried them.
+Read `Array.isArray(b) ? b[0] : b` and the shape stops mattering. An absent
+binding and a wrongly-shaped read look identical in the output, which is what
+makes this worth a second mention.
 
 ### It was rebound to the semantic tier on arrival
 

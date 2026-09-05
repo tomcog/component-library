@@ -39,24 +39,24 @@
   font-size: var(--ui-button-xl-font-size);
   line-height: var(--ui-button-xl-line-height);
 }
-.large .content { gap: var(--ui-button-lg-gap); }
-.large {
+.lg .content { gap: var(--ui-button-lg-gap); }
+.lg {
   height: var(--ui-button-lg-height);
   padding-inline: var(--ui-button-lg-padding-x);
   border-radius: var(--ui-button-lg-radius);
   font-size: var(--ui-button-lg-font-size);
   line-height: var(--ui-button-lg-line-height);
 }
-.medium .content { gap: var(--ui-button-md-gap); }
-.medium {
+.md .content { gap: var(--ui-button-md-gap); }
+.md {
   height: var(--ui-button-md-height);
   padding-inline: var(--ui-button-md-padding-x);
   border-radius: var(--ui-button-md-radius);
   font-size: var(--ui-button-md-font-size);
   line-height: var(--ui-button-md-line-height);
 }
-.small .content { gap: var(--ui-button-sm-gap); }
-.small {
+.sm .content { gap: var(--ui-button-sm-gap); }
+.sm {
   height: var(--ui-button-sm-height);
   padding-inline: var(--ui-button-sm-padding-x);
   border-radius: var(--ui-button-sm-radius);
@@ -168,12 +168,12 @@
 
 .xl .spinner { gap: 4px; }
 .xl .spinner span { width: 6px; height: 6px; }
-.large .spinner { gap: 3px; }
-.large .spinner span { width: 5px; height: 5px; }
-.medium .spinner { gap: 2.5px; }
-.medium .spinner span { width: 4px; height: 4px; }
-.small .spinner { gap: 2px; }
-.small .spinner span { width: 3px; height: 3px; }
+.lg .spinner { gap: 3px; }
+.lg .spinner span { width: 5px; height: 5px; }
+.md .spinner { gap: 2.5px; }
+.md .spinner span { width: 4px; height: 4px; }
+.sm .spinner { gap: 2px; }
+.sm .spinner span { width: 3px; height: 3px; }
 
 @keyframes ui-button-pulse {
   0%, 80%, 100% { opacity: 0.25; scale: 0.7; }
@@ -200,9 +200,9 @@
 /* Tokenised like ButtonRound's, so a consumer can retune a slot without
    restating the rule - and so a size swap carries its icon with it. */
 .xl .icon { width: var(--ui-button-xl-icon-size); height: var(--ui-button-xl-icon-size); }
-.large .icon { width: var(--ui-button-lg-icon-size); height: var(--ui-button-lg-icon-size); }
-.medium .icon { width: var(--ui-button-md-icon-size); height: var(--ui-button-md-icon-size); }
-.small .icon { width: var(--ui-button-sm-icon-size); height: var(--ui-button-sm-icon-size); }
+.lg .icon { width: var(--ui-button-lg-icon-size); height: var(--ui-button-lg-icon-size); }
+.md .icon { width: var(--ui-button-md-icon-size); height: var(--ui-button-md-icon-size); }
+.sm .icon { width: var(--ui-button-sm-icon-size); height: var(--ui-button-sm-icon-size); }
 
 /* Icon sets ship intrinsic dimensions (lucide and heroicons both emit
    width="24" height="24"), so the SVG ignores the slot box and renders at its

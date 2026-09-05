@@ -14,7 +14,7 @@ import { assignRef } from "../../internal/assignRef";
 declare const process: { env: { NODE_ENV?: string } };
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
-export type ButtonSize = "xl" | "large" | "medium" | "small";
+export type ButtonSize = "xl" | "lg" | "md" | "sm";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Figma: Level */
@@ -55,7 +55,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     variant = "primary",
-    size = "large",
+    size = "lg",
     icon,
     iconEnd,
     loading = false,

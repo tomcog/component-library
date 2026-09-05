@@ -7,8 +7,8 @@ import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
-const SIZES: ButtonSize[] = ["xl", "large", "medium", "small"];
-const ROUND_SIZES: ButtonRoundSize[] = ["xl", "large", "medium", "small"];
+const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
+const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
@@ -235,7 +235,7 @@ function App() {
   const [shell, setShell] = useState("/settings");
   const [primary, setPrimary] = useState("#e51a38");
   const [bottomTab, setBottomTab] = useState("JOBS");
-  const [size, setSize] = useState<ButtonSize>("large");
+  const [size, setSize] = useState<ButtonSize>("lg");
   const [loading, setLoading] = useState(false);
   const [lead, setLead] = useState(true);
   const [page, setPage] = useState("/");
