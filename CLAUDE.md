@@ -41,6 +41,28 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.8.0 -> 0.9.0 adds a type scale and renames Button's largest size.**
+Three breaking changes, all small but none silent:
+
+- **`size="jumbo"` is now `size="xl"`**, on both `Button` and `ButtonRound`.
+  TypeScript catches it; the CSS tokens moved with it
+  (`--ui-button-jumbo-*` -> `--ui-button-xl-*`, likewise
+  `--ui-button-round-jumbo-*`). The prop union is now
+  `"xl" | "large" | "medium" | "small"` - mixed, because only the largest
+  size was renamed. Finishing the job (`lg`/`md`/`sm`) is a bigger break
+  across four apps and has not been done.
+- **Pill is 3px taller** (31 -> 34). It moved from 13/17 to 14/20 to sit on
+  the same scale step as everything else at that size, and it has no height
+  token by design, so height is padding plus leading.
+- **`--ui-nav-rail-line-height` means 20, not 32.** The 32 was the slat's
+  box, not its leading; it is now `--ui-nav-rail-slat-height`. An app
+  overriding the old token to resize the rail must move to the new one. The
+  rail renders identically otherwise - verified slat, pipe and pitch.
+
+Additive alongside those: **four `--ui-type-label-*` steps** that every
+component's type tokens now alias, and six -> four Figma text styles. An app
+that overrides no type tokens needs no edit.
+
 **0.7.0 -> 0.8.0 adds LeftRail and NavSlat sub items, and moves NavRail's
 geometry.** Not additive: the `NavSlat` set was redrawn in Figma and the code
 followed, so **any app already using `NavRail` will see its rail change** -
@@ -262,6 +284,86 @@ The font is self-hosted in the package, not linked from Google's CDN — browser
 
 `--ui-font-family` carries a real fallback stack, so a missing font import degrades to `system-ui` rather than breaking. Verify a font change by rendering text in `var(--ui-font-family)` next to a forced `system-ui` and confirming the metrics differ — a silent fallback looks fine in isolation.
 
+### Typography: the label scale
+
+Every string this library renders is a UI label — DM Sans Medium, no body
+copy and no headings — so the scale is one ramp of six label sizes, and each
+component's type tokens alias into it rather than restating a size. The same
+thing `--ui-bottom-nav-chip-size` already does with ButtonRound's geometry.
+
+| Figma text style | size / leading | used by |
+|---|---|---|
+| `Type/Label SM` | 10 / 12 | Button Small, BottomNav caption |
+| `Type/Label MD` | 12 / 16 | Button Medium |
+| `Type/Label LG` | 14 / 20 | Button Large, Nav item, Nav dropdown item, NavSlat, Pill |
+| `Type/Label XL` | 18 / 24 | Button XL |
+
+**The steps carry Button's own size names**, so `--ui-button-md-font-size`
+resolving to `--ui-type-label-md-font-size` needs no lookup table. That is why
+Button's fourth size was renamed from `Jumbo` to `XL`: one vocabulary rather
+than two that have to be mentally mapped.
+
+Weight is **one token for the whole scale**, `--ui-type-label-font-weight`,
+not one per step. Every component in the library is Medium, and a scale that
+restated 500 six times would take six edits to move it.
+
+**Four steps, and a step exists only where something uses it.** The scale
+started at six; two were removed on the same principle, and both are worth
+recording because they are the two ways a type scale grows fat. They are named
+below by value rather than by label, because the labels shifted when the scale
+was renamed onto Button's axis and the old names now mean other sizes.
+
+**14/32** was a spacing decision wearing type's clothes. The 32 was
+the `NavSlat` box, expressed as leading because leading made the slat hug to 32
+for free — one number doing type and geometry at once, which then forced a
+second 14px step to exist beside `LG` differing only in leading. The box is now
+`--ui-nav-rail-slat-height`, a `min-height` on the slat, and the pipe takes its
+height from that rather than from the leading. Verified after the split: slats
+still 32, pipes still 32, pitch still 40, type now a plain 14/20. Nothing moved
+— only the decomposition changed. **Don't reintroduce a scale step that exists
+to size a container.**
+
+**13/17** was an orphan. Pill was its only consumer, and Pill moved onto
+`LG` at the user's call, so the step had nothing left using it. Pill is 3px
+taller as a result (31 → 34): it has no height token by design, so its height is
+padding plus leading, and 20 replaced 17.
+
+**These are the library's first text styles, and they are bound, not loose.**
+Each style's `fontSize`, `lineHeight` and `fontStyle` bind to the matching
+`Type/Label */*` variable, so the style *is* those variables rather than a
+second copy of them. That matters because Button's 80 variants already bind
+`Button Size/*/Font Size`: an unbound text style carrying its own 14 would be
+a second source of truth for a number those variants depend on, which is the
+same defect shape as a component variant binding straight to a primitive.
+**Don't unbind them.**
+
+The 13 `Type/*` variables hold **identical values in Light and Dark**, by
+construction. Type is never themed — the same rule Pill's geometry follows.
+Given that 12 of the file's existing geometry variables currently break that
+rule (see Open divergences), assert it after any edit rather than assuming it.
+
+The scale was added code-first and pushed, per the direction rule. Verified
+after the change: all 21 component tokens resolve to the values they had
+before, and the playground renders exactly six combinations at weight 500 —
+10/12, 12/16, 13/17, 14/20, 14/32, 18/24. A green build does not show this;
+it was measured off computed styles.
+
+The playground has a **Type scale** section beside the colour tiers, reading
+live values off the themed element and rendering each specimen at the tokens
+themselves — so a change to the scale moves the samples rather than letting the
+panel drift from them. Building it surfaced that the colour panel listed only
+13 semantic tokens: `--ui-surface-pale` was never added when it became the
+14th. Fixed there too.
+
+**Both sides now carry the four steps**, pushed and verified: each Figma style
+resolves through its bound variables to the same numbers as the CSS tokens, in
+DM Sans Medium, identical in Light and Dark.
+
+**Not applied to any node yet.** The styles exist and are correct, but no
+component's text is using one — Button's labels still carry their own
+`fontSize` binding with a raw leading. Applying them is a separate pass; see
+Open divergences.
+
 ### Verifying a build
 
 A green `npm run build` does not mean the CSS pipeline works. After any change to the build or styling setup, confirm in `dist/index.js` that the CSS module object has real hashed class names (not `{}`), and that `dist/style.css` selectors are scoped (not bare `.button`). The end-to-end check is `npm pack` into a scratch consumer and server-rendering a component to inspect the emitted `class` attribute.
@@ -272,7 +374,14 @@ Source of truth is the `Button` component set (`135:9598`) in the **component-li
 
 **For reading, prefer the official Figma MCP server instead** (`get_design_context`, `get_screenshot`, `get_variable_defs`). It is authenticated separately, needs neither the Desktop Bridge nor the expired REST token, and returns the variant matrix, component properties and bound variable values in one call — that is how the Nav spec was read. The Desktop Bridge is still required for *writing*, and is worth the setup only then; it also binds to a fallback port when stale instances hold 9223, so `figma_get_status` reporting "no plugin connected" while the plugin looks open usually means it attached to a different port.
 
-Code and Figma were reconciled and currently match on every modelled property: heights 40/32/24, padding 14/10, 12/8, 8/6, gaps 6/5/4, radii 4/3/2, font 14/12/9 DM Sans **Medium**, line heights 20/16/12, icon 16/12/9 at 0.65 opacity.
+**This paragraph was stale and is corrected here.** It recorded a
+reconciliation from before commit `919b801` ("Add a Jumbo size and BottomNav,
+and move spacing to base 8"), and neither `jumbo` nor `BottomNav` was ever
+written up. Verified against the file: Figma's **Light** mode now matches the
+code — heights 48/40/32/24, padding X 24/16/12/8, gaps 10/8/8/4, radii all 4,
+font 18/14/12/10 DM Sans **Medium**, line heights 24/20/16/12. The old numbers
+this paragraph carried (gaps 6/5/4, radii 4/3/2, font …/9, padding X 14) are
+what Figma's **Dark** mode still holds — see Open divergences #11.
 
 Figma's variables were restructured to mirror `tokens.css`: every Button variant now binds to a `Button/*` token which aliases a semantic token which aliases a primitive (e.g. `Button/Tertiary/Hover -> Surface/Muted Hover -> Neutral/350`). Before this, hover/pressed states bound straight to `Brand/Dark` and `Neutral/*`, skipping the component tier — that was the inconsistency that motivated the whole token design. **Don't reintroduce direct primitive bindings on component variants.**
 
@@ -617,9 +726,103 @@ a fix pending, per the rule above.
    measured). Promoting them to a set with an `Icon?` boolean would close it;
    that is a design-shaped change, so it happens in Figma first.
 
+15. **Pill's padding-inline disagrees: Figma 16, code 14.** Pre-existing, found
+   while moving Pill onto the LG step, and not caused by it — nothing in this
+   session touched padding. `Pill/Padding X` is still a raw value on the
+   variants, which is how it drifted unnoticed; padding Y agrees at 7. This
+   file previously recorded Figma as holding 14, so the note was wrong as well.
+   Left alone rather than guessed at: 16 may be a deliberate edit. Binding it
+   as a variable when it is settled would stop it drifting again.
+
+16. ~~Pill's frame had a fixed height.~~ **Resolved, and it was a live trap.**
+   `layoutSizingVertical` was `FIXED` at 32 while the code hugs, so when the
+   type moved to 14/20 the Figma frame stayed 32 while its contents needed 34
+   — the text overflowed rather than the pill growing. This is exactly what
+   Pill's own note predicts ("set a height and the two would fight the moment
+   the type scale moved"); the note was right and the file did not follow it.
+   Set to `HUG`, and both variants now measure 34, matching the code.
+
+17. ~~`logo-tc` bound a remote variable named `"Red"`.~~ **Resolved.** All five
+   weights were already TC Red, so the *value* never diverged — but the fill
+   bound to a **remote** variable literally named `"Red"`, quote characters
+   included, owned by a different library file. Same defect as Nav's `"Black"`,
+   and with the same consequence: this library's own brand mark took its
+   colour from outside the file. Repointed to the local `Color/TC Red` on all
+   five. Visually a no-op, both being `#e51a38`.
+
+   Worth noting the direction here ran the other way for once — Figma was
+   right and the code was the side that had drifted, defaulting the mark to
+   text colour.
+
 7. **`Button` and `logo-tc` have no Figma description**, where `NavSlat`,
    `Card`, `Pill` and `Button/Round` now do. `Button` is the 60-variant set
    and the most valuable one to document.
+
+11. ~~12 geometry variables differ between Light and Dark.~~ **Resolved.**
+   The rule is geometry-never-varies-by-mode, and it was broken at scale.
+   What it was, read off the file rather than inferred:
+
+       Button Size/Jumbo/*         Light 18/10/24/12/4  Dark 0 0 0 0 0
+       Button Size/Large/Gap       8  vs 6
+       Button Size/Large/Padding X 16 vs 14
+       Button Size/Medium/Gap      8  vs 5
+       Button Size/Medium/Radius   4  vs 3
+       Button Size/Small/Radius    4  vs 2
+       Nav/Panel Padding X         24 vs 20
+       Nav/Pipe Radius             0  vs 1
+
+   The Jumbo row is visible breakage: all 20 Jumbo variants collapse to zero
+   padding, gap, radius and text size in Dark, because a new variable defaults
+   to 0 in the second mode and these were never set.
+
+   **It does not run one direction.** Button's Dark values are the old
+   pre-base-8 numbers, so that edit landed in Light only; but `Nav/Panel
+   Padding X` and `Nav/Pipe Radius` match the code in *Dark*, so those landed
+   in Dark only. Geometry is mode-scoped in this collection, so every edit
+   silently applies to whichever mode is active. That is the structural caveat
+   this file already describes for primitives, biting somewhere it was not
+   expected. Fixed with an explicit target per variable taken from
+   `tokens.css` — **not a blanket Light-to-Dark copy**, which would have
+   written 24 and 0 into the two Nav values and made them worse. Ten took the
+   Light value; `Nav/Panel Padding X` and `Nav/Pipe Radius` took the Dark one.
+   Both modes are set to the target, so re-running it is a no-op.
+
+   Verified after: **zero** non-colour variables differ across modes, and the
+   17 colour primitives are still identical. Assert this after any Figma
+   session — it is upheld by discipline, not structure, and one session's
+   spacing edit broke ten variables here without either side looking wrong.
+
+14. ~~Figma is a whole session behind the code.~~ **Resolved.** Pushed and
+   verified in one pass: the two retired text styles and their four variables
+   deleted, `SM` -> `MD` and `XS` -> `SM` renamed with their variables,
+   Button's 20 `Size=Jumbo` variants and ButtonRound's 5 renamed to `Size=XL`
+   along with the five `Button Size/Jumbo/*` variables, and Pill moved to
+   14/20. Verified after: both size axes read `Large | Medium | Small | XL`,
+   no `Jumbo` remains anywhere, all four styles resolve through their bindings
+   to the code's numbers, and neither invariant moved — zero non-colour
+   variables differ across modes, zero primitives differ.
+
+   **Two lessons from the run itself.** A removed style poisons an array
+   captured before the removal: a helper that scanned a pre-fetched list threw
+   `The style with id … does not exist` and left the batch half-applied, one
+   style deleted and nothing else. Re-fetch before every operation rather than
+   holding a list across mutations. And **order the deletes before the
+   renames** — `Type/Label MD` (13/17) had to go before `SM` could take that
+   name, or the file would carry two.
+
+12. **The text styles are not applied to any node.** `Type/Label *` exist and
+   are bound, but Button, Nav, NavSlat, Pill and BottomNav labels still carry
+   a `fontSize` variable binding plus a raw `lineHeight` and a raw `Medium`.
+   Applying a style to Button's 80 variants is the risky half — it needs to
+   not disturb the existing `Button Size/*/Font Size` bindings — so it was
+   left as its own pass rather than bundled into the style creation.
+
+13. **Button's line height and weight are unbound in Figma.** Read directly
+   off the labels: `fontSize` is bound, `lineHeight` is a raw PIXELS value and
+   `fontName.style` is a raw `"Medium"`. That is Pill's old `AUTO` problem —
+   the two sides agree by luck, and a type change moves one and not the other.
+   The `Type/Label */Line Height` and `Type/Label/Font Weight` variables now
+   exist to bind them to.
 
 4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
    the eleven semantics that move are aliased to the same primitives
@@ -1119,16 +1322,37 @@ the open ring and the T — pulled straight out of the component with
 `exportAsync`, so the curves are the artwork's. If a weight is ever redrawn in
 Figma, re-export rather than nudging the `d` strings by hand.
 
-### `currentColor`, deliberately
+### TC Red by default
 
-The mark carries no colour of its own. It is used on light grounds, reversed
-on ink, and in the brand red, and none of those is more correct than the
-others — so it inherits, and `--ui-logo-color` only sets a starting point
-(`--ui-text-default`) for when nothing up the tree has set one.
+The mark defaults to `--ui-tc-red`. It is Tom Coggia's brand mark and red is
+what the brand is; `--ui-logo-color` overrides it, and that property inherits,
+so any ancestor can reverse the mark on ink or knock it back to text colour.
 
-This is the one place `--ui-tc-red` would be the *wrong* default even though
-the mark is the brand: the identity is the shape, not the colour it happens to
-be printed in.
+**`--ui-tc-red`, deliberately not `--ui-primary`.** Primary is the role an app
+owns and recolours. An app recolouring its own primary to blue must not turn
+someone else's logo blue — so this is the identity half of the identity/role
+split, and the one component that legitimately reaches for the primitive.
+Confirmed live: the mark stays red in dark mode and when the playground's
+primary picker is moved.
+
+**This reverses an earlier decision, at the user's instruction.** This section
+used to argue the opposite — that the mark "carries no colour of its own",
+that it should inherit, and that `--ui-tc-red` "would be the *wrong* default
+even though the mark is the brand". That was a defensible reading, but it was
+not the user's, and it is now settled the other way. Don't re-derive the old
+argument and revert it; if it changes again it will be because the user says
+so.
+
+**The old section also described behaviour the component never had.** It said
+the mark "takes its colour from context via currentColor". It does not:
+`.logo` declares `color` on the element itself, so its own declaration beats
+anything inherited, and `currentColor` on the fill just points back at that
+declaration. Measured before the change — an ancestor setting `color: blue`
+left the mark at `#262626`. Only `--ui-logo-color` ever worked, or `style` on
+the element itself (which is why the playground's reversed-on-ink specimen
+appeared to work). The playground demo now overrides through the custom
+property, so it demonstrates the supported route rather than the accidental
+one.
 
 ### Naming is opt-in
 

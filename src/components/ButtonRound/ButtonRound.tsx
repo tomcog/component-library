@@ -5,7 +5,7 @@ import { assignRef } from "../../internal/assignRef";
 
 declare const process: { env: { NODE_ENV?: string } };
 
-export type ButtonRoundSize = "jumbo" | "large" | "medium" | "small";
+export type ButtonRoundSize = "xl" | "large" | "medium" | "small";
 
 export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */

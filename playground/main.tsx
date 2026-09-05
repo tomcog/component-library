@@ -7,8 +7,8 @@ import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
-const SIZES: ButtonSize[] = ["jumbo", "large", "medium", "small"];
-const ROUND_SIZES: ButtonRoundSize[] = ["jumbo", "large", "medium", "small"];
+const SIZES: ButtonSize[] = ["xl", "large", "medium", "small"];
+const ROUND_SIZES: ButtonRoundSize[] = ["xl", "large", "medium", "small"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
@@ -19,12 +19,28 @@ const PRIMITIVE_TOKENS = [
   "--ui-neutral-400", "--ui-neutral-500", "--ui-neutral-550", "--ui-neutral-600",
   "--ui-neutral-650", "--ui-neutral-700", "--ui-neutral-800",
 ];
+// The label scale. Every string this library renders is a UI label - DM Sans
+// Medium, no body copy - so it is one ramp of six, and each component's type
+// tokens alias into it. Figma carries the same six as bound text styles.
+const TYPE_SCALE = [
+  { key: "sm", figma: "Type/Label SM", used: "Button Small \u00b7 BottomNav caption" },
+  { key: "md", figma: "Type/Label MD", used: "Button Medium" },
+  { key: "lg", figma: "Type/Label LG", used: "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill" },
+  { key: "xl", figma: "Type/Label XL", used: "Button XL" },
+];
+const TYPE_WEIGHT = "--ui-type-label-font-weight";
+const TYPE_TOKENS = [
+  ...TYPE_SCALE.flatMap((t) => [`--ui-type-label-${t.key}-font-size`, `--ui-type-label-${t.key}-line-height`]),
+  TYPE_WEIGHT,
+];
+
 // Tier 2: the theming contract. Map all semantic tokens or none.
 const SEMANTIC_TOKENS = [
   "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
   "--ui-surface-inverse", "--ui-text-on-inverse",
   "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
   "--ui-text-default", "--ui-text-muted", "--ui-surface-raised",
+  "--ui-surface-pale",
   "--ui-surface-disabled", "--ui-text-disabled",
 ];
 // Fill + the text meant to sit on it. A recolour that breaks contrast shows here.
@@ -154,6 +170,35 @@ function useTokenValues(names: string[], deps: unknown[]) {
   return values;
 }
 
+function Specimen({ step, values }: { step: (typeof TYPE_SCALE)[number]; values: Record<string, string> }) {
+  const fs = `--ui-type-label-${step.key}-font-size`;
+  const lh = `--ui-type-label-${step.key}-line-height`;
+  const num = (v?: string) => (v ? v.replace("px", "") : "?");
+  return (
+    <div className="specimen">
+      <span className="specimenMeta">
+        <span className="specimenName">{step.figma}</span>
+        <span className="specimenToken">type-label-{step.key}-*</span>
+      </span>
+      <span className="specimenValue">
+        {num(values[fs])} / {num(values[lh])} / {values[TYPE_WEIGHT] || "?"}
+      </span>
+      <span
+        className="specimenSample"
+        style={{
+          fontFamily: "var(--ui-font-family)",
+          fontSize: `var(${fs})`,
+          lineHeight: `var(${lh})`,
+          fontWeight: `var(${TYPE_WEIGHT})` as React.CSSProperties["fontWeight"],
+        }}
+      >
+        Navigation label
+      </span>
+      <span className="specimenUsed">{step.used}</span>
+    </div>
+  );
+}
+
 function Swatch({ name, value }: { name: string; value?: string }) {
   return (
     <div className="swatch">
@@ -196,6 +241,7 @@ function App() {
   const [page, setPage] = useState("/");
   const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, primary]);
   const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, primary]);
+  const type = useTokenValues(TYPE_TOKENS, [theme, primary]);
   const [subPage, setSubPage] = useState("/work/b");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
@@ -226,7 +272,7 @@ function App() {
         note="Live values, read off the themed element - switch theme or pick a primary above and every semantic value follows."
       >
         <p className="groupLabel">
-          Semantic <span>- the public API, 13 names an app overrides</span>
+          Semantic <span>- the public API, 14 names an app overrides</span>
         </p>
         <div className="swatches">
           {SEMANTIC_TOKENS.map((t) => <Swatch key={t} name={t} value={semantic[t]} />)}
@@ -249,6 +295,20 @@ function App() {
         <div className="swatches">
           {PRIMITIVE_TOKENS.map((t) => <Swatch key={t} name={t} value={primitive[t]} />)}
         </div>
+      </Section>
+
+      <Section
+        title="Type scale"
+        note="Live values, read off the themed element. Every step is DM Sans Medium - the library renders labels only, no body copy. The samples below are rendered at the tokens themselves, so a change to the scale moves them."
+      >
+        <div className="specimens">
+          {TYPE_SCALE.map((t) => <Specimen key={t.key} step={t} values={type} />)}
+        </div>
+        <p className="note specimenFoot">
+          Four steps, no duplicates - a step exists only where the type differs, and only where something uses it. NavSlat sits on LG like the horizontal
+          nav; its 32px box is --ui-nav-rail-slat-height, geometry rather than a seventh scale step. Type is never
+          themed, so none of these move between light and dark.
+        </p>
       </Section>
 
       <Section title="Button" note="Every variant at every size. Hover and press to see the interaction states.">
@@ -553,7 +613,7 @@ function App() {
 
       <Section
         title="Logo"
-        note="The brand mark at five weights. Drawn in currentColor, so it takes the colour of whatever it sits in - shown here in text colour, brand red, and reversed on ink. The red is --ui-tc-red, the fixed personal brand, not --ui-primary: change the primary above and the mark stays TC red while everything else follows."
+        note="The brand mark at five weights. It defaults to --ui-tc-red - the fixed personal brand, not --ui-primary: change the primary above and the mark stays TC red while everything else follows. Override it with --ui-logo-color, which inherits, so an ancestor can set it. Note an ancestor's plain `color` does NOT reach the mark: .logo declares its own colour, and its declaration beats inheritance."
       >
         <Row label="weights">
           {LOGO_WEIGHTS.map((w) => (
@@ -565,9 +625,17 @@ function App() {
         </Row>
         <Row label="colour">
           <Logo weight="medium" size={44} />
-          <Logo weight="medium" size={44} style={{ color: "var(--ui-tc-red)" }} />
-          <span style={{ background: "var(--ui-surface-inverse)", padding: 10, borderRadius: 8, display: "inline-flex" }}>
-            <Logo weight="medium" size={44} style={{ color: "var(--ui-text-on-inverse)" }} />
+          {/* Overridden via the custom property, set on an ancestor - the supported route. */}
+          <span style={{ ["--ui-logo-color" as string]: "var(--ui-text-default)" } as React.CSSProperties}>
+            <Logo weight="medium" size={44} />
+          </span>
+          <span
+            style={{
+              background: "var(--ui-surface-inverse)", padding: 10, borderRadius: 8, display: "inline-flex",
+              ["--ui-logo-color" as string]: "var(--ui-text-on-inverse)",
+            } as React.CSSProperties}
+          >
+            <Logo weight="medium" size={44} />
           </span>
         </Row>
         <Row label="named">

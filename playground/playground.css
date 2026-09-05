@@ -56,3 +56,30 @@ section {
 [data-theme="dark"] .cardSection { background: #191919; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .cardLabel { margin: 9px 0 0; font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }
+
+/* -- type specimens ------------------------------------------ */
+.specimens { display: flex; flex-direction: column; }
+.specimen {
+  display: grid;
+  grid-template-columns: 190px 104px minmax(0, 1fr);
+  grid-template-areas: "meta value sample" "meta value used";
+  align-items: center;
+  gap: 0 20px;
+  padding: 13px 0;
+  border-top: 1px solid #ededed;
+}
+.specimen:first-child { border-top: 0; }
+[data-theme="dark"] .specimen { border-top-color: #333; }
+.specimenMeta { grid-area: meta; display: flex; flex-direction: column; gap: 2px; }
+.specimenName { font-size: 12.5px; font-weight: 500; }
+.specimenToken { font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }
+.specimenValue {
+  grid-area: value;
+  font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #8c8c8c;
+  white-space: nowrap;
+}
+.specimenSample { grid-area: sample; min-width: 0; }
+.specimenUsed { grid-area: used; font-size: 11.5px; color: #a3a3a3; }
+[data-theme="dark"] .specimenUsed, [data-theme="dark"] .specimenToken { color: #686868; }
+.specimenFoot { margin: 16px 0 0; }

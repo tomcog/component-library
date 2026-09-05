@@ -22,10 +22,16 @@
   display: flex;
   align-items: center;
   gap: var(--ui-nav-rail-slat-gap);
-  /* No height - the slat hugs its tallest child: the line box on its own, or
-     the 40px chip when there is an icon. Figma draws it the same way (the
-     frame has no padding-block). Setting one would fight the type the moment
-     the scale moved. Same reasoning as Pill. */
+  /* The 32 box is geometry, not leading. It was once expressed as
+     line-height: 32 on 14px type, which made the slat hug to 32 for free -
+     but that put a spacing decision inside the type scale and forced a
+     second 14px step to exist beside LG purely to carry it.
+
+     min-height, not height: the slat still hugs its tallest child - the 32
+     chip when there is an icon - and simply never drops below 32 without
+     one. So this does not fight the type the way a fixed height would.
+     Figma's frame is 32 on every variant and hugs the same way. */
+  min-height: var(--ui-nav-rail-slat-height);
   padding-inline: var(--ui-nav-rail-slat-padding-x);
   font-family: var(--ui-font-family, inherit);
   font-size: var(--ui-nav-rail-font-size);
@@ -54,14 +60,17 @@
   position: absolute;
   /* Sits at the padding edge, or past the chip when there is one. */
   left: var(--ui-nav-rail-pipe-x, var(--ui-nav-rail-slat-padding-x));
-  /* Sized to the label's line box and centred, NOT to the slat. With an icon
-     the slat is 40 tall but the pipe stays the height of the text beside it,
-     which is what Figma draws - the pipe lives in the label's group, not in
-     the slat. Centred with margin rather than a translate so the standalone
-     `scale` below is the only transform in play. */
+  /* The full slat box, centred. Figma's rectangle is layoutAlign: STRETCH
+     inside a 32 slat and measures 32 on both visible variants - checked
+     rather than assumed, because the hidden Default/Active rectangles still
+     read 20 (a hidden node is out of auto-layout, so STRETCH never reaches
+     it) and 20 would be easy to take as the intended height.
+
+     Centred with margin rather than a translate so the standalone `scale`
+     below stays the only transform in play. */
   top: 50%;
-  height: var(--ui-nav-rail-line-height);
-  margin-top: calc(var(--ui-nav-rail-line-height) / -2);
+  height: var(--ui-nav-rail-slat-height);
+  margin-top: calc(var(--ui-nav-rail-slat-height) / -2);
   width: var(--ui-nav-rail-pipe-width);
   background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
   scale: 1 0;

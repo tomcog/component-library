@@ -99,60 +99,109 @@
   --ui-text-disabled: var(--ui-neutral-350);
 
   /* Sizing — not themed, safe to resolve here. */
-  /* Jumbo exists for touch: at 48 it clears both the 44pt iOS and 48dp
+
+  /* -- TYPE SCALE --------------------------------------------
+     Every string this library renders is a UI label: DM Sans Medium,
+     no body copy and no headings. So the scale is one ramp of label
+     sizes, and the component tokens below alias into it rather than
+     restating a size — the same thing --ui-bottom-nav-chip-size
+     already does with ButtonRound's geometry.
+
+     Typography is not themed, so it resolves here safely, exactly as
+     the sizing tokens below do. See this file's header for why colour
+     cannot.
+
+     Figma carries these six as text styles (Type/Label *), with each
+     style's size and leading BOUND to the Type/* FLOAT variables that
+     mirror these tokens. The style is therefore the variables, not a
+     second copy of them — a text style holding its own loose numbers
+     would be a second source of truth for a size that 80 Button
+     variants already bind. Don't unbind them.
+
+     The four steps carry Button's own size names, so --ui-button-md-font-size
+     resolving to --ui-type-label-md-font-size needs no lookup. XL is the one
+     that is not literal: Button's fourth size is XL too, renamed from Jumbo
+     so the two vocabularies match.
+
+     Two steps were cut rather than left sitting unused, and both are worth
+     remembering as the two ways a scale grows fat:
+
+     - 13/17 existed only for Pill, which now sits on LG like everything else
+       at that size. An orphan step.
+     - 14/32 existed only for NavSlat, and was not a type decision at all -
+       the 32 was the slat's box, expressed as leading because leading made
+       the slat hug to 32 for free. One number doing type and geometry at
+       once, which forced a second 14px step differing only in leading. The
+       box is now --ui-nav-rail-slat-height. Don't reintroduce a step that
+       exists to size a container. */
+  --ui-type-label-font-weight: 500;
+
+  --ui-type-label-sm-font-size: 10px;
+  --ui-type-label-sm-line-height: 12px;
+
+  --ui-type-label-md-font-size: 12px;
+  --ui-type-label-md-line-height: 16px;
+
+  --ui-type-label-lg-font-size: 14px;
+  --ui-type-label-lg-line-height: 20px;
+
+  --ui-type-label-xl-font-size: 18px;
+  --ui-type-label-xl-line-height: 24px;
+
+  /* XL exists for touch: at 48 it clears both the 44pt iOS and 48dp
      Android minimum target, which Large at 40 does not. Its type steps up to
      18/24 because a phone is held closer but read at a glance, and its icon
      is 20 — the same box ButtonRound Medium uses. */
-  --ui-button-jumbo-height: 48px;
-  --ui-button-jumbo-padding-x: 24px;
-  --ui-button-jumbo-gap: 10px;
-  --ui-button-jumbo-radius: 4px;
-  --ui-button-jumbo-font-size: 18px;
-  --ui-button-jumbo-line-height: 24px;
-  --ui-button-jumbo-icon-size: 24px;
+  --ui-button-xl-height: 48px;
+  --ui-button-xl-padding-x: 24px;
+  --ui-button-xl-gap: 10px;
+  --ui-button-xl-radius: 4px;
+  --ui-button-xl-font-size: var(--ui-type-label-xl-font-size);
+  --ui-button-xl-line-height: var(--ui-type-label-xl-line-height);
+  --ui-button-xl-icon-size: 24px;
 
   --ui-button-lg-height: 40px;
   --ui-button-lg-padding-x: 16px;
   --ui-button-lg-gap: 8px;
   --ui-button-lg-radius: 4px;
-  --ui-button-lg-font-size: 14px;
-  --ui-button-lg-line-height: 20px;
+  --ui-button-lg-font-size: var(--ui-type-label-lg-font-size);
+  --ui-button-lg-line-height: var(--ui-type-label-lg-line-height);
   --ui-button-lg-icon-size: 18px;
 
   --ui-button-md-height: 32px;
   --ui-button-md-padding-x: 12px;
   --ui-button-md-gap: 8px;
   --ui-button-md-radius: 4px;
-  --ui-button-md-font-size: 12px;
-  --ui-button-md-line-height: 16px;
+  --ui-button-md-font-size: var(--ui-type-label-md-font-size);
+  --ui-button-md-line-height: var(--ui-type-label-md-line-height);
   --ui-button-md-icon-size: 14px;
 
   --ui-button-sm-height: 24px;
   --ui-button-sm-padding-x: 8px;
   --ui-button-sm-gap: 4px;
   --ui-button-sm-radius: 4px;
-  --ui-button-sm-font-size: 10px;
-  --ui-button-sm-line-height: 12px;
+  --ui-button-sm-font-size: var(--ui-type-label-sm-font-size);
+  --ui-button-sm-line-height: var(--ui-type-label-sm-line-height);
   --ui-button-sm-icon-size: 12px;
 
-  --ui-button-font-weight: 500;
+  --ui-button-font-weight: var(--ui-type-label-font-weight);
 
   /* ButtonRound. Figma: 48/40/32/24 containers, 28/24/20/16 icon boxes,
      2.5/2/1.5/1 icon stroke. The icon grows faster than the container
      (58% / 60% / 62.5% / 67%) so the glyph stays legible at Small.
-     Jumbo matches Button's 48 so the two sit level in a touch layout. */
-  --ui-button-round-jumbo-size: 48px;
+     XL matches Button's 48 so the two sit level in a touch layout. */
+  --ui-button-round-xl-size: 48px;
   --ui-button-round-lg-size: 40px;
   --ui-button-round-md-size: 32px;
   --ui-button-round-sm-size: 24px;
-  --ui-button-round-jumbo-icon-size: 28px;
+  --ui-button-round-xl-icon-size: 28px;
   --ui-button-round-lg-icon-size: 24px;
   --ui-button-round-md-icon-size: 20px;
   --ui-button-round-sm-icon-size: 16px;
   /* Rendered stroke, in px. Unitless because SVG stroke-width is a number;
      `vector-effect: non-scaling-stroke` in ButtonRound.module.css is what
      makes these render as literal px whatever the icon's viewBox. */
-  --ui-button-round-jumbo-icon-stroke: 2.5;
+  --ui-button-round-xl-icon-stroke: 2.5;
   --ui-button-round-lg-icon-stroke: 2;
   --ui-button-round-md-icon-stroke: 1.5;
   --ui-button-round-sm-icon-stroke: 1;
@@ -160,9 +209,9 @@
   /* Nav. Figma: TextNav = DM Sans Medium 14/20, Nav gap 32,
      accent rule 4, dropdown gap 12 + 8 indent. Text only - no icon variant. */
   --ui-nav-gap: 32px;
-  --ui-nav-font-size: 14px;
-  --ui-nav-line-height: 20px;
-  --ui-nav-font-weight: 500;
+  --ui-nav-font-size: var(--ui-type-label-lg-font-size);
+  --ui-nav-line-height: var(--ui-type-label-lg-line-height);
+  --ui-nav-font-weight: var(--ui-type-label-font-weight);
   --ui-nav-accent-size: 4px;
   --ui-nav-dropdown-gap: 12px;
   --ui-nav-dropdown-inset: 8px;      /* how far a sub item indents on hover */
@@ -186,9 +235,14 @@
      padding would push every label in past the pipe. */
   --ui-nav-rail-gap: 8px;
   --ui-nav-rail-slat-padding-x: 0px;
-  --ui-nav-rail-font-size: 14px;
-  --ui-nav-rail-line-height: 32px;
-  --ui-nav-rail-font-weight: 500;
+  --ui-nav-rail-font-size: var(--ui-type-label-lg-font-size);
+  --ui-nav-rail-line-height: var(--ui-type-label-lg-line-height);
+  /* The slat's box, and the pipe's height. Geometry, not leading - see the
+     type scale above for why this is not a seventh scale step. Figma's
+     NavSlat frame is 32 on every variant and its pipe rectangle STRETCHes
+     to it. */
+  --ui-nav-rail-slat-height: 32px;
+  --ui-nav-rail-font-weight: var(--ui-type-label-font-weight);
   /* 4px, the same weight as the horizontal nav's accent rule
      (--ui-nav-accent-size). Deliberately its own token rather than an alias:
      the two are the same figure today, but one component's thickness should
@@ -238,9 +292,9 @@
   --ui-bottom-nav-padding-x: 8px;
   --ui-bottom-nav-padding-y: 8px;
   --ui-bottom-nav-item-gap: 6px;    /* chip -> caption */
-  --ui-bottom-nav-font-size: 10px;
-  --ui-bottom-nav-line-height: 12px;
-  --ui-bottom-nav-font-weight: 500;
+  --ui-bottom-nav-font-size: var(--ui-type-label-sm-font-size);
+  --ui-bottom-nav-line-height: var(--ui-type-label-sm-line-height);
+  --ui-bottom-nav-font-weight: var(--ui-type-label-font-weight);
   --ui-bottom-nav-chip-size: var(--ui-button-round-md-size);
   --ui-bottom-nav-chip-icon-size: var(--ui-button-round-md-icon-size);
   --ui-bottom-nav-chip-icon-stroke: var(--ui-button-round-md-icon-stroke);
@@ -275,9 +329,9 @@
   --ui-pill-radius: 999px;
   --ui-pill-padding-x: 14px;
   --ui-pill-padding-y: 7px;
-  --ui-pill-font-size: 13px;
-  --ui-pill-line-height: 17px;
-  --ui-pill-font-weight: 500;
+  --ui-pill-font-size: var(--ui-type-label-lg-font-size);
+  --ui-pill-line-height: var(--ui-type-label-lg-line-height);
+  --ui-pill-font-weight: var(--ui-type-label-font-weight);
 
   /* Card. Figma: 8px radius. No width or height - see Card.module.css for
      why the 350x200 frame is not modelled. */

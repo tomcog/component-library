@@ -31,13 +31,13 @@
 }
 
 /* -- sizes -------------------------------------------------- */
-.jumbo .content { gap: var(--ui-button-jumbo-gap); }
-.jumbo {
-  height: var(--ui-button-jumbo-height);
-  padding-inline: var(--ui-button-jumbo-padding-x);
-  border-radius: var(--ui-button-jumbo-radius);
-  font-size: var(--ui-button-jumbo-font-size);
-  line-height: var(--ui-button-jumbo-line-height);
+.xl .content { gap: var(--ui-button-xl-gap); }
+.xl {
+  height: var(--ui-button-xl-height);
+  padding-inline: var(--ui-button-xl-padding-x);
+  border-radius: var(--ui-button-xl-radius);
+  font-size: var(--ui-button-xl-font-size);
+  line-height: var(--ui-button-xl-line-height);
 }
 .large .content { gap: var(--ui-button-lg-gap); }
 .large {
@@ -166,8 +166,8 @@
 .spinner span:nth-child(2) { animation-delay: 0.15s; }
 .spinner span:nth-child(3) { animation-delay: 0.3s; }
 
-.jumbo .spinner { gap: 4px; }
-.jumbo .spinner span { width: 6px; height: 6px; }
+.xl .spinner { gap: 4px; }
+.xl .spinner span { width: 6px; height: 6px; }
 .large .spinner { gap: 3px; }
 .large .spinner span { width: 5px; height: 5px; }
 .medium .spinner { gap: 2.5px; }
@@ -199,7 +199,7 @@
 }
 /* Tokenised like ButtonRound's, so a consumer can retune a slot without
    restating the rule - and so a size swap carries its icon with it. */
-.jumbo .icon { width: var(--ui-button-jumbo-icon-size); height: var(--ui-button-jumbo-icon-size); }
+.xl .icon { width: var(--ui-button-xl-icon-size); height: var(--ui-button-xl-icon-size); }
 .large .icon { width: var(--ui-button-lg-icon-size); height: var(--ui-button-lg-icon-size); }
 .medium .icon { width: var(--ui-button-md-icon-size); height: var(--ui-button-md-icon-size); }
 .small .icon { width: var(--ui-button-sm-icon-size); height: var(--ui-button-sm-icon-size); }

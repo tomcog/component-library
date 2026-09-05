@@ -1,8 +1,21 @@
-/* The mark takes its colour from context via currentColor, so there is no
-   fill here to override it. --ui-ink is only the starting point, and only
-   when nothing up the tree has set a colour. */
+/* The mark defaults to TC Red, because it is Tom Coggia's brand mark and red
+   is what the brand is. --ui-tc-red and not --ui-primary: primary is the role
+   an app owns and recolours, and an app recolouring its own primary to blue
+   must not turn someone else's logo blue. This is the identity half of the
+   identity/role split, which is exactly what the primitive is for.
+
+   Overriding is one custom property - --ui-logo-color - which inherits, so it
+   can be set on any ancestor to reverse the mark on ink or knock it back to
+   text colour.
+
+   Note what this does NOT do: `color` is declared here, on the element, so an
+   ancestor setting `color` does not reach the mark - its own declaration wins
+   over inheritance. An earlier version of this comment claimed the mark
+   "takes its colour from context via currentColor", which was never true;
+   measured, an ancestor's colour left it unchanged. currentColor on the fill
+   only points at this declaration. Use --ui-logo-color. */
 .logo {
   display: block;
   flex: none;
-  color: var(--ui-logo-color, var(--ui-text-default));
+  color: var(--ui-logo-color, var(--ui-tc-red));
 }
