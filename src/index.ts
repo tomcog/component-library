@@ -2,6 +2,7 @@ export * from "./components/Button";
 export * from "./components/ButtonRound";
 export * from "./components/BottomNav";
 export * from "./components/Card";
+export * from "./components/InputText";
 export * from "./components/LeftRail";
 export * from "./components/Logo";
 export * from "./components/Nav";

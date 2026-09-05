@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, InputText, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -23,9 +23,9 @@ const PRIMITIVE_TOKENS = [
 // Medium, no body copy - so it is one ramp of six, and each component's type
 // tokens alias into it. Figma carries the same six as bound text styles.
 const TYPE_SCALE = [
-  { key: "sm", figma: "Type/Label SM", used: "Button Small \u00b7 BottomNav caption" },
+  { key: "sm", figma: "Type/Label SM", used: "Button Small \u00b7 BottomNav caption \u00b7 InputText label" },
   { key: "md", figma: "Type/Label MD", used: "Button Medium" },
-  { key: "lg", figma: "Type/Label LG", used: "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill" },
+  { key: "lg", figma: "Type/Label LG", used: "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill \u00b7 InputText value" },
   { key: "xl", figma: "Type/Label XL", used: "Button XL" },
 ];
 const TYPE_WEIGHT = "--ui-type-label-font-weight";
@@ -39,9 +39,10 @@ const SEMANTIC_TOKENS = [
   "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
   "--ui-surface-inverse", "--ui-text-on-inverse",
   "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
-  "--ui-text-default", "--ui-text-muted", "--ui-surface-raised",
+  "--ui-text-default", "--ui-text-muted", "--ui-text-faint", "--ui-surface-raised",
   "--ui-surface-pale",
   "--ui-surface-disabled", "--ui-text-disabled",
+  "--ui-border-default",
 ];
 // Fill + the text meant to sit on it. A recolour that breaks contrast shows here.
 const TOKEN_PAIRS: [string, string, string][] = [
@@ -106,6 +107,18 @@ const House = () => (
 const Chevron = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <path d="M9 18l6-6-6-6" />
+  </svg>
+);
+const ChevronDown = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+const Layers = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
+    <path d="M12 2 2 7l10 5 10-5-10-5z" />
+    <path d="m2 17 10 5 10-5" />
+    <path d="m2 12 10 5 10-5" />
   </svg>
 );
 
@@ -243,6 +256,8 @@ function App() {
   const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, primary]);
   const type = useTokenValues(TYPE_TOKENS, [theme, primary]);
   const [subPage, setSubPage] = useState("/work/b");
+  const [where, setWhere] = useState("Home");
+  const [email, setEmail] = useState("");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
   const [rail, setRail] = useState("/work");
@@ -272,7 +287,7 @@ function App() {
         note="Live values, read off the themed element - switch theme or pick a primary above and every semantic value follows."
       >
         <p className="groupLabel">
-          Semantic <span>- the public API, 14 names an app overrides</span>
+          Semantic <span>- the public API, 16 names an app overrides</span>
         </p>
         <div className="swatches">
           {SEMANTIC_TOKENS.map((t) => <Swatch key={t} name={t} value={semantic[t]} />)}
@@ -668,6 +683,46 @@ function App() {
         </Row>
         <Row label="disabled">
           <Pill disabled>Unavailable</Pill>
+        </Row>
+      </Section>
+
+      <Section
+        title="InputText"
+        note={
+          "The label sits UNDER the field, as drawn. Click or tab into one \u2014 active turns the " +
+          "rule primary, and that is the whole treatment: no focus ring, unlike every other control " +
+          "here. Icons are two independent slots: Figma's instance shows a chevron, but a text " +
+          "field is not a select, so nothing is baked in."
+        }
+      >
+        <Row label="as drawn">
+          <InputText
+            style={{ width: 220 }}
+            label="Input label"
+            icon={<Layers />}
+            iconEnd={<ChevronDown />}
+            value={where}
+            onChange={(e) => setWhere(e.target.value)}
+          />
+        </Row>
+        <Row label="no icons">
+          <InputText
+            style={{ width: 220 }}
+            label="Email address"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Row>
+        <Row label="leading only">
+          <InputText style={{ width: 220 }} label="Search" icon={<Layers />} placeholder="Type to filter…" />
+        </Row>
+        <Row label="no label">
+          <InputText style={{ width: 220 }} aria-label="Search" icon={<Layers />} placeholder="aria-label instead" />
+        </Row>
+        <Row label="disabled">
+          <InputText style={{ width: 220 }} label="Input label" icon={<Layers />} value="Home" disabled readOnly />
         </Row>
       </Section>
 

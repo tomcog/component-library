@@ -1,0 +1,159 @@
+/* InputText - a text field with an underline and its label beneath it.
+   Figma: `Input-Text` (553:5455), drawn as a single state.
+
+   Three colours were rebound to the semantic tier on arrival, the same
+   reconciliation Pill and NavSlat had:
+
+   - the rule was `Neutral/350` and the label `Neutral/400`, both PRIMITIVES,
+     so neither could follow the theme - a field on a dark page would have
+     kept a light-mode hairline. They read --ui-border-default and
+     --ui-text-muted.
+   - the leading icon was `IconDefault`, which aliases `Neutral/500` in BOTH
+     modes and so is frozen against the theme. That is the exact binding
+     NavSlat's sub items had, and the fix is the same: --ui-text-muted, which
+     is the identical #737373 in light and lightens to #8c8c8c in dark.
+
+   The label rebinding also moves its value, from #8c8c8c to #737373. That is
+   deliberate twice over: it is what the semantic tier says a muted string is,
+   and #8c8c8c on white is 3.0:1 - below the floor for text this small. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-input-text-label-gap);
+  font-family: var(--ui-font-family, inherit);
+}
+
+/* No width token. Figma hugs the field to its content at 95px, but that is the
+   component posed on the canvas, not a property of it - a field in an app is
+   as wide as the column it sits in. Same call as Card's 350x200 frame. */
+.field {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-input-text-gap);
+  /* The 1px rule sits INSIDE the 32 box, as Figma's stroke does. Set here
+     rather than assumed: a consuming app need not have a border-box reset. */
+  box-sizing: border-box;
+  height: var(--ui-input-text-height);
+  padding: var(--ui-input-text-padding);
+  /* Top corners only - the underline reads as a rule, not as a ring that
+     failed to close. */
+  border-radius: var(--ui-input-text-radius) var(--ui-input-text-radius) 0 0;
+  background: var(--ui-input-text-bg, var(--ui-surface-raised));
+  /* A real border rather than Button's inset shadow: this stroke is on one
+     side, and it should take layout there so the text box shrinks by the 1px
+     instead of the rule overprinting the descenders. */
+  border-bottom: var(--ui-input-text-border-width) solid
+                 var(--ui-input-text-border, var(--ui-border-default));
+  transition: border-color var(--ui-motion-fast) ease;
+}
+
+/* Strip the UA control back to a text box; the field around it draws
+   everything. `font: inherit` is not enough - form controls do not inherit
+   type at all in Safari - so the three properties are set outright. */
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  appearance: none;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  color: var(--ui-input-text-color, var(--ui-text-default));
+  font-family: inherit;
+  font-size: var(--ui-input-text-font-size);
+  line-height: var(--ui-input-text-line-height);
+  font-weight: var(--ui-input-text-font-weight);
+}
+
+/* --ui-text-faint, not --ui-text-muted: the label under the field is muted, and
+   a hint sitting at the same weight as the label reads as a value the user has
+   already typed. Faint is the step back from it, in both modes - see tokens.css.
+
+   Firefox dims the placeholder to 0.54 alpha on top of whatever colour it is
+   given, which would put it under the token's value. */
+.input::placeholder {
+  color: var(--ui-input-text-placeholder, var(--ui-text-faint));
+  opacity: 1;
+}
+
+/* The rule is the whole indicator, so the UA ring must not draw over it. */
+.input:focus {
+  outline: none;
+}
+
+/* The field in use: the rule turns primary.
+
+   The design calls this the ACTIVE state; the token is named `-focus` because
+   this library reserves `-active` for the pressed state, exactly as CSS's own
+   `:active` does - see the Nav state-name table in CLAUDE.md. Same reason
+   NavItem's current-page token is `-current` and not `-active`.
+
+   `:focus-within` rather than `:focus-visible`, so it shows for a mouse click
+   too: this answers "which field am I typing in", which is true however the
+   caret got there.
+
+   It is the ONLY focus treatment on this component - deliberately, and against
+   the pattern Button, ButtonRound and Pill follow. A 2px primary ring at 2px
+   offset was here and was removed: the design's active state is the rule, and
+   a ring around the whole field on top of it is a second indicator saying the
+   same thing. See CLAUDE.md for the accessibility trade that decision carries.
+   Don't add the ring back. */
+.field:focus-within {
+  border-bottom-color: var(--ui-input-text-border-focus, var(--ui-primary));
+}
+
+/* Disabled is not in Figma either, and is likewise the library's existing
+   treatment rather than a new one: the muted fill and inert text Button and
+   Pill already use. Read off the root so the label greys with the field. */
+.root:has(.input:disabled) .field {
+  background: var(--ui-input-text-bg-disabled, var(--ui-surface-disabled));
+  border-bottom-color: var(--ui-input-text-border-disabled, var(--ui-text-disabled));
+}
+.root:has(.input:disabled) .icon,
+.root:has(.input:disabled) .label {
+  color: var(--ui-input-text-color-disabled, var(--ui-text-disabled));
+}
+.input:disabled {
+  color: var(--ui-input-text-color-disabled, var(--ui-text-disabled));
+  /* Not the `disabled` attribute's own default: a field reads as inert only
+     if the cursor says so before the click. */
+  cursor: not-allowed;
+  /* Safari lightens disabled control text on its own, on top of the colour. */
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
+
+/* -- icon --------------------------------------------------- */
+/* Icon sets ship intrinsic dimensions, so the SVG would ignore the slot box
+   and render at its own size - the same note Button's module carries. */
+.icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--ui-input-text-icon-size);
+  height: var(--ui-input-text-icon-size);
+  color: var(--ui-input-text-icon, var(--ui-text-muted));
+}
+.icon > svg,
+.icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* -- label -------------------------------------------------- */
+/* Below the field, and inset to sit under the leading icon. Figma reaches the
+   inset with a 4px padding on a wrapper frame; that is one number, so it is
+   one padding here rather than a wrapper element. */
+.label {
+  padding-inline-start: var(--ui-input-text-label-inset);
+  color: var(--ui-input-text-label-color, var(--ui-text-muted));
+  font-size: var(--ui-input-text-label-font-size);
+  line-height: var(--ui-input-text-label-line-height);
+  font-weight: var(--ui-input-text-label-font-weight);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field { transition: none; }
+}

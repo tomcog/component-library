@@ -84,6 +84,28 @@
   --ui-surface-muted-active: var(--ui-neutral-400);
   --ui-text-default: var(--ui-ink);
   --ui-text-muted: var(--ui-neutral-500);
+  /* One step further back than muted: a string that is present but is plainly
+     not content - a placeholder standing in for a value the user has not typed
+     yet. InputText's placeholder is the first and so far only user.
+
+     It is NOT pinned to a primitive, which is the whole reason it exists as a
+     semantic name. Muted is Neutral/500 in light and Neutral/400 in dark, so a
+     placeholder frozen at Neutral/400 would be one step back from the label in
+     light and exactly the same colour as it in dark - the distinction would
+     survive only in one mode. Faint therefore takes the step muted is not on,
+     which is Neutral/400 in light and Neutral/500 in dark.
+
+     The four text names now read as one ramp in both modes, each less
+     contrasty against its own surface than the one before:
+
+       light  default #262626 -> muted #737373 -> faint #8c8c8c -> disabled #b8b8b8
+       dark   default #ededed -> muted #8c8c8c -> faint #737373 -> disabled #686868
+
+     Faint is the lowest-contrast string this library will render that a user is
+     still meant to read: 3.0:1 in light, 2.8:1 in dark. That is under the 4.5:1
+     text floor, which is why it is scoped to placeholders - a hint that repeats
+     a label already read out. Don't reach for it for content. */
+  --ui-text-faint: var(--ui-neutral-400);
 
   --ui-surface-raised: var(--ui-white);
   /* The page a rail or panel sits on - below `raised`, not above it. Figma:
@@ -97,6 +119,17 @@
      that reads as inert. This is the value ButtonRound's comment records it
      having had before, so it has now settled here. */
   --ui-text-disabled: var(--ui-neutral-350);
+
+  /* The one rule colour: a hairline drawn ON a surface rather than a fill or a
+     string, which is why neither --ui-surface-* nor --ui-text-* could carry it.
+     InputText's underline is the first thing to need it. Figma binds that
+     stroke to the `Neutral/350` PRIMITIVE, which cannot follow the theme; this
+     is that value in light, and lightens in dark so the rule keeps roughly its
+     2.3:1 separation from the surface it sits on instead of vanishing.
+
+     Card had a --ui-border-subtle briefly and it went with the flat variant's
+     hairline, on the grounds that nothing used it. Something does now. */
+  --ui-border-default: var(--ui-neutral-350);
 
   /* Sizing — not themed, safe to resolve here. */
 
@@ -333,6 +366,46 @@
   --ui-pill-line-height: var(--ui-type-label-lg-line-height);
   --ui-pill-font-weight: var(--ui-type-label-font-weight);
 
+  /* InputText. Figma: `Input-Text` (553:5455) - a 32 box, 4 padding, 8 gap,
+     16 icons, a 1px rule and 2px top corners, with the label 2 below it and
+     inset 4.
+
+     No width: the field is as wide as the column it sits in, the same call
+     Card makes about its 350x200 frame.
+
+     The value is the one string this library sets in Regular rather than the
+     Medium label weight - it is content the user typed, not a label naming a
+     control, and Medium would make a filled field read as a heading. Its size
+     is Label LG, which is Figma's 14 exactly.
+
+     The label is Figma's only loose type value: 11/14, bound to no text style,
+     where every other string in the file binds a Type/Label. The scale has no
+     11 and this is the file's own rule about not growing an orphan step for
+     one component - Pill's 13/17 was cut the same way - so it snaps to Label
+     SM, the step BottomNav's caption already uses for exactly this: a small
+     uppercase caption under a control. Bind Figma's text node to Type/Label SM
+     rather than reintroducing the 11 here.
+
+     The focused rule is --ui-input-text-border-focus, NOT `-active`: the
+     design calls the state active, but `-active` means pressed here, as it
+     does in CSS - the same collision that made NavItem's current-page token
+     `-current`. It is a component-side fallback rather than a value declared
+     on :root, so a scoped --ui-primary still moves it. */
+  --ui-input-text-height: 32px;
+  --ui-input-text-padding: 4px;
+  --ui-input-text-gap: 8px;
+  --ui-input-text-radius: 2px;
+  --ui-input-text-border-width: 1px;
+  --ui-input-text-icon-size: 16px;
+  --ui-input-text-font-size: var(--ui-type-label-lg-font-size);
+  --ui-input-text-line-height: var(--ui-type-label-lg-line-height);
+  --ui-input-text-font-weight: 400;
+  --ui-input-text-label-gap: 2px;
+  --ui-input-text-label-inset: 4px;
+  --ui-input-text-label-font-size: var(--ui-type-label-sm-font-size);
+  --ui-input-text-label-line-height: var(--ui-type-label-sm-line-height);
+  --ui-input-text-label-font-weight: var(--ui-type-label-font-weight);
+
   /* Spinner. The brand mark with its ring turning, from tomcoggia.com.
      These are animation periods, not state transitions, which is why they do
      not use --ui-motion-fast/base: those two describe how quickly a thing
@@ -382,6 +455,8 @@
   --ui-surface-muted-active: var(--ui-neutral-550);
   --ui-text-default: var(--ui-neutral-150);
   --ui-text-muted: var(--ui-neutral-400);
+  /* The step muted is not on in this mode - see the light block. */
+  --ui-text-faint: var(--ui-neutral-500);
 
   --ui-surface-raised: var(--ui-neutral-800);
   /* Stays below `raised` as it does in light: the page reads darker than the
@@ -390,6 +465,8 @@
 
   --ui-surface-disabled: var(--ui-neutral-800);
   --ui-text-disabled: var(--ui-neutral-550);
+
+  --ui-border-default: var(--ui-neutral-550);
 
   /* A 10% black shadow does almost nothing on a dark surface - the card and
      its shadow are already close in lightness. Deepening the alpha restores
