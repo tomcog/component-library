@@ -92,7 +92,11 @@
   --ui-surface-pale: var(--ui-neutral-100);
 
   --ui-surface-disabled: var(--ui-neutral-150);
-  --ui-text-disabled: var(--ui-neutral-300);
+  /* Figma: Text/Disabled, moved to Neutral/350. #d4d4d4 on the #ededed
+     disabled fill is 1.2:1 - a label you cannot read at all rather than one
+     that reads as inert. This is the value ButtonRound's comment records it
+     having had before, so it has now settled here. */
+  --ui-text-disabled: var(--ui-neutral-350);
 
   /* Sizing — not themed, safe to resolve here. */
   /* Jumbo exists for touch: at 48 it clears both the 44pt iOS and 48dp
