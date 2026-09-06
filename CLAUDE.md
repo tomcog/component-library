@@ -2182,6 +2182,65 @@ near legible. The code derives from `--ui-primary` and is mode-independent, so
 it does not reproduce that; the dark cells need a decision before they are
 trusted. See Open divergences.
 
+## Checkbox
+
+Figma: the `Checkbox` set (`615:15245`), `Size` = XL | LG | MD and `State` =
+Default | Hover | Selected | Disabled | Disabled Selected.
+
+    slot   glyph   text
+    24     20      18/20
+    20     16      14/20
+    16     14      12/18
+
+### The slot is the hit area; the glyph is the box
+
+Two tokens per step, not one. The square you actually see is smaller than
+either — lucide's `square` is inset to 18 of its 24 viewBox — so the LG box
+reads as **12px inside a 20px target**. Sizing the drawn square directly would
+have shrunk the hit area with it.
+
+### Hover previews the tick
+
+The distinctive part of the design: hovering an **unchecked** box shows the
+check in `--ui-primary` on an unfilled square, so the row says what clicking it
+will do before it does it. The tick is in the DOM at every state and only its
+opacity moves, so it can fade rather than pop and the glyph never reflows.
+
+### Disabled is the library's, not Figma's
+
+Figma draws no disabled cell; both were created. Unchecked greys the outline.
+Checked **keeps the filled square and the reversed tick** and only swaps the
+colour — dropping to an outline would lose the one thing the state exists to
+say. Both were then built into Figma so the two sides match.
+
+### The stroke scales, deliberately — unlike Button and ButtonRound
+
+Those pin stroke weight with `vector-effect: non-scaling-stroke`, because their
+icons arrive from anywhere and must not change weight with the viewBox. This
+glyph is drawn by the component at a known viewBox, and letting the stroke
+scale is what reproduces the design's own weights: `2` in a 24 box renders
+1.67 / 1.33 / 1.17px at XL / LG / MD.
+
+### The input is 1px, not hidden
+
+`display:none` and `visibility:hidden` both take a control out of the focus
+order. The real `<input type="checkbox">` sits at 1px behind the glyph, so
+space-to-toggle, form submission and the screen-reader contract are the
+browser's. The whole row is a `<label>`, which both names the control and
+extends its hit target — no `id`/`htmlFor` pair needed.
+
+### Two bindings were reconciled on arrival, as usual
+
+The drawn cells had the box on `IconDefault` — which aliases `Neutral/500` in
+**both** modes and so is frozen against the theme, the same trap NavSlat's sub
+items and `Input-Text`'s icon carried — and the selected tick on the
+`Color/White` **primitive**. They now read `Text/Muted` and `Text/OnPrimary`.
+Fourth and fifth time this has come up in this file.
+
+The label is DM Sans **Regular**, not the Label scale's Medium: the design sets
+it as body text beside a control, which is also why its 20px and 18px line
+heights are its own numbers rather than `--ui-type-label-*` aliases.
+
 ## InputTextarea
 
 `InputText`'s field made multi-line, and the third member of that family.

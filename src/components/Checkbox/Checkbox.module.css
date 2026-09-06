@@ -1,0 +1,159 @@
+/* Checkbox - a real <input type="checkbox"> with a drawn box beside it.
+   Figma: the `Checkbox` set (615:15245), sizes XL / LG / MD.
+
+   The whole row is a <label>, so the text is part of the hit target and the
+   input gets its accessible name from it without an id/htmlFor pair.
+
+   The input itself is NOT display:none. A hidden input is not focusable and
+   not announced; this one is present and interactive, just drawn at zero size
+   behind the glyph, so keyboard traversal, space-to-toggle, form submission
+   and the screen-reader contract are all the browser's. */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-checkbox-gap);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  cursor: pointer;
+}
+.root:has(.input:disabled) {
+  cursor: not-allowed;
+}
+
+/* Zero-size rather than hidden: `display:none` and `visibility:hidden` both
+   take the control out of the focus order. */
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The box the design draws is the lucide glyph, not this frame. The frame is
+   the hit area around it - 24/20/16 against a 20/16/14 glyph - which is why
+   the two are separate tokens rather than one. */
+.slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--ui-checkbox-slot-size);
+  height: var(--ui-checkbox-slot-size);
+}
+
+.glyph {
+  display: block;
+  width: var(--ui-checkbox-glyph-size);
+  height: var(--ui-checkbox-glyph-size);
+  color: var(--ui-checkbox-box, var(--ui-text-muted));
+  transition: color var(--ui-motion-fast) ease;
+}
+
+/* No `vector-effect: non-scaling-stroke` here, deliberately, and against what
+   Button and ButtonRound do. Those pin the stroke to a px value because their
+   icons come from anywhere and must not change weight with the viewBox. This
+   glyph is drawn by the component at a known viewBox, and letting the stroke
+   scale with it is what reproduces the design's own weights: 2 in a 24 box
+   renders 1.67 / 1.33 / 1.17px at XL / LG / MD, which is what Figma draws. */
+.box {
+  fill: none;
+  stroke: currentColor;
+}
+
+/* Present in the DOM at every state so it can fade rather than pop, and so
+   the glyph never reflows. Hidden until the box is checked or hovered. */
+.check {
+  fill: none;
+  stroke: currentColor;
+  opacity: 0;
+  transition: opacity var(--ui-motion-fast) ease;
+}
+
+/* -- hover ---------------------------------------------------------
+   The design previews the tick: hovering an UNCHECKED box shows the check in
+   primary on an unfilled square, so the row says what clicking it will do
+   before it does it. */
+.root:hover:not(:has(.input:disabled)) .glyph {
+  color: var(--ui-checkbox-box-hover, var(--ui-primary));
+}
+.root:hover:not(:has(.input:disabled)) .check {
+  opacity: 1;
+}
+
+/* -- checked -------------------------------------------------------
+   The square fills and the tick reverses out of it. */
+.root:has(.input:checked) .glyph {
+  color: var(--ui-checkbox-box-checked, var(--ui-primary));
+}
+.root:has(.input:checked) .box {
+  fill: currentColor;
+}
+.root:has(.input:checked) .check {
+  opacity: 1;
+  stroke: var(--ui-checkbox-check-checked, var(--ui-text-on-primary));
+}
+
+/* -- disabled ------------------------------------------------------
+   Not in Figma; this is the library's existing treatment applied to both
+   boxes. Unchecked greys the outline. Checked keeps the FILLED square and the
+   reversed tick and only swaps the colour, so a disabled checked box still
+   reads as checked at a glance - the alternative, dropping to an outline,
+   loses the one thing the state is there to say.
+
+   After the checked rules, so it wins on source order at equal specificity. */
+.root:has(.input:disabled) .glyph {
+  color: var(--ui-checkbox-box-disabled, var(--ui-text-disabled));
+}
+.root:has(.input:disabled:checked) .check {
+  stroke: var(--ui-checkbox-check-disabled, var(--ui-white));
+}
+.root:has(.input:disabled) .label {
+  color: var(--ui-checkbox-label-disabled, var(--ui-text-disabled));
+}
+
+/* -- focus ---------------------------------------------------------
+   On the slot, since the input it belongs to is a 1px box behind the glyph.
+   `:focus-visible` so a mouse click does not draw a ring the pointer already
+   accounts for - the same call every other control here makes. */
+.input:focus-visible + .slot {
+  outline: 2px solid var(--ui-checkbox-focus-ring, var(--ui-primary));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* -- label ---------------------------------------------------------
+   DM Sans REGULAR, not the Medium the Label type scale uses: the design sets
+   this as body text sitting beside a control, not as a label for one. */
+.label {
+  color: var(--ui-checkbox-label, var(--ui-text-default));
+  font-size: var(--ui-checkbox-font-size);
+  line-height: var(--ui-checkbox-line-height);
+  font-weight: var(--ui-checkbox-font-weight);
+}
+
+/* -- sizes ---------------------------------------------------------- */
+.xl {
+  --ui-checkbox-slot-size: var(--ui-checkbox-xl-slot-size);
+  --ui-checkbox-glyph-size: var(--ui-checkbox-xl-glyph-size);
+  --ui-checkbox-font-size: var(--ui-checkbox-xl-font-size);
+  --ui-checkbox-line-height: var(--ui-checkbox-xl-line-height);
+}
+.lg {
+  --ui-checkbox-slot-size: var(--ui-checkbox-lg-slot-size);
+  --ui-checkbox-glyph-size: var(--ui-checkbox-lg-glyph-size);
+  --ui-checkbox-font-size: var(--ui-checkbox-lg-font-size);
+  --ui-checkbox-line-height: var(--ui-checkbox-lg-line-height);
+}
+.md {
+  --ui-checkbox-slot-size: var(--ui-checkbox-md-slot-size);
+  --ui-checkbox-glyph-size: var(--ui-checkbox-md-glyph-size);
+  --ui-checkbox-font-size: var(--ui-checkbox-md-font-size);
+  --ui-checkbox-line-height: var(--ui-checkbox-md-line-height);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glyph, .check { transition: none; }
+}

@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -294,6 +294,7 @@ function App() {
   const [posted, setPosted] = useState("");
   const [salary, setSalary] = useState("220000");
   const [notes, setNotes] = useState("");
+  const [boxes, setBoxes] = useState<Record<string, boolean>>({ xl: true, lg: false, md: true });
   const [grow, setGrow] = useState("This one grows as you type. Add a few lines and the box follows, and the resize grabber is gone because two things setting the height is one too many.");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
@@ -479,6 +480,33 @@ function App() {
         <Row label="disabled">
           <InputTextarea style={{ width: 260 }} label="Notes" value="Unavailable" disabled readOnly />
         </Row>
+      </Section>
+
+      <Section
+        title="Checkbox"
+        note={
+          "Figma: the Checkbox set, sizes XL / LG / MD. Hover an unchecked box \u2014 the design "
+          + "previews the tick in primary on an unfilled square, so the row says what clicking it will "
+          + "do before it does it. Checked fills the square and reverses the tick out of it. Disabled "
+          + "is not drawn in Figma: unchecked greys the outline, and checked keeps the filled square "
+          + "and reversed tick and only swaps the colour, so it still reads as checked. Tab to one and "
+          + "press space \u2014 it is a real input, drawn at 1px behind the glyph rather than hidden, "
+          + "so the keyboard and screen-reader behaviour is the browser's."
+        }
+      >
+        {(["xl", "lg", "md"] as const).map((s) => (
+          <Row key={s} label={s}>
+            <Checkbox
+              size={s}
+              label="Checkbox item"
+              checked={boxes[s]}
+              onChange={(e) => setBoxes((p) => ({ ...p, [s]: e.target.checked }))}
+            />
+            <Checkbox size={s} label="Unchecked" defaultChecked={false} />
+            <Checkbox size={s} label="Disabled" disabled />
+            <Checkbox size={s} label="Disabled checked" disabled defaultChecked />
+          </Row>
+        ))}
       </Section>
 
       <Section title="Loading" note="Content is hidden but keeps its space, so the width never changes.">

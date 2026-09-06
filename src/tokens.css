@@ -533,6 +533,36 @@
 
   /* Card. Figma: 8px radius. No width or height - see Card.module.css for
      why the 350x200 frame is not modelled. */
+  /* -- Checkbox ------------------------------------------------
+     Figma: the `Checkbox` set (615:15245). Two sizes per step, not one: the
+     SLOT is the hit area and the GLYPH is the square drawn inside it, and the
+     design keeps them apart (24/20, 20/16, 16/14). The square you actually
+     see is smaller again - lucide's `square` is inset to 18 of its 24 viewBox
+     - so the LG box reads as 12px inside a 20px target.
+
+     The label is DM Sans Regular at these sizes rather than the Label scale's
+     Medium: the design sets it as body text beside a control. XL's 20px line
+     height and MD's 18px are the design's own, and are why these are not
+     --ui-type-label-* aliases. */
+  --ui-checkbox-gap: 2px;
+
+  --ui-checkbox-xl-slot-size: 24px;
+  --ui-checkbox-xl-glyph-size: 20px;
+  --ui-checkbox-xl-font-size: 18px;
+  --ui-checkbox-xl-line-height: 20px;
+
+  --ui-checkbox-lg-slot-size: 20px;
+  --ui-checkbox-lg-glyph-size: 16px;
+  --ui-checkbox-lg-font-size: 14px;
+  --ui-checkbox-lg-line-height: 20px;
+
+  --ui-checkbox-md-slot-size: 16px;
+  --ui-checkbox-md-glyph-size: 14px;
+  --ui-checkbox-md-font-size: 12px;
+  --ui-checkbox-md-line-height: 18px;
+
+  --ui-checkbox-font-weight: 400;
+
   --ui-card-radius: 8px;
 
   /* -- TYPEFACE ----------------------------------------------
