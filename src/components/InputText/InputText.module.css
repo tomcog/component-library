@@ -126,6 +126,46 @@
   opacity: 1;
 }
 
+/* -- the date picker indicator ------------------------------- */
+/* A date input ships a browser calendar glyph that opens the picker. It is the
+   one thing inside this field that is itself clickable, so it is --ui-primary
+   rather than the muted icon colour.
+
+   MASKED, not a background-image: a data-URI image cannot read a custom
+   property, so the glyph is the mask and --ui-primary paints through it. That
+   keeps the colour on the token instead of baking a hex into the URI.
+
+   The glyph is lucide's `calendar-plus`, copied from lucide-react v0.544.0
+   rather than drawn by hand.
+
+   Replacing the indicator rather than hiding it and overlaying our own keeps
+   the NATIVE click-to-open behaviour, which an overlay would have to
+   reimplement with showPicker(). Firefox exposes no such pseudo-element and
+   keeps its own control - it simply does not see this rule. */
+.input[type="date"]::-webkit-calendar-picker-indicator,
+.input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.input[type="month"]::-webkit-calendar-picker-indicator,
+.input[type="week"]::-webkit-calendar-picker-indicator {
+  width: var(--ui-input-text-icon-size);
+  height: var(--ui-input-text-icon-size);
+  padding: 0;
+  cursor: pointer;
+  opacity: 1;
+  background-color: var(--ui-input-text-picker, var(--ui-primary));
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M16%2019h6'/%3E%3Cpath%20d='M16%202v4'/%3E%3Cpath%20d='M19%2016v6'/%3E%3Cpath%20d='M21%2012.598V6a2%202%200%200%200-2-2H5a2%202%200%200%200-2%202v14a2%202%200%200%200%202%202h8.5'/%3E%3Cpath%20d='M3%2010h18'/%3E%3Cpath%20d='M8%202v4'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M16%2019h6'/%3E%3Cpath%20d='M16%202v4'/%3E%3Cpath%20d='M19%2016v6'/%3E%3Cpath%20d='M21%2012.598V6a2%202%200%200%200-2-2H5a2%202%200%200%200-2%202v14a2%202%200%200%200%202%202h8.5'/%3E%3Cpath%20d='M3%2010h18'/%3E%3Cpath%20d='M8%202v4'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+.input[type="date"]:disabled::-webkit-calendar-picker-indicator {
+  background-color: var(--ui-input-text-color-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+
 /* -- icon --------------------------------------------------- */
 /* Icon sets ship intrinsic dimensions, so the SVG would ignore the slot box
    and render at its own size - the same note Button's module carries. */
