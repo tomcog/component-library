@@ -683,6 +683,7 @@ function App() {
                     key={s.href}
                     href={s.href}
                     active={shell === s.href}
+                    sectionCurrent={!!s.sub?.some((c) => c.href === shell)}
                     onClick={(e) => {
                       e.preventDefault();
                       setShell(s.href);
@@ -728,6 +729,7 @@ function App() {
                     icon={<Briefcase />}
                     href={s.href}
                     active={shell === s.href}
+                    sectionCurrent={!!s.sub?.some((c) => c.href === shell)}
                     onClick={(e) => {
                       e.preventDefault();
                       setShell(s.href);

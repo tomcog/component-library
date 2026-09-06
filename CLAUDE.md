@@ -1561,6 +1561,32 @@ three nodes. Measured live at 32.
   off, which in code is just whether the caller passes `icon`. If it is ever
   promoted to a component, the code name already matches.
 
+### `sectionCurrent`: the parent of the current sub item
+
+A slat that owns sub items is not itself the page when one of its children is.
+It takes the chip's current treatment and **nothing else**:
+
+| | `active` | `sectionCurrent` |
+|---|---|---|
+| chip | current pair | current pair |
+| label | `--ui-primary` | unchanged |
+| `aria-current` | `"page"` | none |
+| pipe + indent on hover | suppressed | kept |
+
+The red label marks the page you are actually on, and the sub item already
+carries it — putting it on the parent too reads as two current items. The chip
+is what says *the page is somewhere in here*.
+
+It is a separate prop rather than something derived from `active`, because the
+two differ in more than colour. `aria-current` is the important one: announcing
+two current items is wrong, so the parent sets none. The pipe and indent stay
+for the same kind of reason — unlike the current page, this slat is still
+somewhere you can navigate to, so it should still answer a hover.
+
+The chip rule is written out rather than shared with `.current`. The two mean
+different things and only happen to agree on that one pair today; sharing it
+would tie them together for a reason that is a coincidence.
+
 ## ButtonRound
 
 Circular icon-only action button. Figma: the `Button/Round` set (`220:11857`),

@@ -26,6 +26,21 @@ export interface NavSlatProps extends NavLinkBaseProps {
    * `<button>` cannot be nested inside the slat's `<a>`.
    */
   icon?: ReactNode;
+  /**
+   * This slat is not the current page, but a sub item under it is. The chip
+   * takes the current treatment and the label does NOT.
+   *
+   * The red label marks the page you are actually on, and the sub item already
+   * carries it; putting it on the parent too reads as two current items. The
+   * chip is what says "the page is somewhere in here".
+   *
+   * Deliberately a separate prop rather than something derived from `active`,
+   * because the two differ in more than colour. This sets no
+   * `aria-current` - the parent is not the current page - and it keeps the
+   * pipe and indent that `active` suppresses, because unlike the current page
+   * this slat is still somewhere you can navigate to.
+   */
+  sectionCurrent?: boolean;
 }
 
 /**
@@ -43,11 +58,14 @@ export interface NavSlatProps extends NavLinkBaseProps {
  * pipe and no indent - and sets `aria-current="page"`, since the design
  * signals it with colour alone.
  *
+ * `sectionCurrent` is the parent of a current sub item: the chip only, no red
+ * label and no `aria-current`. See the prop.
+ *
  * The prop is `active` and the class is `current`, matching `NavItem`:
  * `-active` is unavailable in CSS, where it already means pressed.
  */
 export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavSlat(
-  { active = false, level = "primary", icon, children, ...props },
+  { active = false, sectionCurrent = false, level = "primary", icon, children, ...props },
   ref,
 ) {
   // Figma draws no chip on a sub item, and there is no Level=Secondary
@@ -60,6 +78,7 @@ export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavS
     sub ? styles.secondary : null,
     chip ? styles.withIcon : null,
     active ? styles.current : null,
+    sectionCurrent && !active ? styles.sectionCurrent : null,
   ]
     .filter(Boolean)
     .join(" ");

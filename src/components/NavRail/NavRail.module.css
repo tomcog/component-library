@@ -235,6 +235,22 @@
   margin-inline-start: 0;
 }
 
+/* The parent of a current sub item. The chip only.
+
+   It takes the SAME pair as `.current` above, written out rather than shared,
+   so the two states cannot drift into one another later - they mean different
+   things and only happen to agree on this one pair today.
+
+   Everything else `.current` does is deliberately absent: no red label, since
+   the sub item carries that and two red labels read as two current items; no
+   `aria-current`, since this is not the current page; and the pipe and indent
+   stay, because unlike the current page this slat is still somewhere you can
+   go. */
+.slat.sectionCurrent .chip {
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
+  color: var(--ui-nav-rail-chip-icon-current, var(--ui-primary));
+}
+
 /* Focus is code-only, matching Nav and Button: Figma models no focus state. */
 .slat:focus-visible {
   outline: 2px solid var(--ui-primary);
