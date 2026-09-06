@@ -29,6 +29,11 @@
      change per app. An app that wants different colours overrides the
      SEMANTIC --ui-primary below, never this. */
   --ui-tc-red: #e51a38;           /* Figma: Color/TC Red */
+  /* The confirm green. A primitive rather than a raw hex on the semantic
+     name below, so it sits beside TC Red in the palette where a designer
+     looks for it. Figma: `Confirm` (606:15110), added with the Button/Round
+     `State=Confirm` cell. */
+  --ui-tc-green: #59cf55;         /* Figma: Confirm */
   --ui-white: #ffffff;            /* Figma: Color/White */
   /* Neutralised: was #282523, a warm near-black. #262626 is the same
      perceptual lightness (L* 14.9) with no hue. Pushed to Figma, where
@@ -120,6 +125,32 @@
      as --ui-text-on-accent: independent roles need independent pairings, or a
      divergent theme silently loses contrast on one of them. */
   --ui-text-on-danger: var(--ui-white);
+  /* CONFIRM - the affirmative half of the same pair danger is the negative
+     half of. Save, Apply, Accept, Done: the action that COMMITS what the user
+     has been doing, as opposed to the one that destroys it.
+
+     The fourth independently settable role, and the only one that does NOT
+     default to TC Red. The other three can share the brand because red says
+     nothing contradictory as a CTA, as chrome or as a warning. Green is
+     different: it is doing the same job here that red does for danger, which
+     is carrying a meaning by convention, and a confirm that came out brand-red
+     would say "danger" in exactly the place the user needs to hear the
+     opposite. So it ships green and stays green until an app says otherwise:
+
+         :root { --ui-confirm: #2e7d32 }
+
+     Consumed by ButtonRound's `tone="confirm"`, which uses it for the HOVER
+     fill and leaves the resting state alone - see ButtonRound.module.css. */
+  --ui-confirm: var(--ui-tc-green);
+  /* What sits ON a confirm fill. Same reasoning as --ui-text-on-accent and
+     --ui-text-on-danger: independent roles need independent pairings.
+
+     Figma draws the icon white, and this keeps that. Be aware of what it
+     costs: white on #59cf55 is 2.0:1, and a glyph is a graphical object, for
+     which WCAG asks 3:1. The fill is a hover state - transient, not the
+     resting appearance, and never the only signal that a control is there -
+     but an app that wants the contrast has one name to set. */
+  --ui-text-on-confirm: var(--ui-white);
   /* Figma: Primary/Lighter. Deliberately NOT declared here. Composed at
      :root it would freeze against :root's --ui-primary, so recolouring the
      brand on a subtree would leave the tint behind - the same trap the
@@ -579,6 +610,11 @@
   --ui-text-disabled: var(--ui-neutral-550);
 
   --ui-border-default: var(--ui-neutral-550);
+
+  /* Untouched in dark, exactly as --ui-primary is: a role colour that carries
+     a MEANING rather than a contrast relationship does not get to change when
+     the theme does. #59cf55 is 6.3:1 against the dark page and 2.0:1 against
+     white in both modes - the same trade the light block documents. */
 
   /* A 10% black shadow does almost nothing on a dark surface - the card and
      its shadow are already close in lightness. Deepening the alpha restores

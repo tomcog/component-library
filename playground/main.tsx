@@ -55,6 +55,7 @@ const SEMANTIC_TOKENS = [
   "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
   "--ui-accent", "--ui-text-on-accent",
   "--ui-danger", "--ui-text-on-danger",
+  "--ui-confirm", "--ui-text-on-confirm",
   "--ui-surface-inverse", "--ui-text-on-inverse",
   "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
   "--ui-text-default", "--ui-text-muted", "--ui-text-faint", "--ui-surface-raised",
@@ -67,6 +68,7 @@ const TOKEN_PAIRS: [string, string, string][] = [
   ["--ui-primary", "--ui-text-on-primary", "On primary"],
   ["--ui-accent", "--ui-text-on-accent", "On accent"],
   ["--ui-danger", "--ui-text-on-danger", "On danger"],
+  ["--ui-confirm", "--ui-text-on-confirm", "On confirm"],
   ["--ui-surface-inverse", "--ui-text-on-inverse", "On inverse"],
   ["--ui-surface-muted", "--ui-text-default", "On muted"],
   ["--ui-surface-raised", "--ui-text-default", "On raised"],
@@ -122,6 +124,14 @@ const House = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
     <path d="M9 22V12h6v10" />
+  </svg>
+);
+// lucide `save`, the glyph the confirm tone was asked for.
+const Save = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+    <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+    <path d="M7 3v4a1 1 0 0 0 1 1h7" />
   </svg>
 );
 const Chevron = () => (
@@ -281,6 +291,7 @@ function App() {
   const [where, setWhere] = useState("Home");
   const [mode, setMode] = useState("Remote");
   const [email, setEmail] = useState("");
+  const [posted, setPosted] = useState("");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
   const [rail, setRail] = useState("/work");
@@ -325,7 +336,7 @@ function App() {
         note="Live values, read off the themed element - switch theme or pick a primary above and every semantic value follows."
       >
         <p className="groupLabel">
-          Semantic <span>- the public API, 20 names an app overrides</span>
+          Semantic <span>- the public API, 22 names an app overrides</span>
         </p>
         <div className="swatches">
           {SEMANTIC_TOKENS.map((t) => <Swatch key={t} name={t} value={semantic[t]} />)}
@@ -408,11 +419,20 @@ function App() {
         ))}
       </Section>
 
-      <Section title="ButtonRound" note="Figma sizes and interaction states. Hover and press each icon button.">
+      <Section
+        title="ButtonRound"
+        note={
+          "Figma sizes and interaction states. Hover and press each icon button. The third in " +
+          "each row is tone=\"confirm\" \u2014 same resting appearance as the first, and it answers " +
+          "the pointer in --ui-confirm instead of --ui-primary. The tone changes the hover pair " +
+          "only: pressed is the inverse surface for every round button, whatever it goes on to do."
+        }
+      >
         {ROUND_SIZES.map((s) => (
           <Row key={s} label={s}>
             <ButtonRound size={s} icon={<House />} aria-label={`${s} home action`} />
             <ButtonRound size={s} icon={<House />} aria-label={`${s} disabled action`} disabled />
+            <ButtonRound size={s} tone="confirm" icon={<Save />} aria-label={`${s} save`} />
           </Row>
         ))}
       </Section>
@@ -760,7 +780,9 @@ function App() {
           "rule primary, and that is the whole treatment: no focus ring, unlike every other control " +
           "here. Icons are two independent slots and render identically \u2014 the same glyph is used " +
           "on both sides so the pair can be compared. Figma's instance draws a chevron in the " +
-          "trailing slot, but a text field is not a select, so nothing is baked in."
+          "trailing slot, but a text field is not a select, so nothing is baked in. The date row " +
+          "carries the two things a date input needs on top: a red calendar-plus indicator, and " +
+          "its empty `mm/dd/yyyy` printed in the hint colour rather than at full value-black."
         }
       >
         <Row label="as drawn">
@@ -788,6 +810,15 @@ function App() {
         </Row>
         <Row label="no label">
           <InputText style={{ width: 220 }} aria-label="Search" icon={<Layers />} placeholder="aria-label instead" />
+        </Row>
+        <Row label="date">
+          <InputText
+            style={{ width: 220 }}
+            label="Date posted"
+            type="date"
+            value={posted}
+            onChange={(e) => setPosted(e.target.value)}
+          />
         </Row>
         <Row label="disabled">
           <InputText style={{ width: 220 }} label="Input label" icon={<Layers />} value="Home" disabled readOnly />

@@ -1,5 +1,5 @@
-import { forwardRef, useId } from "react";
-import type { InputHTMLAttributes, ReactNode } from "react";
+import { forwardRef, useId, useState } from "react";
+import type { ChangeEvent, InputHTMLAttributes, ReactNode } from "react";
 import styles from "./InputText.module.css";
 
 // Same literal-expression note as Button: bundlers substitute this exact
@@ -43,6 +43,35 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   const autoId = useId();
   const inputId = id ?? autoId;
 
+  /* Date-like inputs render `mm/dd/yyyy` when empty. That string is a HINT -
+     it is the placeholder in every sense except the one CSS recognises, since
+     a date input has no `placeholder` attribute and so never matches
+     `:placeholder-shown`. Chrome draws it inside ::-webkit-datetime-edit,
+     which takes the input's own `color`, so an empty field printed its hint at
+     full value-black next to text fields printing theirs faint.
+     There is no CSS selector for "this input has no value", so emptiness is
+     published as an attribute for the stylesheet to hook - see the
+     ::-webkit-datetime-edit rule in InputText.module.css. */
+  const controlledValue = props.value;
+  const isControlled = controlledValue !== undefined;
+  const [uncontrolledFilled, setUncontrolledFilled] = useState(
+    () => props.defaultValue != null && props.defaultValue !== "",
+  );
+  const filled = isControlled
+    ? controlledValue !== "" && controlledValue != null
+    : uncontrolledFilled;
+
+  // Only the uncontrolled case needs the listener, and setState with an
+  // unchanged boolean bails out, so a keystroke that does not cross the
+  // empty/filled line costs no render.
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!isControlled) {
+      const next = event.currentTarget.value !== "";
+      setUncontrolledFilled((prev) => (prev === next ? prev : next));
+    }
+    props.onChange?.(event);
+  }
+
   if (process.env.NODE_ENV !== "production") {
     const named =
       props["aria-label"] != null ||
@@ -70,7 +99,15 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     <div className={[styles.root, className].filter(Boolean).join(" ")}>
       <div className={styles.field}>
         {slot(icon)}
-        <input ref={ref} id={inputId} type={type} className={styles.input} {...props} />
+        <input
+          ref={ref}
+          id={inputId}
+          type={type}
+          className={styles.input}
+          {...props}
+          onChange={handleChange}
+          data-filled={filled ? "" : undefined}
+        />
         {slot(iconEnd)}
       </div>
       {label != null ? (

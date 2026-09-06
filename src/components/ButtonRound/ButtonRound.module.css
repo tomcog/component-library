@@ -27,6 +27,29 @@
   color: var(--ui-button-round-icon-active, var(--ui-text-on-inverse));
 }
 
+/* -- tone="confirm" ------------------------------------------ */
+/* A button tagged as the AFFIRMATIVE action - Save, Apply, Accept. Figma:
+   `Button/Round` State=Confirm (606:15107).
+
+   It changes the HOVER pair and nothing else. The resting appearance stays
+   primary-lighter with a primary glyph, which is the point: the green is a
+   response to the pointer arriving, not a second resting style competing with
+   the default one. A row of round buttons keeps one resting rhythm and only
+   answers differently under the cursor. Figma models it the same way - there
+   is a `State=Confirm` cell and deliberately no `Confirm Default`.
+
+   Pressed is left alone too. Active is the inverse surface for every round
+   button regardless of tone: it means "the pointer is down on this", which is
+   the same fact whatever the button goes on to do.
+
+   Declared AFTER the base :hover rule and reading its own override hooks, so
+   `--ui-button-round-bg-hover` set on an instance still wins for that
+   instance - the tone is a default, not a lock. */
+.confirm:hover:not(:disabled) {
+  background: var(--ui-button-round-bg-hover, var(--ui-confirm));
+  color: var(--ui-button-round-icon-hover, var(--ui-text-on-confirm));
+}
+
 .button:focus-visible {
   outline: 2px solid var(--ui-primary);
   outline-offset: 2px;

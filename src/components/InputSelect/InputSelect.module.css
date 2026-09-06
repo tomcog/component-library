@@ -120,9 +120,10 @@
 }
 
 /* -- label --------------------------------------------------- */
+/* Faint, matching InputText's - see the note there. */
 .label {
   padding-inline-start: var(--ui-input-select-label-inset, var(--ui-input-text-label-inset));
-  color: var(--ui-input-select-label-color, var(--ui-text-muted));
+  color: var(--ui-input-select-label-color, var(--ui-text-faint));
   font-size: var(--ui-input-select-label-font-size, var(--ui-input-text-label-font-size));
   line-height: var(--ui-input-select-label-line-height, var(--ui-input-text-label-line-height));
   font-weight: var(--ui-input-select-label-font-weight, var(--ui-input-text-label-font-weight));

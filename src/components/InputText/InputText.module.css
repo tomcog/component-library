@@ -6,16 +6,18 @@
 
    - the rule was `Neutral/350` and the label `Neutral/400`, both PRIMITIVES,
      so neither could follow the theme - a field on a dark page would have
-     kept a light-mode hairline. They read --ui-border-default and
-     --ui-text-muted.
+     kept a light-mode hairline. They read --ui-border-default and, for the
+     label, --ui-text-faint, which IS Neutral/400 in light.
    - the leading icon was `IconDefault`, which aliases `Neutral/500` in BOTH
      modes and so is frozen against the theme. That is the exact binding
      NavSlat's sub items had, and the fix is the same: --ui-text-muted, which
      is the identical #737373 in light and lightens to #8c8c8c in dark.
 
-   The label rebinding also moves its value, from #8c8c8c to #737373. That is
-   deliberate twice over: it is what the semantic tier says a muted string is,
-   and #8c8c8c on white is 3.0:1 - below the floor for text this small. */
+   The label keeps Figma's VALUE, #8c8c8c, but not its binding: --ui-text-faint
+   is Neutral/400 in light and steps to Neutral/500 in dark, so the label now
+   tracks the theme at the tone the design asked for. It was briefly on
+   --ui-text-muted (#737373) for contrast - #8c8c8c on white is 3.0:1, under
+   the 4.5:1 floor - and moved back on request. See CLAUDE.md. */
 
 .root {
   display: flex;
@@ -126,6 +128,28 @@
   opacity: 1;
 }
 
+/* -- the date/time hint -------------------------------------- */
+/* An empty date input prints `mm/dd/yyyy`, which is a hint in every sense
+   except the one CSS recognises: a date input takes no `placeholder`
+   attribute, so it never matches `:placeholder-shown` and the ::placeholder
+   rule above cannot reach it. Chrome draws the string inside
+   ::-webkit-datetime-edit, which inherits the input's own `color` - so without
+   this the hint rendered at full value-black beside text fields printing
+   theirs faint.
+
+   `[data-filled]` is set by the component once the field holds a value; see
+   InputText.tsx for why the emptiness has to be published rather than
+   selected. The colour is the SAME token the placeholder uses, because this is
+   the same thing. Firefox and Safari expose no such pseudo-element and simply
+   do not see the rule. */
+.input[type="date"]:not([data-filled])::-webkit-datetime-edit,
+.input[type="datetime-local"]:not([data-filled])::-webkit-datetime-edit,
+.input[type="month"]:not([data-filled])::-webkit-datetime-edit,
+.input[type="week"]:not([data-filled])::-webkit-datetime-edit,
+.input[type="time"]:not([data-filled])::-webkit-datetime-edit {
+  color: var(--ui-input-text-placeholder, var(--ui-text-faint));
+}
+
 /* -- the date picker indicator ------------------------------- */
 /* A date input ships a browser calendar glyph that opens the picker. It is the
    one thing inside this field that is itself clickable, so it is --ui-primary
@@ -192,10 +216,16 @@
 /* -- label -------------------------------------------------- */
 /* Below the field, and inset to sit under the leading icon. Figma reaches the
    inset with a 4px padding on a wrapper frame; that is one number, so it is
-   one padding here rather than a wrapper element. */
+   one padding here rather than a wrapper element.
+
+   Faint, the same token the placeholder is on. They share a value and that is
+   fine: the two never sit on the same line, and nothing distinguishes them by
+   colour anyway - the label is 12px uppercase with letter-spacing, below the
+   rule; the placeholder is 14px sentence case, inside it. What the placeholder
+   must not be mistaken for is the VALUE, and that is --ui-text-default. */
 .label {
   padding-inline-start: var(--ui-input-text-label-inset);
-  color: var(--ui-input-text-label-color, var(--ui-text-muted));
+  color: var(--ui-input-text-label-color, var(--ui-text-faint));
   font-size: var(--ui-input-text-label-font-size);
   line-height: var(--ui-input-text-label-line-height);
   font-weight: var(--ui-input-text-label-font-weight);

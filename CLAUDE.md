@@ -162,20 +162,38 @@ never alias `--ui-tc-red`.
 
 #### CTA vs chrome: `--ui-primary` and `--ui-accent`
 
-Three roles, all defaulting to `--ui-tc-red`, settable apart:
+Four roles, settable apart:
 
-| token | means | who reads it |
-|---|---|---|
-| `--ui-primary` | the **CTA** colour | every component here — 35 usages across Button, ButtonRound, Nav, NavRail, BottomNav, Pill, InputText |
-| `--ui-accent` | the **brand/chrome** colour — headers, rules, borders, dividers | nothing yet |
-| `--ui-danger` | **destructive actions and error states** — Delete, Remove, a confirm button, an invalid field | nothing yet |
+| token | means | default | who reads it |
+|---|---|---|---|
+| `--ui-primary` | the **CTA** colour | `--ui-tc-red` | every component here — 35 usages across Button, ButtonRound, Nav, NavRail, BottomNav, Pill, InputText |
+| `--ui-accent` | the **brand/chrome** colour — headers, rules, borders, dividers | `--ui-tc-red` | nothing yet |
+| `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | nothing yet |
+| `--ui-confirm` | the **affirmative** action — Save, Apply, Accept, Done | `--ui-tc-green` | `ButtonRound tone="confirm"` |
 
 Each carries its own **on** colour — `--ui-text-on-primary`,
-`--ui-text-on-accent`, `--ui-text-on-danger` — rather than sharing one. That is
-the whole point of splitting the roles: an app that gives itself a pale accent
-and a dark CTA needs different text on each, and a single shared name would be
-wrong for one of them. The playground's pairings panel renders all three, so a
-recolour that breaks contrast shows up there.
+`--ui-text-on-accent`, `--ui-text-on-danger`, `--ui-text-on-confirm` — rather
+than sharing one. That is the whole point of splitting the roles: an app that
+gives itself a pale accent and a dark CTA needs different text on each, and a
+single shared name would be wrong for one of them. The playground's pairings
+panel renders all four, so a recolour that breaks contrast shows up there.
+
+**`--ui-confirm` is the one that does not default to the brand.** The other
+three can all share TC Red because red says nothing contradictory as a CTA, as
+chrome, or as a warning. Confirm is doing for "yes" what danger does for "no":
+carrying a meaning by convention. A confirm button that came out brand-red
+would say *danger* in the one place the user most needs to hear the opposite,
+so it ships green (`#59cf55`, Figma's `Confirm`) and stays green until an app
+says otherwise. It is also untouched in the dark block, for the same reason
+`--ui-primary` is: a colour that carries a meaning does not get to change when
+the theme does.
+
+Know what the default pairing costs. White on `#59cf55` is **2.0:1**, and a
+glyph is a graphical object, which WCAG asks 3:1 of. It is Figma's spec and it
+is what ships. Two things make it tolerable rather than fine: the fill is a
+*hover* state, so it is transient rather than the resting appearance, and it is
+never the only signal that a control is there. An app that wants the contrast
+sets `--ui-text-on-confirm` and nothing else moves.
 
 **Everything this library currently renders is an interactive control**, and
 every one of those is a call to action, so they are all on `--ui-primary` —
@@ -616,6 +634,69 @@ is a reason to be careful, not a reason to refuse.
 Ink has since been neutralised to `#262626` on both sides, which is exactly
 the change that rule would have blocked.
 
+### Every variable now carries its `--ui-*` name (Dev Mode code syntax)
+
+Six variables used to have a WEB code syntax set; **95 do now**. A developer
+opening any token in Dev Mode is told the CSS custom property the coded
+component actually reads — `Surface/Muted Hover` says `var(--ui-surface-muted-hover)`,
+`Button Size/XL/Padding X` says `var(--ui-button-xl-padding-x)`.
+
+This is metadata only: it changes no fill, no binding, and nothing renders
+differently. It is the cheapest possible defence against the drift this file
+keeps suffering, because it puts the code name in front of whoever is about to
+diverge from it. **When you add a variable, set its code syntax in the same
+breath.**
+
+Four groups are deliberately left without one, and the absence is the signal:
+
+- `Button Size/*/Padding Y` — the code sizes buttons by height, not by
+  vertical padding, so there is no token to point at.
+- `Primary/Dark`, `Primary/Darker`, and the `Button/{Primary,Secondary,Tertiary,Ghost}/{Hover,Pressed}`
+  aliases that read them. Figma models button hover and press as darker shades
+  of the brand; the code does not have `--ui-primary-dark` at all. **This is a
+  real divergence, not an oversight** — see Open divergences.
+- `Neutral/50`, `/200`, `/900` — in Figma, never mirrored into the ramp.
+- The file's own legacy screen colours (`Text`, `IconDefault`, `Column`,
+  `Checkbox`, `TabBarBG`, `PageBG`, `StepperWell`, `PacketEditorHeader`,
+  `GroupHeader`, `LayoutIcons`, `TextSoft`, `True Black`) and the unrelated
+  `M3` collection. None of these are library tokens.
+
+### Confirm was promoted out of the component tier
+
+It arrived as `Button/Confirm` holding a **raw `#59cf55`** — a component-tier
+name carrying a literal value, which is both tiers wrong at once and exactly
+the mistake the paragraph above warns about. It is now:
+
+    Confirm/Base   #59cf55        var(--ui-confirm)
+    Text/OnConfirm -> Color/White var(--ui-text-on-confirm)
+
+sitting beside `Primary/Base`, `Accent/Base` and `Danger/Base` as the fourth
+semantic role. The rename kept the variable's ID, so the binding on the
+`State=Confirm` cell survived it untouched — **renaming is safe, deleting and
+recreating is not.**
+
+The cell's glyph was bound to the `Color/White` primitive; it now reads
+`Text/OnConfirm`. Same class of fix as the `Neutral/350` rule and the
+`Neutral/400` label on `Input-Text`, and the third time it has come up.
+
+**The Figma set models Confirm as a `State`, the code as a `tone`.** That is not
+drift — it is why the tone changes hover only; see the ButtonRound section. The
+`State` axis was deliberately NOT renamed to match the prop: changing a variant
+property name breaks every existing instance, and the modelling difference is
+documented rather than forced.
+
+### The `Input/*` group was made consistent
+
+`Input Hint` -> `Input/Hint` and `Input/border` -> `Input/Border`, so all five
+sit together under one prefix (`Input/Border`, `Input/Hint`, `Input/Icon`,
+`Input/Label`, plus the older `InputFieldBG`).
+
+`Input/Label` was also repointed. It had been `Neutral/400` — a **primitive** —
+in Light and `Text/Muted` in Dark, so it could not follow the theme in one mode
+and disagreed with the code in the other. It now reads `Text/Faint` in both,
+which is `Neutral/400` light and `Neutral/500` dark: the value the design asked
+for, and exactly what the component renders.
+
 ### The greys are neutral, deliberately
 
 Every grey in the palette is a true neutral — `R = G = B`. The palette used to
@@ -790,8 +871,13 @@ a fix pending, per the rule above.
 
    `Surface/Pale` came off this list when `LeftRail` needed it, which is
    exactly the trigger the rule describes. It is now `--ui-surface-pale`, the
-   14th semantic token, with a dark value (`--ui-ink`) that Figma does not
-   have yet — so it travels code -> Figma on the next Bridge session.
+   14th semantic token. **Its dark value is still unreconciled, and now
+   actively wrong in Figma:** code says `--ui-ink` (`#262626`), Figma says
+   `#efefef` — a near-white, lighter than every dark surface it is supposed to
+   sit *below* (`Surface/Raised` is `Neutral/800`, `#2e2e2e`). Figma is the
+   side that is wrong here; the code's choice is documented in tokens.css. One
+   `setValueForMode` fixes it, but it is a value change rather than a rename,
+   so it is flagged rather than done.
    (`Primary/Lighter` was already in code as `--ui-primary-lighter`; it should
    not have been on this list.)
 5. ~~NavRail's type and pipe moved in code and not yet in Figma.~~
@@ -1478,8 +1564,8 @@ three nodes. Measured live at 32.
 ## ButtonRound
 
 Circular icon-only action button. Figma: the `Button/Round` set (`220:11857`),
-axes `Size` = Large | Medium | Small and `State` = Default | Hover | Active |
-Disabled.
+axes `Size` = XL | Large | Medium | Small and `State` = Default | Hover |
+Active | Disabled | Ghost | Confirm.
 
     box    icon   stroke
     40     24     2
@@ -1496,6 +1582,36 @@ inherited from its parent — an svg-only rule loses to those silently.
 `vector-effect: non-scaling-stroke` then pins the weight to rendered px
 whatever the icon's viewBox, so a 24-viewBox glyph drawn at 12px does not
 halve its stroke.
+
+### `tone="confirm"` changes the hover pair and nothing else
+
+Figma: `Button/Round` `State=Confirm` (`606:15107`) — `--ui-confirm` ground,
+`--ui-text-on-confirm` glyph. Tag the affirmative action with it:
+
+```tsx
+<ButtonRound tone="confirm" icon={<Save />} aria-label="Save job" />
+```
+
+**The resting appearance is untouched.** That is the design, not an omission:
+the green answers the pointer arriving, it is not a second resting style
+competing with the default one. A row of round buttons keeps one resting
+rhythm and only responds differently under the cursor. Figma models it the same
+way — there is a `State=Confirm` cell and deliberately no `Confirm Default`,
+which is what says this is a *state*, not a variant.
+
+**Pressed is untouched too.** Active is the inverse surface for every round
+button whatever its tone, because it means "the pointer is down on this" — the
+same fact regardless of what the button goes on to do.
+
+The rule is declared after the base `:hover` and still reads
+`--ui-button-round-bg-hover` / `--ui-button-round-icon-hover` first, so an
+instance-level override of those hooks continues to win. The tone sets a
+default; it does not lock the colour.
+
+Only `ButtonRound` has a tone as of this change — that is what the design
+covers. If a rectangular confirm is ever needed, `Button` should get the same
+`tone` prop rather than a `variant`, because confirm cuts across the existing
+variants (a confirm can be primary-filled or ghost) instead of joining them.
 
 ### There are two round-button sets; only one is live
 
@@ -1840,15 +1956,24 @@ mistakes have appeared in the file:
 
 - the rule was `Neutral/350` and the label `Neutral/400`, both **primitives**,
   so neither could follow the theme. They read `--ui-border-default` and
-  `--ui-text-muted`.
+  `--ui-text-faint`.
 - the leading icon was `IconDefault`, which aliases `Neutral/500` in **both**
   modes and so is frozen against the theme — the exact binding NavSlat's sub
   items carried. `--ui-text-muted` is the identical `#737373` in light and
   lightens to `#8c8c8c` in dark.
 
-Rebinding the label also moves its value, `#8c8c8c` → `#737373`. Deliberate
-twice over: it is what the semantic tier means by a muted string, and `#8c8c8c`
-on white is 3.0:1 — under the floor for text this small.
+Rebinding the label keeps Figma's **value** and drops only its **binding**:
+`--ui-text-faint` *is* `Neutral/400` in light, and steps to `Neutral/500` in
+dark, so the label renders the tone the design asked for and still tracks the
+theme.
+
+It sat on `--ui-text-muted` (`#737373`) for one release. That was a contrast
+call — `#8c8c8c` on white is 3.0:1, under the 4.5:1 floor for text this small —
+and it was overruled on request: the label repeats a value the user can already
+see in the field above it, which is the same argument that scopes faint to
+placeholders. **The contrast shortfall is accepted, not overlooked.** If a
+consuming app needs the darker string, `--ui-input-text-label-color` is the
+hook, and it does not have to move `--ui-text-faint` to reach it.
 
 ### `--ui-border-default` is the 15th semantic token
 
@@ -1859,7 +1984,7 @@ which holds roughly the same 2.3:1 separation from the surface behind it
 instead of vanishing. Card had a `--ui-border-subtle` briefly and it went with
 the flat variant's hairline because nothing used it — something does now.
 
-### `--ui-text-faint` is the 16th, and the placeholder is its only user
+### `--ui-text-faint` is the 16th — the placeholder and the field label
 
 The placeholder was on `--ui-text-muted` — the same value as the label under
 the field — and a hint at the same weight as the label reads as a value the
@@ -1879,9 +2004,18 @@ against its own surface than the one before:
     dark    default #ededed -> muted #8c8c8c -> faint #737373 -> disabled #686868
 
 Faint is the lowest-contrast string this library will render that a user is
-still meant to read — 3.0:1 light, 2.8:1 dark, under the 4.5:1 text floor. That
-is why it is scoped to placeholders, which repeat a label that has already been
-read out. **Don't reach for it for content.**
+still meant to read — 3.0:1 light, 2.8:1 dark, under the 4.5:1 text floor. It is
+scoped to two strings that both repeat something already on screen: the
+placeholder, which repeats the label, and the field label itself, which repeats
+what the value in the field above it already shows. **Don't reach for it for
+content.**
+
+The label and the placeholder therefore share a value. That is not the collision
+this token was created to avoid: those two never sit on the same line, and
+colour is not what separates them — the label is 12px uppercase with
+letter-spacing, below the rule; the placeholder is 14px sentence case, inside
+it. The pairing that has to stay distinct is placeholder vs. **value**, and the
+value is `--ui-text-default`.
 
 ### The label snaps to Label SM
 
