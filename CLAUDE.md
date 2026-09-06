@@ -2141,6 +2141,44 @@ make room would have left a dead strip that looks clickable and is not.
 - **Focus turns the rule primary, with no ring**, matching InputText — see that
   component's note for why the ring is deliberately absent.
 
+### Ghost fills on interaction; it does not darken
+
+Figma: `Button` Level=Ghost, States Hover and Pressed (`615:15224`). The
+treatment changed from *darken the text and border* to *fill the button*:
+
+| state | fill | label | outline |
+|---|---|---|---|
+| Default | none | `--ui-primary` | 1px `--ui-primary` |
+| Hover | `Primary/Lighter` | `--ui-primary` | none |
+| Pressed | Figma `#ea929f` | `--ui-primary` | none |
+
+The label holds at `--ui-primary` throughout and the outline drops away, so it
+reads as the same object gaining weight rather than as a different colour of
+button. The border is made **transparent through its own hook** rather than
+deleted, so an app can keep the outline under the fill.
+
+**Both tints are derived, not pinned**, for the reason `--ui-primary-lighter`
+is: an app that sets a green primary must get a green press, not a pink one.
+That costs some fidelity against the drawn values, and the pressed one is worth
+knowing about:
+
+    hover     15% primary on white  ->  #fbdde1   vs Figma #f7dce0
+    pressed   48% primary on white  ->  #f291a0   vs Figma #ea929f
+
+Green and blue land within a point; the pressed **red channel is 8/255 light**,
+because `#ea929f` is not on the primary→white line at all — it was picked by
+eye, not mixed. 48% is the closest fit. If exactness ever matters more than
+theming, `--ui-button-ghost-bg-active` pins it in one line.
+
+**Figma's dark mode still holds the old treatment**, and it is now internally
+inconsistent: `Button/Ghost/Hover` is `Primary/Lighter` in Light but
+`Primary/Dark` in Dark, and `Button/Ghost/Pressed` is `#ea929f` in Light but
+`Primary/Darker` in Dark. One variable, two different ideas. Worse, the label
+is `Primary/Base` in both, so Dark would put `#e51a38` on `#b2142c` — nowhere
+near legible. The code derives from `--ui-primary` and is mode-independent, so
+it does not reproduce that; the dark cells need a decision before they are
+trusted. See Open divergences.
+
 ## InputTextarea
 
 `InputText`'s field made multi-line, and the third member of that family.

@@ -118,17 +118,30 @@
   color: var(--ui-button-ghost-text, var(--ui-primary));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border, var(--ui-primary));
 }
+/* Ghost FILLS on interaction; it does not darken. Figma: `Button` Level=Ghost
+   States Hover and Pressed (615:15224). The label holds at --ui-primary
+   throughout and the outline drops away, so the button reads as the same
+   object gaining weight rather than as a different colour of button.
+
+   Both tints are DERIVED from --ui-primary rather than pinned to Figma's
+   hexes, for the reason --ui-primary-lighter is: an app that sets a green
+   primary must get a green press, not a pink one. See CLAUDE.md for what that
+   costs against the drawn values.
+
+   The border is not deleted, it is made transparent through its own hook, so
+   an app that wants the outline kept under the fill can put it back. */
 .ghost:hover:not(:disabled) {
-  color: var(--ui-button-ghost-text-hover,
-         color-mix(in srgb, var(--ui-primary), black 22.3%));
-  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover,
-              color-mix(in srgb, var(--ui-primary), black 22.3%));
+  background: var(--ui-button-ghost-bg-hover,
+              var(--ui-primary-lighter,
+              color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
+  color: var(--ui-button-ghost-text-hover, var(--ui-primary));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover, transparent);
 }
 .ghost:active:not(:disabled) {
-  color: var(--ui-button-ghost-text-active,
-         color-mix(in srgb, var(--ui-primary), black 40.7%));
-  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active,
-              color-mix(in srgb, var(--ui-primary), black 40.7%));
+  background: var(--ui-button-ghost-bg-active,
+              color-mix(in srgb, var(--ui-primary) 48%, var(--ui-white)));
+  color: var(--ui-button-ghost-text-active, var(--ui-primary));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active, transparent);
 }
 
 /* -- disabled ----------------------------------------------- */
