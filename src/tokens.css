@@ -463,8 +463,17 @@
      on :root, so a scoped --ui-primary still moves it. */
   --ui-input-text-height: 32px;
   --ui-input-text-padding: 4px;          /* inline */
-  --ui-input-text-padding-top: 6px;
-  --ui-input-text-padding-bottom: 2px;   /* the value sits close to the rule */
+  /* Vertical padding is deliberately lopsided: the value sits DOWN against the
+     rule, which is what an underlined field is for. 10 + the 20 line box + 1 +
+     the 1px rule is the 32 box exactly, so the line box has no slack to be
+     centred in and lands where these numbers put it.
+
+     Measured rather than guessed: DM Sans Regular 14 inks 18.5px inside its
+     20px line box, so only 0.8px of half-leading sits under the glyphs. The
+     gap to the rule is therefore almost entirely this padding - which is why
+     trimming it 2px barely showed, and why it is now 1. */
+  --ui-input-text-padding-top: 10px;
+  --ui-input-text-padding-bottom: 1px;
   --ui-input-text-gap: 8px;
   --ui-input-text-radius: 2px;
   --ui-input-text-border-width: 1px;
