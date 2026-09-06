@@ -151,6 +151,7 @@
   font-size: var(--ui-input-text-label-font-size);
   line-height: var(--ui-input-text-label-line-height);
   font-weight: var(--ui-input-text-label-font-weight);
+  letter-spacing: var(--ui-input-text-label-letter-spacing);
   text-transform: uppercase;
 }
 

@@ -1930,6 +1930,61 @@ content the user typed, not a label naming a control, so
   the file has not made — the same reason Card has no padding. Note
   `--ui-primary` is red by default, so a red underline would read as focus.
 
+## InputSelect
+
+A dropdown: InputText's field with a chevron and a real `<select>` inside it.
+
+```tsx
+<InputSelect label="Work mode" value={mode} onChange={…}>
+  <option>Remote</option>
+</InputSelect>
+```
+
+**It is a native `<select>`, deliberately.** A listbox rebuilt out of divs has
+to reimplement type-ahead, keyboard traversal, the mobile wheel picker and the
+screen-reader contract, and gets them subtly wrong. The native control has all
+of that; the only thing it costs is styling the menu, which this component does
+not attempt. `appearance: none` removes the UA arrow, and the chevron replaces
+it.
+
+### It shares InputText's tokens rather than restating them
+
+Every measurement reads InputText's token behind an `--ui-input-select-*` hook:
+
+```css
+height: var(--ui-input-select-height, var(--ui-input-text-height));
+```
+
+The two ARE the same field, so sharing is what stops them drifting the moment
+either is retuned — while the hook still lets an app move the select alone.
+**No new geometry is declared in `tokens.css`**, because none of it is new.
+That is the same reasoning as `--ui-nav-rail-chip-size` aliasing
+`--ui-button-round-md-size`, one layer further out: a fallback chain instead of
+a declared alias, because nothing here needs a name of its own yet.
+
+### The chevron is `--ui-primary`, not `--ui-accent`
+
+It is the one part of the control that says "there is more here", which makes
+it a call to action rather than chrome. Red by default like everything else,
+and it moves with the CTA colour rather than the brand colour if an app splits
+them.
+
+It sits **out of flow and `pointer-events: none`**, with its width reserved by
+`padding-inline-end` on the select. So the select spans the whole field and a
+click anywhere — the chevron included — opens the menu. Shrinking the select to
+make room would have left a dead strip that looks clickable and is not.
+
+### Divergences — do not "fix" these
+
+- **No `iconEnd` slot.** InputText has two icon slots because a text field's
+  trailing icon is a caller's business; here the trailing slot IS the chevron
+  and the control would stop reading as a dropdown without it. The leading
+  `icon` slot is kept, so the two components still line up.
+- **The menu is unstyled.** It is the platform's, and on every platform that
+  is what users expect a select to look like when open.
+- **Focus turns the rule primary, with no ring**, matching InputText — see that
+  component's note for why the ring is deliberately absent.
+
 ## Component API conventions
 
 - Props extend the corresponding intrinsic element props (e.g. `ButtonHTMLAttributes<HTMLButtonElement>`) and spread `...props` onto the DOM node.

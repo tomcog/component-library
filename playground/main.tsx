@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, InputText, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, InputSelect, InputText, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -279,6 +279,7 @@ function App() {
   const type = useTokenValues(TYPE_TOKENS, [theme, primary]);
   const [subPage, setSubPage] = useState("/work/b");
   const [where, setWhere] = useState("Home");
+  const [mode, setMode] = useState("Remote");
   const [email, setEmail] = useState("");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
@@ -757,8 +758,9 @@ function App() {
         note={
           "The label sits UNDER the field, as drawn. Click or tab into one \u2014 active turns the " +
           "rule primary, and that is the whole treatment: no focus ring, unlike every other control " +
-          "here. Icons are two independent slots: Figma's instance shows a chevron, but a text " +
-          "field is not a select, so nothing is baked in."
+          "here. Icons are two independent slots and render identically \u2014 the same glyph is used " +
+          "on both sides so the pair can be compared. Figma's instance draws a chevron in the " +
+          "trailing slot, but a text field is not a select, so nothing is baked in."
         }
       >
         <Row label="as drawn">
@@ -766,7 +768,7 @@ function App() {
             style={{ width: 220 }}
             label="Input label"
             icon={<Layers />}
-            iconEnd={<ChevronDown />}
+            iconEnd={<Layers />}
             value={where}
             onChange={(e) => setWhere(e.target.value)}
           />
@@ -789,6 +791,47 @@ function App() {
         </Row>
         <Row label="disabled">
           <InputText style={{ width: 220 }} label="Input label" icon={<Layers />} value="Home" disabled readOnly />
+        </Row>
+      </Section>
+
+      <Section
+        title="InputSelect"
+        note={
+          "InputText's field with a chevron and a real <select> inside it. Every measurement reads " +
+          "InputText's token behind an --ui-input-select-* hook, so the two cannot drift while an app " +
+          "can still retune the select alone. The chevron is --ui-primary: it is the part that says " +
+          "there is more here, which makes it a call to action rather than chrome."
+        }
+      >
+        <Row label="default">
+          <InputSelect
+            style={{ width: 220 }}
+            label="Work mode"
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+          >
+            <option>Remote</option>
+            <option>Hybrid</option>
+            <option>On-site</option>
+          </InputSelect>
+        </Row>
+        <Row label="leading icon">
+          <InputSelect style={{ width: 220 }} label="Section" icon={<Layers />} defaultValue="Design">
+            <option>Design</option>
+            <option>Engineering</option>
+          </InputSelect>
+        </Row>
+        <Row label="beside a text field">
+          <InputText style={{ width: 200 }} label="Company" defaultValue="Acme" />
+          <InputSelect style={{ width: 200 }} label="Status" defaultValue="Saved">
+            <option>Saved</option>
+            <option>Applied</option>
+          </InputSelect>
+        </Row>
+        <Row label="disabled">
+          <InputSelect style={{ width: 220 }} label="Work mode" defaultValue="Remote" disabled>
+            <option>Remote</option>
+          </InputSelect>
         </Row>
       </Section>
 

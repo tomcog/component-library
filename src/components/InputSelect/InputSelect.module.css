@@ -1,0 +1,133 @@
+/* InputSelect - InputText's field with a chevron and a native <select>.
+
+   Every measurement reads InputText's token with an --ui-input-select-* hook
+   in front of it. That is deliberate: the two ARE the same field, so sharing
+   the tokens is what stops them drifting apart the moment either is retuned,
+   while the hook still lets an app move the select alone. No new geometry is
+   declared in tokens.css, because none of it is new. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-input-select-label-gap, var(--ui-input-text-label-gap));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+}
+
+.field {
+  position: relative; /* anchors the chevron */
+  display: flex;
+  align-items: center;
+  gap: var(--ui-input-select-gap, var(--ui-input-text-gap));
+  box-sizing: border-box;
+  height: var(--ui-input-select-height, var(--ui-input-text-height));
+  padding: var(--ui-input-select-padding, var(--ui-input-text-padding));
+  border-radius: var(--ui-input-select-radius, var(--ui-input-text-radius))
+                 var(--ui-input-select-radius, var(--ui-input-text-radius)) 0 0;
+  background: var(--ui-input-select-bg, var(--ui-surface-raised));
+  border-bottom: var(--ui-input-select-border-width, var(--ui-input-text-border-width)) solid
+                 var(--ui-input-select-border, var(--ui-border-default));
+  transition: border-color var(--ui-motion-fast) ease;
+}
+
+/* Strip the UA control back to text on a transparent ground - including its
+   own arrow, which the chevron below replaces. The select spans the whole
+   field so a click anywhere opens the menu; the chevron's width is reserved
+   with padding rather than by shrinking the box. */
+.select {
+  flex: 1 1 auto;
+  min-width: 0;
+  appearance: none;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  padding-inline-end: calc(
+    var(--ui-input-select-chevron-size, var(--ui-input-text-icon-size)) +
+    var(--ui-input-select-gap, var(--ui-input-text-gap))
+  );
+  color: var(--ui-input-select-color, var(--ui-text-default));
+  font-family: inherit;
+  font-size: var(--ui-input-select-font-size, var(--ui-input-text-font-size));
+  line-height: var(--ui-input-select-line-height, var(--ui-input-text-line-height));
+  font-weight: var(--ui-input-select-font-weight, var(--ui-input-text-font-weight));
+  cursor: pointer;
+}
+
+/* The ring is drawn on .field, so the select must not draw its own. */
+.select:focus {
+  outline: none;
+}
+
+/* The field in use: the rule turns primary, exactly as InputText's does.
+   Named `-focus` rather than `-active`, since `-active` means pressed here as
+   it does in CSS - see the Nav state-name table in CLAUDE.md. */
+.field:focus-within {
+  border-bottom-color: var(--ui-input-select-border-focus, var(--ui-primary));
+}
+
+/* -- chevron ------------------------------------------------- */
+/* RED by default: it is the one part of this control that says "there is more
+   here", which makes it a call to action rather than chrome - so --ui-primary,
+   not --ui-accent. Sits over the field's trailing edge, out of flow and
+   pointer-transparent so the select beneath receives every click. */
+.chevron {
+  position: absolute;
+  right: var(--ui-input-select-padding, var(--ui-input-text-padding));
+  display: inline-flex;
+  pointer-events: none;
+  width: var(--ui-input-select-chevron-size, var(--ui-input-text-icon-size));
+  height: var(--ui-input-select-chevron-size, var(--ui-input-text-icon-size));
+  color: var(--ui-input-select-chevron, var(--ui-primary));
+}
+.chevron > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* -- leading icon -------------------------------------------- */
+.icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--ui-input-select-icon-size, var(--ui-input-text-icon-size));
+  height: var(--ui-input-select-icon-size, var(--ui-input-text-icon-size));
+  color: var(--ui-input-select-icon, var(--ui-text-muted));
+}
+.icon > svg,
+.icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* -- disabled ------------------------------------------------ */
+.root:has(.select:disabled) .field {
+  background: var(--ui-input-select-bg-disabled, var(--ui-surface-disabled));
+  border-bottom-color: var(--ui-input-select-border-disabled, var(--ui-text-disabled));
+}
+.root:has(.select:disabled) .icon,
+.root:has(.select:disabled) .chevron,
+.root:has(.select:disabled) .label {
+  color: var(--ui-input-select-color-disabled, var(--ui-text-disabled));
+}
+.select:disabled {
+  color: var(--ui-input-select-color-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
+
+/* -- label --------------------------------------------------- */
+.label {
+  padding-inline-start: var(--ui-input-select-label-inset, var(--ui-input-text-label-inset));
+  color: var(--ui-input-select-label-color, var(--ui-text-muted));
+  font-size: var(--ui-input-select-label-font-size, var(--ui-input-text-label-font-size));
+  line-height: var(--ui-input-select-label-line-height, var(--ui-input-text-label-line-height));
+  font-weight: var(--ui-input-select-label-font-weight, var(--ui-input-text-label-font-weight));
+  letter-spacing: var(--ui-input-select-label-letter-spacing, var(--ui-input-text-label-letter-spacing));
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field { transition: none; }
+}

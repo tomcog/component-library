@@ -475,6 +475,11 @@
   --ui-input-text-label-font-size: var(--ui-type-label-sm-font-size);
   --ui-input-text-label-line-height: var(--ui-type-label-sm-line-height);
   --ui-input-text-label-font-weight: var(--ui-type-label-font-weight);
+  /* Figma states this as 2%, which CSS cannot express - letter-spacing takes a
+     length, not a percentage. `em` is that percentage: 0.02em IS 2% of the
+     font size, and stays 2% if the label's step ever moves. Uppercase at 10px
+     needs it; letterforms set for lowercase run tight in caps. */
+  --ui-input-text-label-letter-spacing: 0.02em;
 
   /* Spinner. The brand mark with its ring turning, from tomcoggia.com.
      These are animation periods, not state transitions, which is why they do
