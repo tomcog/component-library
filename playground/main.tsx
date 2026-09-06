@@ -292,6 +292,7 @@ function App() {
   const [mode, setMode] = useState("Remote");
   const [email, setEmail] = useState("");
   const [posted, setPosted] = useState("");
+  const [salary, setSalary] = useState("220000");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
   const [rail, setRail] = useState("/work");
@@ -818,6 +819,15 @@ function App() {
             type="date"
             value={posted}
             onChange={(e) => setPosted(e.target.value)}
+          />
+        </Row>
+        <Row label="number">
+          <InputText
+            style={{ width: 220 }}
+            label="Min salary"
+            type="number"
+            value={salary}
+            onChange={(e) => setSalary(e.target.value)}
           />
         </Row>
         <Row label="disabled">

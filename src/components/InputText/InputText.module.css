@@ -128,6 +128,30 @@
   opacity: 1;
 }
 
+/* -- the number spinner -------------------------------------- */
+/* Stripped. A number field is drawn here as an underlined text box, and the
+   UA's spin buttons put a raised grey control inside it - a second visual
+   language, and one this component draws none of the rest of.
+
+   The base `.input` rule's `appearance: none` does NOT remove them: in Chrome
+   the buttons are a separate shadow pseudo-element that has to be turned off
+   in its own right, and in Firefox the spinner needs `appearance: textfield`
+   specifically rather than `none`. Both are set, which is why this looks like
+   it is saying the same thing twice.
+
+   The control stays a real `type="number"`, so the numeric keypad on mobile,
+   arrow-key stepping and min/max validation all survive - only the buttons go. */
+.input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.input[type="number"]::-webkit-outer-spin-button,
+.input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
 /* -- the date/time hint -------------------------------------- */
 /* An empty date input prints `mm/dd/yyyy`, which is a hint in every sense
    except the one CSS recognises: a date input takes no `placeholder`
