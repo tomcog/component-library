@@ -84,6 +84,15 @@
   transition: margin-inline-start var(--ui-motion-fast) ease;
 }
 
+/* Trailing slot. `auto` pushes it to the end of the slat's flex row, so it
+   holds the rail's edge while the label hugs its text - and it stays put when
+   hover indents the label, because the indent is the label's own margin. The
+   library places it; the app paints it. */
+.badge {
+  flex: none;
+  margin-inline-start: auto;
+}
+
 .slat:hover .pipe,
 .slat:focus-visible .pipe {
   scale: 1 1;

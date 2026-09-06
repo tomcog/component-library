@@ -41,6 +41,16 @@ export interface NavSlatProps extends NavLinkBaseProps {
    * this slat is still somewhere you can navigate to.
    */
   sectionCurrent?: boolean;
+  /**
+   * Trailing content pushed to the end of the slat - a count, a status dot.
+   * The library places it and nothing else; what it looks like is the app's,
+   * since a badge means something different in every one.
+   *
+   * Not folded into `children`: those land inside the label, which hugs its
+   * text, so a badge there would sit against the last word rather than at the
+   * rail's edge. It also must not travel with the label when hover indents it.
+   */
+  badge?: ReactNode;
 }
 
 /**
@@ -65,7 +75,7 @@ export interface NavSlatProps extends NavLinkBaseProps {
  * `-active` is unavailable in CSS, where it already means pressed.
  */
 export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavSlat(
-  { active = false, sectionCurrent = false, level = "primary", icon, children, ...props },
+  { active = false, sectionCurrent = false, level = "primary", icon, badge, children, ...props },
   ref,
 ) {
   // Figma draws no chip on a sub item, and there is no Level=Secondary
@@ -98,6 +108,7 @@ export const NavSlat = forwardRef<HTMLAnchorElement, NavSlatProps>(function NavS
           ) : null}
           <span className={styles.pipe} aria-hidden="true" />
           <span className={styles.label}>{label}</span>
+          {badge != null ? <span className={styles.badge}>{badge}</span> : null}
         </>
       )}
       {...props}
