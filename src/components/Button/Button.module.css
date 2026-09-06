@@ -137,10 +137,14 @@
   color: var(--ui-button-ghost-text-hover, var(--ui-primary));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover, transparent);
 }
+/* Pressed is the one state whose label leaves --ui-primary: it darkens, so it
+   holds against the heavier fill under it. Figma: `Button/Ghost/Darker`.
+   `color` carries the icon too, since icons are drawn in currentColor. */
 .ghost:active:not(:disabled) {
   background: var(--ui-button-ghost-bg-active,
               color-mix(in srgb, var(--ui-primary) 48%, var(--ui-white)));
-  color: var(--ui-button-ghost-text-active, var(--ui-primary));
+  color: var(--ui-button-ghost-text-active,
+         color-mix(in srgb, var(--ui-primary), black 25%));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active, transparent);
 }
 

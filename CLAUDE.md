@@ -2150,11 +2150,13 @@ treatment changed from *darken the text and border* to *fill the button*:
 |---|---|---|---|
 | Default | none | `--ui-primary` | 1px `--ui-primary` |
 | Hover | `Primary/Lighter` | `--ui-primary` | none |
-| Pressed | Figma `#ea929f` | `--ui-primary` | none |
+| Pressed | Figma `#ea929f` | `Button/Ghost/Darker` `#ac172d` | none |
 
-The label holds at `--ui-primary` throughout and the outline drops away, so it
-reads as the same object gaining weight rather than as a different colour of
-button. The border is made **transparent through its own hook** rather than
+The outline drops away and the button fills, so it reads as the same object
+gaining weight rather than as a different colour of button. The label holds at
+`--ui-primary` on hover and **darkens on press**, so it keeps its footing
+against the heavier fill under it. In code that is one `color` declaration,
+which carries the icon with it since icons draw in `currentColor`. The border is made **transparent through its own hook** rather than
 deleted, so an app can keep the outline under the fill.
 
 **Both tints are derived, not pinned**, for the reason `--ui-primary-lighter`
@@ -2162,8 +2164,9 @@ is: an app that sets a green primary must get a green press, not a pink one.
 That costs some fidelity against the drawn values, and the pressed one is worth
 knowing about:
 
-    hover     15% primary on white  ->  #fbdde1   vs Figma #f7dce0
-    pressed   48% primary on white  ->  #f291a0   vs Figma #ea929f
+    hover fill     15% primary on white  ->  #fbdde1   vs Figma #f7dce0
+    pressed fill   48% primary on white  ->  #f291a0   vs Figma #ea929f
+    pressed label  primary + 25% black   ->  #ac142a   vs Figma #ac172d
 
 Green and blue land within a point; the pressed **red channel is 8/255 light**,
 because `#ea929f` is not on the primary→white line at all — it was picked by
