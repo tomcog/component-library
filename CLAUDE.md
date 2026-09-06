@@ -2289,8 +2289,14 @@ heights are its own numbers rather than `--ui-type-label-*` aliases.
 Every measurement reads InputText's token behind an `--ui-input-textarea-*`
 hook, exactly as `InputSelect` does, so the three cannot drift apart when any
 one of them is retuned — and almost no new geometry is declared in
-`tokens.css`, because almost none of it is new. There is no Figma node for
-this one; it is InputText's spec applied to a `<textarea>`.
+`tokens.css`, because almost none of it is new.
+
+Figma: the `InputTextarea` set (`638:2383`), `State` = Default | Active |
+Disabled. **This one went code → Figma**, not the other way: it was built from
+InputText's spec applied to a `<textarea>`, and the Figma set was drawn from the
+component afterwards rather than the component from a design. The drawn cells
+are `rows={3}`, so the field is `10 + 3×20 + 1 = 71px`; the 260px width is the
+pose, not a property.
 
 ### Height is the one real departure
 
