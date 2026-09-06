@@ -2387,7 +2387,14 @@ next to it.
 
 ## Tabs
 
-An in-page view switcher. Figma: `PageTabs` (`364:420`) in the NextJob file.
+An in-page view switcher. Figma: the `Tabs` component (`646:2391`) and the
+`Tabs/Item` set (`646:2357`) on the Components page, with `Tabs/*` geometry
+variables carrying the `--ui-tabs-*` code syntax.
+
+**It was designed in the app file and moved here after.** The strip was first
+drawn as a `PageTabs` frame in the NextJob file (`364:420`) while mocking the
+job-detail page, iterated there, and only then built as a real component set in
+this file. If the two ever disagree, this one is the library's.
 
 **Not a nav, and the distinction is the whole design.** `Nav`, `NavRail` and
 `BottomNav` move you between PAGES and are built from links. This swaps what is
