@@ -11,7 +11,7 @@
   align-items: stretch;
   padding: var(--ui-left-rail-padding);
   background: var(--ui-left-rail-bg, var(--ui-surface-pale));
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
   /* No width and no height. The rail is whatever column the app's layout
      gives it, exactly as Card takes its grid cell; Figma poses it at 200x500
      because a frame has to have a size. Stretching to the full column height

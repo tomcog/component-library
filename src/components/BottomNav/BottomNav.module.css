@@ -16,7 +16,7 @@
   border-top: 1px solid var(--ui-bottom-nav-rule, var(--ui-neutral-150));
   padding-top: var(--ui-bottom-nav-padding-y);
   padding-inline: var(--ui-bottom-nav-padding-x);
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
 }
 
 .row {

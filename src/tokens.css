@@ -66,6 +66,60 @@
      name to recolour every primary surface - buttons, active nav, focus
      rings - without touching the palette:  :root { --ui-primary: #634509 } */
   --ui-primary: var(--ui-tc-red);
+  /* The app's ACCENT — headers, borders, rules, decorative chrome.
+     Independently settable, and defaults to the same TC Red, so a component
+     added today looks red either way and nothing moves until an app sets it.
+
+     The pair is the point: --ui-primary is the CTA colour, --ui-accent is the
+     brand colour. An app branded end-to-end in one colour leaves them equal;
+     an app with a loud action colour and quieter chrome sets them apart.
+
+     No component consumes it YET. Everything the library currently renders is
+     an interactive control - a button, a nav item, a rail slat, a focus ring -
+     and every one of those is a call to action, so they all read
+     --ui-primary. That is a fact about what has been built so far, not a rule
+     against using this name.
+
+     **New components should reach for it whenever the element is chrome
+     rather than a control**: a divider, a section rule, a page-header
+     underline, a decorative border, a badge that labels rather than acts.
+     Pick the name by what the element IS, not by what colour it comes out -
+     both resolve to TC Red today, so the choice is invisible until the day an
+     app splits them, which is exactly when getting it wrong would hurt.
+
+     --ui-accent-lighter is deliberately NOT declared, for the same reason
+     --ui-primary-lighter is not: a var() inside a custom property resolves at
+     the element that DECLARES it, so composing a tint here would freeze it
+     against :root. Derive it in the component, as ButtonRound does. */
+  --ui-accent: var(--ui-tc-red);
+  /* What sits ON an accent fill. Its own name rather than reusing
+     --ui-text-on-primary: the three roles are settable apart, so the moment an
+     app gives itself a pale accent and a dark CTA, one shared "on" colour is
+     wrong for one of them. */
+  --ui-text-on-accent: var(--ui-white);
+  /* DANGER - destructive actions and error states. Delete and Remove, the
+     confirm button in a "this cannot be undone" dialog, an invalid field, a
+     failing score.
+
+     The third independently settable role, and the one with the strongest
+     case for being separate: an app whose primary is green still needs delete
+     to look dangerous. Red carries that meaning by convention, and the
+     convention does not move when a brand does.
+
+     Defaults to TC Red like the other two, so a single-brand app gets one
+     colour everywhere and never has to think about it. An app with a
+     non-red brand sets this one name and keeps the warning legible:
+
+         :root { --ui-primary: #2e7d32; --ui-danger: #d4183d; }
+
+     No component consumes it yet - this library ships no destructive control.
+     Whenever one arrives (a Button danger variant, a confirm dialog), that is
+     what should read this name. */
+  --ui-danger: var(--ui-tc-red);
+  /* What sits ON a danger fill — the label of a Delete button. Same reasoning
+     as --ui-text-on-accent: independent roles need independent pairings, or a
+     divergent theme silently loses contrast on one of them. */
+  --ui-text-on-danger: var(--ui-white);
   /* Figma: Primary/Lighter. Deliberately NOT declared here. Composed at
      :root it would freeze against :root's --ui-primary, so recolouring the
      brand on a subtree would leave the tint behind - the same trap the
@@ -184,7 +238,19 @@
   /* XL exists for touch: at 48 it clears both the 44pt iOS and 48dp
      Android minimum target, which Large at 40 does not. Its type steps up to
      18/24 because a phone is held closer but read at a glance, and its icon
-     is 20 — the same box ButtonRound Medium uses. */
+     is 24 — the same box ButtonRound Large uses. (This sentence said 20 and
+     ButtonRound Medium; it was stale, and the icon sizes below now come
+     straight from Figma's `icon size and weight` frame, 553:4796.)
+
+     The icon ramp is 24/20/16/12 with strokes 2/1.5/1/1. Unlike ButtonRound's,
+     which grows the glyph faster than its container so Small stays legible,
+     these track the type: each icon box is the size's line-height, so the
+     glyph and the label are the same height and sit on one optical line.
+
+     Left as literals rather than aliased to --ui-type-label-*-line-height,
+     even though all four currently agree. That would be geometry riding on
+     the type scale, which is the coupling --ui-nav-rail-slat-height was split
+     out to undo - move the scale and every icon would silently resize. */
   --ui-button-xl-height: 48px;
   --ui-button-xl-padding-x: 24px;
   --ui-button-xl-gap: 10px;
@@ -192,6 +258,7 @@
   --ui-button-xl-font-size: var(--ui-type-label-xl-font-size);
   --ui-button-xl-line-height: var(--ui-type-label-xl-line-height);
   --ui-button-xl-icon-size: 24px;
+  --ui-button-xl-icon-stroke: 2;
 
   --ui-button-lg-height: 40px;
   --ui-button-lg-padding-x: 16px;
@@ -199,7 +266,8 @@
   --ui-button-lg-radius: 4px;
   --ui-button-lg-font-size: var(--ui-type-label-lg-font-size);
   --ui-button-lg-line-height: var(--ui-type-label-lg-line-height);
-  --ui-button-lg-icon-size: 18px;
+  --ui-button-lg-icon-size: 20px;
+  --ui-button-lg-icon-stroke: 1.5;
 
   --ui-button-md-height: 32px;
   --ui-button-md-padding-x: 12px;
@@ -207,7 +275,8 @@
   --ui-button-md-radius: 4px;
   --ui-button-md-font-size: var(--ui-type-label-md-font-size);
   --ui-button-md-line-height: var(--ui-type-label-md-line-height);
-  --ui-button-md-icon-size: 14px;
+  --ui-button-md-icon-size: 16px;
+  --ui-button-md-icon-stroke: 1;
 
   --ui-button-sm-height: 24px;
   --ui-button-sm-padding-x: 8px;
@@ -216,6 +285,7 @@
   --ui-button-sm-font-size: var(--ui-type-label-sm-font-size);
   --ui-button-sm-line-height: var(--ui-type-label-sm-line-height);
   --ui-button-sm-icon-size: 12px;
+  --ui-button-sm-icon-stroke: 1;
 
   --ui-button-font-weight: var(--ui-type-label-font-weight);
 
@@ -418,9 +488,34 @@
      why the 350x200 frame is not modelled. */
   --ui-card-radius: 8px;
 
-  /* Typography. DM Sans ships with the package but is opt-in:
-     import "@tomcoggia/ui/fonts.css". Override this token to use a
-     different face; the fallback stack keeps things sane if neither. */
+  /* -- TYPEFACE ----------------------------------------------
+     The same identity/role split the colours have, for the same reason.
+     --ui-dm-sans is the face this package SHIPS and is the counterpart of
+     --ui-tc-red; --ui-font-primary is the ROLE, and is what an app repoints:
+
+         :root { --ui-font-primary: "Inter", "Inter Fallback"; }
+
+     One name, one value, and the fallback stack comes along for free. The
+     flat --ui-font-family this replaces made you restate the whole list to
+     change one face, so an app that changed the face and forgot the tail
+     silently shipped without a safety net.
+
+     Text outside these components opts in with the .ui-font-primary class
+     (typography.css) or by reading the same names, so one edit here moves
+     the components and the app together.
+
+     **--ui-font-family is deliberately NOT declared.** A var() inside a
+     custom property resolves at the element that DECLARES it, so composing
+     the face and the fallback together on :root would freeze the pair
+     against :root and a scoped override could never move it - the same trap
+     --ui-primary-lighter documents at the top of this file. Every component
+     composes it at the element instead, reading --ui-font-family first so
+     that an app already setting that name keeps working unchanged.
+
+     DM Sans ships with the package but is opt-in:
+     import "@tomcoggia/ui/fonts.css". An app on another face just omits it
+     and sets --ui-font-primary. */
+  --ui-dm-sans: "DM Sans";
   /* Motion. System-level, not per component: two components inventing their
      own timings is how interaction feel drifts apart. */
   /* Elevation. Two steps, both two-layer: a soft cast below plus a tight
@@ -439,7 +534,8 @@
   --ui-motion-fast: 150ms;   /* state changes: colour, fills, the nav pipe */
   --ui-motion-base: 200ms;   /* travelling motion: the nav underline wipe */
 
-  --ui-font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ui-font-primary: var(--ui-dm-sans);
+  --ui-font-fallback: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* -- 2. SEMANTIC — dark ------------------------------------- */

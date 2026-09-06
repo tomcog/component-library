@@ -12,6 +12,18 @@ const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
+/* Faces to audition. Each is a value for --ui-font-primary and nothing more -
+   the point of the control is that swapping the face needs no other edit, and
+   that the fallback stack survives the swap. Only DM Sans ships with the
+   package; the rest are whatever the machine already has, which is also what a
+   consuming app's own face would be. */
+const FACES: { label: string; value: string }[] = [
+  { label: "DM Sans (shipped)", value: 'var(--ui-dm-sans)' },
+  { label: "Georgia", value: 'Georgia, serif' },
+  { label: "Courier New", value: '"Courier New", monospace' },
+  { label: "system-ui", value: 'system-ui' },
+];
+
 // Tier 1: fixed palette, internal. An app should never alias these.
 const PRIMITIVE_TOKENS = [
   "--ui-tc-red", "--ui-white", "--ui-ink",
@@ -29,6 +41,10 @@ const TYPE_SCALE = [
   { key: "xl", figma: "Type/Label XL", used: "Button XL" },
 ];
 const TYPE_WEIGHT = "--ui-type-label-font-weight";
+// The typeface tier: one identity, one role, one safety net. --ui-font-family
+// is absent on purpose - it is an override hook read at the element, never
+// declared, so there is no :root value to read back here.
+const TYPEFACE_TOKENS = ["--ui-dm-sans", "--ui-font-primary", "--ui-font-fallback"];
 const TYPE_TOKENS = [
   ...TYPE_SCALE.flatMap((t) => [`--ui-type-label-${t.key}-font-size`, `--ui-type-label-${t.key}-line-height`]),
   TYPE_WEIGHT,
@@ -37,6 +53,8 @@ const TYPE_TOKENS = [
 // Tier 2: the theming contract. Map all semantic tokens or none.
 const SEMANTIC_TOKENS = [
   "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
+  "--ui-accent", "--ui-text-on-accent",
+  "--ui-danger", "--ui-text-on-danger",
   "--ui-surface-inverse", "--ui-text-on-inverse",
   "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
   "--ui-text-default", "--ui-text-muted", "--ui-text-faint", "--ui-surface-raised",
@@ -47,6 +65,8 @@ const SEMANTIC_TOKENS = [
 // Fill + the text meant to sit on it. A recolour that breaks contrast shows here.
 const TOKEN_PAIRS: [string, string, string][] = [
   ["--ui-primary", "--ui-text-on-primary", "On primary"],
+  ["--ui-accent", "--ui-text-on-accent", "On accent"],
+  ["--ui-danger", "--ui-text-on-danger", "On danger"],
   ["--ui-surface-inverse", "--ui-text-on-inverse", "On inverse"],
   ["--ui-surface-muted", "--ui-text-default", "On muted"],
   ["--ui-surface-raised", "--ui-text-default", "On raised"],
@@ -247,12 +267,14 @@ function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [shell, setShell] = useState("/settings");
   const [primary, setPrimary] = useState("#e51a38");
+  const [face, setFace] = useState(FACES[0].value);
   const [bottomTab, setBottomTab] = useState("JOBS");
   const [size, setSize] = useState<ButtonSize>("lg");
   const [loading, setLoading] = useState(false);
   const [lead, setLead] = useState(true);
   const [page, setPage] = useState("/");
   const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, primary]);
+  const typeface = useTokenValues(TYPEFACE_TOKENS, [theme, primary, face]);
   const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, primary]);
   const type = useTokenValues(TYPE_TOKENS, [theme, primary]);
   const [subPage, setSubPage] = useState("/work/b");
@@ -263,7 +285,11 @@ function App() {
   const [rail, setRail] = useState("/work");
 
   return (
-    <div className="page" data-theme={theme} style={{ ["--ui-primary" as string]: primary }}>
+    <div
+      className="page ui-font-primary"
+      data-theme={theme}
+      style={{ ["--ui-primary" as string]: primary, ["--ui-font-primary" as string]: face }}
+    >
       <header>
         <h1>@tomcoggia/ui</h1>
         <div className="controls">
@@ -278,7 +304,18 @@ function App() {
             primary
             <input type="color" value={primary} onChange={(e) => setPrimary(e.target.value)} />
           </label>
-          <button className="reset" onClick={() => setPrimary("#e51a38")}>reset</button>
+          <label>
+            font
+            <select value={face} onChange={(e) => setFace(e.target.value)}>
+              {FACES.map((f) => <option key={f.label} value={f.value}>{f.label}</option>)}
+            </select>
+          </label>
+          <button
+            className="reset"
+            onClick={() => { setPrimary("#e51a38"); setFace(FACES[0].value); }}
+          >
+            reset
+          </button>
         </div>
       </header>
 
@@ -287,7 +324,7 @@ function App() {
         note="Live values, read off the themed element - switch theme or pick a primary above and every semantic value follows."
       >
         <p className="groupLabel">
-          Semantic <span>- the public API, 16 names an app overrides</span>
+          Semantic <span>- the public API, 20 names an app overrides</span>
         </p>
         <div className="swatches">
           {SEMANTIC_TOKENS.map((t) => <Swatch key={t} name={t} value={semantic[t]} />)}
@@ -309,6 +346,35 @@ function App() {
         </p>
         <div className="swatches">
           {PRIMITIVE_TOKENS.map((t) => <Swatch key={t} name={t} value={primitive[t]} />)}
+        </div>
+      </Section>
+
+      <Section
+        title="Typeface"
+        note={
+          "One name to repoint, exactly like --ui-primary. Change `font` above: every component " +
+          "follows, and so does this paragraph \u2014 the page carries the .ui-font-primary class, " +
+          "which is how an app opts its OWN text in. The fallback stack is never restated, so a " +
+          "face swap cannot drop it."
+        }
+      >
+        <div className="faces">
+          {TYPEFACE_TOKENS.map((t) => (
+            <div key={t} className="faceRow">
+              <span>
+                <span className="faceName">{t.replace("--ui-", "")}</span>
+                <br />
+                <span className="faceRole">
+                  {t === "--ui-dm-sans"
+                    ? "identity \u2014 the face this package ships"
+                    : t === "--ui-font-primary"
+                      ? "role \u2014 the one an app overrides"
+                      : "the tail, kept through any swap"}
+                </span>
+              </span>
+              <span className="faceValue">{typeface[t] || "\u2014"}</span>
+            </div>
+          ))}
         </div>
       </Section>
 

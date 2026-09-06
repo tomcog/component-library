@@ -10,7 +10,7 @@
   justify-content: center;
   border: none;
   flex: none;
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
   font-size: var(--ui-pill-font-size);
   line-height: var(--ui-pill-line-height);
   font-weight: var(--ui-pill-font-weight);

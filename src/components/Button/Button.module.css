@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   border: none;
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
   /* asChild can render an <a>, which the UA underlines and colours by default.
      Both are overridden here so a link-rendered Button is visually identical
      to a real <button>. */
@@ -215,3 +215,20 @@
   height: 100%;
   display: block;
 }
+
+/* -- icon stroke -------------------------------------------- */
+/* Figma draws each size's glyph at its own viewBox - 24/20/16/12 - so the
+   weights it exports (2 / 1.5 / 1 / 1) are already rendered px. Lucide in an
+   app is one 24-viewBox glyph scaled to the slot, where stroke-width is in the
+   icon's own user units: the same 2 would render at 1 in a Medium button, and
+   the weight would depend on the size AND the viewBox. non-scaling-stroke pins
+   it to the px the design specifies. Same rule ButtonRound carries. */
+.icon svg * { vector-effect: non-scaling-stroke; }
+/* Set on the shapes as well as the <svg>: lucide puts stroke-width on the root
+   and lets it inherit, but plenty of icon sets put it on each <path>, and a
+   presentation attribute on an element beats one inherited from its parent -
+   so an svg-only rule silently loses to those. */
+.xl .icon svg, .xl .icon svg * { stroke-width: var(--ui-button-xl-icon-stroke); }
+.lg .icon svg, .lg .icon svg * { stroke-width: var(--ui-button-lg-icon-stroke); }
+.md .icon svg, .md .icon svg * { stroke-width: var(--ui-button-md-icon-stroke); }
+.sm .icon svg, .sm .icon svg * { stroke-width: var(--ui-button-sm-icon-stroke); }

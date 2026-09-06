@@ -6,7 +6,13 @@ body { margin: 0; background: #f6f6f5; }
 .page {
   min-height: 100vh;
   padding: 32px 40px 80px;
-  font: 14px/1.5 var(--ui-font-family, system-ui);
+  /* Size and leading only. The FACE comes from the .ui-font-primary class on
+     this same element - the playground opts its own chrome in exactly the way
+     a consuming app would, rather than reading a token by hand. Declaring the
+     face here too would win on source order and the control above would appear
+     to do nothing to the page's own text. */
+  font-size: 14px;
+  line-height: 1.5;
   color: #262626;
   background: #f6f6f5;
 }
@@ -56,6 +62,25 @@ section {
 [data-theme="dark"] .cardSection { background: #191919; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .cardLabel { margin: 9px 0 0; font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }
+
+/* -- typeface tier -------------------------------------------- */
+/* Its own rows rather than .specimen's grid: that one is four named areas for
+   the type scale, and a three-column row dropped into it overlaps. */
+.faces { display: flex; flex-direction: column; }
+.faceRow {
+  display: grid;
+  grid-template-columns: minmax(150px, 200px) 1fr;
+  gap: 8px 20px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-top: 1px solid #e5e5e5;
+}
+.faceRow:first-child { border-top: 0; }
+[data-theme="dark"] .faceRow { border-top-color: #333; }
+.faceName { font-size: 12.5px; font-weight: 500; }
+.faceRole { font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #a3a3a3; }
+.faceValue { font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-word; }
+[data-theme="dark"] .faceRole { color: #686868; }
 
 /* -- type specimens ------------------------------------------ */
 .specimens { display: flex; flex-direction: column; }

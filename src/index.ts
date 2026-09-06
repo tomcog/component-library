@@ -10,3 +10,4 @@ export * from "./components/NavRail";
 export * from "./components/Pill";
 export * from "./components/Spinner";
 import "./tokens.css";
+import "./typography.css";

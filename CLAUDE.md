@@ -153,12 +153,46 @@ Consuming apps use npm and React 18.3.1 — match that rather than introducing a
 - **Peer dependencies.** React/React-DOM are peers (`>=18`) and externalized in the Rollup config alongside `react/jsx-runtime` — never promote them to `dependencies`.
 - **`src/css-modules.d.ts`** provides the `*.module.css` ambient types. Without it, `tsc` fails on the style imports.
 
-### The theming contract: 16 semantic tokens
+### The theming contract: 20 semantic tokens
 
 `tokens.css` has a primitive tier and a semantic tier. **The semantic tier is
-the public API** — those 16 names are what a consuming app overrides to make
+the public API** — those 20 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
 never alias `--ui-tc-red`.
+
+#### CTA vs chrome: `--ui-primary` and `--ui-accent`
+
+Three roles, all defaulting to `--ui-tc-red`, settable apart:
+
+| token | means | who reads it |
+|---|---|---|
+| `--ui-primary` | the **CTA** colour | every component here — 35 usages across Button, ButtonRound, Nav, NavRail, BottomNav, Pill, InputText |
+| `--ui-accent` | the **brand/chrome** colour — headers, rules, borders, dividers | nothing yet |
+| `--ui-danger` | **destructive actions and error states** — Delete, Remove, a confirm button, an invalid field | nothing yet |
+
+Each carries its own **on** colour — `--ui-text-on-primary`,
+`--ui-text-on-accent`, `--ui-text-on-danger` — rather than sharing one. That is
+the whole point of splitting the roles: an app that gives itself a pale accent
+and a dark CTA needs different text on each, and a single shared name would be
+wrong for one of them. The playground's pairings panel renders all three, so a
+recolour that breaks contrast shows up there.
+
+**Everything this library currently renders is an interactive control**, and
+every one of those is a call to action, so they are all on `--ui-primary` —
+button fills, ghost rules, the nav underline, the current-page label, the
+rail's pipe, the tinted nav chips, and all six focus rings. That is a fact
+about what has been built, not a rule against `--ui-accent`.
+
+**New components should read `--ui-accent` whenever the element is chrome
+rather than a control**: a divider, a section rule, a page-header underline, a
+decorative border, a badge that labels rather than acts. Choose by what the
+element *is*, not by the colour it comes out — both resolve to TC Red today,
+so the choice is invisible right up until an app splits them, which is exactly
+when a wrong one bites.
+
+Focus rings stay on `--ui-primary` deliberately: a ring is an interaction
+affordance, and pinning it to the CTA colour keeps it legible when an app
+picks something pale for its chrome.
 
 #### Identity vs role: `--ui-tc-red` and `--ui-primary`
 
@@ -295,10 +329,92 @@ The font is self-hosted in the package, not linked from Google's CDN — browser
 
 - `src/fonts/` holds `dm-sans-latin-var.woff2` (variable, weights 100-1000, latin subset, ~61KB), `fonts.css`, and `OFL.txt`. DM Sans is SIL OFL 1.1, so redistribution inside the package is permitted **provided `OFL.txt` ships with it** — don't drop it.
 - `scripts/copy-fonts.mjs` copies `src/fonts` to `dist/fonts` verbatim after `vite build`. Deliberately not run through Vite: the woff2 keeps a stable filename and `fonts.css` keeps its relative `url()`, so no asset hashing to reason about.
-- Consumers opt in with `import "@tomcoggia/ui/fonts.css"` alongside the main stylesheet. Apps that self-host or use another face simply omit it and override `--ui-font-family`.
+- Consumers opt in with `import "@tomcoggia/ui/fonts.css"` alongside the main stylesheet. Apps that self-host or use another face simply omit it and set `--ui-font-primary` — see below.
 - Because it is a **variable** font, adding weights (400/500/700) later costs zero extra bytes — only 600 is used today.
 
 `--ui-font-family` carries a real fallback stack, so a missing font import degrades to `system-ui` rather than breaking. Verify a font change by rendering text in `var(--ui-font-family)` next to a forced `system-ui` and confirming the metrics differ — a silent fallback looks fine in isolation.
+
+### The typeface: one name, the same shape as `--ui-primary`
+
+`--ui-font-family` used to be a single flat token holding the face *and* its
+fallbacks. Changing the face meant restating the whole list, so an app that
+changed it and forgot the tail silently shipped with no safety net. It is now
+the same identity/role split the colours have:
+
+| | colour | typeface |
+|---|---|---|
+| identity — what this package ships | `--ui-tc-red` | `--ui-dm-sans` |
+| role — **what an app overrides** | `--ui-primary` | `--ui-font-primary` |
+
+```css
+:root { --ui-font-primary: "Inter", "Inter Fallback"; }
+```
+
+One line, and every component follows. `--ui-font-fallback` carries
+`system-ui, -apple-system, "Segoe UI", sans-serif` and is appended for you, so
+a face swap cannot drop it.
+
+**This is NOT a 17th semantic token.** The semantic tier in `tokens.css` is
+colour and only colour — "what a colour *means*" — and the 16 in the theming
+contract above are all colours. The typeface is its own small tier beside it.
+Don't fold it into that count.
+
+#### `--ui-font-family` is no longer declared
+
+It survives as the **override hook** each component reads first, exactly like
+`--ui-button-primary-bg`, so an app that already sets it keeps working. But it
+is not declared on `:root` any more, and that is deliberate: a `var()` inside a
+custom property resolves at the element that DECLARES it, so composing the face
+and the fallback together on `:root` would freeze the pair there and
+`<div style="--ui-font-primary: Georgia">` could never move it. Same trap
+`--ui-primary-lighter` documents. Every component composes it at the element:
+
+```css
+font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+```
+
+Verified in the playground: a scoped `--ui-font-primary` moves that subtree and
+nothing else, and the fallback tail survives.
+
+**Breaking for apps that READ `var(--ui-font-family)` in their own CSS** — with
+nothing declared, that now resolves to nothing rather than to DM Sans. Apps
+that *set* it are unaffected. The fix is one line, and it is the better shape
+anyway: use the class below, or read `var(--ui-font-primary), var(--ui-font-fallback)`.
+The playground's own `.page` rule hit exactly this and is the worked example.
+
+#### App text: a base default, plus a class
+
+`src/typography.css` carries both, and they compose.
+
+**`:where(body)`** sets the app's base typeface, so importing
+`@tomcoggia/ui/styles.css` is enough and one `--ui-font-primary` line then
+moves the components *and* the app's own headings, prose and tables with no
+markup change.
+
+This is the library deliberately reaching past its own components, which is an
+opinion worth naming — it is what Tailwind's preflight does, and the same two
+escape hatches apply. `:where()` contributes **zero specificity**, so a bare
+`body { font-family: X }` in the app beats it with no `!important` and no
+specificity war; and it ships inside `@layer ui`, so any unlayered app rule
+beats it whatever the import order. Both verified in the playground.
+
+**Form controls are deliberately excluded.** `input`, `select`, `textarea` and
+`button` do not inherit `font-family` from the UA, and pulling them in would
+mean restyling every control in the consuming app — a much larger claim than
+setting a base face. This library's own controls set their face explicitly, so
+they are unaffected either way.
+
+**`.ui-font-primary`** is the narrower tool, for a subtree rather than the
+document:
+
+```html
+<section class="ui-font-primary">
+```
+
+Keeping both is the point: the base rule means an app gets the typeface for
+free, and the class means "text already set to use the primary typeface" stays
+a real distinction — text with its own face does not move when the token does.
+Verified: a `<p style="font-family: Impact">` holds Impact through a face swap.
 
 ### Typography: the label scale
 
@@ -888,6 +1004,37 @@ Two things not to "simplify":
 
 - **Icon position was briefly a variant axis in Figma and an `iconPosition` enum in code. Both were wrong.** A fourth variant axis doubled the set to 96 variants to express what component properties already handle; the enum then couldn't express both-sides. Don't reintroduce either.
 - **Slots are separate DOM nodes, not one node flipped with `flex-direction: row-reverse`.** Reversing in CSS desynchronises visual order from DOM/reading order, which breaks screen-reader and keyboard sequence.
+
+#### Icon geometry comes from Figma's `icon size and weight` frame (553:4796)
+
+    size   box   stroke   (label line-height)
+    XL     24    2        24
+    LG     20    1.5      20
+    MD     16    1        16
+    SM     12    1        12
+
+LG and MD were 18 and 14 before that frame existed, and Button had **no stroke
+tokens at all** — whatever weight the caller's icon set shipped is what
+rendered. Both were read straight off the frame: the sizes from each glyph's
+viewBox, the weights from the exported SVGs (MD and SM carry no `stroke-width`
+attribute, so they are SVG's default of 1).
+
+Each box now equals its size's line-height, so the glyph and the label are the
+same height and sit on one optical line. **They are still literals**, not
+aliases of `--ui-type-label-*-line-height`, even though all four agree today —
+that would be geometry riding on the type scale, the coupling
+`--ui-nav-rail-slat-height` was split out to undo.
+
+`vector-effect: non-scaling-stroke` and the `svg, svg *` selector pair are the
+same rules ButtonRound carries, and for the same two reasons: stroke-width is
+in the icon's own user units, so without it a 24-viewBox lucide glyph drawn in
+a Medium button would render at half the weight; and a presentation attribute
+on a `<path>` beats one inherited from the `<svg>`, so an svg-only rule loses
+to icon sets that put the width on each shape.
+
+**ButtonRound's ramp is deliberately different** (28/24/20/16 at 2.5/2/1.5/1):
+its glyph grows faster than its container so Small stays legible with no label
+beside it. Don't reconcile the two.
 
 Both icons are `aria-hidden`, so a Button with icons and no children has no accessible name. A dev-only `console.warn` catches this; it relies on the exact expression `process.env.NODE_ENV` (bundlers substitute that literal — an optional chain does **not** match their define and silently disables the warning), and on `define: { "process.env.NODE_ENV": "process.env.NODE_ENV" }` in `vite.config.ts` keeping Vite from inlining it at our build time.
 

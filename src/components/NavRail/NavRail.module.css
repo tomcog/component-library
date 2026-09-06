@@ -14,7 +14,7 @@
      same intent expressed the way Figma has to express it. */
   align-items: stretch;
   gap: var(--ui-nav-rail-gap);
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
 }
 
 .slat {
@@ -33,7 +33,7 @@
      Figma's frame is 32 on every variant and hugs the same way. */
   min-height: var(--ui-nav-rail-slat-height);
   padding-inline: var(--ui-nav-rail-slat-padding-x);
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
   font-size: var(--ui-nav-rail-font-size);
   font-weight: var(--ui-nav-rail-font-weight);
   line-height: var(--ui-nav-rail-line-height);

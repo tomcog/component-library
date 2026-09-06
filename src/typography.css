@@ -1,0 +1,61 @@
+/* The primary typeface, for text this library does not itself render.
+
+   Two ways in, and they compose: a zero-specificity default on <body>, and an
+   explicit class for anything narrower.
+
+   ---------------------------------------------------------------------------
+   1. The base default
+   ---------------------------------------------------------------------------
+   Importing @tomcoggia/ui/styles.css sets the app's base typeface, so one line
+   moves the whole surface and no markup has to change:
+
+       :root { --ui-font-primary: "Inter"; }
+
+   This is a component library deliberately reaching past its own components,
+   which is an opinion worth naming. Two things keep it from being a nuisance:
+
+   - `:where()` contributes ZERO specificity, so a bare `body { font-family: X }`
+     in the app beats it - no !important, no specificity war.
+   - It ships inside @layer ui, so any unlayered app rule beats it whatever the
+     import order.
+
+   Form controls are deliberately NOT included. `input`, `select`, `textarea`
+   and `button` do not inherit font-family from the UA, and pulling them in
+   would mean restyling every control in the consuming app - a much larger
+   claim than setting a base face. Apps that want it write the one-liner
+   themselves; this library's own controls already set their face explicitly.
+
+   ---------------------------------------------------------------------------
+   2. The class
+   ---------------------------------------------------------------------------
+   Opt a subtree in explicitly.
+
+   The components already read --ui-font-primary themselves. This is for the
+   app's own markup - headings, paragraphs, tables, anything the library does
+   not render - so that one edit to --ui-font-primary moves the whole surface
+   rather than just the buttons and nav.
+
+       <body class="ui-font-primary">
+
+   font-family inherits, so the class is normally set once on <body> or on a
+   layout wrapper and everything under it follows. Put it on a subtree instead
+   and only that subtree opts in - which is what makes "if that text was set to
+   use the primary typeface" a real distinction: text that sets its own face,
+   or never opts in, is untouched by a change to the token.
+
+   Composed here rather than read from a single --ui-font-family declared on
+   :root, for the reason tokens.css gives at length: a var() inside a custom
+   property resolves where it is DECLARED, so the :root version could not be
+   moved by a scoped override. Composed at the element, this works:
+
+       <div style="--ui-font-primary: Georgia">
+
+   Ships inside @layer ui like everything else, so any unlayered app rule beats
+   it - an app that wants a different face for one region just says so. */
+:where(body) {
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+}
+
+.ui-font-primary {
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+}

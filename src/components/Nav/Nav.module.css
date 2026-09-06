@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: flex-end; /* Figma: justify-end - nav sits top-right */
   gap: var(--ui-nav-gap);
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
 }
 
 /* -- item --------------------------------------------------- */
@@ -18,7 +18,7 @@
   position: relative; /* anchors the accent rule */
   display: inline-flex;
   align-items: flex-start; /* Figma: items-start */
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
   font-size: var(--ui-nav-font-size);
   line-height: var(--ui-nav-line-height);
   font-weight: var(--ui-nav-font-weight);
@@ -137,7 +137,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  font-family: var(--ui-font-family, inherit);
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
   font-size: var(--ui-nav-font-size);
   line-height: var(--ui-nav-line-height);
   font-weight: var(--ui-nav-font-weight);
