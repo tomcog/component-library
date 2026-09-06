@@ -20,7 +20,9 @@
   gap: var(--ui-input-select-gap, var(--ui-input-text-gap));
   box-sizing: border-box;
   height: var(--ui-input-select-height, var(--ui-input-text-height));
-  padding: var(--ui-input-select-padding, var(--ui-input-text-padding));
+  padding: var(--ui-input-select-padding-top, var(--ui-input-text-padding-top))
+           var(--ui-input-select-padding, var(--ui-input-text-padding))
+           var(--ui-input-select-padding-bottom, var(--ui-input-text-padding-bottom));
   border-radius: var(--ui-input-select-radius, var(--ui-input-text-radius))
                  var(--ui-input-select-radius, var(--ui-input-text-radius)) 0 0;
   background: var(--ui-input-select-bg, var(--ui-surface-raised));

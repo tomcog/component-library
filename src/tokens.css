@@ -462,7 +462,9 @@
      `-current`. It is a component-side fallback rather than a value declared
      on :root, so a scoped --ui-primary still moves it. */
   --ui-input-text-height: 32px;
-  --ui-input-text-padding: 4px;
+  --ui-input-text-padding: 4px;          /* inline */
+  --ui-input-text-padding-top: 6px;
+  --ui-input-text-padding-bottom: 2px;   /* the value sits close to the rule */
   --ui-input-text-gap: 8px;
   --ui-input-text-radius: 2px;
   --ui-input-text-border-width: 1px;

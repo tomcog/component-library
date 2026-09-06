@@ -35,7 +35,9 @@
      rather than assumed: a consuming app need not have a border-box reset. */
   box-sizing: border-box;
   height: var(--ui-input-text-height);
-  padding: var(--ui-input-text-padding);
+  padding: var(--ui-input-text-padding-top)
+           var(--ui-input-text-padding)
+           var(--ui-input-text-padding-bottom);
   /* Top corners only - the underline reads as a rule, not as a ring that
      failed to close. */
   border-radius: var(--ui-input-text-radius) var(--ui-input-text-radius) 0 0;
