@@ -94,10 +94,24 @@
 /* -- auto-resize --------------------------------------------------- */
 /* The grabber goes when the box sizes itself: two things competing to set the
    height, one of which silently loses on the next keystroke, reads as broken.
-   The height itself is set inline by the component - see InputTextarea.tsx. */
+   The height itself is set inline by the component - see InputTextarea.tsx.
+
+   --ui-input-textarea-max-height is the ceiling, and unset it does nothing.
+   Set it and the box grows to fit only up to that point, then scrolls: the
+   difference between a field that hugs its content and a field that runs a
+   form to several screens because someone pasted a whole job posting into it.
+
+   `auto` rather than `hidden` for the overflow, which is what makes the
+   ceiling work. The component sets height to scrollHeight, so below the cap
+   the content fits its box exactly and no scrollbar is drawn; above it,
+   max-height clamps the rendered height and the scrollbar appears because it
+   is now genuinely needed. `hidden` would have silently swallowed the
+   overflow instead. Measuring is unaffected - scrollHeight reports the
+   content's height whether or not the box is clamped. */
 .autoResize {
   resize: none;
-  overflow-y: hidden;
+  overflow-y: auto;
+  max-height: var(--ui-input-textarea-max-height, none);
 }
 
 /* -- disabled ------------------------------------------------------ */

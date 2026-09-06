@@ -2182,8 +2182,19 @@ holding — without that it only ever grows and never shrinks back. It runs in a
 is never shown at the wrong height first, and it re-runs on `value` so a
 controlled field follows its state.
 
-The class also sets `overflow-y: hidden`. Two things competing to set the
-height, one of which silently loses on the next keystroke, reads as broken.
+### `--ui-input-textarea-max-height` is the ceiling on that
+
+Unset it does nothing. Set it and the box hugs its content only up to that
+point, then scrolls — the difference between a field that fits what is in it
+and a field that runs a form to several screens because someone pasted a whole
+job posting into it.
+
+The class sets `overflow-y: auto`, which is what makes the ceiling work: the
+component sets height to `scrollHeight`, so below the cap the content fits its
+box exactly and no scrollbar is drawn, and above it `max-height` clamps the
+rendered height so the scrollbar appears exactly when it is needed. `hidden`
+would have swallowed the overflow instead. Measurement is unaffected —
+`scrollHeight` reports the content's height whether or not the box is clamped.
 
 ### No icon slots, deliberately
 
