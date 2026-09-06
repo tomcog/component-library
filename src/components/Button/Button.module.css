@@ -25,8 +25,13 @@
   visibility: hidden;
 }
 
+/* The ring is the one colour on this component that had no override hook, so a
+   variant retinted to another role - a ghost pointed at --ui-danger, say - kept
+   ringing in the brand colour. It defaults to --ui-primary as before: a ring is
+   an interaction affordance, and the CTA colour is the one guaranteed to stay
+   legible when an app picks something pale for its chrome. */
 .button:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-button-focus-ring, var(--ui-primary));
   outline-offset: 2px;
 }
 
