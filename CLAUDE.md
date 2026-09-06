@@ -2394,7 +2394,7 @@ An in-page view switcher. Figma: `PageTabs` (`364:420`) in the NextJob file.
 shown inside the page you are already on, so it is a real `tablist` of
 **buttons** — and gets the ARIA tab pattern rather than `aria-current`.
 
-    tab      icon 18 · label 16/500/21 · icon-gap 8 · padding-bottom 8 · rule 3
+    tab      icon 18 · label 14/500/21 · icon-gap 8 · padding-bottom 8 · rule 3
     strip    gap between tabs 32 · rule 1 · both rules --ui-primary
 
 ### It was measured off the app, not read off the drawing
@@ -2427,11 +2427,12 @@ label holds the weight, the icon stays quiet — so the two cannot inherit
 together the way they do in `NavSlat` and `Button`. `--ui-tabs-icon` is muted,
 and goes primary on hover and when selected.
 
-### The line box is 21, not 24
+### The line box is 21, and stays there
 
-A tab is label + gap + rule = `21 + 8 + 3 = 32`. DM Sans at 16 sets a 21px line
-box and the design leans on it; a rounder 24 makes every strip 3px taller than
-drawn.
+A tab is label + gap + rule = `21 + 8 + 3 = 32`, which is the strip height the
+design sets. The 21 came from DM Sans at 16, and it is **held** now the label
+is 14 — the type shrank, the strip did not. Letting the line box follow the
+font size would have taken 3px off every tab bar in the app.
 
 ### Tabs hug; the rule spans
 

@@ -577,10 +577,11 @@
 
      The rule is 3px and is drawn TRANSPARENT when a tab is not selected, so
      selecting one changes a colour and never a height. */
-  --ui-tabs-font-size: 16px;
-  /* 21, not 24: DM Sans at 16 sets a 21px line box, and the design leans on
-     it - a tab is label (21) + gap (8) + rule (3) = 32 exactly. A rounder 24
-     would make every strip 3px taller than drawn. */
+  --ui-tabs-font-size: 14px;
+  /* Held at 21 even though the label dropped to 14, so the strip keeps the
+     32px height the design sets: label (21) + gap (8) + rule (3). The box is
+     roomier than 14px type needs, which is the point - the type shrank, the
+     strip did not. */
   --ui-tabs-line-height: 21px;
   --ui-tabs-font-weight: 500;
   /* Icon to label, inside one tab. */
