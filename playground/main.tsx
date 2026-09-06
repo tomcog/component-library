@@ -488,8 +488,8 @@ function App() {
           "Figma: the Checkbox set, sizes XL / LG / MD. Hover an unchecked box \u2014 the design "
           + "previews the tick in primary on an unfilled square, so the row says what clicking it will "
           + "do before it does it. Checked fills the square and reverses the tick out of it. Disabled "
-          + "is not drawn in Figma: unchecked greys the outline, and checked keeps the filled square "
-          + "and reversed tick and only swaps the colour, so it still reads as checked. Tab to one and "
+          + "unchecked greys the outline, and checked keeps the filled square and the tick and only "
+          + "swaps the colour \u2014 a faint grey tick rather than white, which read as active. Tab to one and "
           + "press space \u2014 it is a real input, drawn at 1px behind the glyph rather than hidden, "
           + "so the keyboard and screen-reader behaviour is the browser's."
         }

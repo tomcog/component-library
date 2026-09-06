@@ -2208,18 +2208,38 @@ opacity moves, so it can fade rather than pop and the glyph never reflows.
 
 ### Disabled is the library's, not Figma's
 
-Figma draws no disabled cell; both were created. Unchecked greys the outline.
-Checked **keeps the filled square and the reversed tick** and only swaps the
-colour — dropping to an outline would lose the one thing the state exists to
-say. Both were then built into Figma so the two sides match.
+Figma drew no disabled cell; both were created here, then built into Figma so
+the two sides match. Unchecked greys the outline. Checked **keeps the filled
+square and the tick** and only swaps the colour — dropping to an outline would
+lose the one thing the state exists to say.
 
-### The stroke scales, deliberately — unlike Button and ButtonRound
+The tick is `--ui-text-faint` (`#8c8c8c`) on the `--ui-text-disabled`
+(`#b8b8b8`) square, **not white**. White read as an active tick that had merely
+lost its colour; the darker grey keeps the box legible as checked while staying
+unmistakably inert. That was the designer's call in Figma, and the code follows
+it.
 
-Those pin stroke weight with `vector-effect: non-scaling-stroke`, because their
-icons arrive from anywhere and must not change weight with the viewBox. This
-glyph is drawn by the component at a known viewBox, and letting the stroke
-scale is what reproduces the design's own weights: `2` in a 24 box renders
-1.67 / 1.33 / 1.17px at XL / LG / MD.
+### The tick is NOT stock lucide, and the strokes are pinned
+
+Both were wrong in the first cut and were corrected against the file's own
+vector paths. **Measure, don't assume the icon set.**
+
+The square *is* stock lucide `square` — `x3 y3 w18 h18 rx2`, identical. The
+tick is not: the design scales lucide's up by **1.5×**, to `9×6` units at
+`(7.5, 9)` against stock's `6×4` at `(9, 10)`. Rendered from the stock path it
+came out visibly small inside the box.
+
+Stroke weight is **fixed pixels, not scaled** — Figma draws the outline at 1px
+and the tick at 1.5px at *every* size, so the viewBox numbers differ per size
+only because the glyph does. That is `vector-effect: non-scaling-stroke`, the
+same thing Button and ButtonRound do, and the first cut argued its way out of
+it. Letting the stroke scale thickens the outline as the box grows, which is
+the opposite of what is drawn.
+
+    size   glyph   box    tick     box stroke   tick stroke
+    XL     20      15     7.5x5    1px          1.5px
+    LG     16      12     6x4      1px          1.5px
+    MD     14      10.5   5.25x3.5 1px          1.5px
 
 ### The input is 1px, not hidden
 

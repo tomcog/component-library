@@ -60,14 +60,18 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         <svg
           className={styles.glyph}
           viewBox="0 0 24 24"
-          strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
           focusable="false"
         >
+          {/* The square is stock lucide `square`. The tick is NOT stock
+              `square-check` - the design scales that one up by 1.5, to 9x6
+              units at (7.5, 9) against lucide's 6x4 at (9, 10). Traced off the
+              file's own vector paths rather than taken from the icon set,
+              because the two do not match. */}
           <rect className={styles.box} width="18" height="18" x="3" y="3" rx="2" />
-          <path className={styles.check} d="m9 12 2 2 4-4" />
+          <path className={styles.check} d="M7.5 12 L10.5 15 L16.5 9" />
         </svg>
       </span>
       {label != null ? <span className={styles.label}>{label}</span> : null}

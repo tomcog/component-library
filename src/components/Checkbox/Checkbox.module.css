@@ -52,15 +52,16 @@
   transition: color var(--ui-motion-fast) ease;
 }
 
-/* No `vector-effect: non-scaling-stroke` here, deliberately, and against what
-   Button and ButtonRound do. Those pin the stroke to a px value because their
-   icons come from anywhere and must not change weight with the viewBox. This
-   glyph is drawn by the component at a known viewBox, and letting the stroke
-   scale with it is what reproduces the design's own weights: 2 in a 24 box
-   renders 1.67 / 1.33 / 1.17px at XL / LG / MD, which is what Figma draws. */
+/* `non-scaling-stroke`, as Button and ButtonRound use. Measured off the file
+   rather than assumed: Figma draws the outline at 1px and the tick at 1.5px at
+   EVERY size - constant rendered pixels, so the viewBox values differ per size
+   only because the glyph scales. Letting the stroke scale instead would thicken
+   the outline as the box grows, which is the opposite of what is drawn. */
 .box {
   fill: none;
   stroke: currentColor;
+  stroke-width: var(--ui-checkbox-box-stroke);
+  vector-effect: non-scaling-stroke;
 }
 
 /* Present in the DOM at every state so it can fade rather than pop, and so
@@ -68,6 +69,8 @@
 .check {
   fill: none;
   stroke: currentColor;
+  stroke-width: var(--ui-checkbox-tick-stroke);
+  vector-effect: non-scaling-stroke;
   opacity: 0;
   transition: opacity var(--ui-motion-fast) ease;
 }
@@ -107,8 +110,11 @@
 .root:has(.input:disabled) .glyph {
   color: var(--ui-checkbox-box-disabled, var(--ui-text-disabled));
 }
+/* Faint, not white. A white tick on the disabled grey read as an ACTIVE tick
+   that had merely lost its colour; the darker grey keeps the box legible as
+   checked while staying unmistakably inert. Figma: Text/Faint. */
 .root:has(.input:disabled:checked) .check {
-  stroke: var(--ui-checkbox-check-disabled, var(--ui-white));
+  stroke: var(--ui-checkbox-check-disabled, var(--ui-text-faint));
 }
 .root:has(.input:disabled) .label {
   color: var(--ui-checkbox-label-disabled, var(--ui-text-disabled));

@@ -563,6 +563,13 @@
 
   --ui-checkbox-font-weight: 400;
 
+  /* Stroke weights are FIXED PIXELS, not scaled with the glyph - Figma draws
+     1 and 1.5 at every size, which is why the box outline stays hairline as
+     the box grows. Unitless, and paired with vector-effect: non-scaling-stroke
+     in the module, exactly as ButtonRound's icon stroke tokens work. */
+  --ui-checkbox-box-stroke: 1;
+  --ui-checkbox-tick-stroke: 1.5;
+
   --ui-card-radius: 8px;
 
   /* -- TYPEFACE ----------------------------------------------
