@@ -60,11 +60,85 @@
   outline: none;
 }
 
-/* The field in use: the rule turns primary, exactly as InputText's does.
-   Named `-focus` rather than `-active`, since `-active` means pressed here as
-   it does in CSS - see the Nav state-name table in CLAUDE.md. */
-.field:focus-within {
-  border-bottom-color: var(--ui-input-select-border-focus, var(--ui-primary));
+/* -- the popup menu ------------------------------------------ */
+/* The menu a native <select> drops is drawn by the platform, in a window of
+   its own outside the page, so nothing declared here reaches it - which is
+   why its highlight was the OS blue and not ours.
+
+   `appearance: base-select` moves the picker INTO the page as real DOM, and
+   from there it styles like anything else. Guarded on
+   `selector(::picker(select))`, which is true only where the whole feature
+   exists: a browser without it keeps the native menu, blue highlight and all,
+   rather than being left with a half-converted control. */
+@supports selector(::picker(select)) {
+  .select,
+  .select::picker(select) {
+    appearance: base-select;
+  }
+
+  /* base-select re-dresses the closed control as a button - border, ground,
+     padding and an arrow of its own. The field around it already provides all
+     four, and .chevron already draws the arrow, so strip them back off. */
+  .select {
+    border: none;
+    background: none;
+    box-shadow: none;
+    min-height: 0;
+  }
+  .select::picker-icon {
+    display: none;
+  }
+
+  /* The menu itself: the raised surface the rest of the system uses, with the
+     field's radius. `inset-inline-start: 0` anchors it to the field's leading
+     edge rather than the select box's, which sits after the leading icon. */
+  .select::picker(select) {
+    box-sizing: border-box;
+    min-width: anchor-size(width);
+    margin-block-start: var(--ui-input-select-menu-offset, 4px);
+    padding-block: var(--ui-input-select-menu-padding, 4px);
+    border: var(--ui-input-select-menu-border-width, 1px) solid
+            var(--ui-input-select-menu-border, var(--ui-border-default));
+    border-radius: var(--ui-input-select-menu-radius, var(--ui-input-text-radius));
+    background: var(--ui-input-select-menu-bg, var(--ui-surface-raised));
+    box-shadow: var(--ui-input-select-menu-shadow, var(--ui-shadow-float-2));
+  }
+
+  /* A row. Same type as the field, so the menu reads as the field opened up
+     rather than as a separate list. */
+  .select option {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-input-select-gap, var(--ui-input-text-gap));
+    padding: var(--ui-input-select-option-padding, 6px 12px);
+    color: var(--ui-input-select-color, var(--ui-text-default));
+    font-family: inherit;
+    font-size: var(--ui-input-select-font-size, var(--ui-input-text-font-size));
+    line-height: var(--ui-input-select-line-height, var(--ui-input-text-line-height));
+    cursor: pointer;
+  }
+
+  /* The highlight - the point of all of the above. Primary, not the platform
+     blue, and one pair for all three ways a row can be the one you mean:
+     pointed at, arrowed onto, or already chosen. */
+  .select option:hover,
+  .select option:focus,
+  .select option:checked {
+    background: var(--ui-input-select-option-highlight, var(--ui-primary));
+    color: var(--ui-input-select-option-highlight-text, var(--ui-text-on-primary));
+  }
+  .select option:disabled {
+    color: var(--ui-input-select-color-disabled, var(--ui-text-disabled));
+    background: none;
+    cursor: not-allowed;
+  }
+
+  /* base-select reserves a gutter on every row for a tick on the chosen one.
+     The highlight already says which row that is, and the gutter cost every
+     label 20-odd px of indent. */
+  .select option::checkmark {
+    display: none;
+  }
 }
 
 /* -- chevron ------------------------------------------------- */

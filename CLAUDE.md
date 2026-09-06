@@ -2125,9 +2125,9 @@ A dropdown: InputText's field with a chevron and a real `<select>` inside it.
 **It is a native `<select>`, deliberately.** A listbox rebuilt out of divs has
 to reimplement type-ahead, keyboard traversal, the mobile wheel picker and the
 screen-reader contract, and gets them subtly wrong. The native control has all
-of that; the only thing it costs is styling the menu, which this component does
-not attempt. `appearance: none` removes the UA arrow, and the chevron replaces
-it.
+of that, and it keeps all of it here - the menu is styled without giving any of
+it up. See *The menu* below. `appearance: none` removes the UA arrow, and the
+chevron replaces it.
 
 ### It shares InputText's tokens rather than restating them
 
@@ -2156,14 +2156,39 @@ It sits **out of flow and `pointer-events: none`**, with its width reserved by
 click anywhere — the chevron included — opens the menu. Shrinking the select to
 make room would have left a dead strip that looks clickable and is not.
 
+### The menu
+
+The menu a native `<select>` drops is drawn by the platform in a window of its
+own, outside the page - so nothing declared on the component reaches it, and
+its highlight was the OS blue rather than `--ui-primary`. `appearance:
+base-select` moves the picker INTO the page as real DOM, where it styles like
+anything else: the raised surface, the field's radius, `--ui-shadow-float-2`,
+and `--ui-primary` / `--ui-text-on-primary` on `option:hover`, `:focus` and
+`:checked` alike - one pair for all three ways a row can be the one you mean.
+
+It is wrapped in `@supports selector(::picker(select))`, which is true only
+where the whole feature exists. A browser without it keeps the platform menu,
+blue highlight and all, rather than being left with a half-converted control.
+
+Two things `base-select` adds are turned back off, because the component
+already provides them: its `::picker-icon` (`.chevron` draws that) and the
+per-row `::checkmark` gutter, which cost every label ~20px of indent to say
+what the highlight already says.
+
+This reverses an earlier decision - the menu used to be listed below as a
+deliberate divergence. It was one, for as long as styling it meant rebuilding
+the control out of divs. `base-select` is that same native `<select>`, so the
+trade the divergence protected no longer exists.
+
 ### Divergences — do not "fix" these
 
 - **No `iconEnd` slot.** InputText has two icon slots because a text field's
   trailing icon is a caller's business; here the trailing slot IS the chevron
   and the control would stop reading as a dropdown without it. The leading
   `icon` slot is kept, so the two components still line up.
-- **The menu is unstyled.** It is the platform's, and on every platform that
-  is what users expect a select to look like when open.
+- **The chevron is drawn by this component, not the picker.** `base-select`
+  supplies a `::picker-icon` of its own; it is hidden, because `.chevron`
+  already occupies that slot and is the one the design specifies.
 - **Focus turns the rule primary, with no ring**, matching InputText — see that
   component's note for why the ring is deliberately absent.
 
