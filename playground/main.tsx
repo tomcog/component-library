@@ -134,6 +134,28 @@ const Save = () => (
     <path d="M7 3v4a1 1 0 0 0 1 1h7" />
   </svg>
 );
+const Info = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+  </svg>
+);
+const Sparkle = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+  </svg>
+);
+const FileText = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
+    <path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />
+  </svg>
+);
+const Scale = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+    <path d="M7 21h10" /><path d="M12 3v18" /><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
+  </svg>
+);
 const Chevron = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <path d="M9 18l6-6-6-6" />
@@ -526,10 +548,10 @@ function App() {
           <div style={{ width: 576 }}>
             <Tabs aria-label="Job views">
               {[
-                ["details", "Details", <Layers key="d" />],
-                ["brief", "Brief", <Layers key="b" />],
-                ["post", "Post", <Layers key="p" />],
-                ["fit", "Fit", <Layers key="f" />],
+                ["details", "Details", <Info key="d" />],
+                ["brief", "Brief", <Sparkle key="b" />],
+                ["post", "Post", <FileText key="p" />],
+                ["fit", "Fit", <Scale key="f" />],
               ].map(([id, label, ic]) => (
                 <Tab
                   key={id as string}
@@ -540,18 +562,6 @@ function App() {
                   {label as string}
                 </Tab>
               ))}
-            </Tabs>
-          </div>
-        </Row>
-        <Row label="badge + trailing + disabled">
-          <div style={{ width: 576 }}>
-            <Tabs
-              aria-label="Sections"
-              trailing={<Button variant="ghost" size="sm">Export</Button>}
-            >
-              <Tab icon={<Layers />} active>Open</Tab>
-              <Tab icon={<Layers />} badge={<Pill size="sm">3</Pill>}>Review</Tab>
-              <Tab icon={<Layers />} disabled>Archived</Tab>
             </Tabs>
           </div>
         </Row>

@@ -12,29 +12,41 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  /* The hairline the whole strip sits on. The active tab's own rule is drawn
-     over it, which is why the two weights differ. */
+  /* The line runs the full width in primary; the selected tab thickens it to
+     3px. One line, two weights - not two lines. */
   border-bottom: var(--ui-tabs-border-width) solid
-                 var(--ui-tabs-border, var(--ui-border-subtle));
+                 var(--ui-tabs-border, var(--ui-primary));
   /* A long set on a narrow screen scrolls rather than squashing; nothing is
      ever clipped to unreadability. */
   overflow-x: auto;
 }
 
+/* Still takes the row, so `trailing` is pushed to the far end - but its own
+   children hug, so the tabs gather at the start rather than spreading. */
 .list {
   display: flex;
   flex: 1 1 0%;
   min-width: 0;
+  /* Tabs are separated by a GAP, not by padding inside each one. Padding
+     would widen every hit area, grow the space between two tabs at twice the
+     rate, and could not put air before the first or after the last without
+     also padding the ends of the strip. */
+  gap: var(--ui-tabs-gap);
 }
 
 .tab {
-  /* Equal shares of the row, as drawn. `0%` not `auto`, so a long label does
-     not win itself more width than its neighbours. */
-  flex: 1 1 0%;
+  /* Each tab is as wide as its own label needs and no wider. The RULE spans
+     the container - it is on .bar, which is width: 100% - so the line is full
+     width while the tabs sitting on it are not.
+
+     They were equal shares of the row at first, which is how the source design
+     drew a four-tab strip; that only looks right at exactly that count, and
+     turns a two-tab strip into two 50% slabs. */
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--ui-tabs-gap);
+  gap: var(--ui-tabs-icon-gap);
   /* Zeroed explicitly: a <button> carries UA padding (1px 6px in Chrome), and
      the library cannot assume the consuming app has reset it. */
   padding-top: 0;
@@ -48,7 +60,9 @@
   font-size: var(--ui-tabs-font-size);
   line-height: var(--ui-tabs-line-height);
   font-weight: var(--ui-tabs-font-weight);
-  color: var(--ui-tabs-text, var(--ui-text-muted));
+  /* Default, not muted: an unselected view is still somewhere you would go,
+     and greying every one made the strip read as mostly disabled. */
+  color: var(--ui-tabs-text, var(--ui-text-default));
   /* TRANSPARENT, not absent: the rule takes its space at every state, so
      selecting a tab moves nothing. */
   border-bottom: var(--ui-tabs-rule-width) solid transparent;
@@ -85,6 +99,20 @@
   flex: none;
   width: var(--ui-tabs-icon-size);
   height: var(--ui-tabs-icon-size);
+  /* Its OWN colour, not currentColor. An idle tab is a dark label beside a
+     muted glyph - the label carries the weight, the icon stays quiet - so the
+     two cannot simply inherit together the way they do elsewhere here. */
+  color: var(--ui-tabs-icon, var(--ui-text-muted));
+  transition: color var(--ui-motion-fast) ease;
+}
+.tab:hover:not(:disabled) .icon {
+  color: var(--ui-tabs-icon-hover, var(--ui-primary));
+}
+.current .icon {
+  color: var(--ui-tabs-icon-current, var(--ui-primary));
+}
+.tab:disabled .icon {
+  color: var(--ui-tabs-icon-disabled, var(--ui-text-disabled));
 }
 .icon > svg,
 .icon > img {

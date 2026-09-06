@@ -2394,13 +2394,54 @@ An in-page view switcher. Figma: `PageTabs` (`364:420`) in the NextJob file.
 shown inside the page you are already on, so it is a real `tablist` of
 **buttons** — and gets the ARIA tab pattern rather than `aria-current`.
 
-    icon 18   label 16/500   gap 8   padding 0 12 8   rule 3   strip rule 1
+    tab      icon 18 · label 16/500/21 · icon-gap 8 · padding-bottom 8 · rule 3
+    strip    gap between tabs 32 · rule 1 · both rules --ui-primary
 
 ### It was measured off the app, not read off the drawing
 
 The markup asks for a 16px icon and the CSS overrides it to 18, so the rendered
 size — the one that matters — is **18**. Reading the JSX would have got it
 wrong, and did: the Figma node was drawn at 16 and had to be corrected.
+
+### Space between tabs is a GAP, never padding
+
+This is the one that took five attempts to get right, so it is worth being
+blunt about. The tabs carry **no inline padding at all**; they are separated by
+`--ui-tabs-gap` on the list. Padding inside each tab is the wrong instrument:
+it widens every hit area, it grows the space between two tabs at *twice* the
+rate you set it, and it cannot put air before the first tab or after the last
+without also padding the ends of the strip.
+
+Three different gaps live here and they must not be confused:
+
+| token | between |
+|---|---|
+| `--ui-tabs-gap` | one tab and the next (32) |
+| `--ui-tabs-icon-gap` | a tab's icon and its label (8) |
+| `--ui-tabs-padding-bottom` | a label and its own rule (8) |
+
+### The icon carries its own colour
+
+Not `currentColor`. An idle tab is a **dark label beside a muted glyph** — the
+label holds the weight, the icon stays quiet — so the two cannot inherit
+together the way they do in `NavSlat` and `Button`. `--ui-tabs-icon` is muted,
+and goes primary on hover and when selected.
+
+### The line box is 21, not 24
+
+A tab is label + gap + rule = `21 + 8 + 3 = 32`. DM Sans at 16 sets a 21px line
+box and the design leans on it; a rounder 24 makes every strip 3px taller than
+drawn.
+
+### Tabs hug; the rule spans
+
+Each tab is as wide as its label needs. The 1px primary rule is on the bar,
+which is `width: 100%`, so the line runs the full container while the tabs
+sitting on it do not.
+
+They were equal shares at first — which is how the source design drew a
+four-tab strip, and only looks right at exactly that count: the same rule turns
+a two-tab strip into two 50% slabs.
 
 ### The rule is transparent, never absent
 
@@ -2432,13 +2473,18 @@ still share what is left, so the bar looks the same with or without it.
 A `<button>` inside a form submits it unless told otherwise, and a tab must
 never submit anything — so that is not a choice to leave with the consumer.
 
-### `--ui-border-subtle` came back for this
+### One line, two weights
 
-The strip's hairline is far lighter than `--ui-border-default` (`#b8b8b8`),
-which reads as an edge rather than a separation. `Card` carried a
-`--ui-border-subtle` briefly and lost it *because nothing used it*; Tabs is the
-something. `Neutral/150` light, `Neutral/700` dark — darker rather than
-lighter, since on a dark page that is what "just off the surface" means.
+The bar sits on a 1px primary rule that runs the full container, and the
+selected tab thickens it to 3px on the same line. Not two lines: an earlier cut
+put an 8px gap between them and it read as a stray stroke.
+
+`--ui-border-subtle` was added for this and removed again inside one version.
+An intermediate design gave the strip a near-invisible grey hairline, which
+needed a token the library did not have; the rule then went primary and the
+token had no consumer left. It came out for exactly the reason `Card`'s copy
+did. `--ui-tabs-border` is the hook if a quiet rule is ever wanted on an
+instance.
 
 ## Component API conventions
 
