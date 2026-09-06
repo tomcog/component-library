@@ -2173,14 +2173,28 @@ because `#ea929f` is not on the primary→white line at all — it was picked by
 eye, not mixed. 48% is the closest fit. If exactness ever matters more than
 theming, `--ui-button-ghost-bg-active` pins it in one line.
 
-**Figma's dark mode still holds the old treatment**, and it is now internally
-inconsistent: `Button/Ghost/Hover` is `Primary/Lighter` in Light but
-`Primary/Dark` in Dark, and `Button/Ghost/Pressed` is `#ea929f` in Light but
-`Primary/Darker` in Dark. One variable, two different ideas. Worse, the label
-is `Primary/Base` in both, so Dark would put `#e51a38` on `#b2142c` — nowhere
-near legible. The code derives from `--ui-primary` and is mode-independent, so
-it does not reproduce that; the dark cells need a decision before they are
-trusted. See Open divergences.
+**The tints mix toward `--ui-surface-raised`, not toward white.** In light that
+surface *is* white, so nothing moves; in dark it is `Neutral/800`, so the tint
+comes out a dark ground with a hint of brand in it rather than a pale pink chip
+glowing on a dark page. One rule, correct in both modes, and why this component
+needs no dark block.
+
+That fixed a real bug. Figma's dark values had been left on the *old* darken
+model: `Button/Ghost/Hover` was `Primary/Lighter` in Light but `Primary/Dark`
+in Dark, and `Button/Ghost/Pressed` was `#ea929f` in Light but `Primary/Darker`
+in Dark — one variable meaning a pale tint in one mode and a dark shade in the
+other. Under the old model those dark values were the *label* colour and
+nothing was filled; once they became a **fill**, dark mode filled dark red and
+wrote `Primary/Base` on top at **1.5:1**. Both dark values are now the
+surface-mixed tints (`#492b30`, `#862433`), matching what the code derives.
+
+**Still open: the pressed LABEL in dark.** Pressed darkens the label
+(`Button/Ghost/Darker`, `#ac172d`) so it holds against a light fill. On the
+dark press fill that lands at roughly **1.3:1** — darkening is a light-ground
+idea. The honest fix is for it to lighten in dark instead, which
+`color-mix(in srgb, var(--ui-primary), var(--ui-text-default) 25%)` would do
+automatically, at the cost of moving the light value ~9/255 off the hex that
+was deliberately picked. Not changed unilaterally.
 
 ## Checkbox
 
