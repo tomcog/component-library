@@ -215,6 +215,11 @@
      Card had a --ui-border-subtle briefly and it went with the flat variant's
      hairline, on the grounds that nothing used it. Something does now. */
   --ui-border-default: var(--ui-neutral-350);
+  /* A LIGHTER rule than --ui-border-default, for a hairline that separates
+     without drawing a line you read as an edge - the strip a tab bar sits on.
+     Card carried one of these briefly and it went with the flat variant
+     because nothing used it; Tabs is the something. */
+  --ui-border-subtle: var(--ui-neutral-150);
 
   /* Sizing — not themed, safe to resolve here. */
 
@@ -570,6 +575,23 @@
   --ui-checkbox-box-stroke: 1;
   --ui-checkbox-tick-stroke: 1.5;
 
+  /* -- Tabs ----------------------------------------------------
+     Figma: `PageTabs` (364:420), measured off the running app rather than the
+     drawing - the icons render at 18 there even though the markup asks for
+     16, because the CSS overrides the attribute.
+
+     The rule is 3px and is drawn TRANSPARENT when a tab is not selected, so
+     selecting one changes a colour and never a height. */
+  --ui-tabs-font-size: 16px;
+  --ui-tabs-line-height: 24px;
+  --ui-tabs-font-weight: 500;
+  --ui-tabs-gap: 8px;
+  --ui-tabs-padding-x: 12px;
+  --ui-tabs-padding-bottom: 8px;
+  --ui-tabs-icon-size: 18px;
+  --ui-tabs-rule-width: 3px;
+  --ui-tabs-border-width: 1px;
+
   --ui-card-radius: 8px;
 
   /* -- TYPEFACE ----------------------------------------------
@@ -647,6 +669,9 @@
   --ui-text-disabled: var(--ui-neutral-550);
 
   --ui-border-default: var(--ui-neutral-550);
+  /* Neutral/700 rather than /150: the subtle rule has to stay just off the
+     surface it separates, and on a dark page that means darker, not lighter. */
+  --ui-border-subtle: var(--ui-neutral-700);
 
   /* Untouched in dark, exactly as --ui-primary is: a role colour that carries
      a MEANING rather than a contrast relationship does not get to change when

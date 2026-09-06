@@ -12,5 +12,6 @@ export * from "./components/Nav";
 export * from "./components/NavRail";
 export * from "./components/Pill";
 export * from "./components/Spinner";
+export * from "./components/Tabs";
 import "./tokens.css";
 import "./typography.css";

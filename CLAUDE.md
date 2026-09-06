@@ -2385,6 +2385,61 @@ descender gap beneath it, which puts a few stray pixels between the last line
 and the rule — enough to break the alignment with a single-line field standing
 next to it.
 
+## Tabs
+
+An in-page view switcher. Figma: `PageTabs` (`364:420`) in the NextJob file.
+
+**Not a nav, and the distinction is the whole design.** `Nav`, `NavRail` and
+`BottomNav` move you between PAGES and are built from links. This swaps what is
+shown inside the page you are already on, so it is a real `tablist` of
+**buttons** — and gets the ARIA tab pattern rather than `aria-current`.
+
+    icon 18   label 16/500   gap 8   padding 0 12 8   rule 3   strip rule 1
+
+### It was measured off the app, not read off the drawing
+
+The markup asks for a 16px icon and the CSS overrides it to 18, so the rendered
+size — the one that matters — is **18**. Reading the JSX would have got it
+wrong, and did: the Figma node was drawn at 16 and had to be corrected.
+
+### The rule is transparent, never absent
+
+Every tab draws its 3px rule at every state and only the colour changes.
+Toggling `border-bottom` on and off would move the row by 3px each time you
+picked a view.
+
+### The keyboard is the reason this is a component
+
+`role="tab"` without arrow keys is a lie: a screen-reader user is told this is
+a tablist and then finds the arrows do nothing. So the full pattern is here —
+`←`/`→` move **and select** (automatic activation, which is what suits a view
+switcher: the view follows the focus), `Home`/`End` jump to the ends, and both
+directions wrap. A roving `tabIndex` means Tab enters the strip at the selected
+view and leaves it, rather than walking through every one.
+
+Selection stays the consumer's: the arrow handler calls the focused tab's own
+`click()`, so it runs whatever handler that tab already carries instead of
+inventing a second channel for state.
+
+### `trailing` sits outside the tablist
+
+A tablist's children must be tabs, so an action parked among them would be a
+lie to a screen reader. It renders as a sibling inside the strip; the tabs
+still share what is left, so the bar looks the same with or without it.
+
+### `type` is omitted from `TabProps`, not defaulted
+
+A `<button>` inside a form submits it unless told otherwise, and a tab must
+never submit anything — so that is not a choice to leave with the consumer.
+
+### `--ui-border-subtle` came back for this
+
+The strip's hairline is far lighter than `--ui-border-default` (`#b8b8b8`),
+which reads as an edge rather than a separation. `Card` carried a
+`--ui-border-subtle` briefly and lost it *because nothing used it*; Tabs is the
+something. `Neutral/150` light, `Neutral/700` dark — darker rather than
+lighter, since on a dark page that is what "just off the surface" means.
+
 ## Component API conventions
 
 - Props extend the corresponding intrinsic element props (e.g. `ButtonHTMLAttributes<HTMLButtonElement>`) and spread `...props` onto the DOM node.

@@ -1,0 +1,107 @@
+/* Tabs - an in-page view switcher. Figma: `PageTabs` (364:420) in the NextJob
+   file, traced off the running app rather than the drawing: the icons render
+   at 18 there even though the markup asks for 16, because the CSS overrides
+   the attribute. Measured, not assumed.
+
+   Not to be confused with Nav, NavRail or BottomNav. Those move you between
+   PAGES; this one swaps what is shown inside the page you are already on,
+   which is why it is a tablist rather than a set of links. */
+
+.bar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  /* The hairline the whole strip sits on. The active tab's own rule is drawn
+     over it, which is why the two weights differ. */
+  border-bottom: var(--ui-tabs-border-width) solid
+                 var(--ui-tabs-border, var(--ui-border-subtle));
+  /* A long set on a narrow screen scrolls rather than squashing; nothing is
+     ever clipped to unreadability. */
+  overflow-x: auto;
+}
+
+.list {
+  display: flex;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.tab {
+  /* Equal shares of the row, as drawn. `0%` not `auto`, so a long label does
+     not win itself more width than its neighbours. */
+  flex: 1 1 0%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-tabs-gap);
+  /* Zeroed explicitly: a <button> carries UA padding (1px 6px in Chrome), and
+     the library cannot assume the consuming app has reset it. */
+  padding-top: 0;
+  padding-inline: var(--ui-tabs-padding-x);
+  padding-bottom: var(--ui-tabs-padding-bottom);
+  border: none;
+  background: none;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  font-size: var(--ui-tabs-font-size);
+  line-height: var(--ui-tabs-line-height);
+  font-weight: var(--ui-tabs-font-weight);
+  color: var(--ui-tabs-text, var(--ui-text-muted));
+  /* TRANSPARENT, not absent: the rule takes its space at every state, so
+     selecting a tab moves nothing. */
+  border-bottom: var(--ui-tabs-rule-width) solid transparent;
+  transition: color var(--ui-motion-fast) ease,
+              border-color var(--ui-motion-fast) ease;
+}
+
+/* An idle tab previews where it would take you. The icon needs no rule of its
+   own - its stroke is currentColor, so it follows the label. */
+.tab:hover:not(:disabled) {
+  color: var(--ui-tabs-text-hover, var(--ui-primary));
+}
+
+.tab:disabled {
+  color: var(--ui-tabs-text-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+
+/* The selected view. Label, icon and rule are one colour. */
+.current {
+  color: var(--ui-tabs-text-current, var(--ui-primary));
+  border-bottom-color: var(--ui-tabs-rule, var(--ui-primary));
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--ui-tabs-focus-ring, var(--ui-primary));
+  outline-offset: 2px;
+}
+
+/* Icon sets ship intrinsic dimensions, so the SVG would render at its own size
+   rather than the slot's - the same note Button and ButtonRound carry. */
+.icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--ui-tabs-icon-size);
+  height: var(--ui-tabs-icon-size);
+}
+.icon > svg,
+.icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Trailing content sits OUTSIDE the tablist, deliberately: a tablist's
+   children must be tabs, so an action parked among them would be a lie to a
+   screen reader. */
+.trailing {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab { transition: none; }
+}

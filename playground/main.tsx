@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner, Tab, Tabs } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -294,6 +294,7 @@ function App() {
   const [posted, setPosted] = useState("");
   const [salary, setSalary] = useState("220000");
   const [notes, setNotes] = useState("");
+  const [view, setView] = useState("details");
   const [boxes, setBoxes] = useState<Record<string, boolean>>({ xl: true, lg: false, md: true });
   const [grow, setGrow] = useState("This one grows as you type. Add a few lines and the box follows, and the resize grabber is gone because two things setting the height is one too many.");
   const [trail, setTrail] = useState(false);
@@ -507,6 +508,53 @@ function App() {
             <Checkbox size={s} label="Disabled checked" disabled defaultChecked />
           </Row>
         ))}
+      </Section>
+
+      <Section
+        title="Tabs"
+        note={
+          "An in-page view switcher \u2014 NOT a nav. Nav, NavRail and BottomNav move you between "
+          + "pages and are built from links; this swaps what is shown inside the page you are already "
+          + "on, so it is a real tablist of buttons. Click one, then use the arrow keys: they move "
+          + "between tabs and select as they go, and Home/End jump to the ends. Only the selected tab "
+          + "is in the tab order, so Tab enters and leaves the strip rather than walking through every "
+          + "view. The rule under each tab is drawn at every state and only changes colour, so "
+          + "selecting one moves nothing."
+        }
+      >
+        <Row label="four views">
+          <div style={{ width: 576 }}>
+            <Tabs aria-label="Job views">
+              {[
+                ["details", "Details", <Layers key="d" />],
+                ["brief", "Brief", <Layers key="b" />],
+                ["post", "Post", <Layers key="p" />],
+                ["fit", "Fit", <Layers key="f" />],
+              ].map(([id, label, ic]) => (
+                <Tab
+                  key={id as string}
+                  icon={ic as React.ReactNode}
+                  active={view === id}
+                  onClick={() => setView(id as string)}
+                >
+                  {label as string}
+                </Tab>
+              ))}
+            </Tabs>
+          </div>
+        </Row>
+        <Row label="badge + trailing + disabled">
+          <div style={{ width: 576 }}>
+            <Tabs
+              aria-label="Sections"
+              trailing={<Button variant="ghost" size="sm">Export</Button>}
+            >
+              <Tab icon={<Layers />} active>Open</Tab>
+              <Tab icon={<Layers />} badge={<Pill size="sm">3</Pill>}>Review</Tab>
+              <Tab icon={<Layers />} disabled>Archived</Tab>
+            </Tabs>
+          </div>
+        </Row>
       </Section>
 
       <Section title="Loading" note="Content is hidden but keeps its space, so the width never changes.">
