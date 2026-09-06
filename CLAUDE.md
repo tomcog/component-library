@@ -2188,13 +2188,21 @@ nothing was filled; once they became a **fill**, dark mode filled dark red and
 wrote `Primary/Base` on top at **1.5:1**. Both dark values are now the
 surface-mixed tints (`#492b30`, `#862433`), matching what the code derives.
 
-**Still open: the pressed LABEL in dark.** Pressed darkens the label
-(`Button/Ghost/Darker`, `#ac172d`) so it holds against a light fill. On the
-dark press fill that lands at roughly **1.3:1** — darkening is a light-ground
-idea. The honest fix is for it to lighten in dark instead, which
-`color-mix(in srgb, var(--ui-primary), var(--ui-text-default) 25%)` would do
-automatically, at the cost of moving the light value ~9/255 off the hex that
-was deliberately picked. Not changed unilaterally.
+**The pressed label moves AWAY from its fill, in whichever direction that is.**
+It mixes toward `--ui-text-default`, not toward black: darkening is a
+light-ground idea, and on the dark press fill it walked the label *into* the
+background. `Text/Default` is near-black in light and near-white in dark, so one
+declaration darkens in one mode and lightens in the other. Measured:
+
+    light   #b51d34 on #f3919f   2.93:1   (was 3.23 mixing toward black)
+    dark    #e74f65 on #862433   2.46:1   (was ~1.3)
+
+Light gives up a little and dark gains a lot. The light value also drifts from
+Figma's hand-picked `#ac172d` by about 9/255 on red; `Button/Ghost/Darker` keeps
+that hex in Light and carries `#e74f65` in Dark, and
+`--ui-button-ghost-text-active` pins the exact value if fidelity ever beats
+legibility. Both are still under the 4.5:1 text floor — this is a transient
+press state on a control the pointer is already on, not a resting string.
 
 ## Checkbox
 

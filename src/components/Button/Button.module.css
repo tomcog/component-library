@@ -148,14 +148,25 @@
   color: var(--ui-button-ghost-text-hover, var(--ui-primary));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover, transparent);
 }
-/* Pressed is the one state whose label leaves --ui-primary: it darkens, so it
-   holds against the heavier fill under it. Figma: `Button/Ghost/Darker`.
-   `color` carries the icon too, since icons are drawn in currentColor. */
+/* Pressed is the one state whose label leaves --ui-primary: it moves AWAY from
+   the fill under it, so it still holds once the ground gets heavy. Figma:
+   `Button/Ghost/Darker`. `color` carries the icon too, since icons are drawn in
+   currentColor.
+
+   Mixed toward --ui-text-default rather than toward black. Darkening is a
+   light-ground idea: on the dark press fill it walked the label INTO the
+   background. Text/Default is near-black in light and near-white in dark, so
+   one declaration darkens in one mode and lightens in the other, which is the
+   behaviour the state actually wants.
+
+   It costs a little fidelity in light - #b51d34 against Figma's #ac172d, about
+   9/255 on red - and --ui-button-ghost-text-active pins the exact hex if that
+   ever matters more than the dark mode being legible. */
 .ghost:active:not(:disabled) {
   background: var(--ui-button-ghost-bg-active,
               color-mix(in srgb, var(--ui-primary) 48%, var(--ui-surface-raised)));
   color: var(--ui-button-ghost-text-active,
-         color-mix(in srgb, var(--ui-primary), black 25%));
+         color-mix(in srgb, var(--ui-primary), var(--ui-text-default) 25%));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active, transparent);
 }
 
