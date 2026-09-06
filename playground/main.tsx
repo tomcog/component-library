@@ -544,27 +544,29 @@ function App() {
           + "selecting one moves nothing."
         }
       >
-        <Row label="four views">
-          <div style={{ width: 576 }}>
-            <Tabs aria-label="Job views">
-              {[
-                ["details", "Details", <Info key="d" />],
-                ["brief", "Brief", <Sparkle key="b" />],
-                ["post", "Post", <FileText key="p" />],
-                ["fit", "Fit", <Scale key="f" />],
-              ].map(([id, label, ic]) => (
-                <Tab
-                  key={id as string}
-                  icon={ic as React.ReactNode}
-                  active={view === id}
-                  onClick={() => setView(id as string)}
-                >
-                  {label as string}
-                </Tab>
-              ))}
-            </Tabs>
-          </div>
-        </Row>
+        {(["lg", "xl"] as const).map((size) => (
+          <Row key={size} label={size === "lg" ? "lg \u2014 14/21, icon 18" : "xl \u2014 18/24, icon 20"}>
+            <div style={{ width: 576 }} data-tabs-size={size}>
+              <Tabs size={size} aria-label={`Job views (${size})`}>
+                {[
+                  ["details", "Details", <Info key="d" />],
+                  ["brief", "Brief", <Sparkle key="b" />],
+                  ["post", "Post", <FileText key="p" />],
+                  ["fit", "Fit", <Scale key="f" />],
+                ].map(([id, label, ic]) => (
+                  <Tab
+                    key={id as string}
+                    icon={ic as React.ReactNode}
+                    active={view === id}
+                    onClick={() => setView(id as string)}
+                  >
+                    {label as string}
+                  </Tab>
+                ))}
+              </Tabs>
+            </div>
+          </Row>
+        ))}
       </Section>
 
       <Section title="Loading" note="Content is hidden but keeps its space, so the width never changes.">

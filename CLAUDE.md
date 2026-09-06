@@ -41,6 +41,33 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.21.0 -> 0.22.0 gives Tabs a size axis.** `<Tabs size="xl">` is 18/24 with
+a 20 icon and a 35px strip; `lg` is the default and is the strip as it was.
+Only three values differ between the sizes - the gaps, the padding and the
+rule are shared - so an XL strip is the same object set larger.
+
+**Breaking for anyone overriding three tokens**, which is nobody today
+(checked: NextJob mentions `--ui-tabs-icon-size` in a comment and overrides
+none of them):
+
+    --ui-tabs-font-size    -> --ui-tabs-lg-font-size
+    --ui-tabs-line-height  -> --ui-tabs-lg-line-height
+    --ui-tabs-icon-size    -> --ui-tabs-lg-icon-size
+
+They do not error if left behind - they silently stop applying, the usual
+failure mode for a renamed token here.
+
+**The prop is on the STRIP, where Figma's axis is on the item.** A strip is
+one size throughout and the rule under it has to be continuous, so a per-tab
+size could build a ragged row. Figma repeats the axis on `Tabs/Item` only
+because a variant axis is the only way it can say this; that is a modelling
+difference, not drift, and it is written into the set's description.
+
+This went Figma-first, per the direction rule for a design-shaped change, and
+the code followed in the same session at the user's explicit instruction -
+which is the one documented exception to "never change both sides in the same
+session", because the second half was a fetch rather than an independent edit.
+
 **0.8.0 -> 0.9.0 adds a type scale and renames Button's largest size.**
 Three breaking changes, all small but none silent:
 
@@ -996,6 +1023,59 @@ a fix pending, per the rule above.
 7. **`Button` and `logo-tc` have no Figma description**, where `NavSlat`,
    `Card`, `Pill` and `Button/Round` now do. `Button` is the 60-variant set
    and the most valuable one to document.
+
+19. ~~`Tabs/Item` has a `Size` axis in Figma and none in code.~~ **Resolved in
+   the same session, at the user's instruction.** Both sides now carry
+   `LG | XL`: Figma as a variant axis on the item, code as `size` on the
+   strip. The three renamed variables took their code names with them and the
+   code followed - `--ui-tabs-lg-*` and `--ui-tabs-xl-*`, with the gap,
+   icon gap, padding-bottom, rule and border still shared on `Tabs/*`.
+
+   Measured off the rendered playground rather than trusting the build: LG
+   14/21 icon 18 tab 32, XL 18/24 icon 20 tab 35, both with gap 32, icon gap
+   8, padding 8 and rule 3. Class names came back hashed, so the CSS Modules
+   pipeline is intact.
+
+   **`Size=LG` is the first variant on purpose.** A variant property's default
+   comes from the first variant and every existing instance resolves to it, so
+   ordering XL first - which is what the two-letter axis convention would
+   suggest, and what Button does - would have silently flipped the live
+   instances to XL. Verified after: all four instances in the `Tabs` strip
+   still read `Size=LG`. Don't reorder them to match Button.
+
+   **The strip was promoted too.** `Tabs` is now a set at `648:13715` with the
+   same `LG | XL` axis, LG first; the old plain component at `646:2391` is its
+   `Size=LG` variant. Safe because it had zero instances - checked against all
+   4478 instances in the file rather than assumed.
+
+   **Still open:** a loose WIP frame named `Tabs/Item` sits on the Components
+   page at `648:2401` - the XL item drawn by hand before the variants existed,
+   carrying a raw unbound 18. It is the user's, so it was not deleted. It is
+   redundant now.
+
+   **Figma is published; the package is not.** The library was published by the
+   user after the sets landed. The component keys, for a consuming file:
+
+       Tabs/Item   91c3b5edaf79bab534b06dd8a4910123fc44ce9e
+       Tabs        983bc9a89652d4120350e29ecd20a0a884e7e1c2
+
+   The publish could NOT be verified from here, and the two ways it was tried
+   are both worth knowing about:
+
+   - `figma_search_components` against the file's own key as a library returns
+     an empty list - but so does a search for `Button`, which has been
+     published for many versions. That is the expired REST token failing
+     silently, not evidence about Tabs. **Control the check against a
+     known-published component before believing an empty result.**
+   - `importComponentSetByKeyAsync` returned `imported.id === localId` for
+     both sets, which is precisely the resolves-to-local case this file
+     already warns about. The variant lists it returned were the local ones.
+
+   So the snapshot still has to be checked from a consuming file, and the
+   instances there accepted in its Assets panel - publishing does not update
+   consumers on its own.
+
+   The package still needs `git tag v0.22.0` and each app's ref moved.
 
 11. ~~12 geometry variables differ between Light and Dark.~~ **Resolved.**
    The rule is geometry-never-varies-by-mode, and it was broken at scale.
@@ -2412,9 +2492,14 @@ next to it.
 
 ## Tabs
 
-An in-page view switcher. Figma: the `Tabs` component (`646:2391`) and the
-`Tabs/Item` set (`646:2357`) on the Components page, with `Tabs/*` geometry
-variables carrying the `--ui-tabs-*` code syntax.
+An in-page view switcher. Figma: the `Tabs` strip set (`648:13715`) and the
+`Tabs/Item` set (`646:2357`) on the Components page, with `Tabs/*` and
+`Tabs Size/*/*` variables carrying the `--ui-tabs-*` code syntax. Both sets
+carry a `Size` axis of `LG | XL`.
+
+The strip was a plain COMPONENT at `646:2391` until XL arrived; it is now the
+`Size=LG` variant inside the set. Promoting it was safe because it had zero
+instances - checked against all 4478 instances in the file, not assumed.
 
 **It was designed in the app file and moved here after.** The strip was first
 drawn as a `PageTabs` frame in the NextJob file (`364:420`) while mocking the
@@ -2428,6 +2513,27 @@ shown inside the page you are already on, so it is a real `tablist` of
 
     tab      icon 18 · label 14/500/21 · icon-gap 8 · padding-bottom 8 · rule 3
     strip    gap between tabs 32 · rule 1 · both rules --ui-primary
+
+**There are two sizes.** The numbers above are `lg`, the default. `xl` is
+18/24 with a 20 icon and stands 35 tall; only font size, line height and icon
+size are size-scoped, so the gap, padding-bottom and rule are shared and an XL
+strip is the same object set larger.
+
+    <Tabs size="xl" aria-label="Resource types">
+      <Tab active onClick={...}>Companies</Tab>
+      <Tab onClick={...}>Job sites</Tab>
+      <Tab onClick={...}>People</Tab>
+    </Tabs>
+
+**The prop is on the strip; Figma's axis is on the item.** A strip is one size
+throughout, and the rule under it has to be continuous - a per-tab size could
+build a ragged row whose rules do not line up. Figma repeats the axis on
+`Tabs/Item` because a variant axis is the only way it can express this. Not
+drift; don't "fix" it by adding `size` to `Tab`.
+
+**Only two steps, not Button's four.** A step exists when something uses it -
+the same rule that cut the type scale from six to four. `md` and `sm` are not
+missing, they are unbuilt.
 
 ### It was measured off the app, not read off the drawing
 

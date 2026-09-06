@@ -577,12 +577,23 @@
 
      The rule is 3px and is drawn TRANSPARENT when a tab is not selected, so
      selecting one changes a colour and never a height. */
-  --ui-tabs-font-size: 14px;
-  /* Held at 21 even though the label dropped to 14, so the strip keeps the
-     32px height the design sets: label (21) + gap (8) + rule (3). The box is
-     roomier than 14px type needs, which is the point - the type shrank, the
-     strip did not. */
-  --ui-tabs-line-height: 21px;
+  /* Two sizes, and only three values differ between them. Everything below
+     this block - the gaps, the padding, the rules - is shared, because a
+     bigger tab is bigger type and a bigger glyph and nothing else.
+
+     LG is what the strip has always been and stays the default. Its 21 is held
+     even though the label dropped to 14, so the strip keeps the 32px height
+     the design sets: label (21) + gap (8) + rule (3). The box is roomier than
+     14px type needs, which is the point - the type shrank, the strip did not.
+
+     XL takes Type/Label XL's 18/24 rather than holding 21. That rule was about
+     not SHRINKING an existing strip; a new size is free to sit on the type
+     scale, and 18px in a 21px box is 1.17 leading, which is tight for a
+     label. It stands 35 tall: 24 + 8 + 3. */
+  --ui-tabs-lg-font-size: 14px;
+  --ui-tabs-lg-line-height: 21px;
+  --ui-tabs-xl-font-size: 18px;
+  --ui-tabs-xl-line-height: 24px;
   --ui-tabs-font-weight: 500;
   /* Icon to label, inside one tab. */
   --ui-tabs-icon-gap: 8px;
@@ -595,7 +606,8 @@
   --ui-tabs-gap: 32px;
   /* Label to its own rule. */
   --ui-tabs-padding-bottom: 8px;
-  --ui-tabs-icon-size: 18px;
+  --ui-tabs-lg-icon-size: 18px;
+  --ui-tabs-xl-icon-size: 20px;
   --ui-tabs-rule-width: 3px;
   --ui-tabs-border-width: 1px;
 

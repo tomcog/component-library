@@ -4,9 +4,32 @@ import styles from "./Tabs.module.css";
 
 declare const process: { env: { NODE_ENV?: string } };
 
+/**
+ * Figma: the `Size` axis on `Tabs/Item` (646:2357).
+ *
+ * Only two steps, because only two are drawn. This is NOT the four-step
+ * `xl | lg | md | sm` axis Button and ButtonRound carry - a step exists here
+ * when something uses it, the same rule that cut the type scale from six to
+ * four.
+ */
+export type TabsSize = "xl" | "lg";
+
 export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   /** The `<Tab>` children. */
   children: ReactNode;
+  /**
+   * `lg` (the default) is 14/21 with an 18 icon and a 32px strip; `xl` is
+   * 18/24 with a 20 icon and a 35px strip. Nothing else moves between them -
+   * the gaps, the padding and the rule are shared.
+   *
+   * It sits on the STRIP, not on each `Tab`, though Figma models it per item.
+   * A strip is one size throughout: a per-tab size would let a caller build a
+   * ragged row whose rules do not line up, and the rule is the one part of
+   * this component that has to be continuous. Figma has no way to express
+   * "this applies to the whole assembly" other than repeating the axis on the
+   * item, so that difference is a modelling artefact, not drift.
+   */
+  size?: TabsSize;
   /**
    * Actions pinned to the right of the strip. Rendered OUTSIDE the tablist,
    * because a tablist's children must be tabs - an action parked among them
@@ -22,7 +45,8 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelec
 }
 
 /**
- * An in-page view switcher. Figma: `PageTabs` (364:420).
+ * An in-page view switcher. Figma: the `Tabs/Item` set (646:2357) and the
+ * `Tabs` strip set (648:13715), both carrying a `Size` axis of LG | XL.
  *
  * NOT a nav. `Nav`, `NavRail` and `BottomNav` move you between PAGES and are
  * built from links; this swaps what is shown inside the page you are already
@@ -31,6 +55,14 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelec
  *     <Tabs aria-label="Job views">
  *       <Tab icon={<Info />} active onClick={() => setView("details")}>Details</Tab>
  *       <Tab icon={<Sparkles />} onClick={() => setView("brief")}>Brief</Tab>
+ *     </Tabs>
+ *
+ * A larger strip is one prop, and the icons and type grow together:
+ *
+ *     <Tabs size="xl" aria-label="Resource types">
+ *       <Tab active onClick={() => setTab("companies")}>Companies</Tab>
+ *       <Tab onClick={() => setTab("sites")}>Job sites</Tab>
+ *       <Tab onClick={() => setTab("people")}>People</Tab>
  *     </Tabs>
  *
  * **Keyboard**: the arrow keys move between tabs and select as they go
@@ -43,7 +75,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelec
  * it composes with whatever state that handler already drives.
  */
 export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
-  { children, trailing, className, ...props },
+  { children, trailing, size = "lg", className, ...props },
   ref,
 ) {
   const list = useRef<HTMLDivElement | null>(null);
@@ -82,7 +114,11 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   }
 
   return (
-    <div className={[styles.bar, className].filter(Boolean).join(" ")} {...props} ref={ref}>
+    <div
+      className={[styles.bar, styles[size], className].filter(Boolean).join(" ")}
+      {...props}
+      ref={ref}
+    >
       <div
         ref={list}
         role="tablist"
@@ -115,10 +151,12 @@ export interface TabProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
 }
 
 /**
- * One tab in a `Tabs`. Figma: `PageTabs` (364:420).
+ * One tab in a `Tabs`. Figma: the `Tabs/Item` set (646:2357).
  *
  * The rule under a tab is drawn at every state and only changes colour, so
  * selecting one moves nothing.
+ *
+ * It carries no `size` of its own - the strip sets that for every tab in it.
  */
 export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
   { active = false, icon, badge, children, className, ...props },

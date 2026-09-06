@@ -1,5 +1,6 @@
-/* Tabs - an in-page view switcher. Figma: `PageTabs` (364:420) in the NextJob
-   file, traced off the running app rather than the drawing: the icons render
+/* Tabs - an in-page view switcher. Figma: the `Tabs/Item` set (646:2357) and
+   the `Tabs` strip set (648:13715) in the component-library file. It was first
+   traced off the running NextJob app rather than a drawing - the icons render
    at 18 there even though the markup asks for 16, because the CSS overrides
    the attribute. Measured, not assumed.
 
@@ -57,8 +58,6 @@
   white-space: nowrap;
   cursor: pointer;
   font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
-  font-size: var(--ui-tabs-font-size);
-  line-height: var(--ui-tabs-line-height);
   font-weight: var(--ui-tabs-font-weight);
   /* Default, not muted: an unselected view is still somewhere you would go,
      and greying every one made the strip read as mostly disabled. */
@@ -68,6 +67,31 @@
   border-bottom: var(--ui-tabs-rule-width) solid transparent;
   transition: color var(--ui-motion-fast) ease,
               border-color var(--ui-motion-fast) ease;
+}
+
+/* The size axis. It sits on the BAR, not on each tab: a strip is one size
+   throughout, and a per-tab prop would let a caller build a ragged row whose
+   rules do not line up. Figma models it per item only because a variant axis
+   is the sole way it can - see the divergence note in Tabs.tsx.
+
+   Three values move and no more. The gap between tabs, the gap to the icon,
+   the padding to the rule and the rule itself are shared, so an XL strip is
+   the same object set larger rather than a second design. */
+.lg .tab {
+  font-size: var(--ui-tabs-lg-font-size);
+  line-height: var(--ui-tabs-lg-line-height);
+}
+.lg .icon {
+  width: var(--ui-tabs-lg-icon-size);
+  height: var(--ui-tabs-lg-icon-size);
+}
+.xl .tab {
+  font-size: var(--ui-tabs-xl-font-size);
+  line-height: var(--ui-tabs-xl-line-height);
+}
+.xl .icon {
+  width: var(--ui-tabs-xl-icon-size);
+  height: var(--ui-tabs-xl-icon-size);
 }
 
 /* An idle tab previews where it would take you. The icon needs no rule of its
@@ -97,8 +121,7 @@
 .icon {
   display: inline-flex;
   flex: none;
-  width: var(--ui-tabs-icon-size);
-  height: var(--ui-tabs-icon-size);
+  /* Sized by the .lg / .xl rules above, not here. */
   /* Its OWN colour, not currentColor. An idle tab is a dark label beside a
      muted glyph - the label carries the weight, the icon stays quiet - so the
      two cannot simply inherit together the way they do elsewhere here. */
