@@ -151,6 +151,12 @@
   padding: 0;
   cursor: pointer;
   opacity: 1;
+  /* Chrome paints its OWN calendar glyph here as a background-image, and the
+     mask clips that just as happily as it clips our colour - so without this
+     the native black glyph shows through the mask with our red only visible
+     where the two shapes differ, which reads as one icon overlapping another.
+     Clearing it leaves the mask with nothing to reveal but the colour. */
+  background-image: none;
   background-color: var(--ui-input-text-picker, var(--ui-primary));
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M16%2019h6'/%3E%3Cpath%20d='M16%202v4'/%3E%3Cpath%20d='M19%2016v6'/%3E%3Cpath%20d='M21%2012.598V6a2%202%200%200%200-2-2H5a2%202%200%200%200-2%202v14a2%202%200%200%200%202%202h8.5'/%3E%3Cpath%20d='M3%2010h18'/%3E%3Cpath%20d='M8%202v4'/%3E%3C/svg%3E");
   mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M16%2019h6'/%3E%3Cpath%20d='M16%202v4'/%3E%3Cpath%20d='M19%2016v6'/%3E%3Cpath%20d='M21%2012.598V6a2%202%200%200%200-2-2H5a2%202%200%200%200-2%202v14a2%202%200%200%200%202%202h8.5'/%3E%3Cpath%20d='M3%2010h18'/%3E%3Cpath%20d='M8%202v4'/%3E%3C/svg%3E");
