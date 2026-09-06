@@ -41,6 +41,34 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.22.0 -> 0.22.1 lifts the field's value 2px.**
+`--ui-input-text-padding-top` 10 -> 8 and `-padding-bottom` 1 -> 3, so the
+value sits 2px higher and the gap to the rule doubles. The field is still 32:
+8 + the 20 line box + 3 + the 1px rule.
+
+**InputSelect and InputTextarea read those same two tokens, so all three moved
+together** - which is the whole point of sharing them. Moving the select alone
+was offered and declined; it would have put a select 2px above a text field
+standing next to it, which the playground's own "beside a text field" row
+would have shown immediately.
+
+It partly undoes an earlier trim of `-padding-bottom` TO 1, made on the
+reasoning that the change "barely showed". It showed at this end: 1px left the
+glyphs all but touching the rule.
+
+Pushed to Figma in the same pass, and the padding is now BOUND there rather
+than raw - `Input/Padding Top` and `Input/Padding Bottom`, with their
+`--ui-*` code syntax, on `Button/Input-Text`'s field frame. It had been a raw
+`[10, 4, 1, 4]`, which is the same shape of defect `Pill/Padding X` was created
+to close. Verified after: both invariants still hold - zero non-colour
+variables and zero primitives differ across modes.
+
+**One sub-pixel divergence is left, and it predates this.** Figma centres the
+value in a 21px content box and lands it at 8.5; the code's box is 20 (the
+1px rule is inside `border-box`) so it lands at 8. Both moved by exactly 2.
+Fixing it means changing how the stroke is counted, not the padding - not
+worth it for half a pixel, but don't be surprised by it.
+
 **0.21.0 -> 0.22.0 gives Tabs a size axis.** `<Tabs size="xl">` is 18/24 with
 a 20 icon and a 35px strip; `lg` is the default and is the strip as it was.
 Only three values differ between the sizes - the gaps, the padding and the
@@ -1048,10 +1076,12 @@ a fix pending, per the rule above.
    `Size=LG` variant. Safe because it had zero instances - checked against all
    4478 instances in the file rather than assumed.
 
-   **Still open:** a loose WIP frame named `Tabs/Item` sits on the Components
-   page at `648:2401` - the XL item drawn by hand before the variants existed,
-   carrying a raw unbound 18. It is the user's, so it was not deleted. It is
-   redundant now.
+   The loose WIP frame at `648:2401` - the XL item drawn by hand before the
+   variants existed - was deleted at the user's request once the set carried
+   XL. It was validated by id and by properties first, not by position: it had
+   been moved since it was first read, and the tell that it was the hand-drawn
+   one rather than a variant was its RAW unbound font size where every real
+   variant binds one. Figma deletes are undoable from the canvas.
 
    **Figma is published; the package is not.** The library was published by the
    user after the sets landed. The component keys, for a consuming file:

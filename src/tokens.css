@@ -495,16 +495,24 @@
   --ui-input-text-height: 32px;
   --ui-input-text-padding: 4px;          /* inline */
   /* Vertical padding is deliberately lopsided: the value sits DOWN against the
-     rule, which is what an underlined field is for. 10 + the 20 line box + 1 +
+     rule, which is what an underlined field is for. 8 + the 20 line box + 3 +
      the 1px rule is the 32 box exactly, so the line box has no slack to be
-     centred in and lands where these numbers put it.
+     centred in and lands where these numbers put it. Change one and change the
+     other, or the field stops adding up to its own height.
 
      Measured rather than guessed: DM Sans Regular 14 inks 18.5px inside its
      20px line box, so only 0.8px of half-leading sits under the glyphs. The
-     gap to the rule is therefore almost entirely this padding - which is why
-     trimming it 2px barely showed, and why it is now 1. */
-  --ui-input-text-padding-top: 10px;
-  --ui-input-text-padding-bottom: 1px;
+     gap to the rule is therefore almost entirely this padding.
+
+     It was 10/1 until the value was lifted 2px at the user's request. That
+     partly undoes an earlier trim TO 1, which had been made on the reasoning
+     that the change "barely showed" - it shows at this end, because 1px left
+     the glyphs all but touching the rule. InputSelect and InputTextarea read
+     these same two tokens, so all three move together; that is the point of
+     sharing them, and moving one alone would misalign a select sitting beside
+     a text field. */
+  --ui-input-text-padding-top: 8px;
+  --ui-input-text-padding-bottom: 3px;
   --ui-input-text-gap: 8px;
   --ui-input-text-radius: 2px;
   --ui-input-text-border-width: 1px;
