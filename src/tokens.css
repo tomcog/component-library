@@ -367,7 +367,7 @@
      Padding-inline is 0: the rail's own padding sets the inset, and the
      hover pipe wants the slat's leading edge to BE that inset. A slat
      padding would push every label in past the pipe. */
-  --ui-nav-rail-gap: 8px;
+  --ui-nav-rail-gap: 12px;
   --ui-nav-rail-slat-padding-x: 0px;
   --ui-nav-rail-font-size: var(--ui-type-label-lg-font-size);
   --ui-nav-rail-line-height: var(--ui-type-label-lg-line-height);
