@@ -166,10 +166,43 @@
    the NATIVE click-to-open behaviour, which an overlay would have to
    reimplement with showPicker(). Firefox exposes no such pseudo-element and
    keeps its own control - it simply does not see this rule. */
+/* LEADING, not trailing. Chrome puts the indicator at the inline end of the
+   control; this pulls it to the start, where it lines up with the component's
+   own `icon` slot and with the leading icon on every other field in a form.
+
+   It is taken out of flow rather than reordered, because the shadow-DOM
+   container it lives in is not ours to lay out - `direction: rtl` on the input
+   would move it, but at the cost of reversing the datetime-edit's own fields
+   and needing that undone again. Absolute positioning is honoured on this
+   pseudo-element and moves nothing else.
+
+   The containing block is the input itself (`position: relative` below), so
+   `inset-inline-start: 0` is the start of the TEXT box - i.e. after the
+   component's own leading icon when one is passed. The two sit adjacent
+   rather than on top of each other.
+
+   The space is then reserved with padding, using the same --ui-input-text-gap
+   the icon slot is separated by, so the date reads at the same offset from its
+   glyph as any other field's value does. */
+.input[type="date"],
+.input[type="datetime-local"],
+.input[type="month"],
+.input[type="week"] {
+  position: relative;
+  padding-inline-start: calc(
+    var(--ui-input-text-icon-size) + var(--ui-input-text-gap)
+  );
+}
+
 .input[type="date"]::-webkit-calendar-picker-indicator,
 .input[type="datetime-local"]::-webkit-calendar-picker-indicator,
 .input[type="month"]::-webkit-calendar-picker-indicator,
 .input[type="week"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
   width: var(--ui-input-text-icon-size);
   height: var(--ui-input-text-icon-size);
   padding: 0;

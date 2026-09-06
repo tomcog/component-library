@@ -1975,6 +1975,28 @@ placeholders. **The contrast shortfall is accepted, not overlooked.** If a
 consuming app needs the darker string, `--ui-input-text-label-color` is the
 hook, and it does not have to move `--ui-text-faint` to reach it.
 
+### The date picker indicator is moved to the LEADING edge
+
+Chrome puts `::-webkit-calendar-picker-indicator` at the inline end of the
+control. It is pulled to the start so it lines up with the component's own
+`icon` slot and with the leading icon on every other field in a form.
+
+It is taken **out of flow**, not reordered. The shadow-DOM container it lives
+in is not ours to lay out; `direction: rtl` on the input would move it, but at
+the cost of reversing the datetime-edit's own fields and then needing that
+undone. Absolute positioning is honoured on this pseudo-element and disturbs
+nothing else.
+
+Its containing block is the input (`position: relative`), so
+`inset-inline-start: 0` is the start of the **text box** — after the
+component's leading icon when one is passed, so the two sit adjacent rather
+than overlapping. The space is reserved with
+`padding-inline-start: calc(icon-size + gap)`, reusing `--ui-input-text-gap` so
+the date sits at the same offset from its glyph as any other field's value
+does from its icon.
+
+Logical properties throughout, so it follows the writing direction.
+
 ### `--ui-border-default` is the 15th semantic token
 
 The first rule colour the library has needed: a hairline drawn *on* a surface,
