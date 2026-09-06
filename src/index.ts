@@ -4,6 +4,7 @@ export * from "./components/BottomNav";
 export * from "./components/Card";
 export * from "./components/InputSelect";
 export * from "./components/InputText";
+export * from "./components/InputTextarea";
 export * from "./components/LeftRail";
 export * from "./components/Logo";
 export * from "./components/Nav";

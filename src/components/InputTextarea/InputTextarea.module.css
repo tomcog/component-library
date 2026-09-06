@@ -1,0 +1,135 @@
+/* InputTextarea - InputText's field, made multi-line.
+
+   Every measurement reads InputText's token with an --ui-input-textarea-*
+   hook in front of it, exactly as InputSelect does. That is deliberate: these
+   three ARE the same field, so sharing the tokens is what stops them drifting
+   apart the moment any one of them is retuned, while the hook still lets an
+   app move the textarea alone. Almost no new geometry is declared in
+   tokens.css, because almost none of it is new. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-input-textarea-label-gap, var(--ui-input-text-label-gap));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+}
+
+/* No `height`, which is the one real departure from InputText. A single-line
+   field is 32px because a line is 32px; a textarea is as tall as the `rows`
+   it was given, and pinning a height here would fight that. The box grows
+   from its content instead, with min-height as the floor. */
+.field {
+  display: flex;
+  box-sizing: border-box;
+  min-height: var(--ui-input-textarea-min-height, var(--ui-input-text-height));
+  padding: var(--ui-input-textarea-padding-top, var(--ui-input-text-padding-top))
+           var(--ui-input-textarea-padding, var(--ui-input-text-padding))
+           var(--ui-input-textarea-padding-bottom, var(--ui-input-text-padding-bottom));
+  border-radius: var(--ui-input-textarea-radius, var(--ui-input-text-radius))
+                 var(--ui-input-textarea-radius, var(--ui-input-text-radius)) 0 0;
+  background: var(--ui-input-textarea-bg, var(--ui-surface-raised));
+  border-bottom: var(--ui-input-textarea-border-width, var(--ui-input-text-border-width)) solid
+                 var(--ui-input-textarea-border, var(--ui-border-default));
+  transition: border-color var(--ui-motion-fast) ease;
+}
+
+/* Strip the UA control back to a text box, as InputText does. `font: inherit`
+   is not enough - form controls do not inherit type at all in Safari - so the
+   three properties are set outright.
+
+   `display: block` matters more here than it looks: an inline-level textarea
+   sits on a text baseline and picks up the line-box descender gap under it,
+   which would put a few stray pixels between the last line and the rule and
+   break the alignment with the single-line field beside it. */
+.textarea {
+  flex: 1 1 auto;
+  display: block;
+  min-width: 0;
+  appearance: none;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  color: var(--ui-input-textarea-color, var(--ui-text-default));
+  font-family: inherit;
+  font-size: var(--ui-input-textarea-font-size, var(--ui-input-text-font-size));
+  line-height: var(--ui-input-textarea-line-height, var(--ui-input-text-line-height));
+  font-weight: var(--ui-input-textarea-font-weight, var(--ui-input-text-font-weight));
+  /* NO grabber by default. It is UA chrome of exactly the kind this family
+     strips elsewhere - the number spinner, the calendar glyph - and it is
+     worse here than either: the handle is drawn in the bottom-right corner,
+     which on an underline-only field is directly on the rule, so it reads as
+     a defect rather than an affordance.
+
+     Height still moves; it just moves for a better reason. `rows` sets it,
+     and `autoResize` grows it to the content, which is what a user dragging
+     the corner was trying to achieve anyway.
+
+     An app that wants the handle back sets the token. `vertical`, not `both`:
+     a box dragged wider breaks out of the column it was placed in and leaves
+     the label and every field above it hanging. */
+  resize: var(--ui-input-textarea-resize, none);
+}
+
+/* Same token as InputText's placeholder, because it is the same thing.
+   Firefox dims the placeholder to 0.54 alpha on top of whatever colour it is
+   given, which would put it under the token's value. */
+.textarea::placeholder {
+  color: var(--ui-input-textarea-placeholder, var(--ui-text-faint));
+  opacity: 1;
+}
+
+/* The rule is the whole indicator, so the UA ring must not draw over it. */
+.textarea:focus {
+  outline: none;
+}
+
+/* The field in use: the rule turns primary, exactly as InputText's does.
+   Named `-focus` rather than `-active`, since `-active` means pressed here as
+   it does in CSS - see the Nav state-name table in CLAUDE.md. */
+.field:focus-within {
+  border-bottom-color: var(--ui-input-textarea-border-focus, var(--ui-primary));
+}
+
+/* -- auto-resize --------------------------------------------------- */
+/* The grabber goes when the box sizes itself: two things competing to set the
+   height, one of which silently loses on the next keystroke, reads as broken.
+   The height itself is set inline by the component - see InputTextarea.tsx. */
+.autoResize {
+  resize: none;
+  overflow-y: hidden;
+}
+
+/* -- disabled ------------------------------------------------------ */
+.root:has(.textarea:disabled) .field {
+  background: var(--ui-input-textarea-bg-disabled, var(--ui-surface-disabled));
+  border-bottom-color: var(--ui-input-textarea-border-disabled, var(--ui-text-disabled));
+}
+.root:has(.textarea:disabled) .label {
+  color: var(--ui-input-textarea-color-disabled, var(--ui-text-disabled));
+}
+.textarea:disabled {
+  color: var(--ui-input-textarea-color-disabled, var(--ui-text-disabled));
+  /* Not the `disabled` attribute's own default: a field reads as inert only
+     if the cursor says so before the click. */
+  cursor: not-allowed;
+  /* Safari lightens disabled control text on its own, on top of the colour. */
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+  resize: none;
+}
+
+/* -- label --------------------------------------------------------- */
+.label {
+  padding-inline-start: var(--ui-input-textarea-label-inset, var(--ui-input-text-label-inset));
+  color: var(--ui-input-textarea-label-color, var(--ui-text-faint));
+  font-size: var(--ui-input-textarea-label-font-size, var(--ui-input-text-label-font-size));
+  line-height: var(--ui-input-textarea-label-line-height, var(--ui-input-text-label-line-height));
+  font-weight: var(--ui-input-textarea-label-font-weight, var(--ui-input-text-label-font-weight));
+  letter-spacing: var(--ui-input-textarea-label-letter-spacing, var(--ui-input-text-label-letter-spacing));
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field { transition: none; }
+}

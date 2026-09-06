@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, InputSelect, InputText, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -293,6 +293,8 @@ function App() {
   const [email, setEmail] = useState("");
   const [posted, setPosted] = useState("");
   const [salary, setSalary] = useState("220000");
+  const [notes, setNotes] = useState("");
+  const [grow, setGrow] = useState("This one grows as you type. Add a few lines and the box follows, and the resize grabber is gone because two things setting the height is one too many.");
   const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
   const [rail, setRail] = useState("/work");
@@ -436,6 +438,47 @@ function App() {
             <ButtonRound size={s} tone="confirm" icon={<Save />} aria-label={`${s} save`} />
           </Row>
         ))}
+      </Section>
+
+      <Section
+        title="InputTextarea"
+        note={
+          "InputText's field made multi-line, and the third member of the same family: every "
+          + "measurement reads InputText's token behind an --ui-input-textarea-* hook, so the three "
+          + "cannot drift. The one real departure is height \u2014 a single-line field is 32px because a "
+          + "line is 32px, while this is as tall as its `rows`. No resize grabber: on an underline-only "
+          + "field the handle lands on the rule. A box dragged "
+          + "wider would break out of the column it sits in, and autoResize covers the case anyway. No icon "
+          + "slots, deliberately \u2014 a leading "
+          + "glyph is anchored to one line of text and has nowhere to sit beside three."
+        }
+      >
+        <Row label="default">
+          <InputTextarea
+            style={{ width: 260 }}
+            label="Notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Anything worth remembering…"
+          />
+        </Row>
+        <Row label="beside a field">
+          <InputText style={{ width: 160 }} label="Company" defaultValue="Acme" />
+          <InputTextarea style={{ width: 260 }} label="Description" rows={2} />
+        </Row>
+        <Row label="auto-resize">
+          <InputTextarea
+            style={{ width: 260 }}
+            label="Grows to fit"
+            autoResize
+            rows={2}
+            value={grow}
+            onChange={(e) => setGrow(e.target.value)}
+          />
+        </Row>
+        <Row label="disabled">
+          <InputTextarea style={{ width: 260 }} label="Notes" value="Unavailable" disabled readOnly />
+        </Row>
       </Section>
 
       <Section title="Loading" note="Content is hidden but keeps its space, so the width never changes.">

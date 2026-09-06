@@ -2141,6 +2141,65 @@ make room would have left a dead strip that looks clickable and is not.
 - **Focus turns the rule primary, with no ring**, matching InputText — see that
   component's note for why the ring is deliberately absent.
 
+## InputTextarea
+
+`InputText`'s field made multi-line, and the third member of that family.
+Every measurement reads InputText's token behind an `--ui-input-textarea-*`
+hook, exactly as `InputSelect` does, so the three cannot drift apart when any
+one of them is retuned — and almost no new geometry is declared in
+`tokens.css`, because almost none of it is new. There is no Figma node for
+this one; it is InputText's spec applied to a `<textarea>`.
+
+### Height is the one real departure
+
+InputText pins `height: 32px` because a line *is* 32px. A textarea is as tall
+as the `rows` it was given, so this sets `min-height` to InputText's height
+token as a floor and lets the box grow from there. Pinning a height would
+fight `rows`.
+
+### No resize grabber
+
+`resize: none`, and the reason is the same one that strips the number spinner
+and replaces the calendar glyph: it is UA chrome introducing a second visual
+language. It is worse here than in either of those cases — the handle is drawn
+in the bottom-right corner, which on an underline-only field is **directly on
+the rule**, so it reads as a defect rather than an affordance. It shipped
+`vertical` for about ten minutes and looked broken; see the note in the module.
+
+Height still moves, for a better reason: `rows` sets it, and `autoResize`
+grows it to fit the content, which is what a user dragging the corner was
+trying to achieve. `--ui-input-textarea-resize` puts the handle back for an app
+that wants it — `vertical`, never `both`, since a box dragged wider breaks out
+of the column it was placed in and leaves the label and every field above it
+hanging.
+
+### `autoResize` measures, it does not calculate
+
+Height is reset to `auto` before reading `scrollHeight`, so the measurement is
+the content's natural height rather than the height the box is already
+holding — without that it only ever grows and never shrinks back. It runs in a
+`useLayoutEffect`, before paint, so a field that arrives already holding text
+is never shown at the wrong height first, and it re-runs on `value` so a
+controlled field follows its state.
+
+The class also sets `overflow-y: hidden`. Two things competing to set the
+height, one of which silently loses on the next keystroke, reads as broken.
+
+### No icon slots, deliberately
+
+Unlike `InputText` and `InputSelect`. A leading glyph is anchored to a single
+line of text; beside a three-line box it either floats in the middle of an
+empty column or sits against the first line pretending the other two are not
+there. Neither reads as the same component, so the slot is omitted rather than
+left to be misused.
+
+### `display: block` on the control
+
+An inline-level textarea sits on a text baseline and picks up the line-box
+descender gap beneath it, which puts a few stray pixels between the last line
+and the rule — enough to break the alignment with a single-line field standing
+next to it.
+
 ## Component API conventions
 
 - Props extend the corresponding intrinsic element props (e.g. `ButtonHTMLAttributes<HTMLButtonElement>`) and spread `...props` onto the DOM node.
