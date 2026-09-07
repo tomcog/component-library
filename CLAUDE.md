@@ -41,6 +41,19 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.23.0 -> 0.24.0 adds SegmentedControl.** A pale track holding N options of
+which exactly one holds - a filter row, a sort order. `LG | MD`, and a
+`variant` of `primary | dark` choosing the selected segment's ground.
+
+**Purely additive.** A new component and its own `--ui-segmented-*` tokens; no
+existing token renamed or removed, so an app on 0.23.0 needs no edit to move.
+
+It is a **radiogroup**, which is the point of it existing beside `Pill`. A row
+of Pills is N independent toggles that an app happens to keep exclusive; this
+says so to a screen reader, and carries the arrow-key pattern that follows.
+Anywhere an app draws a row of pills where only one can hold - NextJob's
+work-mode filters and its Newest/A-Z sort are both this - should move.
+
 **0.22.1 -> 0.23.0 gives ButtonRound a ghost variant.** `variant="ghost"`
 drops the fill and rests as a `--ui-text-muted` glyph; `filled` is the default
 and is the button as it was. Figma has drawn `State=Ghost` at all four sizes
