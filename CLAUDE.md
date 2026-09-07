@@ -41,6 +41,27 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.22.1 -> 0.23.0 gives ButtonRound a ghost variant.** `variant="ghost"`
+drops the fill and rests as a `--ui-text-muted` glyph; `filled` is the default
+and is the button as it was. Figma has drawn `State=Ghost` at all four sizes
+for some time - this is the code catching up, not a new design.
+
+**Purely additive.** No token renamed or removed, and nothing renders
+differently without the prop, so an app on 0.22.1 needs no edit to move.
+
+Hover and press are NOT declared on it: they fall through to the base rules,
+so a ghost fills `--ui-primary` under the pointer exactly as a filled one does.
+Disabled is the one code-only piece - it stays unfilled, where the base rule
+would paint it `--ui-surface-disabled` and make switching a button off the
+thing that gives it a visible disc.
+
+**Four places in NextJob hand-roll this today** through
+`--ui-button-round-bg` / `--ui-button-round-icon`: the job sheet's discard and
+save pair, both task dialogs' close buttons, and the task delete. Each is two
+declarations that collapse to one prop once its ref moves - and the comments
+sitting beside them, which say ButtonRound "ships no ghost variant", are now
+wrong and should go with them.
+
 **0.22.0 -> 0.22.1 lifts the field's value 2px.**
 `--ui-input-text-padding-top` 10 -> 8 and `-padding-bottom` 1 -> 3, so the
 value sits 2px higher and the gap to the rule doubles. The field is still 32:
