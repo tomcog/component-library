@@ -2879,7 +2879,29 @@ radius 99, gap 4, type 14/20 and 12/16; no `Button/*` binding remains; and both
 file invariants still hold - zero non-colour variables and zero primitives
 differ across modes.
 
-**Still needs publishing**, which is UI-only and the user's.
+**Published by the user** once the reconciliation landed - which covers this
+whole pass, not just SegmentedControl: the `Text/Muted` and `Surface/Pale`
+value fixes, `Button/Round`'s rewritten description and its ghost variant, and
+the `Segment` icon property all went out in the same snapshot.
+
+**The snapshot has NOT been verified from a consuming file**, and that is the
+one check that means anything here. The Desktop Bridge disconnected as the
+publish happened, so it could not be run. Two reminders about doing it, both
+learned the hard way and written up under "There is a third copy":
+
+- `importComponentSetByKeyAsync` run from INSIDE component-library resolves the
+  key to the local set and returns it, so every count matches and the check
+  proves nothing. Compare `imported.id` against the local node's id; if they
+  are equal, that is what happened. Run it from a consumer instead - the
+  NextJob design file is the one to hand.
+- `figma_search_components` against this file's own key returns empty even for
+  long-published components, because the REST token is expired and fails
+  silently. Control the check against something known-published before
+  believing an empty result.
+
+The snapshot was once found five renames behind with nobody noticing, so
+"published" is not the same as "arrived". **Consumers also have to accept the
+update in their own Assets panel** - publishing does not push it to them.
 
 ### Divergences - do not "fix" these
 
