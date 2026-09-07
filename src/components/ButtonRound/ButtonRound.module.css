@@ -66,6 +66,39 @@
   cursor: not-allowed;
 }
 
+/* -- variant="ghost" ----------------------------------------- */
+/* Figma: `Button/Round` State=Ghost, drawn at all four sizes (220:11857).
+   No fill, no stroke, and the glyph on `Text/Muted` - which is what the
+   variants bind, so this reads the matching semantic token rather than a
+   value of its own.
+
+   Only the RESTING pair is declared. Hover and press deliberately fall
+   through to the base rules above, so a ghost button fills primary under the
+   pointer exactly as a filled one does: transparent at rest, weight on hover.
+   That is not invention - `NavRail` and `BottomNav` both hand-roll this
+   exact chip today, and the reason their comments give is that ButtonRound
+   "has no transparent resting state". Now it does.
+
+   Specificity does the sequencing on its own: `.ghost` is one class, so
+   `.button:hover:not(:disabled)` and `.button:active:not(:disabled)` both
+   outrank it whatever the source order. `:disabled` is the one that has to be
+   restated - it matches at the same weight, so it is written below rather
+   than left to the base rule. */
+.ghost {
+  background: var(--ui-button-round-ghost-bg, transparent);
+  color: var(--ui-button-round-ghost-icon, var(--ui-text-muted));
+}
+
+/* A disabled ghost stays unfilled. The base rule would paint it
+   --ui-surface-disabled, which makes turning a button OFF the thing that
+   gives it a visible disc - louder switched off than on. Figma draws no
+   Ghost Disabled cell, so this is the library's call, the same way
+   ButtonRound's disabled state was before it. */
+.ghost:disabled {
+  background: var(--ui-button-round-ghost-bg-disabled, transparent);
+  color: var(--ui-button-round-ghost-icon-disabled, var(--ui-text-disabled));
+}
+
 .xl { width: var(--ui-button-round-xl-size); height: var(--ui-button-round-xl-size); }
 .lg { width: var(--ui-button-round-lg-size); height: var(--ui-button-round-lg-size); }
 .md { width: var(--ui-button-round-md-size); height: var(--ui-button-round-md-size); }
