@@ -954,17 +954,58 @@ a fix pending, per the rule above.
    `Text/Default`, `Text/Muted` and `Text/OnPrimary` - no primitives, no
    Button component tokens - and no primitive differs between modes.
    **Still needs publishing.**
-6. **`Button/Round` has a 13th variant: `Size=Large, State=Ghost`.** The set
-   is documented here as `Size` x `State` = 3 x 4; the `State` axis now also
-   carries `Ghost`, at Large only. It is 40x40 with no fill and no stroke, and
-   its glyph binds to `Button/Tertiary/Label` - Button's component token,
-   which is the binding this file keeps reaching for by accident.
+6. ~~`Button/Round` has a 13th variant: `Size=Large, State=Ghost`.~~
+   **Resolved, and both halves of the old note had gone stale.** It is not one
+   variant at Large: `Ghost` is drawn at all four sizes, same geometry as
+   Default. And its glyph does not bind `Button/Tertiary/Label` any more - all
+   four are on `Text/Muted`, the semantic tier, so the repointing this entry
+   asked for had already happened in the file.
 
-   **Left alone deliberately.** An incomplete variant at one size reads as
-   work in progress, and a previous session destroyed a `Level=Ghost` the user
-   was creating by assuming exactly this was leftover scaffolding. Ask before
-   touching it. If it is intended, the code needs a `ghost` state on
-   `ButtonRound` and the glyph wants repointing to a semantic token.
+   The waiting question - *is it intended* - was answered by the user asking
+   why the playground had no ghost. Code followed the drawing: `variant="ghost"`
+   on `ButtonRound`. Only the code moved, the set already being complete.
+
+   **The old note's caution was still right in kind.** It said to ask rather
+   than assume, and asking is what turned a variant that looked like scaffolding
+   into a shipped one. Two things in this set still fit that description and are
+   left alone below.
+
+20. **Figma's `Text/Muted` aliases `Neutral/400` in BOTH modes.** Code says
+   `Neutral/500` (`#737373`) light and `Neutral/400` (`#8c8c8c`) dark. So the
+   token is wrong in light *and* frozen against the theme - the `IconDefault`
+   defect this file documents five times over, now on a semantic token rather
+   than a legacy one.
+
+   It also collapses a distinction the library deliberately built.
+   `Text/Faint` is `Neutral/400` in Light, so in Figma's Light mode muted and
+   faint are **the same colour** - and InputText's note says faint exists
+   precisely to "take whichever step muted is not on". Two names, one value,
+   in the mode almost everyone reads the file in.
+
+   Found while reading `Button/Round`'s Ghost cells, whose glyph binds this
+   token: the code renders that glyph `#737373` and Figma draws it `#8c8c8c`.
+   The binding NAME matches, which is what the sync rule asks of a component -
+   this is a defect in the variable, one `setValueForMode` wide. Not done here:
+   the user was in the file, and writing needs them out of it.
+
+21. **`Button/Round`'s description is stale, and it is the most-read surface
+   on the component.** It still says the size prop takes "small, medium or
+   large" and lists three sizes (24/32/40) - no XL, and the pre-0.9.0 long
+   names the rest of the library dropped. It says nothing about `Ghost`,
+   `Confirm`, or the `tone` prop. Same class of defect as `NavSlat`'s
+   description (#9), and worth doing in the same pass.
+
+22. **`Button/Round` carries a 7th state, `ConfirmButton`, at XL only.** It is
+   `Primary/Lighter` filled with the glyph on **`Danger/Base`** - so it renders
+   identically to `State=Default` today, both roles defaulting to TC Red, and
+   the difference only appears if an app splits them.
+
+   **Left alone deliberately**, the same call the old entry 6 made and for the
+   same reason: an incomplete state at one size reads as work in progress, and
+   a previous session destroyed a `Level=Ghost` the user was creating by
+   assuming exactly that. Ask before touching it. If it is a duplicate of
+   `Confirm`, deleting it is one call; if it is intended, it needs the other
+   three sizes and a glyph on a role that is not danger.
 
 8. ~~NavRail's slat gap moved in code and not yet in Figma.~~
    **Superseded.** The 14px gap lasted one session. Reading the `LeftRail`
@@ -1718,6 +1759,48 @@ inherited from its parent — an svg-only rule loses to those silently.
 `vector-effect: non-scaling-stroke` then pins the weight to rendered px
 whatever the icon's viewBox, so a 24-viewBox glyph drawn at 12px does not
 halve its stroke.
+
+### `variant="ghost"` drops the fill; `tone` and `variant` are orthogonal
+
+Figma: `Button/Round` `State=Ghost`, drawn at **all four sizes** (`220:11857`).
+No fill, no stroke, and the glyph on `Text/Muted`. The geometry is untouched,
+so a ghost lines up with a filled button standing beside it.
+
+```tsx
+<ButtonRound variant="ghost" icon={<X />} aria-label="Dismiss" />
+```
+
+**Only the resting pair is declared. Hover and press fall through to the base
+rules**, so a ghost fills `--ui-primary` under the pointer exactly as a filled
+one does — transparent at rest, weight arriving with the cursor. That is not
+invention: `NavRail` and `BottomNav` both hand-roll this exact chip today, and
+the reason their comments give is that ButtonRound "has no transparent resting
+state". Now it does, and those two are the obvious candidates to move onto it.
+
+Specificity does the sequencing on its own — `.ghost` is one class, so
+`.button:hover:not(:disabled)` outranks it whatever the source order.
+`:disabled` is the exception: it matches at the same weight, so `.ghost:disabled`
+is written below the base rule rather than left to it.
+
+**A disabled ghost stays unfilled**, which is code-only — Figma draws no Ghost
+Disabled cell. The base rule would paint it `--ui-surface-disabled`, making
+*switching a button off* the thing that gives it a visible disc: louder off
+than on.
+
+**The prop is `variant`, taking `filled | ghost` — deliberately not `primary`,**
+though that is what `Button` calls its filled variant. `tone` already accepts
+`"primary"` on this same component, and one component with two props that both
+take that word, meaning different things, is a lookup table nobody should have
+to hold in their head. Not a boolean either, so a third weight can join without
+reshaping the API.
+
+The two props are orthogonal and compose: `variant` is how much weight the
+button carries, `tone` is what it does. `variant="ghost" tone="confirm"` rests
+as a muted glyph and answers the pointer in green.
+
+**Figma models both as `State`**, which cannot express two independent axes
+without multiplying the set. That is a modelling difference, the same one
+`tone="confirm"` already carries — see below.
 
 ### `tone="confirm"` changes the hover pair and nothing else
 
