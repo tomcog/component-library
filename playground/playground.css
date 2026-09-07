@@ -18,7 +18,24 @@ body { margin: 0; background: #f6f6f5; }
 }
 .page[data-theme="dark"] { background: #191919; color: #ededed; }
 
-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+/* Sticky, so the jump menu is still reachable after it has jumped. Without
+   this the control scrolls away with the top of the page and is good for
+   exactly one use. The negative top and the padding cancel the .page inset,
+   so nothing shows through above the bar as it pins. */
+header {
+  position: sticky;
+  top: -32px;
+  z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  margin: -32px -40px 28px; padding: 32px 40px 12px;
+  flex-wrap: wrap; gap: 16px;
+  background: #f6f6f5;
+}
+.page[data-theme="dark"] header { background: #191919; }
+
+/* Clears the pinned bar, so a jumped-to section lands below it rather than
+   under it. */
+section { scroll-margin-top: 72px; }
 h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
 h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #8c8c8c; margin: 0 0 4px; }
 .note { color: #8c8c8c; font-size: 12.5px; margin: 0 0 18px; }

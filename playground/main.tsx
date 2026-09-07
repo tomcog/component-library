@@ -285,9 +285,15 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
+/* The jump menu addresses sections by this, and reads its labels back off the
+   DOM - so a new Section joins the menu by existing, with no list to keep in
+   step with it. */
+const slug = (title: string) =>
+  title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
 function Section({ title, note, className, children }: { title: string; note?: string; className?: string; children: React.ReactNode }) {
   return (
-    <section className={className}>
+    <section id={slug(title)} data-title={title} className={className}>
       <h2>{title}</h2>
       {note ? <p className="note">{note}</p> : null}
       {children}
@@ -297,6 +303,17 @@ function Section({ title, note, className, children }: { title: string; note?: s
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  /* Read off the rendered DOM rather than kept as a constant beside the JSX.
+     A hand-maintained list is one someone adds a Section without updating,
+     and a jump menu missing the newest entry is worse than none. Runs once:
+     the sections are static JSX. */
+  const [sections, setSections] = useState<{ id: string; title: string }[]>([]);
+  useEffect(() => {
+    setSections(
+      Array.from(document.querySelectorAll<HTMLElement>("section[id][data-title]"))
+        .map((el) => ({ id: el.id, title: el.dataset.title as string })),
+    );
+  }, []);
   const [shell, setShell] = useState("/settings");
   const [primary, setPrimary] = useState("#e51a38");
   const [face, setFace] = useState(FACES[0].value);
@@ -332,6 +349,24 @@ function App() {
       <header>
         <h1>@tomcoggia/ui</h1>
         <div className="controls">
+          <label>
+            jump to
+            {/* Value is held at "" rather than tracking the selection, so
+                picking the same section twice fires twice - a menu that
+                silently ignored the second pick would read as broken. */}
+            <select
+              value=""
+              onChange={(e) => {
+                const target = document.getElementById(e.target.value);
+                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            >
+              <option value="">section…</option>
+              {sections.map((sec) => (
+                <option key={sec.id} value={sec.id}>{sec.title}</option>
+              ))}
+            </select>
+          </label>
           <label>
             theme
             <select value={theme} onChange={(e) => setTheme(e.target.value as "light" | "dark")}>
@@ -452,7 +487,11 @@ function App() {
           "Figma sizes and interaction states. Hover and press each icon button. The third in " +
           "each row is tone=\"confirm\" \u2014 same resting appearance as the first, and it answers " +
           "the pointer in --ui-confirm instead of --ui-primary. The tone changes the hover pair " +
-          "only: pressed is the inverse surface for every round button, whatever it goes on to do."
+          "only: pressed is the inverse surface for every round button, whatever it goes on to do. " +
+          "The last two are variant=\"ghost\": no fill and a muted glyph at rest, then the same " +
+          "primary fill as the first on hover \u2014 weight arriving with the pointer rather than a " +
+          "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
+          "makes it louder than leaving it on."
         }
       >
         {ROUND_SIZES.map((s) => (
@@ -460,6 +499,8 @@ function App() {
             <ButtonRound size={s} icon={<House />} aria-label={`${s} home action`} />
             <ButtonRound size={s} icon={<House />} aria-label={`${s} disabled action`} disabled />
             <ButtonRound size={s} tone="confirm" icon={<Save />} aria-label={`${s} save`} />
+            <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost home action`} />
+            <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
           </Row>
         ))}
       </Section>
