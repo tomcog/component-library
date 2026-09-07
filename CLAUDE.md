@@ -2864,6 +2864,16 @@ except where noted:
 - **Both sets were given descriptions.** They were empty, and a description is
   the surface every `get_design_context` returns.
 
+- **`Icon?` and `SegmentIcon` were added to the set**, the same boolean +
+  instance-swap shape Button carries. Deliberately NOT a variant axis: that is
+  what once doubled Button's set to 96 and was reverted, and the note is under
+  "Icons: two slots, not a position enum". It defaults OFF so existing
+  instances do not sprout a glyph, and the icon's stroke binds the same
+  variable as the label in every state - what the code gets for free from
+  `currentColor`. Sized to the LINE BOX (LG 20, MD 16), matching the CSS.
+- **A worked `Segmented Control - LG (icons)` frame** sits below the other two,
+  built the way they are: a track instance with Segment instances posed on it.
+
 Verified after: geometry unchanged at 40/32, padding-x 16/12, padding-y 10/8,
 radius 99, gap 4, type 14/20 and 12/16; no `Button/*` binding remains; and both
 file invariants still hold - zero non-colour variables and zero primitives
