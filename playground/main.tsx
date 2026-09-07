@@ -1,8 +1,8 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Spinner, Tab, Tabs } from "../src";
-import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
@@ -10,6 +10,7 @@ const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
+const SEGMENTED_SIZES: SegmentedControlSize[] = ["lg", "md"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
 /* Faces to audition. Each is a value for --ui-font-primary and nothing more -
@@ -303,6 +304,8 @@ function Section({ title, note, className, children }: { title: string; note?: s
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [segMode, setSegMode] = useState("all");
+  const [segSort, setSegSort] = useState("newest");
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
      A hand-maintained list is one someone adds a Section without updating,
      and a jump menu missing the newest entry is worse than none. Runs once:
@@ -503,6 +506,45 @@ function App() {
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
           </Row>
         ))}
+      </Section>
+
+      <Section
+        title="SegmentedControl"
+        note={
+          "One choice from a short, fixed set \u2014 a filter row, a sort order. A radiogroup, "
+          + "not a tablist and not a row of Pills: Tabs swaps what is shown inside the page, and a "
+          + "Pill is one independent toggle, where these N options are mutually exclusive. Arrow "
+          + "keys move and select, Home and End jump, and both wrap; only the current choice is in "
+          + "the tab order. The track's pale pill is the only ground always drawn \u2014 an idle "
+          + "segment has none, and hovering one changes the LABEL alone, because a second ground "
+          + "inside the track would read as two things chosen. The second column is variant=\"dark\"."
+        }
+      >
+        {SEGMENTED_SIZES.map((s) => (
+          <Row key={s} label={s}>
+            <SegmentedControl size={s} aria-label={`${s} work mode`}>
+              <Segment selected={segMode === "all"} onClick={() => setSegMode("all")}>All</Segment>
+              <Segment selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Remote</Segment>
+              <Segment selected={segMode === "hybrid"} onClick={() => setSegMode("hybrid")}>Hybrid</Segment>
+            </SegmentedControl>
+            <SegmentedControl size={s} variant="dark" aria-label={`${s} sort order`}>
+              <Segment selected={segSort === "newest"} onClick={() => setSegSort("newest")}>Newest</Segment>
+              <Segment selected={segSort === "az"} onClick={() => setSegSort("az")}>A–Z</Segment>
+            </SegmentedControl>
+          </Row>
+        ))}
+        <Row label="icons">
+          <SegmentedControl aria-label="View with icons">
+            <Segment icon={<House />} selected={segMode === "all"} onClick={() => setSegMode("all")}>Home</Segment>
+            <Segment icon={<Save />} selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Saved</Segment>
+          </SegmentedControl>
+        </Row>
+        <Row label="disabled">
+          <SegmentedControl aria-label="Disabled example">
+            <Segment selected>Available</Segment>
+            <Segment disabled>Unavailable</Segment>
+          </SegmentedControl>
+        </Row>
       </Section>
 
       <Section

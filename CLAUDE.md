@@ -2759,6 +2759,97 @@ token had no consumer left. It came out for exactly the reason `Card`'s copy
 did. `--ui-tabs-border` is the hook if a quiet rule is ever wanted on an
 instance.
 
+## SegmentedControl
+
+One choice from a short, fixed set - a filter row, a sort order. Figma: the
+`SegmentedTrack` set (558:15011) holding the `Segment` set (555:14966), both
+carrying a `Size` axis of LG | MD.
+
+```tsx
+<SegmentedControl aria-label="Sort order">
+  <Segment selected={sort === "newest"} onClick={() => setSort("newest")}>Newest</Segment>
+  <Segment selected={sort === "az"} onClick={() => setSort("az")}>A-Z</Segment>
+</SegmentedControl>
+```
+
+    track    Surface/Pale pill, radius 99, 4 inset, 4 between segments
+    segment  radius 99, icon gap 8
+    LG       segment 40 on 14/20, padding-x 16, so the track stands 48
+    MD       segment 32 on 12/16, padding-x 12, so the track stands 40
+
+### It is a radiogroup, and that is the whole distinction
+
+Three components in this library look like rows of small pills and are not
+interchangeable. Choose by what the row MEANS:
+
+| | pattern | means |
+|---|---|---|
+| `Tabs` | `tablist` | swaps what is shown inside the page you are on |
+| `Pill` | `aria-pressed` per pill | each is one independent toggle |
+| `SegmentedControl` | `radiogroup` | N options, exactly one holds |
+
+Saying `radiogroup` is what tells a screen reader that choosing one
+**un-chooses the rest** - which a row of `aria-pressed` pills does not, however
+the app happens to behave. The keyboard follows from it and is the reason this
+is a component at all: arrows move and select, Home and End jump, both
+directions wrap, and a roving `tabIndex` means Tab enters at the current choice
+and leaves rather than walking every option. Up and Down are handled as well as
+Left and Right - the pattern is about the group, not about which way it is
+drawn.
+
+Selection stays the consumer's: the arrow handler calls the focused segment's
+own `click()`, the same contract Tabs has.
+
+### Only the selected segment has a ground
+
+An idle segment has **no fill at all** - what you see behind its label is the
+track's own pale pill. Hovering one changes the LABEL and nothing else.
+
+That is not an inference: Figma draws the `Hover` cell with its fill switched
+OFF at both sizes, and the `Inactive` cell likewise. Reading the fills without
+checking `visible` makes Inactive look like a brand-red chip with near-black
+text on it, and MD Hover look like red text on red. Both are hidden paints.
+**Check `visible` before believing a fill.**
+
+### The track is not given a height
+
+48 and 40 are derived - 4 + the segment + 4. Declaring a track height as well
+would be two numbers for one measurement, and they would disagree the moment
+the segment moved. The segment itself takes `height` plus `padding-inline`,
+never `padding-block`: the same decomposition Button uses, for the same reason.
+
+### `variant` picks the selected ground, and sits on the TRACK
+
+`primary` fills the chosen segment with the brand colour; `dark` fills it with
+`--ui-surface-inverse`. Figma models these as two `State` values on the segment
+(`Active` and `Dark`), which is the only way a variant axis can say it - the
+same modelling difference `Tabs` has with its size, and recorded here for the
+same reason. A control whose selected segment came out red or black depending
+on which one you clicked would be a different control each time.
+
+### Divergences - do not "fix" these
+
+- **The dark ground is `--ui-surface-inverse`, where Figma binds `Neutral/800`.**
+  That is a PRIMITIVE, so it cannot follow the theme - the sixth time this file
+  has had to record that fix, after ButtonRound's pressed state (`Color/Ink`),
+  Pill's ground (`Color/White`), NavSlat's icons, `Input-Text`'s rule and
+  Checkbox's box. It costs 8/255 on one channel in light: the semantic token is
+  `--ui-ink` (`#262626`) where Figma draws `#2e2e2e`.
+- **The focus ring is INSET** (`outline-offset: -2px`), where every other ring
+  in this library is offset outward by 2. A segment sits 4px inside the track's
+  pill, so an outset ring is clipped by the thing it lives in. Figma models no
+  focus state, so this is code-only, matching Button and Tabs.
+- **The icon takes `currentColor`**, where Tabs gives its icon a colour of its
+  own. In Tabs an idle tab is a dark label beside a muted glyph, so the two
+  cannot inherit together; here the icon and label are one object and move
+  together through every state.
+- **The example frames are not modelled.** `Segmented Control - MD` and
+  `- LG` are loose groups posing three hand-placed segments, and their spacing
+  disagrees with the set (6 and 8 against the track's 4). The SET is the spec -
+  same call as Card's 350x200 frame.
+- **No `sm` or `xl`.** A step exists when something uses one, the rule that cut
+  the type scale from six to four and keeps Tabs at two sizes.
+
 ## Component API conventions
 
 - Props extend the corresponding intrinsic element props (e.g. `ButtonHTMLAttributes<HTMLButtonElement>`) and spread `...props` onto the DOM node.

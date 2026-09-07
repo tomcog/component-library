@@ -11,6 +11,7 @@ export * from "./components/Logo";
 export * from "./components/Nav";
 export * from "./components/NavRail";
 export * from "./components/Pill";
+export * from "./components/SegmentedControl";
 export * from "./components/Spinner";
 export * from "./components/Tabs";
 import "./tokens.css";

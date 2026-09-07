@@ -1,0 +1,145 @@
+/* SegmentedControl - one choice from a short, fixed set. Figma: the
+   `SegmentedTrack` set (558:15011) and the `Segment` set (555:14966), both
+   carrying a Size axis of LG | MD.
+
+   Not to be confused with Tabs or Pill. Tabs swaps what is shown inside the
+   page and is a tablist; Pill is one independent toggle. This is N options of
+   which exactly one holds, which is why it is a radiogroup. */
+
+.track {
+  display: inline-flex;
+  align-items: center;
+  /* The pale pill the segments sit in. It is the one ground that is always
+     drawn - an idle segment has none, so what you see behind an unselected
+     label is this. */
+  background: var(--ui-segmented-track-bg, var(--ui-surface-pale));
+  border-radius: var(--ui-segmented-track-radius);
+  padding: var(--ui-segmented-track-padding);
+  gap: var(--ui-segmented-track-gap);
+  /* Height is DERIVED - padding + the segment - so the track is 48 at LG and
+     40 at MD without either being declared. Giving it a height as well would
+     be two numbers for one measurement, and they would disagree the moment
+     the segment moved. */
+}
+
+.segment {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-segmented-icon-gap);
+  /* Zeroed explicitly: a <button> carries UA padding (1px 6px in Chrome), and
+     the library cannot assume the consuming app has reset it. */
+  padding-block: 0;
+  border: none;
+  border-radius: var(--ui-segmented-radius);
+  /* NO ground at rest. The selected one is the only segment with a fill, which
+     is the whole read of the control - see .selected below. */
+  background: none;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  font-weight: var(--ui-segmented-font-weight);
+  color: var(--ui-segmented-text, var(--ui-text-default));
+  transition: background-color var(--ui-motion-fast) ease,
+              color var(--ui-motion-fast) ease;
+}
+
+/* The size axis. It sits on the TRACK, not on each segment: a control is one
+   size throughout, and a per-segment size would build a ragged row inside a
+   pill that cannot accommodate it.
+
+   Height and padding-inline, not padding-block - the same decomposition
+   Button uses. Padding Y is derived (LG (40-20)/2 = 10, MD (32-16)/2 = 8) and
+   stating it as well would be two numbers for one measurement. */
+.lg .segment {
+  height: var(--ui-segmented-lg-height);
+  padding-inline: var(--ui-segmented-lg-padding-x);
+  font-size: var(--ui-segmented-lg-font-size);
+  line-height: var(--ui-segmented-lg-line-height);
+}
+.md .segment {
+  height: var(--ui-segmented-md-height);
+  padding-inline: var(--ui-segmented-md-padding-x);
+  font-size: var(--ui-segmented-md-font-size);
+  line-height: var(--ui-segmented-md-line-height);
+}
+
+/* Hovering an idle segment changes the LABEL and nothing else. Figma draws the
+   hover cell with its fill switched OFF at both sizes, which is the drawing
+   saying exactly this: a second ground inside the track would read as two
+   things chosen at once. */
+.segment:not(.selected):hover:not(:disabled) {
+  color: var(--ui-segmented-text-hover, var(--ui-primary));
+}
+
+/* Hovering the SELECTED segment adds nothing - it is already the answer, and
+   the two states would otherwise compound. The same rule NavItem, NavSlat and
+   NavDropdownItem all follow. */
+
+.segment:disabled {
+  color: var(--ui-segmented-text-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+
+.segment:focus-visible {
+  outline: 2px solid var(--ui-segmented-focus-ring, var(--ui-primary));
+  /* Inside, not offset. An outset ring on a segment sitting 4px from the
+     track's edge would be clipped by the pill it lives in; every other focus
+     ring in this library is offset because nothing is boxing it in. */
+  outline-offset: -2px;
+}
+
+/* -- the selected ground ------------------------------------- */
+/* Two treatments, set on the track. Figma models them as two `State` values on
+   the segment (Active and Dark), which is the only way a variant axis can say
+   it - a modelling artefact, not drift. See the note in the .tsx. */
+.primary .selected {
+  background: var(--ui-segmented-selected-bg, var(--ui-primary));
+  color: var(--ui-segmented-selected-text, var(--ui-text-on-primary));
+}
+
+/* Figma binds this pair to the `Neutral/800` PRIMITIVE, which cannot follow
+   the theme - the same defect ButtonRound's pressed state carried before it
+   moved off `Color/Ink`, and Pill's ground before it moved off `Color/White`.
+   The semantic pair is used instead, so a dark-selected segment inverts with
+   the theme rather than staying near-black on a near-black page.
+
+   It costs 8/255 on one channel in light: --ui-surface-inverse is --ui-ink
+   (#262626) where Figma draws #2e2e2e. */
+.dark .selected {
+  background: var(--ui-segmented-selected-bg, var(--ui-surface-inverse));
+  color: var(--ui-segmented-selected-text, var(--ui-text-on-inverse));
+}
+
+/* Icon sets ship intrinsic dimensions, so the SVG would render at its own size
+   rather than the slot's - the same note Button, ButtonRound and Tabs carry.
+   Sized off the line box so the glyph and the label sit on one optical line,
+   which is what Button's icon frame does too. */
+.icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  /* Its colour is currentColor by inheritance, deliberately: unlike Tabs,
+     where an idle tab is a dark label beside a muted glyph, a segment's icon
+     and label are one object and move together through every state. */
+}
+.lg .icon {
+  width: var(--ui-segmented-lg-line-height);
+  height: var(--ui-segmented-lg-line-height);
+}
+.md .icon {
+  width: var(--ui-segmented-md-line-height);
+  height: var(--ui-segmented-md-line-height);
+}
+.icon > svg,
+.icon > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment { transition: none; }
+}

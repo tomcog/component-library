@@ -619,6 +619,34 @@
   --ui-tabs-rule-width: 3px;
   --ui-tabs-border-width: 1px;
 
+  /* -- SEGMENTED CONTROL -------------------------------------
+     Figma: the `Segment` set (555:14966) and `SegmentedTrack` (558:15011),
+     both carrying a Size axis of LG | MD.
+
+     The TRACK is a pale pill holding the segments; a segment is a pill inside
+     it, and the selected one is the only one with a ground. Track height is
+     derived, not declared: 4 + the segment + 4, so LG is 48 and MD 40. Only
+     the segment is given a height, which is the same decomposition Button
+     uses - size by height, never by vertical padding. */
+  --ui-segmented-track-radius: 99px;
+  /* The inset that lets the pale track show around the selected pill. */
+  --ui-segmented-track-padding: 4px;
+  /* Between two segments. A gap, not padding inside each one - the same
+     distinction Tabs' tokens spell out, and for the same reasons. */
+  --ui-segmented-track-gap: 4px;
+  --ui-segmented-radius: 99px;
+  /* Icon to label, inside one segment. */
+  --ui-segmented-icon-gap: 8px;
+  --ui-segmented-lg-height: 40px;
+  --ui-segmented-lg-padding-x: 16px;
+  --ui-segmented-lg-font-size: var(--ui-type-label-lg-font-size);
+  --ui-segmented-lg-line-height: var(--ui-type-label-lg-line-height);
+  --ui-segmented-md-height: 32px;
+  --ui-segmented-md-padding-x: 12px;
+  --ui-segmented-md-font-size: var(--ui-type-label-md-font-size);
+  --ui-segmented-md-line-height: var(--ui-type-label-md-line-height);
+  --ui-segmented-font-weight: var(--ui-type-label-font-weight);
+
   --ui-card-radius: 8px;
 
   /* -- TYPEFACE ----------------------------------------------
