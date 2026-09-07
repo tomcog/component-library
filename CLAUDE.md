@@ -2884,24 +2884,31 @@ whole pass, not just SegmentedControl: the `Text/Muted` and `Surface/Pale`
 value fixes, `Button/Round`'s rewritten description and its ghost variant, and
 the `Segment` icon property all went out in the same snapshot.
 
-**The snapshot has NOT been verified from a consuming file**, and that is the
-one check that means anything here. The Desktop Bridge disconnected as the
-publish happened, so it could not be run. Two reminders about doing it, both
-learned the hard way and written up under "There is a third copy":
+**Verified, and there is a far better way to do it than this file previously
+knew.** `node.getPublishStatusAsync()` returns `CURRENT` | `CHANGED` |
+`UNPUBLISHED` and works from INSIDE the source file, answering directly the
+question the five-renames-behind incident could not: does the published
+snapshot match what is on the canvas? It exists on components, component sets,
+variables and variable collections alike.
 
-- `importComponentSetByKeyAsync` run from INSIDE component-library resolves the
-  key to the local set and returns it, so every count matches and the check
-  proves nothing. Compare `imported.id` against the local node's id; if they
-  are equal, that is what happened. Run it from a consumer instead - the
-  NextJob design file is the one to hand.
-- `figma_search_components` against this file's own key returns empty even for
-  long-published components, because the REST token is expired and fails
-  silently. Control the check against something known-published before
-  believing an empty result.
+All eleven library sets returned `CURRENT` - Segment, SegmentedTrack,
+ButtonRound, Button, Tabs, Tabs/Item, Card, Pill, NavSlat, Checkbox,
+Input-Text - as did the variable collection and every variable this pass
+touched (`Text/Muted`, `Text/Faint`, `Surface/Pale` and all nine
+`Segmented/*`), each carrying its `--ui-*` code syntax.
 
-The snapshot was once found five renames behind with nobody noticing, so
-"published" is not the same as "arrived". **Consumers also have to accept the
-update in their own Assets panel** - publishing does not push it to them.
+**Use this instead of the two checks described under "There is a third copy".**
+Both of those are still true and both are still traps -
+`importComponentSetByKeyAsync` resolves to the LOCAL set when run from inside
+this file, so it proves nothing, and `figma_search_components` returns empty
+even for long-published components because the REST token is expired and fails
+silently. But neither is necessary now: `getPublishStatusAsync` is direct, it
+needs no consuming file open, and `CHANGED` is exactly the state that went
+unnoticed for five renames.
+
+**Consumers still have to accept the update in their own Assets panel.** That
+half has not changed - publishing does not push it to them, so a file holding
+instances keeps rendering the old ones until someone accepts.
 
 ### Divergences - do not "fix" these
 
