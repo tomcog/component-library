@@ -960,13 +960,12 @@ a fix pending, per the rule above.
 
    `Surface/Pale` came off this list when `LeftRail` needed it, which is
    exactly the trigger the rule describes. It is now `--ui-surface-pale`, the
-   14th semantic token. **Its dark value is still unreconciled, and now
-   actively wrong in Figma:** code says `--ui-ink` (`#262626`), Figma says
-   `#efefef` — a near-white, lighter than every dark surface it is supposed to
-   sit *below* (`Surface/Raised` is `Neutral/800`, `#2e2e2e`). Figma is the
-   side that is wrong here; the code's choice is documented in tokens.css. One
-   `setValueForMode` fixes it, but it is a value change rather than a rename,
-   so it is flagged rather than done.
+   14th semantic token. ~~Its dark value is still unreconciled.~~
+   **Resolved.** Figma had a raw `#efefef` in dark - a near-white, lighter than
+   every dark surface it is meant to sit *below* - and a raw `#f5f5f5` in
+   light. Both were raw rather than aliased, which is the other half of the
+   defect. Now `Neutral/100` in light and `Color/Ink` in dark, matching the
+   code and aliasing the tier it should.
    (`Primary/Lighter` was already in code as `--ui-primary-lighter`; it should
    not have been on this list.)
 5. ~~NavRail's type and pipe moved in code and not yet in Figma.~~
@@ -1004,30 +1003,30 @@ a fix pending, per the rule above.
    into a shipped one. Two things in this set still fit that description and are
    left alone below.
 
-20. **Figma's `Text/Muted` aliases `Neutral/400` in BOTH modes.** Code says
-   `Neutral/500` (`#737373`) light and `Neutral/400` (`#8c8c8c`) dark. So the
-   token is wrong in light *and* frozen against the theme - the `IconDefault`
-   defect this file documents five times over, now on a semantic token rather
-   than a legacy one.
+20. ~~Figma's `Text/Muted` aliases `Neutral/400` in BOTH modes.~~
+   **Resolved.** It is `Neutral/500` in light and `Neutral/400` in dark now,
+   which is what the code says and what makes the token follow the theme at
+   all. It had been wrong in light AND frozen against the mode - the
+   `IconDefault` defect, on a semantic token.
 
-   It also collapses a distinction the library deliberately built.
-   `Text/Faint` is `Neutral/400` in Light, so in Figma's Light mode muted and
-   faint are **the same colour** - and InputText's note says faint exists
-   precisely to "take whichever step muted is not on". Two names, one value,
-   in the mode almost everyone reads the file in.
+   **207 node bindings moved**, from `#8c8c8c` to the darker `#737373` in
+   light. That is a real visual change across the file and it was made
+   deliberately: the count is a blast radius, not a prohibition, and the code
+   is the documented intent.
 
-   Found while reading `Button/Round`'s Ghost cells, whose glyph binds this
-   token: the code renders that glyph `#737373` and Figma draws it `#8c8c8c`.
-   The binding NAME matches, which is what the sync rule asks of a component -
-   this is a defect in the variable, one `setValueForMode` wide. Not done here:
-   the user was in the file, and writing needs them out of it.
+   It also un-collapses a distinction the library built on purpose. `Text/Faint`
+   is `Neutral/400` light and `Neutral/500` dark, so the two had been *the same
+   colour* in light - and InputText's note says faint exists precisely to "take
+   whichever step muted is not on". The ramp now reads muted -> faint in both
+   modes, as tokens.css has it.
 
-21. **`Button/Round`'s description is stale, and it is the most-read surface
-   on the component.** It still says the size prop takes "small, medium or
-   large" and lists three sizes (24/32/40) - no XL, and the pre-0.9.0 long
-   names the rest of the library dropped. It says nothing about `Ghost`,
-   `Confirm`, or the `tone` prop. Same class of defect as `NavSlat`'s
-   description (#9), and worth doing in the same pass.
+21. ~~`Button/Round`'s description is stale.~~ **Resolved.** Rewritten: all
+   four sizes with their icon and stroke ramps, the six states with the tokens
+   each binds, and - most useful to a reader - the note that `variant`, `tone`
+   and the element's own states are three separate things in code where Figma
+   has one `State` axis. It also names the `ConfirmButton` cell below as
+   unmodelled, so someone reading the component is told rather than left to
+   discover it.
 
 22. **`Button/Round` carries a 7th state, `ConfirmButton`, at XL only.** It is
    `Primary/Lighter` filled with the glyph on **`Danger/Base`** - so it renders
@@ -2840,14 +2839,47 @@ same modelling difference `Tabs` has with its size, and recorded here for the
 same reason. A control whose selected segment came out red or black depending
 on which one you clicked would be a different control each time.
 
+### Figma was reconciled after the code landed
+
+The set was drawn first and the code followed, so this was a fetch rather than
+an independent edit - the documented exception to "never change both sides in
+the same session". What moved in Figma, none of it changing a rendered value
+except where noted:
+
+- **`State=Dark` came off the `Neutral/800` PRIMITIVE** onto `Surface/Inverse`
+  / `Text/OnInverse`, so it follows the theme. This DID change the value:
+  `#2e2e2e` -> `#262626`, 8/255 on one channel, and the code's number.
+- **Every `Button/*` token is gone from the set.** `Active` was on
+  `Button/Primary/Default` and `Button/Primary/Label`, and all four LG cells
+  took `Button Size/LG/Padding Y` and `Button Size/LG/Font Size`. A Segment
+  would have moved whenever a Button did - the trap NavSlat and Pill each hit
+  once. Colours now read `Primary/Base` / `Text/OnPrimary`, type reads the
+  `Type/Label */*` scale, and vertical padding is unbound: the code has no
+  padding-Y token at all, sizing by height exactly as Button does, so there is
+  nothing to point at.
+- **Nine `Segmented/*` and `Segmented Size/*/*` FLOAT variables** now carry the
+  geometry, each with its `--ui-*` name as Dev Mode code syntax, and each set
+  to the same value in both modes. Radius, padding, gap, height and padding-x
+  were raw on the variants - the defect `Pill/Padding X` was created to close.
+- **Both sets were given descriptions.** They were empty, and a description is
+  the surface every `get_design_context` returns.
+
+Verified after: geometry unchanged at 40/32, padding-x 16/12, padding-y 10/8,
+radius 99, gap 4, type 14/20 and 12/16; no `Button/*` binding remains; and both
+file invariants still hold - zero non-colour variables and zero primitives
+differ across modes.
+
+**Still needs publishing**, which is UI-only and the user's.
+
 ### Divergences - do not "fix" these
 
-- **The dark ground is `--ui-surface-inverse`, where Figma binds `Neutral/800`.**
-  That is a PRIMITIVE, so it cannot follow the theme - the sixth time this file
-  has had to record that fix, after ButtonRound's pressed state (`Color/Ink`),
-  Pill's ground (`Color/White`), NavSlat's icons, `Input-Text`'s rule and
-  Checkbox's box. It costs 8/255 on one channel in light: the semantic token is
-  `--ui-ink` (`#262626`) where Figma draws `#2e2e2e`.
+- **The dark ground is `--ui-surface-inverse` on both sides now.** Figma drew
+  it on the `Neutral/800` PRIMITIVE, which cannot follow the theme - the sixth
+  time this file has had to record that fix, after ButtonRound's pressed state
+  (`Color/Ink`), Pill's ground (`Color/White`), NavSlat's icons, `Input-Text`'s
+  rule and Checkbox's box. Reconciled in Figma rather than copied into code, so
+  this is no longer a divergence; kept here because the shape of the mistake
+  keeps recurring and `Neutral/800` is the obvious thing to reach for.
 - **The focus ring is INSET** (`outline-offset: -2px`), where every other ring
   in this library is offset outward by 2. A segment sits 4px inside the track's
   pill, so an outset ring is clipped by the thing it lives in. Figma models no
