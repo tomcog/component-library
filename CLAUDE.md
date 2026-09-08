@@ -41,6 +41,23 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.28.2 -> 0.29.0 lowers Float 1 so the two elevations read as two heights.**
+`--ui-shadow-float-1` goes from `0 6px 18px / 0 0 6px` to `0 2px 6px / 0 0 2px`.
+The pair gets used as a resting/hover couple - PlantPal's plant grid is
+`float1` at rest and `float2` on hover - and the old values shared an 18px
+blur and differed only by half an offset, so the lift barely registered. The
+y-offset separation goes from 2x to 6x.
+
+Float 1 was lowered rather than Float 2 raised: only Card reads float-1,
+whereas float-2 also draws InputSelect's menu.
+
+**Minor, not patch** - nothing about the API moved, but every `Card
+variant="float1"` in every consuming app changes appearance, which is not
+what a patch should do.
+
+**Figma is behind on this**, deliberately - see the Card section. Token-shaped
+changes go code-first and are synced after, never both in one session.
+
 **0.28.1 -> 0.28.2 stops aligning a menu that does not fit.** Chrome does not
 shrink an oversized picker - it pins it to a viewport edge and lets the rest
 hang off - so shifting a long list up by `index * row` only buries more of it.
@@ -2463,6 +2480,29 @@ The two shadows are `--ui-shadow-float-1` / `--ui-shadow-float-2` in
 system-level, and a second component inventing its own shadow is how depth
 drifts apart. Both are two-layer - a soft cast plus a tight contact shadow -
 so a card reads as lifted rather than blurred.
+
+**Float 1 was lowered to `0 2px 6px / 0 0 2px`, and Figma is BEHIND on it.**
+The pair gets used as a resting/hover couple - PlantPal's plant grid is
+`float1` at rest and `float2` on hover - and at `0 6px 18px` against
+`0 12px 18px` the lift was barely perceptible: identical blur, half the
+offset. Lowering float1 rather than raising float2 was deliberate; only Card
+reads float-1, whereas float-2 also draws InputSelect's menu.
+
+Two things to know before touching this again:
+
+- **The two sides had already drifted before this change**, and it was not
+  recorded anywhere. `Shadow/Float 1` in Figma was `0 0 4px` + `0 4px 16px`
+  while the code said `0 0 6px` + `0 6px 18px`. `Shadow/Float 2` matched
+  exactly, and still does. Whatever caused that drift, it was not a documented
+  decision - so do not read Figma's old float1 as an intent that was
+  overridden here.
+- **The Figma effect style has NOT been updated.** This is a token-shaped
+  change, so per "Which direction to make a change" the code moved first and
+  Figma is synced after - and never in the same session. `Shadow/Float 1`
+  (`S:75e740be560094d05c51563c32287f3db6c4db36`) still holds the old two
+  layers. Syncing it means setting the cast layer to radius 6 / offset (0,2)
+  and the contact layer to radius 2 / offset (0,0), leaving both colours bound
+  to `Shadow/Color`.
 
 Figma shadows cannot be variables — variables are only BOOLEAN, FLOAT, STRING
 and COLOR — so the two elevations are **effect styles**, `Shadow/Float 1` and
