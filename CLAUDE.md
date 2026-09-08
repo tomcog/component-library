@@ -55,8 +55,8 @@ whereas float-2 also draws InputSelect's menu.
 variant="float1"` in every consuming app changes appearance, which is not
 what a patch should do.
 
-**Figma is behind on this**, deliberately - see the Card section. Token-shaped
-changes go code-first and are synced after, never both in one session.
+Figma was synced afterwards - see the Card section. Token-shaped changes go
+code-first, and the sync is its own pass.
 
 **0.28.1 -> 0.28.2 stops aligning a menu that does not fit.** Chrome does not
 shrink an oversized picker - it pins it to a viewport edge and lets the rest
@@ -2496,13 +2496,24 @@ Two things to know before touching this again:
   exactly, and still does. Whatever caused that drift, it was not a documented
   decision - so do not read Figma's old float1 as an intent that was
   overridden here.
-- **The Figma effect style has NOT been updated.** This is a token-shaped
-  change, so per "Which direction to make a change" the code moved first and
-  Figma is synced after - and never in the same session. `Shadow/Float 1`
-  (`S:75e740be560094d05c51563c32287f3db6c4db36`) still holds the old two
-  layers. Syncing it means setting the cast layer to radius 6 / offset (0,2)
-  and the contact layer to radius 2 / offset (0,0), leaving both colours bound
-  to `Shadow/Color`.
+- **Figma is synced.** `Shadow/Float 1`
+  (`S:75e740be560094d05c51563c32287f3db6c4db36`) now holds contact
+  radius 2 / offset (0,0) and cast radius 6 / offset (0,2), both colours still
+  bound to `Shadow/Color`. Figma's blur radius maps 1:1 to the CSS blur, which
+  is checkable against Float 2: radius 10 / offset (0,-1) and radius 18 /
+  offset (0,12) against `0 12px 18px, 0 -1px 10px`.
+
+  Editing an effect style through the plugin means reassigning the whole
+  `effects` array. **Spread each existing effect and change only `radius` and
+  `offset`** - rebuilding the objects from literals drops
+  `boundVariables.color`, and that binding is the only reason elevation is
+  theme-aware. Read the bindings back after writing; a green result proves
+  nothing here.
+
+  On the canvas the variants run **Flat, Float1, Float2** left to right, which
+  is not the order `children` returns them in. Flat is invisible in a
+  screenshot against the white page - no shadow, white fill - and that is
+  correct, not a failed render.
 
 Figma shadows cannot be variables — variables are only BOOLEAN, FLOAT, STRING
 and COLOR — so the two elevations are **effect styles**, `Shadow/Float 1` and
