@@ -85,6 +85,17 @@
 .root:hover:not(:has(.input:disabled)) .check {
   opacity: 1;
 }
+/* The LABEL previews with it, so the whole row answers the pointer rather than
+   just the glyph - which matters because the whole row IS the hit target, and
+   a row that only lit its box read as though the text were not part of it.
+
+   Only while UNCHECKED. A checked row is already the answer, so lighting it on
+   hover would say "this will become selected" about something that is - the
+   same reason NavItem, NavSlat and Segment all suppress hover on the current
+   one. Excluded rather than overridden, so the two states can never compound. */
+.root:hover:not(:has(.input:disabled)):not(:has(.input:checked)) .label {
+  color: var(--ui-checkbox-label-hover, var(--ui-primary));
+}
 
 /* -- checked -------------------------------------------------------
    The square fills and the tick reverses out of it. */
@@ -138,6 +149,9 @@
   font-size: var(--ui-checkbox-font-size);
   line-height: var(--ui-checkbox-line-height);
   font-weight: var(--ui-checkbox-font-weight);
+  /* Eases with the glyph beside it, which already transitions its colour -
+     without this the text would snap while the box faded. */
+  transition: color var(--ui-motion-fast) ease;
 }
 
 /* -- sizes ---------------------------------------------------------- */
@@ -161,5 +175,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glyph, .check { transition: none; }
+  .glyph, .check, .label { transition: none; }
 }

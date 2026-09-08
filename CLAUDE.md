@@ -2665,6 +2665,55 @@ the opposite of what is drawn.
     LG     16      12     6x4      1px          1.5px
     MD     14      10.5   5.25x3.5 1px          1.5px
 
+### Hover previews the label too, and only while unchecked
+
+The label turns `--ui-primary` with the tick, so the whole row answers the
+pointer rather than just the glyph. That matters because the whole row IS the
+hit target - a row that lit only its box read as though the text were not part
+of it.
+
+**Only while UNCHECKED.** A checked row is already the answer, so lighting it
+would say "this will become selected" about something that is - the same rule
+`NavItem`, `NavSlat` and `Segment` all follow. It is EXCLUDED with
+`:not(:has(.input:checked))` rather than overridden afterwards, so the two
+states cannot compound.
+
+Figma drew the Hover label as `Text/Default`; the cells now carry
+`Primary/Base` to match.
+
+### Two things about this set that cost an hour, both worth knowing
+
+**A `BOOLEAN_OPERATION` paints with its OWN fill; its children are operands and
+render nothing.** `lucide/square-check` had its two vectors wrapped in a UNION
+carrying a grey `IconDefault` fill, so Hover, Selected and Disabled Selected -
+nine variants - all rendered as flat grey shapes whatever their children were
+set to. A union with one fill cannot express a filled square with a contrasting
+tick, so the construction was wrong for this icon, not just mis-coloured.
+Fixed by lifting the two vectors out and deleting the wrapper, which is how
+every other lucide icon in the file is built. Instance overrides survived,
+being keyed on the child node ids.
+
+This is the same fact `NavSlat`'s note records ("only its fill paints"), hit
+from the other direction. **Verify it by hiding the boolean's fill: if the
+glyph vanishes rather than revealing its children, the boolean is the only
+thing painting.**
+
+**Do not hand a fresh paint literal to `setBoundVariableForPaint`.** Doing so
+stored the paint as BLACK while reporting the right colour back on the same
+call - the disabled labels rendered black for two rounds before a screenshot
+caught it, because reading `fills[0].color` said `#b8b8b8`. Write the resolved
+colour first, then bind the paint READ BACK from the node:
+
+    node.fills = [{ type: "SOLID", color: resolved }];
+    const p = JSON.parse(JSON.stringify(node.fills));
+    p[0] = figma.variables.setBoundVariableForPaint(p[0], "color", v);
+    node.fills = p;
+
+`setBoundVariableForPaint` also does not chase an alias chain, so resolve
+`Text/Disabled -> Neutral/350 -> #b8b8b8` yourself before using it as the base.
+**And screenshot: the stored colour and the rendered colour disagreed here, so
+reading the value back proves nothing.**
+
 ### The input is 1px, not hidden
 
 `display:none` and `visibility:hidden` both take a control out of the focus
