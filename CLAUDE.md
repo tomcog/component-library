@@ -2683,6 +2683,16 @@ Figma drew the Hover label as `Text/Default`; the cells now carry
 
 ### Two things about this set that cost an hour, both worth knowing
 
+**The boolean came BACK.** `lucide/square-check` was flattened once, and a
+later session found the UNION restored — so something in the editing flow
+recreates it, and it is worth checking rather than assuming the fix held. The
+tell is not obvious: with the union present, Hover still looks right and only
+`Selected` and `Disabled Selected` go grey. That is because the boolean's fill
+paints the union AREA, and those two are the only states whose square carries a
+fill of its own; where the children are stroke-only there is no area to paint,
+so the strokes show through and the cell looks fine. **Judge it on the filled
+states, not on Hover.**
+
 **A `BOOLEAN_OPERATION` paints with its OWN fill; its children are operands and
 render nothing.** `lucide/square-check` had its two vectors wrapped in a UNION
 carrying a grey `IconDefault` fill, so Hover, Selected and Disabled Selected -
