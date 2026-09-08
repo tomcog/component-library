@@ -41,6 +41,51 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.29.0 -> 0.30.0 tightens Button's padding at three of its four sizes.**
+
+    --ui-button-xl-padding-x   24 -> 16
+    --ui-button-lg-padding-x   16 -> 12
+    --ui-button-md-padding-x   12 -> 10
+    --ui-button-sm-padding-x    8     unchanged
+
+The ramp goes 24/16/12/8 -> **16/12/10/8**. Heights, gaps, radii and type did
+not move; the buttons are narrower, not shorter.
+
+**Minor, not patch** - no API moved, but XL, LG and MD buttons in every
+consuming app get narrower, which is not what a patch should do. **MD is the
+one to check first**: it is the most-used size in NextJob (14 of 34 call sites
+against 7 large), so this is felt there more than the XL and LG changes are.
+
+**This one went Figma -> code**, against the direction rule, because the user
+had already made the change on the canvas. Padding is token-shaped, so the rule
+says code first; what actually happened is the documented fetch exception.
+
+**The edit had been made by hand, so it arrived as RAW values that bound
+nothing** - the defect `Pill/Padding X` was created to close, here on Button.
+`Button Size/XL/Padding X` and `-LG-` still held the old 24 and 16 while all 22
+XL and 20 LG variants carried a raw 16 and 12 binding neither. Repaired in the
+same session at the user's instruction: both variables set to the new values in
+Light *and* Dark, then rebound across all 42 variants. **A no-op on screen** -
+the raw values already equalled the targets - which is what makes it safe to do
+in one pass.
+
+**MD came from the audit, not from the brief**, and it is the reason to run one.
+Walking all 82 variants found MD split - 16 cells at a raw 10 and 4 bound at 12
+- and the 10 turned out to be the intended value, so the code token and the 4
+bound Primary cells were the wrong ones. See resolved divergence #23; the
+sequence there is worth reading, because binding all 20 first is what reduced
+the value change to a single variable edit that moved every MD cell at once.
+
+Verified by measuring the rendered playground, not off the build: 48/40/32/24
+tall with padding 16/12/10/8, radius 4, type 18/14/12/10, and each size's width
+within a pixel of the matching Figma variant (168.15 vs 169, 131.57 vs 132,
+112.52 vs 113, 89.35 vs 89). Loading widths still match default widths exactly
+at all four sizes, which is the invariant the `visibility: hidden` content
+wrapper exists to hold. On the Figma side, all 82 variants bind their
+`Button Size/*/Padding X`, one padding and one width per size, and both file
+invariants hold - zero non-colour variables and zero colour primitives differ
+across modes.
+
 **0.28.2 -> 0.29.0 lowers Float 1 so the two elevations read as two heights.**
 `--ui-shadow-float-1` goes from `0 6px 18px / 0 0 6px` to `0 2px 6px / 0 0 2px`.
 The old values shared an 18px blur and differed only by half an offset, so
@@ -1125,6 +1170,49 @@ a fix pending, per the rule above.
    rename — every dark-mode token resolves to the same colour it did before.
    `Neutral/550`, `/650`, `/700` and `/800` were then created in Figma, so
    both sides hold the same ramp even though no Figma mode uses them yet.
+23. ~~Button's 20 MD variants disagree about padding-x: 16 raw at 10, 4 bound
+   at 12.~~ **Resolved, and the value went the opposite way to the first
+   guess.** Found by auditing all 82 variants during the 0.30.0 sync; it
+   predated that change. The split was by Level:
+
+       Level=Primary, States Default/Hover/Pressed/Disabled   12, bound, 117 wide
+       every Secondary, Tertiary and Ghost, plus ALL Loading   10, RAW,  113 wide
+
+   It had broken a documented invariant: `Primary/MD` Default was 117 while
+   `Primary/MD` Loading was 113, where the Button section says loading widths
+   match Default exactly. That was the only mismatched pair in the set, because
+   Primary MD Default was bound and its Loading cell was not.
+
+   **The reasoning that read 12 as correct was wrong, and it is worth knowing
+   why.** Three things pointed at 12 - the code token said 12, the only BOUND
+   cells said 12, and 10 looked like a pre-base-8 leftover. All three are the
+   same fact wearing three hats: the base-8 pass had written 12 into the token
+   and into the cells it touched. **A raw value is not evidence of neglect, and
+   a bound one is not evidence of intent** - binding records what someone last
+   ran a script over, not what the design says. 16 cells agreeing was the
+   stronger signal and was read as the weaker one. The user settled it: 10.
+
+   So it was fixed in two passes, and the order mattered:
+
+   - all 20 cells bound to `Button Size/MD/Padding X`, which widened 16 of them
+     113 -> 117 on the wrong assumption;
+   - the variable then set to **10**, which moved all 20 at once, back to 113.
+
+   The detour left no trace - the 16 ended where they started - and the binding
+   half was right regardless, since it is what turned the value change into one
+   edit instead of twenty. The code token followed to 10.
+
+   Verified after: all 82 variants bound, one padding and one width per size
+   (XL 16/169, LG 12/132, MD 10/113, SM 8/89), heights still 48/40/32/24, zero
+   loading-width mismatches anywhere in the set, and both file invariants
+   holding.
+
+   **The lesson is the audit.** `get_variable_defs` on the SET reported
+   `--ui-button-md-padding-x` present and correct, because 4 cells did bind it
+   - a set-level read cannot distinguish "bound everywhere" from "bound on a
+   few". Only walking all 82 variants found it. Do that before trusting a
+   size's geometry.
+
 3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
    `True Black`, `Primary/Dark`, `Primary/Darker`. No
    component uses any of them, and some may belong to the other projects

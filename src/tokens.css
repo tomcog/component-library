@@ -283,7 +283,7 @@
      the type scale, which is the coupling --ui-nav-rail-slat-height was split
      out to undo - move the scale and every icon would silently resize. */
   --ui-button-xl-height: 48px;
-  --ui-button-xl-padding-x: 24px;
+  --ui-button-xl-padding-x: 16px;
   --ui-button-xl-gap: 10px;
   --ui-button-xl-radius: 4px;
   --ui-button-xl-font-size: var(--ui-type-label-xl-font-size);
@@ -292,7 +292,7 @@
   --ui-button-xl-icon-stroke: 2;
 
   --ui-button-lg-height: 40px;
-  --ui-button-lg-padding-x: 16px;
+  --ui-button-lg-padding-x: 12px;
   --ui-button-lg-gap: 8px;
   --ui-button-lg-radius: 4px;
   --ui-button-lg-font-size: var(--ui-type-label-lg-font-size);
@@ -301,7 +301,7 @@
   --ui-button-lg-icon-stroke: 1.5;
 
   --ui-button-md-height: 32px;
-  --ui-button-md-padding-x: 12px;
+  --ui-button-md-padding-x: 10px;
   --ui-button-md-gap: 8px;
   --ui-button-md-radius: 4px;
   --ui-button-md-font-size: var(--ui-type-label-md-font-size);
