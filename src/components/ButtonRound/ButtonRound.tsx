@@ -18,10 +18,14 @@ export type ButtonRoundSize = "xl" | "lg" | "md" | "sm";
  */
 export type ButtonRoundVariant = "filled" | "ghost";
 /**
- * What the button DOES, not what colour it is. `confirm` marks the
- * affirmative action - Save, Apply, Accept - and turns the hover fill green.
+ * What the button DOES, not what colour it is. `confirm` marks the affirmative
+ * action - Save, Apply, Accept - and turns the hover fill green; `danger`
+ * marks the destructive one - Delete, Discard, Remove - and turns it red.
+ *
+ * The pair is deliberate: they are "yes" and "no", and an app that recolours
+ * its primary gets neither of them by accident.
  */
-export type ButtonRoundTone = "primary" | "confirm";
+export type ButtonRoundTone = "primary" | "confirm" | "danger";
 
 export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */
@@ -41,9 +45,10 @@ export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement
    */
   variant?: ButtonRoundVariant;
   /**
-   * Figma: the `Confirm` state. `confirm` tags this as the affirmative action
-   * and turns the HOVER fill `--ui-confirm` with `--ui-text-on-confirm` on it;
-   * the resting and pressed appearances are unchanged. Defaults to `primary`.
+   * Figma: the `Confirm` and `Danger` states. Each turns the HOVER pair -
+   * `--ui-confirm` / `--ui-text-on-confirm`, or `--ui-danger` /
+   * `--ui-text-on-danger` - and leaves the resting and pressed appearances
+   * alone. Defaults to `primary`.
    */
   tone?: ButtonRoundTone;
   /** Render the single child element, such as an anchor, as the control. */
@@ -76,7 +81,7 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
       styles.button,
       styles[size],
       variant === "ghost" ? styles.ghost : null,
-      tone === "confirm" ? styles.confirm : null,
+      tone !== "primary" ? styles[tone] : null,
       className,
       child?.props.className,
     ]

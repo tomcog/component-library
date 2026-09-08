@@ -50,6 +50,32 @@
   color: var(--ui-button-round-icon-hover, var(--ui-text-on-confirm));
 }
 
+/* -- tone="danger" ------------------------------------------- */
+/* The destructive action - Delete, Discard, Remove. Figma: `Button/Round`
+   State=Danger, which arrived as `ConfirmButton` (Primary/Lighter with the
+   glyph on Danger/Base, so it rendered identically to Default) and was
+   redrawn as a Danger/Base ground.
+
+   Everything the confirm note above says applies here, and for the same
+   reasons: it changes the HOVER pair only, so a row of round buttons keeps one
+   resting rhythm and answers differently under the cursor. Figma agrees by
+   construction - there is a `State=Danger` cell and no `Danger Default`, which
+   is what says this is a state rather than a variant.
+
+   That is not a small point here. A delete button that rests red is the most
+   coloured thing in its row, which is precisely backwards: the destructive
+   action should be the quiet one until you reach for it. NextJob had exactly
+   that on its task Delete - a permanent red-50 wash - and it came off.
+
+   This is the first consumer of `--ui-danger`. It resolves to TC Red like
+   `--ui-primary` does today, so the two look identical until an app splits
+   them - which is the whole reason to say `danger` here rather than reaching
+   for the primary hover and getting the right colour by luck. */
+.danger:hover:not(:disabled) {
+  background: var(--ui-button-round-bg-hover, var(--ui-danger));
+  color: var(--ui-button-round-icon-hover, var(--ui-text-on-danger));
+}
+
 .button:focus-visible {
   outline: 2px solid var(--ui-primary);
   outline-offset: 2px;

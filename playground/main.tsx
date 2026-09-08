@@ -135,6 +135,14 @@ const Save = () => (
     <path d="M7 3v4a1 1 0 0 0 1 1h7" />
   </svg>
 );
+// lucide `trash-2`, for the danger tone.
+const Trash2 = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+    <path d="M10 11v6" /><path d="M14 11v6" />
+  </svg>
+);
 const Info = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
     <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
@@ -488,9 +496,11 @@ function App() {
         title="ButtonRound"
         note={
           "Figma sizes and interaction states. Hover and press each icon button. The third in " +
-          "each row is tone=\"confirm\" \u2014 same resting appearance as the first, and it answers " +
-          "the pointer in --ui-confirm instead of --ui-primary. The tone changes the hover pair " +
-          "only: pressed is the inverse surface for every round button, whatever it goes on to do. " +
+          "each row is tone=\"confirm\" and the fourth tone=\"danger\" \u2014 both rest exactly like " +
+          "the first, and answer the pointer in --ui-confirm and --ui-danger instead of " +
+          "--ui-primary. A tone changes the hover pair only: pressed is the inverse surface for " +
+          "every round button, whatever it goes on to do, and a destructive button that rested red " +
+          "would be the loudest thing in its row. " +
           "The last two are variant=\"ghost\": no fill and a muted glyph at rest, then the same " +
           "primary fill as the first on hover \u2014 weight arriving with the pointer rather than a " +
           "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
@@ -502,6 +512,7 @@ function App() {
             <ButtonRound size={s} icon={<House />} aria-label={`${s} home action`} />
             <ButtonRound size={s} icon={<House />} aria-label={`${s} disabled action`} disabled />
             <ButtonRound size={s} tone="confirm" icon={<Save />} aria-label={`${s} save`} />
+            <ButtonRound size={s} tone="danger" icon={<Trash2 />} aria-label={`${s} delete`} />
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost home action`} />
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
           </Row>

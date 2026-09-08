@@ -41,6 +41,23 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.24.0 -> 0.25.0 adds `tone="danger"` to ButtonRound.** The destructive
+action - Delete, Discard, Remove - turning the HOVER pair `--ui-danger` /
+`--ui-text-on-danger`. Resting and pressed are untouched, exactly as `confirm`
+is: a delete button that RESTS red is the loudest thing in its row, which is
+backwards.
+
+**Purely additive.** A third value on an existing prop; no token renamed or
+removed, and nothing renders differently without it.
+
+It is the first consumer of `--ui-danger`, which resolves to TC Red like
+`--ui-primary` today - so the two look identical until an app splits the roles,
+which is the whole point of saying `danger`. **Three places in NextJob
+hand-roll this** through `--ui-button-round-bg-hover`, and between them use
+three different reds for one meaning: the job sheet's Discard
+(`--ui-primary`), the task Delete (`--destructive`) and SmartCapture's discard
+(`--ui-danger`). Each collapses to one prop once its ref moves.
+
 **0.23.0 -> 0.24.0 adds SegmentedControl.** A pale track holding N options of
 which exactly one holds - a filter row, a sort order. `LG | MD`, and a
 `variant` of `primary | dark` choosing the selected segment's ground.
@@ -1028,17 +1045,16 @@ a fix pending, per the rule above.
    unmodelled, so someone reading the component is told rather than left to
    discover it.
 
-22. **`Button/Round` carries a 7th state, `ConfirmButton`, at XL only.** It is
-   `Primary/Lighter` filled with the glyph on **`Danger/Base`** - so it renders
-   identically to `State=Default` today, both roles defaulting to TC Red, and
-   the difference only appears if an app splits them.
+22. ~~`Button/Round` carries a 7th state, `ConfirmButton`, at XL only.~~
+   **Resolved, and the caution was the reason.** It was `Primary/Lighter` with
+   the glyph on `Danger/Base`, so it rendered identically to `Default` and read
+   as scaffolding. It was left alone on the rule that a previous session broke
+   - never assume an unfamiliar variant is leftover - and flagged instead. It
+   has since been renamed `State=Danger` and redrawn as a `Danger/Base` ground
+   with a white glyph, which is what it was always reaching for.
 
-   **Left alone deliberately**, the same call the old entry 6 made and for the
-   same reason: an incomplete state at one size reads as work in progress, and
-   a previous session destroyed a `Level=Ghost` the user was creating by
-   assuming exactly that. Ask before touching it. If it is a duplicate of
-   `Confirm`, deleting it is one call; if it is intended, it needs the other
-   three sizes and a glyph on a role that is not danger.
+   The code followed: `tone="danger"` on `ButtonRound`, the third tone. Had the
+   cell been deleted as scaffolding, the intent would have gone with it.
 
 8. ~~NavRail's slat gap moved in code and not yet in Figma.~~
    **Superseded.** The 14px gap lasted one session. Reading the `LeftRail`
@@ -1834,6 +1850,40 @@ as a muted glyph and answers the pointer in green.
 **Figma models both as `State`**, which cannot express two independent axes
 without multiplying the set. That is a modelling difference, the same one
 `tone="confirm"` already carries — see below.
+
+### `tone` marks what the button DOES: `confirm` and `danger`
+
+Figma: `Button/Round` `State=Confirm` (`--ui-confirm` ground,
+`--ui-text-on-confirm` glyph) and `State=Danger` (`--ui-danger` /
+`--ui-text-on-danger`). Tag the affirmative and the destructive action:
+
+```tsx
+<ButtonRound tone="confirm" icon={<Save />} aria-label="Save job" />
+<ButtonRound tone="danger" icon={<Trash2 />} aria-label="Delete job" />
+```
+
+**Both change the HOVER pair and nothing else**, and the resting appearance is
+untouched for both. That is the design, not an omission - see the note below,
+which was written for confirm and applies unchanged to danger.
+
+**`danger` is worth the emphasis.** A delete button that RESTS red is the most
+coloured thing in its row, which is exactly backwards: the destructive action
+should be the quiet one until you reach for it. NextJob had precisely that on
+its task Delete, a permanent red-50 wash, and it came off. Figma agrees by
+construction - there is a `State=Danger` cell and no `Danger Default`, the same
+tell that says Confirm is a state rather than a variant.
+
+**It is the first consumer of `--ui-danger`**, which had none. That token
+resolves to TC Red exactly as `--ui-primary` does today, so a danger button and
+a primary one look identical until an app splits the two roles - which is the
+whole reason to say `danger` rather than reaching for the primary hover and
+getting the right colour by luck.
+
+**`Danger` arrived as `ConfirmButton`** and was open divergence #22 for a
+session: `Primary/Lighter` with the glyph on `Danger/Base`, so it rendered
+identically to Default and read as work in progress. It was left alone on the
+"ask before touching an unfamiliar variant" rule, and asking is what got it
+redrawn properly rather than deleted.
 
 ### `tone="confirm"` changes the hover pair and nothing else
 
