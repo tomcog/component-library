@@ -1173,9 +1173,14 @@ a fix pending, per the rule above.
    right and the code was the side that had drifted, defaulting the mark to
    text colour.
 
-7. **`Button` and `logo-tc` have no Figma description**, where `NavSlat`,
-   `Card`, `Pill` and `Button/Round` now do. `Button` is the 60-variant set
-   and the most valuable one to document.
+7. ~~`Button` has no Figma description.~~ **Half resolved.** `Button`'s is
+   written - and the useful part was naming what its `State` axis actually
+   holds, which is three different kinds of thing at once: the element's own
+   states (Default, Hover, Pressed, Disabled), a real prop (Loading), and a
+   tone (Danger). Read as one axis it invites a fifth Level called Danger,
+   which is exactly the modelling the code rejects.
+
+   `logo-tc` still has none.
 
 19. ~~`Tabs/Item` has a `Size` axis in Figma and none in code.~~ **Resolved in
    the same session, at the user's instruction.** Both sides now carry
@@ -2508,6 +2513,35 @@ trade the divergence protected no longer exists.
   already occupies that slot and is the one the design specifies.
 - **Focus turns the rule primary, with no ring**, matching InputText — see that
   component's note for why the ring is deliberately absent.
+
+### `tone="danger"` is a `State` cell in Figma, one cell for the whole tone
+
+Figma: `Button` `State=Danger` at `Level=Primary, Size=XL` - a `Danger/Base`
+ground with a `Text/OnDanger` label, drawn as the HOVER appearance because that
+is what the tone changes.
+
+**One cell, following `Confirm`'s precedent**, which is also a single
+`Primary/XL` cell. The tone reaches all four Levels in code; drawing it
+sixteen times would say nothing the description does not, and the set is
+already 82 variants. The cell says the tone exists and what colour it is; the
+description says how far it reaches.
+
+**`State` now holds three different kinds of thing**, and reading it as one
+axis is how someone ends up adding a fifth `Level` called Danger:
+
+| cells | what they are |
+|---|---|
+| Default, Hover, Pressed, Disabled | the element's own states - not props |
+| Loading | the `loading` prop, a State because a Figma boolean can only drive `visible` |
+| Confirm, Danger | the `tone` prop, cutting across the four Levels |
+
+**`Confirm` remains Figma-only.** `tone="confirm"` exists on `ButtonRound` and
+not on `Button` - no rectangular confirm has been needed - so that cell has no
+counterpart in code. It is named as such in the description rather than left
+for someone to discover.
+
+This went code-first and was pushed at the user's explicit instruction, the
+same documented exception the Tabs size axis used.
 
 ### Ghost fills on interaction; it does not darken
 
