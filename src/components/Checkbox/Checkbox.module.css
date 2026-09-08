@@ -52,11 +52,13 @@
   transition: color var(--ui-motion-fast) ease;
 }
 
-/* `non-scaling-stroke`, as Button and ButtonRound use. Measured off the file
-   rather than assumed: Figma draws the outline at 1px and the tick at 1.5px at
-   EVERY size - constant rendered pixels, so the viewBox values differ per size
-   only because the glyph scales. Letting the stroke scale instead would thicken
-   the outline as the box grows, which is the opposite of what is drawn. */
+/* `non-scaling-stroke`, as Button and ButtonRound use, so these are RENDERED
+   pixels whatever the viewBox - the number in the token is the number you see.
+
+   The box outline is per size (1.5 / 1.25 / 1, set by the size classes below);
+   the tick is a flat 1.5 at every size. Measured off the file rather than
+   assumed - the outline used to be flat too, and grew with the box because a
+   1px hairline read as too fine at XL. */
 .box {
   fill: none;
   stroke: currentColor;
@@ -156,18 +158,21 @@
 
 /* -- sizes ---------------------------------------------------------- */
 .xl {
+  --ui-checkbox-box-stroke: var(--ui-checkbox-xl-box-stroke);
   --ui-checkbox-slot-size: var(--ui-checkbox-xl-slot-size);
   --ui-checkbox-glyph-size: var(--ui-checkbox-xl-glyph-size);
   --ui-checkbox-font-size: var(--ui-checkbox-xl-font-size);
   --ui-checkbox-line-height: var(--ui-checkbox-xl-line-height);
 }
 .lg {
+  --ui-checkbox-box-stroke: var(--ui-checkbox-lg-box-stroke);
   --ui-checkbox-slot-size: var(--ui-checkbox-lg-slot-size);
   --ui-checkbox-glyph-size: var(--ui-checkbox-lg-glyph-size);
   --ui-checkbox-font-size: var(--ui-checkbox-lg-font-size);
   --ui-checkbox-line-height: var(--ui-checkbox-lg-line-height);
 }
 .md {
+  --ui-checkbox-box-stroke: var(--ui-checkbox-md-box-stroke);
   --ui-checkbox-slot-size: var(--ui-checkbox-md-slot-size);
   --ui-checkbox-glyph-size: var(--ui-checkbox-md-glyph-size);
   --ui-checkbox-font-size: var(--ui-checkbox-md-font-size);
