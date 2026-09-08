@@ -711,10 +711,11 @@
      move them. Same trap the header of this file describes.
 
      Float 1 was lowered from `0 6px 18px / 0 0 6px` so the two steps read as
-     two heights. The pair is used as a resting/hover couple - PlantPal's
-     plant grid is float1 at rest, float2 on hover - and at 6px against 12px
-     the lift was barely perceptible: same 18px blur, half the offset. At 2px
-     the card sits ON the surface and float2 clearly leaves it.
+     two heights: at 6px against 12px they shared a blur and differed by half
+     an offset. At 2px the card sits ON the surface and float2 clearly leaves
+     it. Prompted by a float1-at-rest/float2-on-hover pair in PlantPal that
+     has since gone flat float2, so nothing reads float-1 today - the value
+     stands on its own, but no consumer would flag it moving again.
 
      Only Card reads float-1, so this moves nothing else. float-2 is NOT
      touched: InputSelect's menu reads it too, and it already matches Figma. */

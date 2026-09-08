@@ -43,13 +43,20 @@ ships an empty package.
 
 **0.28.2 -> 0.29.0 lowers Float 1 so the two elevations read as two heights.**
 `--ui-shadow-float-1` goes from `0 6px 18px / 0 0 6px` to `0 2px 6px / 0 0 2px`.
-The pair gets used as a resting/hover couple - PlantPal's plant grid is
-`float1` at rest and `float2` on hover - and the old values shared an 18px
-blur and differed only by half an offset, so the lift barely registered. The
-y-offset separation goes from 2x to 6x.
+The old values shared an 18px blur and differed only by half an offset, so
+against Float 2 the step barely registered. The y-offset separation goes from
+2x to 6x.
 
 Float 1 was lowered rather than Float 2 raised: only Card reads float-1,
 whereas float-2 also draws InputSelect's menu.
+
+**The pairing that prompted this no longer exists.** PlantPal's plant grid was
+`float1` at rest and `float2` on hover, which is what made the two steps'
+similarity obvious; it has since settled on a flat `float2` with no hover, so
+nothing consumes float-1 today. The value stands on its own - two elevation
+steps that differ only by half an offset are not two steps - but do not read
+the original pairing as a live requirement, and do not assume a consumer would
+notice if float-1 moved again.
 
 **Minor, not patch** - nothing about the API moved, but every `Card
 variant="float1"` in every consuming app changes appearance, which is not
@@ -2481,12 +2488,16 @@ system-level, and a second component inventing its own shadow is how depth
 drifts apart. Both are two-layer - a soft cast plus a tight contact shadow -
 so a card reads as lifted rather than blurred.
 
-**Float 1 was lowered to `0 2px 6px / 0 0 2px`, and Figma is BEHIND on it.**
-The pair gets used as a resting/hover couple - PlantPal's plant grid is
-`float1` at rest and `float2` on hover - and at `0 6px 18px` against
-`0 12px 18px` the lift was barely perceptible: identical blur, half the
-offset. Lowering float1 rather than raising float2 was deliberate; only Card
-reads float-1, whereas float-2 also draws InputSelect's menu.
+**Float 1 was lowered to `0 2px 6px / 0 0 2px` in 0.29.0.** At `0 6px 18px`
+against `0 12px 18px` the two steps were barely distinguishable: identical
+blur, half the offset. Lowering float1 rather than raising float2 was
+deliberate; only Card reads float-1, whereas float-2 also draws InputSelect's
+menu.
+
+It was prompted by PlantPal's plant grid running `float1` at rest and `float2`
+on hover. **That pairing is gone** - the grid now sits on a flat `float2` with
+no hover - so no consumer reads float-1 at present. The value is still right
+on its own terms; just don't treat the resting/hover story as current.
 
 Two things to know before touching this again:
 
