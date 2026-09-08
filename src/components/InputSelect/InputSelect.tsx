@@ -1,5 +1,6 @@
-import { forwardRef, useId } from "react";
+import { forwardRef, useCallback, useEffect, useId, useRef } from "react";
 import type { ReactNode, SelectHTMLAttributes } from "react";
+import { assignRef } from "../../internal/assignRef";
 import styles from "./InputSelect.module.css";
 
 // Same literal-expression note as Button: bundlers substitute this exact
@@ -37,6 +38,68 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
 ) {
   const autoId = useId();
   const selectId = id ?? autoId;
+  const inner = useRef<HTMLSelectElement | null>(null);
+
+  /**
+   * Line the CHOSEN row up with the field's own value, the way a macOS popup
+   * button does - so opening the menu does not move the thing you are looking
+   * at. The picker anchors under the select, and the shift is
+   *
+   *     border + padding + row/2 + value line-height/2 + index * row
+   *
+   * all of which are tokens except the index, which is what this supplies.
+   *
+   * **`beforetoggle` does not fire for a select's picker** - measured in
+   * Chrome 148, where opening one emits only pointerdown / mousedown / focus /
+   * click. Nor does `toggle`. Do not "restore" them: `"onbeforetoggle" in el`
+   * is TRUE on every HTMLElement, inherited from the popover API, so it feeds
+   * back a confident yes and detects nothing. That false positive cost a
+   * debugging round here.
+   *
+   * `pointerdown` and `keydown` are the two things that precede an open, and
+   * both fire while the index is still correct and before the picker paints -
+   * so the menu is never drawn in the wrong place and then corrected.
+   *
+   * The `:open` guard is what makes arrowing through an OPEN menu safe:
+   * every arrow press is a keydown, and re-reading the index then would walk
+   * the menu up the screen under the pointer. Syncing only while closed also
+   * makes controlled and uncontrolled selects behave identically, since the
+   * index is read from the DOM at the last possible moment either way.
+   */
+  useEffect(() => {
+    const el = inner.current;
+    if (!el) return;
+    if (
+      typeof CSS === "undefined" ||
+      typeof CSS.supports !== "function" ||
+      !CSS.supports("selector(::picker(select))")
+    ) {
+      return;
+    }
+
+    const sync = () => {
+      if (el.matches(":open")) return;
+      el.style.setProperty("--ui-input-select-picker-index", String(el.selectedIndex));
+    };
+
+    el.addEventListener("pointerdown", sync, true);
+    el.addEventListener("keydown", sync, true);
+    el.setAttribute("data-ui-picker-aligned", "");
+    sync();
+    return () => {
+      el.removeEventListener("pointerdown", sync, true);
+      el.removeEventListener("keydown", sync, true);
+      el.removeAttribute("data-ui-picker-aligned");
+    };
+  }, []);
+
+  const setRefs = useCallback(
+    (node: HTMLSelectElement | null) => {
+      inner.current = node;
+      assignRef(ref, node);
+    },
+    [ref],
+  );
 
   if (process.env.NODE_ENV !== "production") {
     const named =
@@ -60,7 +123,7 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
             {icon}
           </span>
         ) : null}
-        <select ref={ref} id={selectId} className={styles.select} {...props}>
+        <select ref={setRefs} id={selectId} className={styles.select} {...props}>
           {children}
         </select>
         {/* Out of the flow and pointer-transparent, so the select underneath

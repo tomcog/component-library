@@ -104,13 +104,53 @@
     box-shadow: var(--ui-input-select-menu-shadow, var(--ui-shadow-float-2));
   }
 
+  /* Line the CHOSEN row up with the field's own value, the way a macOS popup
+     button does: open the menu and the thing you were looking at has not
+     moved. Without this the menu drops BELOW the field and the selected row
+     is wherever the list happens to put it.
+
+     The picker anchors to the SELECT's bottom edge - measured, not assumed;
+     the 4px below is `margin-block-start` against the select box, not the
+     field - so from that edge the chosen row's centre sits at
+
+         border + padding + index * row + row / 2
+
+     and the field's value centre sits half a line-height ABOVE it. Cancelling
+     the two is the shift. Every term is a token; only the index comes from
+     JS, which sets --ui-input-select-picker-index on pointerdown and
+     keydown - a select's picker fires no beforetoggle/toggle event.
+
+     Gated on the attribute the component adds, so a browser that styles the
+     picker but cannot report an open keeps the plain menu below the field
+     rather than one shifted by a stale index. */
+  .select[data-ui-picker-aligned]::picker(select) {
+    margin-block-start: calc(-1 * (
+        var(--ui-input-select-menu-border-width, 1px)
+      + var(--ui-input-select-menu-padding, 4px)
+      + var(--ui-input-select-option-height,
+             var(--ui-input-select-height, var(--ui-input-text-height))) / 2
+      + var(--ui-input-select-line-height, var(--ui-input-text-line-height)) / 2
+      + var(--ui-input-select-picker-index, 0)
+        * var(--ui-input-select-option-height,
+               var(--ui-input-select-height, var(--ui-input-text-height)))
+    ));
+  }
+
   /* A row. Same type as the field, so the menu reads as the field opened up
      rather than as a separate list. */
   .select option {
     display: flex;
     align-items: center;
     gap: var(--ui-input-select-gap, var(--ui-input-text-gap));
-    padding: var(--ui-input-select-option-padding, 6px 12px);
+    /* HEIGHT, not padding-block. It was `6px 12px`, which came to the same 32
+       - but the alignment rule below has to multiply the row height by an
+       index, and a padding shorthand is not a number you can do arithmetic
+       with. A row is now exactly the field's height by construction, which is
+       also what "the menu reads as the field opened up" means. */
+    height: var(--ui-input-select-option-height,
+                var(--ui-input-select-height, var(--ui-input-text-height)));
+    padding-block: 0;
+    padding-inline: var(--ui-input-select-option-padding-x, 12px);
     color: var(--ui-input-select-color, var(--ui-text-default));
     font-family: inherit;
     font-size: var(--ui-input-select-font-size, var(--ui-input-text-font-size));

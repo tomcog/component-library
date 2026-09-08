@@ -41,6 +41,24 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.27.0 -> 0.28.0 aligns InputSelect's open menu, and adds Tag.** The
+picker now opens with the CHOSEN row over the field's own value, the way a
+macOS popup button does, instead of dropping below the field. `Tag` is the
+small label pill from Figma's `Tag` set (685:584).
+
+**Breaking for one token, which nobody overrides** (checked: NextJob overrides
+no `--ui-input-select-*` at all):
+
+    --ui-input-select-option-padding   ->  --ui-input-select-option-padding-x
+                                           + --ui-input-select-option-height
+
+A menu row is now a height rather than padding plus leading, because the
+alignment rule multiplies the row height by the selected index and a padding
+shorthand cannot be used in that arithmetic. The rendered row is 32 either way.
+
+Everything else is additive: a new component, its `--ui-tag-*` tokens, and a
+`data-ui-picker-aligned` attribute the select adds to itself.
+
 **0.26.1 -> 0.27.0 rebuilds Checkbox's glyph from the Figma artwork.** Four
 filled paths exported out of the set - `lucide/square`, `lucide/square-check`,
 `lucide/square-checked`, `lucide/square-filled` - replacing a hand-trace of
@@ -2664,6 +2682,70 @@ This reverses an earlier decision - the menu used to be listed below as a
 deliberate divergence. It was one, for as long as styling it meant rebuilding
 the control out of divs. `base-select` is that same native `<select>`, so the
 trade the divergence protected no longer exists.
+
+### The open menu lines the chosen row up with the field's value
+
+Like a macOS popup button: open the menu and the thing you were looking at has
+not moved. Without it the menu drops below the field and the selected row is
+wherever the list happens to put it.
+
+The picker anchors to the **select's** bottom edge - measured, not assumed; the
+4px gap is `margin-block-start` against the select box, not the field. From
+there the chosen row's centre sits at `border + padding + index * row + row/2`,
+and the field's value centre sits half a line-height above it. Cancelling the
+two gives the shift, which is a negative `margin-block-start`:
+
+    -(border + padding + row/2 + value-line-height/2 + index * row)
+
+Every term is a token; only the index comes from JS. At LG that is
+`-(1 + 4 + 16 + 10 + 32i)`, so `-31px` on the first option and `-95px` on the
+third. Verified live at 0.00px misalignment for indices 0 and 2.
+
+**A row is now a HEIGHT, not padding plus leading.** It was `6px 12px`, which
+came to the same 32 - but the rule above multiplies the row height by an index,
+and a padding shorthand is not a number you can do arithmetic with. A row is
+now exactly the field's height by construction, which is also what "the menu
+reads as the field opened up" is trying to say.
+**`--ui-input-select-option-padding` is therefore gone**, replaced by
+`--ui-input-select-option-padding-x` and `--ui-input-select-option-height`.
+Nothing overrode it - checked NextJob, which overrides no `--ui-input-select-*`
+at all.
+
+#### `beforetoggle` does NOT fire for a select's picker
+
+This cost a debugging round and is the reason the hook is what it is. Measured
+in Chrome 148: opening a picker emits `pointerdown`, `mousedown`, `focus`,
+`click` - and **neither `beforetoggle` nor `toggle`**, despite both being the
+documented popover events and despite the picker being a popover.
+
+Worse, the obvious feature test lies. **`"onbeforetoggle" in el` is `true` on
+every `HTMLElement`**, inherited from the popover API, so it answers yes for a
+select that will never fire the event. An implementation was written against it
+and reported success while the index silently stayed at 0 - the menu was
+mispositioned by exactly `index * row`, which reads as "the shift is wrong"
+rather than "the event never fired". **Don't reintroduce either.**
+
+`pointerdown` and `keydown` are used instead: they are the two things that
+precede an open, and both fire while the index is still correct and before the
+picker paints, so the menu is never drawn wrong and then corrected.
+
+**The `:open` guard is load-bearing.** Every arrow press inside an open menu is
+a `keydown`, so re-reading the index there would walk the menu up the screen
+under the pointer. Syncing only while closed also makes controlled and
+uncontrolled selects behave identically - the index is read from the DOM at the
+last possible moment either way. Verified: pressing Up with the menu open left
+the index and the margin untouched.
+
+The whole thing is gated on `data-ui-picker-aligned`, which the component adds
+only where `::picker(select)` is supported. A browser without it keeps the
+platform menu; one that somehow styles the picker but never runs the effect
+keeps the plain menu below the field, rather than one shifted by a stale index.
+
+**Known limit: a long list near the top of the viewport.** The shift is a plain
+negative margin, so a high index in a long list moves the menu up by
+`index * 32` and can push it off-screen. Every select in this library is a short
+fixed set, so it has not bitten; if it ever does, the fix is `position-try-fallbacks`
+on the picker rather than clamping in JS.
 
 ### Divergences — do not "fix" these
 
