@@ -1,0 +1,60 @@
+/* Tag - a small label pill. Figma: the `Tag` set (685:584), one axis
+   `State` = Default | Hover.
+
+   NOT Pill, though they look alike and share a radius token. Pill is a filter
+   TOGGLE - a real <button> carrying aria-pressed, with an on and an off state
+   that the user switches between. A Tag states a fact about the thing it sits
+   on. It has no pressed state and nothing to toggle, which is why it renders a
+   <span> and why there is no `selected` prop to reach for. */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-tag-gap);
+  /* Figma binds the four corners to `Pill/Radius`, the same variable Pill
+     uses, so the two cannot drift apart. Read through Pill's token rather
+     than declaring a second copy of 999. */
+  border-radius: var(--ui-tag-radius, var(--ui-pill-radius));
+  padding-block: var(--ui-tag-padding-y);
+  padding-inline: var(--ui-tag-padding-x);
+  background: var(--ui-tag-bg, var(--ui-surface-raised));
+  color: var(--ui-tag-text, var(--ui-text-muted));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  font-size: var(--ui-tag-font-size);
+  line-height: var(--ui-tag-line-height);
+  font-weight: var(--ui-tag-font-weight);
+  letter-spacing: var(--ui-tag-letter-spacing);
+  /* No height token: Figma's 24 is 4 + the 16 line box + 4, so height is
+     padding plus leading. Pinning it would fight the type the moment the
+     scale moved - the same call Pill's note records. */
+  transition: color var(--ui-motion-fast) ease;
+}
+
+/* Figma's second cell. The whole label reddens - there is no fill change and
+   no border, so the colour IS the state.
+
+   It is on the tag rather than on an inner element, because Figma draws the
+   state on the component and a Tag is one object. A caller that wants the
+   resting appearance under the pointer overrides --ui-tag-text-hover. */
+.tag:hover {
+  color: var(--ui-tag-text-hover, var(--ui-primary));
+}
+
+/* Anything the caller puts inside inherits the type and the colour rather
+   than the UA's, so a <button> or an <a> in here matches the label beside it.
+   Buttons do not inherit font from their parent, which is exactly the bug
+   NextJob's own chip note records. */
+.tag > button,
+.tag > a {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag { transition: none; }
+}

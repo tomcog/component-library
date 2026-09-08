@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -1021,6 +1021,40 @@ function App() {
         </Row>
         <Row label="disabled">
           <Pill disabled>Unavailable</Pill>
+        </Row>
+      </Section>
+
+      <Section
+        title="Tag"
+        note={
+          "A small label pill. Figma: State = Default | Hover \u2014 hover one and the label reddens, "
+          + "which is the whole state: no fill change and no border. NOT Pill, though they look alike: "
+          + "Pill is a filter TOGGLE carrying aria-pressed, and a Tag states a fact, so it renders a "
+          + "span and has nothing to toggle. The two share Figma's Pill/Radius, so the corner cannot "
+          + "drift between them. Type is Label MD at weight 600, the library's only SemiBold string, "
+          + "with the design's 1% letter-spacing."
+        }
+      >
+        <Row label="labels">
+          <Tag>Applied</Tag>
+          <Tag>Remote</Tag>
+          <Tag>Full-time</Tag>
+        </Row>
+        <Row label="asChild \u2014 the whole pill is the control">
+          <Tag asChild>
+            <button type="button" onClick={() => {}}>Accessibility &amp; Inclusive Design</button>
+          </Tag>
+        </Row>
+        <Row label="holding a trailing control">
+          <Tag style={{ ["--ui-tag-gap" as any]: "6px" }}>
+            <button type="button" onClick={() => {}}>Figma Mastery</button>
+            <button type="button" onClick={() => {}} aria-label="Remove Figma Mastery" title="Remove">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </Tag>
         </Row>
       </Section>
 

@@ -14,5 +14,6 @@ export * from "./components/Pill";
 export * from "./components/SegmentedControl";
 export * from "./components/Spinner";
 export * from "./components/Tabs";
+export * from "./components/Tag";
 import "./tokens.css";
 import "./typography.css";

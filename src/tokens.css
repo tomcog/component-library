@@ -467,6 +467,34 @@
   --ui-pill-line-height: var(--ui-type-label-lg-line-height);
   --ui-pill-font-weight: var(--ui-type-label-font-weight);
 
+  /* Tag. Figma: the `Tag` set (685:584) - 4/8 padding on Type/Label MD, the
+     24px height being padding plus the 16 line box rather than a set height,
+     the same decomposition Pill uses.
+
+     There is deliberately NO --ui-tag-radius here. Figma binds Tag's four
+     corners to `Pill/Radius`, the very same variable Pill binds, so the
+     module reads var(--ui-tag-radius, var(--ui-pill-radius)) and the two
+     corners cannot drift apart. Declaring a second 999 would be a copy that
+     only LOOKS like an alias - the trap --ui-left-rail-bg documents.
+
+     Two values here are the library's first of their kind, and both are the
+     design's rather than inventions:
+
+     - WEIGHT 600. Every other string in this library is Medium (500), bar
+       InputText's value and Checkbox's label, which are Regular. SemiBold is
+       Figma's, read off both cells.
+     - LETTER-SPACING 1%. Nothing else here sets it, and guidelines/Guidelines
+       says not to adjust it - transcribing the drawn value is not adjusting
+       it, but it is the one number worth querying if a tag ever looks wrong.
+       0.01em rather than a px value so it follows the font size. */
+  --ui-tag-gap: 0;
+  --ui-tag-padding-x: 8px;
+  --ui-tag-padding-y: 4px;
+  --ui-tag-font-size: var(--ui-type-label-md-font-size);
+  --ui-tag-line-height: var(--ui-type-label-md-line-height);
+  --ui-tag-font-weight: 600;
+  --ui-tag-letter-spacing: 0.01em;
+
   /* InputText. Figma: `Input-Text` (553:5455) - a 32 box, 4 padding, 8 gap,
      16 icons, a 1px rule and 2px top corners, with the label 2 below it and
      inset 4.
