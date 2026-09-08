@@ -128,8 +128,13 @@
      0.00px in both orientations - below in the playground, above in NextJob's
      Add Job dialog, which is what caught the missing half.
 
+     The component withholds the attribute when the menu is TALLER than the
+     viewport, so this rule does not apply to a very long list. Chrome does not
+     shrink an oversized picker - it pins it to a viewport edge and lets the
+     rest hang off - so shifting one up by index*row only buries more of it.
+
      LIMIT: an <optgroup> label is a row this arithmetic does not count, so a
-     grouped select will be off by one row per preceding group. No select in
+     grouped select would be off by one row per preceding group. No select in
      this library or its consumers uses one. */
   .select[data-ui-picker-aligned]::picker(select) {
     margin-block-start: calc(-1 * (

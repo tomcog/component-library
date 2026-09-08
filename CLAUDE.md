@@ -41,6 +41,23 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.28.1 -> 0.28.2 stops aligning a menu that does not fit.** Chrome does not
+shrink an oversized picker - it pins it to a viewport edge and lets the rest
+hang off - so shifting a long list up by `index * row` only buries more of it.
+NextJob has a 165-option company select where aligning cut the visible rows
+from ~31 to ~12.
+
+The component now withholds `data-ui-picker-aligned` when
+`options.length * row > innerHeight`, so an oversized menu falls back to
+Chrome's own placement, which shows the most rows. The row height is read
+through the same fallback chain the CSS uses, so an app that retunes either
+token is measured on its own terms.
+
+**The overflow itself is NOT ours and predates all of this** - measured with
+the rule switched off, that menu is 5290px tall in a 1001px viewport either
+way. Alignment only moved where the overflow sat. Worth knowing before anyone
+"fixes" the fallback expecting the long list to behave.
+
 **0.28.0 -> 0.28.1 fixes the half of that alignment which was missing.**
 0.28.0 lined the chosen row up with the field only when the menu opened
 DOWNWARD. Chrome opens the picker above the field as readily as below it - its
