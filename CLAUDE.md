@@ -1399,6 +1399,58 @@ a Medium button would render at half the weight; and a presentation attribute
 on a `<path>` beats one inherited from the `<svg>`, so an svg-only rule loses
 to icon sets that put the width on each shape.
 
+#### Flattening a Figma icon silently kills every instance's colour
+
+The `lucide/*` components in the file were redrawn from stroked outlines to
+single FILLED shapes. Nothing in code depends on them - see the Checkbox
+section for why they are drawings, not a source - but it broke the Figma side
+comprehensively and **it broke it invisibly, one paint at a time**.
+
+A per-instance icon colour is an override on a specific PROPERTY. Every one of
+them was on `strokes`, because that is what painted a stroked glyph. Flatten
+the component and the glyph paints from `fills` instead - so all those
+overrides still exist, still hold the right colour, and reach a property that
+no longer draws anything. Every glyph in the file fell back to its component
+default, `IconDefault`.
+
+The damage, measured rather than guessed:
+
+    Button           164 glyphs, all IconDefault  (should be 8 different tokens)
+    Button/Round      22 glyphs, all IconDefault  (7 states)
+    NavSlat            3 glyphs, all IconDefault
+    BottomNav frame    4 of 5
+    Segment           17 glyphs, all IconDefault
+    Input-Text         1
+    Checkbox           already correct - repaired by hand beforehand
+
+**It does not look broken in the obvious places.** A Tertiary button wants a
+near-black glyph and `IconDefault` is a mid grey, so it reads as slightly off
+rather than wrong; only the Primary and Secondary fills, which want white,
+shout. Checking one variant proves nothing - scan them all.
+
+**Repairing it: take the colour from the variant's own LABEL wherever there is
+one.** Text fills were untouched, every Button variant binds one, and the icon
+is `currentColor` in code - so the label IS the answer, and copying it needs no
+table to be re-derived and cannot drift from what the design says. That covers
+Button and Segment. Only the icon-only sets - `Button/Round`, `NavSlat`,
+`BottomNav/Item` - need an explicit state -> token map, and those are small.
+
+Two traps inside the repair, both hit:
+
+- **Climb to the RIGHT ancestor for the state.** A `BottomNav/Item` contains a
+  `Button/Round` chip carrying a `State` of its own (`Ghost`), so a naive
+  walk-up finds the chip's state, not the item's. Match on the ancestor whose
+  main component's set is the one you mean.
+- **`setBoundVariableForPaint` still needs the resolved colour first**, and
+  still does not chase an alias chain. The recipe in the Checkbox section
+  applies unchanged, and `Text/OnPrimary -> Color/White -> #ffffff` has to be
+  walked by hand.
+
+Verified after by screenshot rather than by reading values back - the stored
+and rendered colour have disagreed in this file before. Both mode invariants
+still hold, and the 11 instances belonging to other projects (`Stepper`,
+`Stepper/Rule`, `Dropdown`, `Component/Stepper`) were left alone.
+
 **ButtonRound's ramp is deliberately different** (28/24/20/16 at 2.5/2/1.5/1):
 its glyph grows faster than its container so Small stays legible with no label
 beside it. Don't reconcile the two.
