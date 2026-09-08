@@ -125,11 +125,20 @@
 .root:has(.input:disabled) .glyph {
   color: var(--ui-checkbox-box-disabled, var(--ui-text-disabled));
 }
-/* The square's ground, where a live checked box uses currentColor. Two classes
-   plus :disabled:checked outranks the plain checked rule, so this needs no
-   ordering trick. */
-.root:has(.input:disabled:checked) .box {
+/* NO border, and a ground on BOTH boxes - which is precisely what a disabled
+   Button is: a pale fill carrying a muted mark, with no rule around it.
+
+   The ground has to reach the unchecked box too, not just the checked one. A
+   disabled unchecked box is nothing BUT its outline, so dropping the rule
+   without giving it a fill would erase the control entirely rather than mute
+   it. With the ground there, the tick is the only thing separating checked
+   from unchecked - which is the honest difference between them.
+
+   Equal specificity with the plain checked rule above, so source order is what
+   makes this win; that is why the disabled block sits last. */
+.root:has(.input:disabled) .box {
   fill: var(--ui-checkbox-box-fill-disabled, var(--ui-surface-disabled));
+  stroke: var(--ui-checkbox-box-border-disabled, transparent);
 }
 /* The tick is the thing ON that ground, so it takes the same
    --ui-text-disabled the outline and the label do.

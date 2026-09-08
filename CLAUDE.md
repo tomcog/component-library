@@ -2638,8 +2638,15 @@ what `.button:disabled` paints. One disabled look across the library, so a dead
 checkbox and a dead button read as the same kind of thing. Verified against a
 disabled Button in the playground: identical values.
 
-Checked **keeps the filled square** rather than dropping to an outline, which
-is the one thing the state exists to say; only the two colours change.
+**No rule around either box, and a ground on both** - which is precisely what
+a disabled Button is: a pale fill carrying a muted mark, with nothing drawn
+around it.
+
+The ground has to reach the UNCHECKED box too. A disabled unchecked box is
+nothing but its outline, so removing the rule without giving it a fill would
+erase the control rather than mute it. With the ground there, the tick is the
+only thing separating checked from unchecked - which is the honest difference
+between them.
 
 **The tick was `--ui-text-faint` for a while**, one step darker than the
 outline, on the reasoning that a lighter tick read as an ACTIVE tick that had
