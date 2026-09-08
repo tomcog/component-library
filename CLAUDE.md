@@ -41,6 +41,27 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.28.0 -> 0.28.1 fixes the half of that alignment which was missing.**
+0.28.0 lined the chosen row up with the field only when the menu opened
+DOWNWARD. Chrome opens the picker above the field as readily as below it - its
+UA sheet gives `::picker(select)` a `position-try-fallbacks` of
+`start span-end, end span-start, start span-start` ordered by
+`most-block-size`, so a select low in the viewport flips upward - and in that
+case the menu landed a full constant term (31px at LG) out.
+
+**It reproduced only where the select sat low**, which is why the playground
+looked perfect and NextJob's Add Job dialog did not: the first select in that
+dialog was pixel-exact and the third, 300px further down, was not. A fix
+verified on one instance is not verified.
+
+`margin-block-end` is now set alongside `margin-block-start`, and only the one
+facing the anchor applies - so CSS never has to ask which way Chrome went. The
+flipped case measures from the menu's far edge, so it needs the option COUNT as
+well as the index, and the component now publishes
+`--ui-input-select-picker-count` beside `-picker-index`.
+
+Purely a fix; no token renamed or removed.
+
 **0.27.0 -> 0.28.0 aligns InputSelect's open menu, and adds Tag.** The
 picker now opens with the CHOSEN row over the field's own value, the way a
 macOS popup button does, instead of dropping below the field. `Tag` is the

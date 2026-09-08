@@ -60,6 +60,10 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
    * both fire while the index is still correct and before the picker paints -
    * so the menu is never drawn in the wrong place and then corrected.
    *
+   * Both the index AND the option count go out, because Chrome opens the
+   * picker above the field as readily as below it and the module has to solve
+   * for either - see the note on the alignment rule in the CSS.
+   *
    * The `:open` guard is what makes arrowing through an OPEN menu safe:
    * every arrow press is a keydown, and re-reading the index then would walk
    * the menu up the screen under the pointer. Syncing only while closed also
@@ -79,7 +83,16 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
 
     const sync = () => {
       if (el.matches(":open")) return;
-      el.style.setProperty("--ui-input-select-picker-index", String(el.selectedIndex));
+      // selectedIndex is -1 when nothing is selected; the first row is the
+      // sensible thing to line up with then.
+      el.style.setProperty(
+        "--ui-input-select-picker-index",
+        String(Math.max(0, el.selectedIndex)),
+      );
+      // The COUNT is needed as well as the index: Chrome opens the picker
+      // above the field as readily as below it, and the flipped case measures
+      // from the menu's far edge, so it depends on how tall the menu is.
+      el.style.setProperty("--ui-input-select-picker-count", String(el.options.length));
     };
 
     el.addEventListener("pointerdown", sync, true);

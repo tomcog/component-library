@@ -106,23 +106,31 @@
 
   /* Line the CHOSEN row up with the field's own value, the way a macOS popup
      button does: open the menu and the thing you were looking at has not
-     moved. Without this the menu drops BELOW the field and the selected row
+     moved. Without this the menu drops beside the field and the selected row
      is wherever the list happens to put it.
 
-     The picker anchors to the SELECT's bottom edge - measured, not assumed;
-     the 4px below is `margin-block-start` against the select box, not the
-     field - so from that edge the chosen row's centre sits at
+     Chrome opens the picker EITHER BELOW OR ABOVE the field and picks per
+     instance: its UA sheet gives ::picker(select) a position-try-fallbacks of
+     `start span-end, end span-start, start span-start` ordered by
+     `most-block-size`, so a select low in the viewport flips upward. Both
+     orientations have to be handled, and CSS cannot ask which one it chose -
+     so both margins are set, and only the one facing the anchor applies.
 
-         border + padding + index * row + row / 2
+     Measuring from the anchored edge, with B border, P padding, R row,
+     LH the field's line height, i the selected index and n the option count:
 
-     and the field's value centre sits half a line-height ABOVE it. Cancelling
-     the two is the shift. Every term is a token; only the index comes from
-     JS, which sets --ui-input-select-picker-index on pointerdown and
-     keydown - a select's picker fires no beforetoggle/toggle event.
+       below   the row's centre is  B + P + i*R + R/2  under the picker's top,
+               and the value's centre is LH/2 above the select's bottom
+       above   the picker's height is 2B + 2P + n*R, and it hangs from the
+               select's top, so the same row sits that much higher
 
-     Gated on the attribute the component adds, so a browser that styles the
-     picker but cannot report an open keeps the plain menu below the field
-     rather than one shifted by a stale index. */
+     Solving each for the margin gives the two calcs below. Verified live at
+     0.00px in both orientations - below in the playground, above in NextJob's
+     Add Job dialog, which is what caught the missing half.
+
+     LIMIT: an <optgroup> label is a row this arithmetic does not count, so a
+     grouped select will be off by one row per preceding group. No select in
+     this library or its consumers uses one. */
   .select[data-ui-picker-aligned]::picker(select) {
     margin-block-start: calc(-1 * (
         var(--ui-input-select-menu-border-width, 1px)
@@ -134,6 +142,16 @@
         * var(--ui-input-select-option-height,
                var(--ui-input-select-height, var(--ui-input-text-height)))
     ));
+    margin-block-end: calc(
+        var(--ui-input-select-option-height,
+            var(--ui-input-select-height, var(--ui-input-text-height))) / 2
+      - var(--ui-input-select-menu-border-width, 1px)
+      - var(--ui-input-select-menu-padding, 4px)
+      - var(--ui-input-select-line-height, var(--ui-input-text-line-height)) / 2
+      + (var(--ui-input-select-picker-index, 0) - var(--ui-input-select-picker-count, 1))
+        * var(--ui-input-select-option-height,
+               var(--ui-input-select-height, var(--ui-input-text-height)))
+    );
   }
 
   /* A row. Same type as the field, so the menu reads as the field opened up
