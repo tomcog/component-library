@@ -545,8 +545,8 @@
      Figma: the `Checkbox` set (615:15245). Two sizes per step, not one: the
      SLOT is the hit area and the GLYPH is the square drawn inside it, and the
      design keeps them apart (24/20, 20/16, 16/14). The square you actually
-     see is smaller again - lucide's `square` is inset to 18 of its 24 viewBox
-     - so the LG box reads as 12px inside a 20px target.
+     see is smaller again - the glyph is inset to 13 of its 16 viewBox - so
+     the LG box reads as 13px inside a 20px target.
 
      The label is DM Sans Regular at these sizes rather than the Label scale's
      Medium: the design sets it as body text beside a control. XL's 20px line
@@ -570,24 +570,6 @@
   --ui-checkbox-md-line-height: 18px;
 
   --ui-checkbox-font-weight: 400;
-
-  /* Stroke weights are FIXED PIXELS, not scaled with the glyph: unitless, and
-     paired with vector-effect: non-scaling-stroke in the module, exactly as
-     ButtonRound's icon stroke tokens work. So these are rendered pixels, not
-     viewBox units, and the number here is the number you see.
-
-     The BOX outline is per size - 1.5 / 1.25 / 1. It used to be a flat 1 at
-     every size, on the reasoning that a hairline should stay a hairline as the
-     box grows; at XL that read as too fine against a 20px box, so the outline
-     now grows with it. The TICK stays flat at 1.5, which is what Figma still
-     draws at every size.
-
-     The steps are not even (0.25 then 0.25 across a 20 -> 16 -> 14 glyph)
-     because they are drawn values, not a computed ramp. */
-  --ui-checkbox-xl-box-stroke: 1.5;
-  --ui-checkbox-lg-box-stroke: 1.25;
-  --ui-checkbox-md-box-stroke: 1;
-  --ui-checkbox-tick-stroke: 1.5;
 
   /* -- Tabs ----------------------------------------------------
      Figma: `PageTabs` (364:420), measured off the running app rather than the

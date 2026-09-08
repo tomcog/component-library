@@ -41,6 +41,47 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.26.1 -> 0.27.0 rebuilds Checkbox's glyph from the Figma artwork.** Four
+filled paths exported out of the set - `lucide/square`, `lucide/square-check`,
+`lucide/square-checked`, `lucide/square-filled` - replacing a hand-trace of
+lucide's `square` plus a scaled-up tick. Every path is `currentColor` and none
+has a stroke.
+
+**Breaking for anyone overriding six tokens**, which is nobody today (checked:
+NextJob uses Checkbox in four places and overrides none of them):
+
+    --ui-checkbox-xl-box-stroke      removed - no stroke to weight
+    --ui-checkbox-lg-box-stroke      removed
+    --ui-checkbox-md-box-stroke      removed
+    --ui-checkbox-tick-stroke        removed
+    --ui-checkbox-check-checked      removed - the tick is a knockout, not a paint
+    --ui-checkbox-check-disabled     removed
+    --ui-checkbox-box-fill-disabled  removed
+    --ui-checkbox-box-border-disabled removed
+
+They do not error if left behind - they silently stop applying, the usual
+failure mode here. What is left is one colour hook per state: `--ui-checkbox-box`,
+`-box-hover`, `-box-checked`, `-box-disabled`.
+
+**One visible change beyond the redraw: disabled is now a solid mid-grey
+square** where it was a pale `--ui-surface-disabled` ground carrying a
+`--ui-text-disabled` tick. The new checked shape has the tick KNOCKED OUT of a
+single path, so the tick is the ground showing through and one shape cannot
+carry two colours. Figma binds `Button/Disabled/Label` across the whole glyph,
+which is what the code now renders.
+
+**The drawn box also grew about a pixel at each size** - the glyph is inset to
+13 of its 16 viewBox where lucide's `square` was 18 of 24, so it reads
+16.25 / 13 / 11.375 inside the unchanged 24 / 20 / 16 slot. Slot, glyph and type
+tokens did not move.
+
+This was a fetch from Figma, not an independent edit - the documented exception
+to "never change both sides in the same session". Verified by rendering the
+BUILT stylesheet with the component's real DOM and measuring all 15 cells: glyph
+20/16/14, `stroke: none` on every path, the right one or two paths visible per
+state, hover previewing tick and label on unchecked only and suppressed on
+checked and disabled.
+
 **0.26.0 -> 0.26.1 makes Button's danger rest neutral**, matching ButtonRound.
 It shipped for one version recolouring the RESTING appearance too - a danger
 ghost rested with a red rule - which put two contracts on one prop name. It now
@@ -2630,61 +2671,89 @@ check in `--ui-primary` on an unfilled square, so the row says what clicking it
 will do before it does it. The tick is in the DOM at every state and only its
 opacity moves, so it can fade rather than pop and the glyph never reflows.
 
-### Disabled follows Button's convention
+### Disabled is one colour, because the glyph is one shape
 
-The ground is `--ui-surface-disabled` (`#ededed`) and everything drawn on it -
-outline, tick and label - is `--ui-text-disabled` (`#b8b8b8`), which is exactly
-what `.button:disabled` paints. One disabled look across the library, so a dead
-checkbox and a dead button read as the same kind of thing. Verified against a
-disabled Button in the playground: identical values.
+`--ui-text-disabled` (`#b8b8b8`) on whichever path the state is showing, and
+nothing else. Unchecked drops to the SOLID square rather than staying a ring -
+a greyed hairline reads as an artefact rather than as a control switched off,
+and filling it makes the pair honest, since checked and unchecked then differ
+by the tick alone. Checked keeps the knocked-out shape, so the tick is still
+the thing the state exists to say.
 
-**No rule around either box, and a ground on both** - which is precisely what
-a disabled Button is: a pale fill carrying a muted mark, with nothing drawn
-around it.
+**This changed when the Figma artwork was adopted, and it is worth knowing why
+the old shape is not recoverable.** It used to be a two-colour glyph - an
+`--ui-surface-disabled` (`#ededed`) ground carrying a `--ui-text-disabled`
+tick - reasoned from `.button:disabled`, which is a pale fill with a muted
+mark. The new glyph is a single path with the tick KNOCKED OUT of it, so the
+tick is the ground showing through rather than a second colour painted on top.
+One shape cannot hold two colours, so `--ui-checkbox-check-disabled` and
+`--ui-checkbox-box-fill-disabled` have nothing to point at and are gone.
 
-The ground has to reach the UNCHECKED box too. A disabled unchecked box is
-nothing but its outline, so removing the rule without giving it a fill would
-erase the control rather than mute it. With the ground there, the tick is the
-only thing separating checked from unchecked - which is the honest difference
-between them.
+It follows Figma rather than Button now: the cells bind `Button/Disabled/Label`
+(`#b8b8b8`) across the whole glyph. **A borrowed token still pointing at the
+right answer** - the binding tier is wrong and the value is what the design
+asks for, which is the same lesson recorded below and the reason it was twice
+"corrected" onto the wrong thing. Repointing it to `Text/Disabled` is a
+mechanism fix that changes no pixel; the VALUE is settled.
 
-**The tick was `--ui-text-faint` for a while**, one step darker than the
-outline, on the reasoning that a lighter tick read as an ACTIVE tick that had
-merely lost its colour. That reasoning is answered by moving the GROUND to
-`--ui-surface-disabled` instead of leaving it at `--ui-text-disabled`: the tick
-no longer has to carry the contrast alone, because it is dark-on-pale like
-every other disabled mark rather than darker-grey-on-grey.
+The net effect on screen: a disabled box is a solid mid-grey square where it
+used to be a pale square with a grey mark in it.
 
-**Figma had this right first, by the wrong route.** Its `Disabled Selected`
-cells bound `Button/Disabled/Background` and `Button/Disabled/Label` - the
-correct VALUES, reached by borrowing another component's tier, which is the
-trap this file keeps recording. Those bindings were "corrected" onto
-`Text/Disabled`/`Text/Faint` before the intent was understood, and are now on
-`Surface/Disabled`/`Text/Disabled`: Button's convention, on the semantic tier.
-**A borrowed token can still be pointing at the right answer** - fix the
-mechanism without assuming the value was wrong too.
+### The glyph is NOT a lucide icon, and there is not a stroke in it
 
-### The tick is NOT stock lucide, and the strokes are pinned
+This is the thing to understand before touching this component, and it is the
+opposite of how every other icon in the library works.
 
-Both were wrong in the first cut and were corrected against the file's own
-vector paths. **Measure, don't assume the icon set.**
+**Everywhere else, an icon is a SLOT.** `Button`, `ButtonRound`, `Segment`,
+`NavSlat` and `Tabs` all take a `ReactNode` and render whatever the app hands
+them - the library has no icon dependency at all, only React. The app imports
+`lucide-react` itself, so the consumer has the entire set, including icons that
+were never drawn in the Figma file. The `lucide/*` components in Figma exist
+only as instance-swap targets so a designer can populate that same slot in a
+mockup; **nothing is ever exported from them into code**, and an icon missing
+from the Figma file is not drift.
 
-The square *is* stock lucide `square` — `x3 y3 w18 h18 rx2`, identical. The
-tick is not: the design scales lucide's up by **1.5×**, to `9×6` units at
-`(7.5, 9)` against stock's `6×4` at `(9, 10)`. Rendered from the stock path it
-came out visibly small inside the box.
+**Checkbox is one of only two exceptions**, and the reason is that its glyph is
+not swappable: the tick fades in on hover and the square fills when checked, so
+the component owns the shapes. (The other is `InputText`'s calendar indicator,
+which has to be in CSS because a shadow-DOM pseudo-element cannot take a node.)
 
-Stroke weight is **fixed pixels, not scaled** — Figma draws the outline at 1px
-and the tick at 1.5px at *every* size, so the viewBox numbers differ per size
-only because the glyph does. That is `vector-effect: non-scaling-stroke`, the
-same thing Button and ButtonRound do, and the first cut argued its way out of
-it. Letting the stroke scale thickens the outline as the box grows, which is
-the opposite of what is drawn.
+So the four paths are **exported straight out of the Figma set** -
+`lucide/square`, `lucide/square-check`, `lucide/square-checked` and
+`lucide/square-filled` - the same way `Logo`'s weights are. Re-export if the
+artwork moves; don't nudge the `d` strings, and don't reach for the lucide
+package to "fix" them. The `lucide/` prefix on those components is where the
+artwork STARTED, not what it is.
 
-    size   glyph   box    tick     box stroke   tick stroke
-    XL     20      15     7.5x5    1px          1.5px
-    LG     16      12     6x4      1px          1.5px
-    MD     14      10.5   5.25x3.5 1px          1.5px
+    path        shape                              states
+    .ring       the outline, as a filled ring      Default
+    .tick       the check                          Hover (over .ring)
+    .solid      the square, no tick                Disabled unchecked
+    .knockout   the square with the tick REMOVED   Selected, Disabled Selected
+
+All four sit in the DOM at every state and only opacity moves, so the tick
+fades rather than pops and the glyph never reflows.
+
+**Every path is `fill: currentColor` and none of them has a stroke.** That is
+the whole simplification: a state is ONE colour on `.glyph` plus which paths
+are showing, exactly as the Figma cells are built - one component per state,
+each a single shape with a single fill.
+
+Four tokens went with it - `--ui-checkbox-{xl,lg,md}-box-stroke` and
+`--ui-checkbox-tick-stroke` - along with `vector-effect: non-scaling-stroke`.
+The glyph is flattened at its 16x16 appearance and simply scaled, so the ring
+thickness now rides the glyph size (1px at LG, 1.25 at XL, 0.875 at MD) instead
+of being pinned per size. **Do not reintroduce the ramp here.**
+
+`non-scaling-stroke` is still correct and still load-bearing in `Button` and
+`ButtonRound`, and the two cases are not comparable: those render lucide's real
+SVG, whose stroke-width is in a 24-unit viewBox, so without it a token saying
+`1.5` would draw at 1px in a 16px box. Checkbox has no stroke to scale.
+
+The square is inset to 13 of its 16 viewBox, so the drawn box reads 16.25 / 13
+/ 11.375 inside the 24 / 20 / 16 slot. It used to be lucide's `square` at 18 of
+24, reading 15 / 12 / 10.5 - so the box grew about a pixel at each size when
+the artwork was adopted.
 
 ### Hover previews the label too, and only while unchecked
 

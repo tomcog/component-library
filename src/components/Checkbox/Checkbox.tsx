@@ -54,24 +54,40 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
     <label className={[styles.root, styles[size], className].filter(Boolean).join(" ")}>
       <input ref={ref} type="checkbox" className={styles.input} {...props} />
       <span className={styles.slot}>
-        {/* lucide `square` and `square-check`, drawn as one glyph rather than
-            swapped between two: the tick is always in the DOM and only its
-            opacity moves, so hover can fade it in without the box reflowing. */}
+        {/* NOT a lucide icon, and not swappable. Four filled paths exported
+            straight out of the Figma component set - `lucide/square`,
+            `lucide/square-check`, `lucide/square-checked` and
+            `lucide/square-filled` - which is where this glyph is drawn and
+            where it has to be re-exported from if it ever moves.
+
+            The name `lucide/*` in that file is where the artwork STARTED, not
+            what it is: the tick was scaled up from lucide's, and all four have
+            since been flattened to single filled shapes. Nothing here imports
+            an icon set, and this is one of only two places in the library that
+            carries glyph geometry at all.
+
+            All four are in the DOM at every state and only their opacity
+            moves, so the tick can fade rather than pop and the glyph never
+            reflows. Each is one closed shape in currentColor, so a state is a
+            single colour on .glyph plus which of these are showing - which is
+            exactly how the Figma cells are built. */}
         <svg
           className={styles.glyph}
-          viewBox="0 0 24 24"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          viewBox="0 0 16 16"
           aria-hidden="true"
           focusable="false"
         >
-          {/* The square is stock lucide `square`. The tick is NOT stock
-              `square-check` - the design scales that one up by 1.5, to 9x6
-              units at (7.5, 9) against lucide's 6x4 at (9, 10). Traced off the
-              file's own vector paths rather than taken from the icon set,
-              because the two do not match. */}
-          <rect className={styles.box} width="18" height="18" x="3" y="3" rx="2" />
-          <path className={styles.check} d="M7.5 12 L10.5 15 L16.5 9" />
+          {/* Unchecked: the outline, as a filled ring rather than a stroke. */}
+          <path className={styles.ring} d="M13.5 3.33301C13.4998 2.87303 13.127 2.50018 12.667 2.5H3.33301C2.87303 2.50018 2.50018 2.87303 2.5 3.33301V12.667C2.50018 13.127 2.87303 13.4998 3.33301 13.5H12.667C13.127 13.4998 13.4998 13.127 13.5 12.667V3.33301ZM14.5 12.667C14.4998 13.6793 13.6793 14.4998 12.667 14.5H3.33301C2.32074 14.4998 1.50018 13.6793 1.5 12.667V3.33301C1.50018 2.32074 2.32074 1.50018 3.33301 1.5H12.667C13.6793 1.50018 14.4998 2.32074 14.5 3.33301V12.667Z" />
+          {/* Hover previews this over the ring, unchecked only. */}
+          <path className={styles.tick} d="M11.0244 5.31055C11.2476 5.08739 11.6098 5.08739 11.833 5.31055C12.0557 5.53366 12.0558 5.89511 11.833 6.11816L7.26074 10.6895C7.03758 10.9125 6.67625 10.9126 6.45312 10.6895L4.16699 8.4043C3.94391 8.18116 3.94394 7.81886 4.16699 7.5957C4.39014 7.37256 4.75242 7.37259 4.97559 7.5957L6.85742 9.47754L11.0244 5.31055Z" />
+          {/* Disabled unchecked: the same square with no tick and no hole. */}
+          <path className={styles.solid} d="M14.5 12.667C14.4998 13.6793 13.6793 14.4998 12.667 14.5H3.33301C2.32074 14.4998 1.50018 13.6793 1.5 12.667V3.33301C1.50018 2.32074 2.32074 1.50018 3.33301 1.5H12.667C13.6793 1.50018 14.4998 2.32074 14.5 3.33301V12.667Z" />
+          {/* Checked, enabled or not: ONE shape with the tick knocked out of
+              it, so the tick is the ground showing through rather than a
+              second colour painted on top. That is why disabled checked needs
+              no second token - see the module. */}
+          <path className={styles.knockout} d="M12.667 1.5C13.6793 1.50018 14.4998 2.32074 14.5 3.33301V12.667C14.4998 13.6793 13.6793 14.4998 12.667 14.5H3.33301C2.32074 14.4998 1.50018 13.6793 1.5 12.667V3.33301C1.50018 2.32074 2.32074 1.50018 3.33301 1.5H12.667ZM11.833 5.31055C11.6098 5.08739 11.2476 5.08739 11.0244 5.31055L6.85742 9.47754L4.97559 7.5957C4.75242 7.37257 4.39014 7.37255 4.16699 7.5957C3.94392 7.81886 3.94389 8.18116 4.16699 8.4043L6.45312 10.6895C6.67626 10.9126 7.03758 10.9125 7.26074 10.6895L11.833 6.11816C12.0558 5.89511 12.0557 5.53366 11.833 5.31055Z" />
         </svg>
       </span>
       {label != null ? <span className={styles.label}>{label}</span> : null}

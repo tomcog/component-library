@@ -52,29 +52,27 @@
   transition: color var(--ui-motion-fast) ease;
 }
 
-/* `non-scaling-stroke`, as Button and ButtonRound use, so these are RENDERED
-   pixels whatever the viewBox - the number in the token is the number you see.
+/* The four shapes, all FILLED and all currentColor - there is not a stroke
+   anywhere in this component. That is why there is no stroke-width token and
+   no `vector-effect: non-scaling-stroke`: the glyph is flattened at its 16x16
+   appearance and simply scaled, so the ring thickness rides the glyph size
+   (1px at LG, 1.25 at XL, 0.875 at MD) instead of being pinned per size.
 
-   The box outline is per size (1.5 / 1.25 / 1, set by the size classes below);
-   the tick is a flat 1.5 at every size. Measured off the file rather than
-   assumed - the outline used to be flat too, and grew with the box because a
-   1px hairline read as too fine at XL. */
-.box {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: var(--ui-checkbox-box-stroke);
-  vector-effect: non-scaling-stroke;
-}
-
-/* Present in the DOM at every state so it can fade rather than pop, and so
-   the glyph never reflows. Hidden until the box is checked or hovered. */
-.check {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: var(--ui-checkbox-tick-stroke);
-  vector-effect: non-scaling-stroke;
-  opacity: 0;
+   Only opacity moves. Each state is ONE colour on .glyph plus which of these
+   are showing, which is exactly how the Figma cells are drawn - one component
+   per state, each a single shape with a single fill. */
+.ring,
+.tick,
+.solid,
+.knockout {
+  fill: currentColor;
   transition: opacity var(--ui-motion-fast) ease;
+}
+/* Resting is the ring alone. */
+.tick,
+.solid,
+.knockout {
+  opacity: 0;
 }
 
 /* -- hover ---------------------------------------------------------
@@ -84,7 +82,7 @@
 .root:hover:not(:has(.input:disabled)) .glyph {
   color: var(--ui-checkbox-box-hover, var(--ui-primary));
 }
-.root:hover:not(:has(.input:disabled)) .check {
+.root:hover:not(:has(.input:disabled)):not(:has(.input:checked)) .tick {
   opacity: 1;
 }
 /* The LABEL previews with it, so the whole row answers the pointer rather than
@@ -100,57 +98,42 @@
 }
 
 /* -- checked -------------------------------------------------------
-   The square fills and the tick reverses out of it. */
+   The ring and the tick give way to the single knocked-out shape: a solid
+   square with the tick removed from it. So the tick is the GROUND showing
+   through, not a second colour painted on top - which is why checked needs no
+   tick token at all, and why disabled checked needs no second one either. */
 .root:has(.input:checked) .glyph {
   color: var(--ui-checkbox-box-checked, var(--ui-primary));
 }
-.root:has(.input:checked) .box {
-  fill: currentColor;
+.root:has(.input:checked) .ring,
+.root:has(.input:checked) .tick {
+  opacity: 0;
 }
-.root:has(.input:checked) .check {
+.root:has(.input:checked) .knockout {
   opacity: 1;
-  stroke: var(--ui-checkbox-check-checked, var(--ui-text-on-primary));
 }
 
 /* -- disabled ------------------------------------------------------
-   Follows Button's convention exactly: the GROUND is --ui-surface-disabled and
-   everything drawn on it is --ui-text-disabled. One disabled look across the
-   library, so a dead checkbox and a dead button read as the same kind of
-   thing.
+   One colour, --ui-text-disabled, on whichever shape the state is showing.
 
-   Checked keeps the FILLED square rather than dropping to an outline, which is
-   the one thing the state is there to say - only the two colours change.
+   Unchecked drops to the SOLID square rather than staying a ring: a disabled
+   unchecked box is nothing but its outline, and a greyed hairline reads as an
+   artefact rather than as a control that is switched off. Filling it also
+   makes the pair honest - checked and unchecked then differ by the tick alone,
+   which is the actual difference between them.
+
+   Checked keeps the knocked-out shape, so the tick is still there and still
+   the thing the state exists to say.
 
    After the checked rules, so it wins on source order at equal specificity. */
 .root:has(.input:disabled) .glyph {
   color: var(--ui-checkbox-box-disabled, var(--ui-text-disabled));
 }
-/* NO border, and a ground on BOTH boxes - which is precisely what a disabled
-   Button is: a pale fill carrying a muted mark, with no rule around it.
-
-   The ground has to reach the unchecked box too, not just the checked one. A
-   disabled unchecked box is nothing BUT its outline, so dropping the rule
-   without giving it a fill would erase the control entirely rather than mute
-   it. With the ground there, the tick is the only thing separating checked
-   from unchecked - which is the honest difference between them.
-
-   Equal specificity with the plain checked rule above, so source order is what
-   makes this win; that is why the disabled block sits last. */
-.root:has(.input:disabled) .box {
-  fill: var(--ui-checkbox-box-fill-disabled, var(--ui-surface-disabled));
-  stroke: var(--ui-checkbox-box-border-disabled, transparent);
+.root:has(.input:disabled):not(:has(.input:checked)) .ring {
+  opacity: 0;
 }
-/* The tick is the thing ON that ground, so it takes the same
-   --ui-text-disabled the outline and the label do.
-
-   It was --ui-text-faint for a while, one step darker, on the reasoning that a
-   lighter tick read as an ACTIVE tick that had merely lost its colour. That
-   reasoning was answered by moving the GROUND to --ui-surface-disabled instead
-   of leaving it at --ui-text-disabled: the tick no longer has to carry the
-   contrast on its own, because it is now dark-on-pale like every other
-   disabled mark in the library rather than darker-grey-on-grey. */
-.root:has(.input:disabled:checked) .check {
-  stroke: var(--ui-checkbox-check-disabled, var(--ui-text-disabled));
+.root:has(.input:disabled):not(:has(.input:checked)) .solid {
+  opacity: 1;
 }
 .root:has(.input:disabled) .label {
   color: var(--ui-checkbox-label-disabled, var(--ui-text-disabled));
@@ -181,21 +164,18 @@
 
 /* -- sizes ---------------------------------------------------------- */
 .xl {
-  --ui-checkbox-box-stroke: var(--ui-checkbox-xl-box-stroke);
   --ui-checkbox-slot-size: var(--ui-checkbox-xl-slot-size);
   --ui-checkbox-glyph-size: var(--ui-checkbox-xl-glyph-size);
   --ui-checkbox-font-size: var(--ui-checkbox-xl-font-size);
   --ui-checkbox-line-height: var(--ui-checkbox-xl-line-height);
 }
 .lg {
-  --ui-checkbox-box-stroke: var(--ui-checkbox-lg-box-stroke);
   --ui-checkbox-slot-size: var(--ui-checkbox-lg-slot-size);
   --ui-checkbox-glyph-size: var(--ui-checkbox-lg-glyph-size);
   --ui-checkbox-font-size: var(--ui-checkbox-lg-font-size);
   --ui-checkbox-line-height: var(--ui-checkbox-lg-line-height);
 }
 .md {
-  --ui-checkbox-box-stroke: var(--ui-checkbox-md-box-stroke);
   --ui-checkbox-slot-size: var(--ui-checkbox-md-slot-size);
   --ui-checkbox-glyph-size: var(--ui-checkbox-md-glyph-size);
   --ui-checkbox-font-size: var(--ui-checkbox-md-font-size);
@@ -203,5 +183,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glyph, .check, .label { transition: none; }
+  .glyph, .ring, .tick, .solid, .knockout, .label { transition: none; }
 }
