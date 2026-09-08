@@ -2630,18 +2630,32 @@ check in `--ui-primary` on an unfilled square, so the row says what clicking it
 will do before it does it. The tick is in the DOM at every state and only its
 opacity moves, so it can fade rather than pop and the glyph never reflows.
 
-### Disabled is the library's, not Figma's
+### Disabled follows Button's convention
 
-Figma drew no disabled cell; both were created here, then built into Figma so
-the two sides match. Unchecked greys the outline. Checked **keeps the filled
-square and the tick** and only swaps the colour — dropping to an outline would
-lose the one thing the state exists to say.
+The ground is `--ui-surface-disabled` (`#ededed`) and everything drawn on it -
+outline, tick and label - is `--ui-text-disabled` (`#b8b8b8`), which is exactly
+what `.button:disabled` paints. One disabled look across the library, so a dead
+checkbox and a dead button read as the same kind of thing. Verified against a
+disabled Button in the playground: identical values.
 
-The tick is `--ui-text-faint` (`#8c8c8c`) on the `--ui-text-disabled`
-(`#b8b8b8`) square, **not white**. White read as an active tick that had merely
-lost its colour; the darker grey keeps the box legible as checked while staying
-unmistakably inert. That was the designer's call in Figma, and the code follows
-it.
+Checked **keeps the filled square** rather than dropping to an outline, which
+is the one thing the state exists to say; only the two colours change.
+
+**The tick was `--ui-text-faint` for a while**, one step darker than the
+outline, on the reasoning that a lighter tick read as an ACTIVE tick that had
+merely lost its colour. That reasoning is answered by moving the GROUND to
+`--ui-surface-disabled` instead of leaving it at `--ui-text-disabled`: the tick
+no longer has to carry the contrast alone, because it is dark-on-pale like
+every other disabled mark rather than darker-grey-on-grey.
+
+**Figma had this right first, by the wrong route.** Its `Disabled Selected`
+cells bound `Button/Disabled/Background` and `Button/Disabled/Label` - the
+correct VALUES, reached by borrowing another component's tier, which is the
+trap this file keeps recording. Those bindings were "corrected" onto
+`Text/Disabled`/`Text/Faint` before the intent was understood, and are now on
+`Surface/Disabled`/`Text/Disabled`: Button's convention, on the semantic tier.
+**A borrowed token can still be pointing at the right answer** - fix the
+mechanism without assuming the value was wrong too.
 
 ### The tick is NOT stock lucide, and the strokes are pinned
 

@@ -623,9 +623,11 @@ function App() {
         note={
           "Figma: the Checkbox set, sizes XL / LG / MD. Hover an unchecked box \u2014 the design "
           + "previews the tick in primary on an unfilled square, so the row says what clicking it will "
-          + "do before it does it. Checked fills the square and reverses the tick out of it. Disabled "
-          + "unchecked greys the outline, and checked keeps the filled square and the tick and only "
-          + "swaps the colour \u2014 a faint grey tick rather than white, which read as active. Tab to one and "
+          + "do before it does it \u2014 and the LABEL previews with it, since the whole row is the hit "
+          + "target. Only while unchecked: a checked row is already the answer. Checked fills the "
+          + "square and reverses the tick out of it. Disabled follows Button exactly \u2014 the ground "
+          + "is --ui-surface-disabled and everything on it is --ui-text-disabled \u2014 so a dead "
+          + "checkbox and a dead button read as the same kind of thing. Tab to one and "
           + "press space \u2014 it is a real input, drawn at 1px behind the glyph rather than hidden, "
           + "so the keyboard and screen-reader behaviour is the browser's."
         }

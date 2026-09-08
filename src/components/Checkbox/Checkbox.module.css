@@ -113,21 +113,35 @@
 }
 
 /* -- disabled ------------------------------------------------------
-   Not in Figma; this is the library's existing treatment applied to both
-   boxes. Unchecked greys the outline. Checked keeps the FILLED square and the
-   reversed tick and only swaps the colour, so a disabled checked box still
-   reads as checked at a glance - the alternative, dropping to an outline,
-   loses the one thing the state is there to say.
+   Follows Button's convention exactly: the GROUND is --ui-surface-disabled and
+   everything drawn on it is --ui-text-disabled. One disabled look across the
+   library, so a dead checkbox and a dead button read as the same kind of
+   thing.
+
+   Checked keeps the FILLED square rather than dropping to an outline, which is
+   the one thing the state is there to say - only the two colours change.
 
    After the checked rules, so it wins on source order at equal specificity. */
 .root:has(.input:disabled) .glyph {
   color: var(--ui-checkbox-box-disabled, var(--ui-text-disabled));
 }
-/* Faint, not white. A white tick on the disabled grey read as an ACTIVE tick
-   that had merely lost its colour; the darker grey keeps the box legible as
-   checked while staying unmistakably inert. Figma: Text/Faint. */
+/* The square's ground, where a live checked box uses currentColor. Two classes
+   plus :disabled:checked outranks the plain checked rule, so this needs no
+   ordering trick. */
+.root:has(.input:disabled:checked) .box {
+  fill: var(--ui-checkbox-box-fill-disabled, var(--ui-surface-disabled));
+}
+/* The tick is the thing ON that ground, so it takes the same
+   --ui-text-disabled the outline and the label do.
+
+   It was --ui-text-faint for a while, one step darker, on the reasoning that a
+   lighter tick read as an ACTIVE tick that had merely lost its colour. That
+   reasoning was answered by moving the GROUND to --ui-surface-disabled instead
+   of leaving it at --ui-text-disabled: the tick no longer has to carry the
+   contrast on its own, because it is now dark-on-pale like every other
+   disabled mark in the library rather than darker-grey-on-grey. */
 .root:has(.input:disabled:checked) .check {
-  stroke: var(--ui-checkbox-check-disabled, var(--ui-text-faint));
+  stroke: var(--ui-checkbox-check-disabled, var(--ui-text-disabled));
 }
 .root:has(.input:disabled) .label {
   color: var(--ui-checkbox-label-disabled, var(--ui-text-disabled));
