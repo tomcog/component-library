@@ -14,11 +14,28 @@ import { assignRef } from "../../internal/assignRef";
 declare const process: { env: { NODE_ENV?: string } };
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
+/**
+ * What the button DOES, not what colour it is - the same axis `ButtonRound`
+ * carries. `danger` marks the destructive action: Delete, Remove, Discard.
+ *
+ * A tone, NOT a fifth variant, and the distinction is the point: danger cuts
+ * ACROSS the variants rather than joining them. A destructive action can be a
+ * filled button or a quiet ghost one, and both are still destructive - as a
+ * fifth variant it could only ever be one of them.
+ */
+export type ButtonTone = "primary" | "danger";
 export type ButtonSize = "xl" | "lg" | "md" | "sm";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Figma: Level */
   variant?: ButtonVariant;
+  /**
+   * `danger` recolours whichever `variant` this is onto `--ui-danger`, through
+   * the component's own override hooks - so a danger primary is a red fill and
+   * a danger ghost is a red rule, each keeping its variant's shape. The focus
+   * ring follows. Defaults to `primary`, which changes nothing.
+   */
+  tone?: ButtonTone;
   /** Figma: Size */
   size?: ButtonSize;
   /**
@@ -55,6 +72,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     variant = "primary",
+    tone = "primary",
     size = "lg",
     icon,
     iconEnd,
@@ -104,6 +122,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     styles.button,
     styles[size],
     styles[variant],
+    tone === "danger" ? styles.danger : null,
     loading ? styles.loading : null,
     className,
     child ? child.props.className : null,

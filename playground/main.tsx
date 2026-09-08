@@ -477,7 +477,18 @@ function App() {
         </p>
       </Section>
 
-      <Section title="Button" note="Every variant at every size. Hover and press to see the interaction states.">
+      <Section
+        title="Button"
+        note={
+          "Every variant at every size. Hover and press to see the interaction states. The last "
+          + "row is tone=\"danger\", which is not a fifth variant: it recolours whichever variant "
+          + "it is given onto --ui-danger, so a danger primary is a red fill and a danger ghost a "
+          + "red rule, each keeping its own shape. Danger cuts across the variants rather than "
+          + "joining them \u2014 a destructive action can be loud or quiet and is destructive either "
+          + "way. Tertiary takes it on the LABEL only: its grey ground is the variant, and "
+          + "recolouring that would make it a primary in disguise."
+        }
+      >
         {SIZES.map((s) => (
           <Row key={s} label={s}>
             {VARIANTS.map((v) => (
@@ -490,6 +501,13 @@ function App() {
             </Button>
           </Row>
         ))}
+        <Row label="danger">
+          {VARIANTS.map((v) => (
+            <Button key={v} variant={v} tone="danger" size="lg" icon={<Trash2 />}>
+              Delete
+            </Button>
+          ))}
+        </Row>
       </Section>
 
       <Section

@@ -41,6 +41,30 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.25.0 -> 0.26.0 gives Button the same `tone`.** `tone="danger"` recolours
+whichever `variant` it is given onto `--ui-danger`, so a danger primary is a
+red fill and a danger ghost a red rule, each keeping its variant's shape. The
+focus ring follows.
+
+**Purely additive.** A new optional prop defaulting to `primary`, which changes
+nothing; no token renamed or removed.
+
+**A tone, not a fifth variant** - this is the shape CLAUDE.md predicted when
+ButtonRound got `confirm`: danger cuts ACROSS the variants rather than joining
+them, because a destructive action can be loud or quiet and is destructive
+either way. As a variant it could only ever be one of them.
+
+It works by setting the component's OWN override hooks on the element rather
+than restating any variant's rules, which is what lets one tone recolour all
+four. Tertiary is the one that takes it on the LABEL alone: its grey ground is
+the variant, and recolouring that would make it a primary in disguise. Tints
+are derived from `--ui-danger` with the same mixes the primary and ghost
+variants use on `--ui-primary`.
+
+**NextJob's `.deleteBtn` hand-rolled exactly this** - seven declarations
+replicating the ghost variant's whole derived-tint scheme in danger - and it
+collapses to one prop.
+
 **0.24.0 -> 0.25.0 adds `tone="danger"` to ButtonRound.** The destructive
 action - Delete, Discard, Remove - turning the HOVER pair `--ui-danger` /
 `--ui-text-on-danger`. Resting and pressed are untouched, exactly as `confirm`
@@ -1910,10 +1934,16 @@ The rule is declared after the base `:hover` and still reads
 instance-level override of those hooks continues to win. The tone sets a
 default; it does not lock the colour.
 
-Only `ButtonRound` has a tone as of this change — that is what the design
-covers. If a rectangular confirm is ever needed, `Button` should get the same
-`tone` prop rather than a `variant`, because confirm cuts across the existing
-variants (a confirm can be primary-filled or ghost) instead of joining them.
+**`Button` has since gained the same axis**, as this paragraph predicted, and
+for exactly the reason it gave: `tone="danger"` cuts across the four variants
+rather than joining them. The prediction is left standing here because it was
+right, and because the two components' tones are deliberately not identical -
+ButtonRound's changes the HOVER pair only, where Button's recolours the resting
+appearance too. The difference is the drawing's: Figma gives ButtonRound a
+`State=Danger` cell and no `Danger Default`, which is what says "state"; Button
+has no danger cell at all, so its tone is a code-side retint of each variant.
+
+`confirm` is still ButtonRound's alone - no rectangular one has been needed.
 
 ### There are two round-button sets; only one is live
 

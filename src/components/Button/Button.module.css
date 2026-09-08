@@ -271,3 +271,50 @@
 .lg .icon svg, .lg .icon svg * { stroke-width: var(--ui-button-lg-icon-stroke); }
 .md .icon svg, .md .icon svg * { stroke-width: var(--ui-button-md-icon-stroke); }
 .sm .icon svg, .sm .icon svg * { stroke-width: var(--ui-button-sm-icon-stroke); }
+
+/* -- tone="danger" ------------------------------------------- */
+/* The destructive action - Delete, Remove, Discard - in whichever variant it
+   is drawn as. Declared LAST so it wins on source order against the variant
+   rules above, which match at the same specificity.
+
+   It works by setting the component's OWN override hooks on the element rather
+   than by restating any variant's rules. That is what lets one tone recolour
+   all four: each hook is already variant-scoped, so a danger primary is a red
+   fill and a danger ghost a red rule, each keeping its variant's shape. It is
+   also why this is a tone and not a fifth variant - danger cuts across the
+   variants instead of joining them, exactly as `confirm` does on ButtonRound.
+
+   The tints are DERIVED from --ui-danger with the same mixes the primary
+   variant uses on --ui-primary (22.3% and 40.7% black; 15% and 48% toward the
+   raised surface for ghost), so an app that sets its own danger colour gets a
+   coherent hover and press rather than a pinned red. The one number that is
+   not shared is the ghost pressed LABEL, which mixes toward --ui-text-default
+   so it moves away from its fill in either theme - see the ghost note above.
+
+   An app can still override any single hook: these are declared in @layer ui,
+   so an unlayered app rule on the same element beats them. The tone sets
+   defaults; it does not lock the colour. */
+.danger {
+  --ui-button-focus-ring: var(--ui-danger);
+
+  --ui-button-primary-bg: var(--ui-danger);
+  --ui-button-primary-text: var(--ui-text-on-danger);
+  --ui-button-primary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
+
+  /* Secondary keeps its inverse ground at rest - that IS the variant - and
+     turns danger on interaction, mirroring how it borrows primary today. */
+  --ui-button-secondary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
+
+  /* Tertiary is the neutral grey fill by definition, so only its label carries
+     the tone; recolouring the ground would make it a primary in disguise. */
+  --ui-button-tertiary-text: var(--ui-danger);
+
+  --ui-button-ghost-text: var(--ui-danger);
+  --ui-button-ghost-border: var(--ui-danger);
+  --ui-button-ghost-bg-hover: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
+  --ui-button-ghost-text-hover: var(--ui-danger);
+  --ui-button-ghost-bg-active: color-mix(in srgb, var(--ui-danger) 48%, var(--ui-surface-raised));
+  --ui-button-ghost-text-active: color-mix(in srgb, var(--ui-danger), var(--ui-text-default) 25%);
+}
