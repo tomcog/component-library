@@ -41,10 +41,21 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
-**0.25.0 -> 0.26.0 gives Button the same `tone`.** `tone="danger"` recolours
-whichever `variant` it is given onto `--ui-danger`, so a danger primary is a
-red fill and a danger ghost a red rule, each keeping its variant's shape. The
-focus ring follows.
+**0.26.0 -> 0.26.1 makes Button's danger rest neutral**, matching ButtonRound.
+It shipped for one version recolouring the RESTING appearance too - a danger
+ghost rested with a red rule - which put two contracts on one prop name. It now
+changes the HOVER and PRESSED pairs only, and at rest a danger button is
+indistinguishable from its variant. The focus ring is no longer retinted
+either, for the same reason ButtonRound never retints it.
+
+**Breaking only in appearance, and only if you were using it**, which was one
+button in NextJob for a few minutes. The trade is now stated where the tone is:
+on a palette that splits `--ui-primary` from `--ui-danger`, a Delete RESTS in
+the CTA colour and turns red when reached for. That is the cost of one resting
+rhythm, and it is the cost ButtonRound already pays.
+
+**0.25.0 -> 0.26.0 gives Button the same `tone`.** `tone="danger"` on whichever
+`variant` it is given - see 0.26.1 above for the contract it settled on.
 
 **Purely additive.** A new optional prop defaulting to `primary`, which changes
 nothing; no token renamed or removed.
@@ -1939,9 +1950,9 @@ for exactly the reason it gave: `tone="danger"` cuts across the four variants
 rather than joining them. The prediction is left standing here because it was
 right, and because the two components' tones are deliberately not identical -
 ButtonRound's changes the HOVER pair only, where Button's recolours the resting
-appearance too. The difference is the drawing's: Figma gives ButtonRound a
-`State=Danger` cell and no `Danger Default`, which is what says "state"; Button
-has no danger cell at all, so its tone is a code-side retint of each variant.
+appearance too. The two now carry the SAME contract - hover and press only,
+resting appearance untouched - which is what the `State=Danger` cell with no
+`Danger Default` says, and what Button's tone was corrected to in 0.26.1.
 
 `confirm` is still ButtonRound's alone - no rectangular one has been needed.
 

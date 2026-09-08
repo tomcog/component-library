@@ -16,7 +16,8 @@ declare const process: { env: { NODE_ENV?: string } };
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 /**
  * What the button DOES, not what colour it is - the same axis `ButtonRound`
- * carries. `danger` marks the destructive action: Delete, Remove, Discard.
+ * carries, with the same contract: it changes the HOVER and PRESSED pairs and
+ * leaves the resting appearance to the variant.
  *
  * A tone, NOT a fifth variant, and the distinction is the point: danger cuts
  * ACROSS the variants rather than joining them. A destructive action can be a
@@ -30,10 +31,9 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Figma: Level */
   variant?: ButtonVariant;
   /**
-   * `danger` recolours whichever `variant` this is onto `--ui-danger`, through
-   * the component's own override hooks - so a danger primary is a red fill and
-   * a danger ghost is a red rule, each keeping its variant's shape. The focus
-   * ring follows. Defaults to `primary`, which changes nothing.
+   * `danger` turns whichever `variant` this is red on HOVER and PRESS, leaving
+   * its resting appearance alone - the same contract `ButtonRound`'s tones
+   * carry. Defaults to `primary`, which changes nothing.
    */
   tone?: ButtonTone;
   /** Figma: Size */

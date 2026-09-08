@@ -481,12 +481,13 @@ function App() {
         title="Button"
         note={
           "Every variant at every size. Hover and press to see the interaction states. The last "
-          + "row is tone=\"danger\", which is not a fifth variant: it recolours whichever variant "
-          + "it is given onto --ui-danger, so a danger primary is a red fill and a danger ghost a "
-          + "red rule, each keeping its own shape. Danger cuts across the variants rather than "
-          + "joining them \u2014 a destructive action can be loud or quiet and is destructive either "
-          + "way. Tertiary takes it on the LABEL only: its grey ground is the variant, and "
-          + "recolouring that would make it a primary in disguise."
+          + "row is tone=\"danger\", which is not a fifth variant: danger cuts across the variants "
+          + "rather than joining them \u2014 a destructive action can be loud or quiet and is "
+          + "destructive either way. Hover and press each one: like ButtonRound's tones it changes "
+          + "those pairs ONLY, so at rest a danger button is indistinguishable from its variant. "
+          + "The red answers the pointer arriving rather than competing as a second resting style. "
+          + "On a palette that splits --ui-primary from --ui-danger that means a Delete rests in "
+          + "the CTA colour \u2014 the cost of one resting rhythm."
         }
       >
         {SIZES.map((s) => (

@@ -274,47 +274,57 @@
 
 /* -- tone="danger" ------------------------------------------- */
 /* The destructive action - Delete, Remove, Discard - in whichever variant it
-   is drawn as. Declared LAST so it wins on source order against the variant
-   rules above, which match at the same specificity.
+   is drawn as.
 
-   It works by setting the component's OWN override hooks on the element rather
-   than by restating any variant's rules. That is what lets one tone recolour
-   all four: each hook is already variant-scoped, so a danger primary is a red
-   fill and a danger ghost a red rule, each keeping its variant's shape. It is
-   also why this is a tone and not a fifth variant - danger cuts across the
-   variants instead of joining them, exactly as `confirm` does on ButtonRound.
+   It changes the HOVER and PRESSED pairs ONLY; the resting appearance is the
+   variant's own, untouched. That is the same contract `ButtonRound`'s tones
+   carry, and the reasoning is theirs: the red is a response to the pointer
+   arriving, not a second resting style competing with the variant. A row of
+   buttons keeps one resting rhythm and answers differently under the cursor.
 
-   The tints are DERIVED from --ui-danger with the same mixes the primary
-   variant uses on --ui-primary (22.3% and 40.7% black; 15% and 48% toward the
-   raised surface for ghost), so an app that sets its own danger colour gets a
-   coherent hover and press rather than a pinned red. The one number that is
-   not shared is the ghost pressed LABEL, which mixes toward --ui-text-default
-   so it moves away from its fill in either theme - see the ghost note above.
+   The trade, stated because it is real: on a palette that splits `--ui-primary`
+   from `--ui-danger`, a Delete button RESTS in the CTA colour and only turns
+   red when reached for. That is the cost of one resting rhythm, and it is the
+   cost ButtonRound already pays.
 
-   An app can still override any single hook: these are declared in @layer ui,
-   so an unlayered app rule on the same element beats them. The tone sets
-   defaults; it does not lock the colour. */
+   Backgrounds go through the component's own override hooks, which is what
+   lets one tone reach all four variants. The label colours need explicit rules
+   because three of the variants' hover/press text is not behind a hook -
+   `.danger` plus the variant is two classes, so these outrank the variant's
+   own state rules whatever the source order, and each still reads its hook
+   first so an app override wins.
+
+   Tints derive from `--ui-danger` with the mixes each variant already uses on
+   `--ui-primary`, so an app setting its own danger colour gets a coherent
+   press rather than a pinned red.
+
+   The FOCUS RING is deliberately not retinted. It stays `--ui-primary`, as
+   ButtonRound's does at every tone: a ring is an interaction affordance, and a
+   red ring around a button still resting in the brand colour would describe a
+   state the button is not in. */
 .danger {
-  --ui-button-focus-ring: var(--ui-danger);
+  --ui-button-primary-bg-hover: var(--ui-danger);
+  --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
 
-  --ui-button-primary-bg: var(--ui-danger);
-  --ui-button-primary-text: var(--ui-text-on-danger);
-  --ui-button-primary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
-  --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
+  --ui-button-secondary-bg-hover: var(--ui-danger);
+  --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
 
-  /* Secondary keeps its inverse ground at rest - that IS the variant - and
-     turns danger on interaction, mirroring how it borrows primary today. */
-  --ui-button-secondary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
-  --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
+  --ui-button-tertiary-bg-hover: var(--ui-danger);
+  --ui-button-tertiary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
 
-  /* Tertiary is the neutral grey fill by definition, so only its label carries
-     the tone; recolouring the ground would make it a primary in disguise. */
-  --ui-button-tertiary-text: var(--ui-danger);
-
-  --ui-button-ghost-text: var(--ui-danger);
-  --ui-button-ghost-border: var(--ui-danger);
   --ui-button-ghost-bg-hover: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
   --ui-button-ghost-text-hover: var(--ui-danger);
   --ui-button-ghost-bg-active: color-mix(in srgb, var(--ui-danger) 48%, var(--ui-surface-raised));
   --ui-button-ghost-text-active: color-mix(in srgb, var(--ui-danger), var(--ui-text-default) 25%);
+}
+
+/* Secondary and tertiary fill danger on interaction, so their labels have to
+   move to the colour that sits on it. Secondary hard-codes --ui-text-on-primary
+   in its own state rules and tertiary keeps its resting label, so neither can
+   be reached by a hook alone. */
+.danger.secondary:hover:not(:disabled),
+.danger.secondary:active:not(:disabled),
+.danger.tertiary:hover:not(:disabled),
+.danger.tertiary:active:not(:disabled) {
+  color: var(--ui-button-danger-text-on-fill, var(--ui-text-on-danger));
 }
