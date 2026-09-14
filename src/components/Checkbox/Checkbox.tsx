@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import type { InputHTMLAttributes, ReactNode } from "react";
 import styles from "./Checkbox.module.css";
+import hidden from "../../internal/visuallyHidden.module.css";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
@@ -19,6 +20,12 @@ export interface CheckboxProps
   label?: ReactNode;
   /** Figma: Size. Defaults to `lg`. */
   size?: CheckboxSize;
+  /**
+   * Hide the label on screen while keeping it as the control's accessible
+   * name. Defaults to `false`: the label shows. Pass a `label` with it -
+   * a hidden label is still the name a screen reader announces.
+   */
+  hideLabel?: boolean;
 }
 
 /**
@@ -34,7 +41,7 @@ export interface CheckboxProps
  * input, which is what the ref points at.
  */
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
-  { label, size = "lg", className, ...props },
+  { label, hideLabel = false, size = "lg", className, ...props },
   ref,
 ) {
   if (process.env.NODE_ENV !== "production") {
@@ -90,7 +97,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           <path className={styles.knockout} d="M12.667 1.5C13.6793 1.50018 14.4998 2.32074 14.5 3.33301V12.667C14.4998 13.6793 13.6793 14.4998 12.667 14.5H3.33301C2.32074 14.4998 1.50018 13.6793 1.5 12.667V3.33301C1.50018 2.32074 2.32074 1.50018 3.33301 1.5H12.667ZM11.833 5.31055C11.6098 5.08739 11.2476 5.08739 11.0244 5.31055L6.85742 9.47754L4.97559 7.5957C4.75242 7.37257 4.39014 7.37255 4.16699 7.5957C3.94392 7.81886 3.94389 8.18116 4.16699 8.4043L6.45312 10.6895C6.67626 10.9126 7.03758 10.9125 7.26074 10.6895L11.833 6.11816C12.0558 5.89511 12.0557 5.53366 11.833 5.31055Z" />
         </svg>
       </span>
-      {label != null ? <span className={styles.label}>{label}</span> : null}
+      {label != null ? (
+        <span className={hideLabel ? hidden.visuallyHidden : styles.label}>{label}</span>
+      ) : null}
     </label>
   );
 });

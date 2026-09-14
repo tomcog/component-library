@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useEffect, useId, useRef } from "react";
 import type { ReactNode, SelectHTMLAttributes } from "react";
 import { assignRef } from "../../internal/assignRef";
 import styles from "./InputSelect.module.css";
+import hidden from "../../internal/visuallyHidden.module.css";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
@@ -18,6 +19,12 @@ export interface InputSelectProps extends SelectHTMLAttributes<HTMLSelectElement
   icon?: ReactNode;
   /** The `<option>` elements. */
   children: ReactNode;
+  /**
+   * Hide the label on screen while keeping it as the control's accessible
+   * name. Defaults to `false`: the label shows. Pass a `label` with it -
+   * a hidden label is still the name a screen reader announces.
+   */
+  hideLabel?: boolean;
 }
 
 /**
@@ -33,7 +40,7 @@ export interface InputSelectProps extends SelectHTMLAttributes<HTMLSelectElement
  * `<select>`, and the ref points at it.
  */
 export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(function InputSelect(
-  { label, icon, id, className, children, ...props },
+  { label, hideLabel = false, icon, id, className, children, ...props },
   ref,
 ) {
   const autoId = useId();
@@ -175,7 +182,7 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
         </span>
       </div>
       {label != null ? (
-        <label className={styles.label} htmlFor={selectId}>
+        <label className={hideLabel ? hidden.visuallyHidden : styles.label} htmlFor={selectId}>
           {label}
         </label>
       ) : null}

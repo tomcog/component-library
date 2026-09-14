@@ -603,6 +603,9 @@ function App() {
           <InputText style={{ width: 160 }} label="Company" defaultValue="Acme" />
           <InputTextarea style={{ width: 260 }} label="Description" rows={2} />
         </Row>
+        <Row label="hideLabel">
+          <InputTextarea style={{ width: 260 }} label="Description" hideLabel rows={2} placeholder="label hidden, still named" />
+        </Row>
         <Row label="auto-resize">
           <InputTextarea
             style={{ width: 260 }}
@@ -645,6 +648,7 @@ function App() {
             <Checkbox size={s} label="Unchecked" defaultChecked={false} />
             <Checkbox size={s} label="Disabled" disabled />
             <Checkbox size={s} label="Disabled checked" disabled defaultChecked />
+            <Checkbox size={s} label="Hidden label" hideLabel defaultChecked />
           </Row>
         ))}
       </Section>
@@ -1096,6 +1100,9 @@ function App() {
         <Row label="no label">
           <InputText style={{ width: 220 }} aria-label="Search" icon={<Layers />} placeholder="aria-label instead" />
         </Row>
+        <Row label="hideLabel">
+          <InputText style={{ width: 220 }} label="Search" hideLabel icon={<Layers />} placeholder="label hidden, still named" />
+        </Row>
         <Row label="date">
           <InputText
             style={{ width: 220 }}
@@ -1142,6 +1149,12 @@ function App() {
         </Row>
         <Row label="leading icon">
           <InputSelect style={{ width: 220 }} label="Section" icon={<Layers />} defaultValue="Design">
+            <option>Design</option>
+            <option>Engineering</option>
+          </InputSelect>
+        </Row>
+        <Row label="hideLabel">
+          <InputSelect style={{ width: 220 }} label="Section" hideLabel defaultValue="Design">
             <option>Design</option>
             <option>Engineering</option>
           </InputSelect>

@@ -41,6 +41,26 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.30.0 -> 0.31.0 adds `hideLabel` to every input control** - InputText,
+InputSelect, InputTextarea and Checkbox. Defaults to `false`, so the label
+shows and no consumer changes. With `hideLabel` the `label` is still rendered
+and still names the control (`htmlFor`, or Checkbox's wrapping `<label>`); it is
+only removed from view by `src/internal/visuallyHidden.module.css`, one shared
+class rather than four copies. Prefer `label="…" hideLabel` over `aria-label`
+when a design drops the visible label: the name stays in the same prop it would
+otherwise occupy, and turning the label back on is one boolean. Requested for
+NextDraw Studio, which hides the labels of its paper-size and drawing-tool
+selects.
+
+The hidden label is out of flow, so the field closes up to its own height
+(InputSelect 46 -> 32 measured in the playground) and Checkbox's slot-to-label
+`gap` leaves no hole (the root measured exactly the slot, 24/20/16).
+Named `hideLabel`, not `showLabel`, so the default is the absent boolean
+rather than `showLabel={false}` - the same shape as `autoResize` and `loading`.
+
+**Minor, not patch** - a new prop on four public components. **Figma has no
+counterpart yet**: see Open divergences #24.
+
 **0.30.0 also adds SegmentedControl `size="sm"`** - a 24px segment on the
 Label SM step (10/12), padding-x 8, so the track stands 32. Purely additive: a
 third value on an existing prop and two new tokens, `--ui-segmented-sm-height`
@@ -1524,6 +1544,15 @@ a fix pending, per the rule above.
 4. ~~Dark mode.~~ **Resolved.** The collection has Light and Dark modes and
    the eleven semantics that move are aliased to the same primitives
    `tokens.css` uses. Verified: no primitive differs between the modes.
+
+24. **Input labels have no hidden state in Figma.** Code 0.31.0 added
+   `hideLabel` to InputText, InputSelect, InputTextarea and Checkbox; the
+   Figma components still always draw their label. Code went first because the
+   prop changes no token and no visible default. The Figma side is a `Label?`
+   boolean on `Input-Text` (`553:5455`), the Input-Select and Input-Textarea
+   sets and the Checkbox set, hiding the label layer so the field hugs its own
+   height - to be done as its own session, per "Which direction to make a
+   change".
 
 ### Which direction to make a change
 

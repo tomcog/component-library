@@ -1,0 +1,15 @@
+/* Hides text on screen while keeping it in the accessibility tree, so a hidden
+   label still names its control. Out of flow, so a flex `gap` beside it
+   (Checkbox's slot-to-label gap) does not leave a hole. Shared by every input
+   control's `hideLabel`. */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

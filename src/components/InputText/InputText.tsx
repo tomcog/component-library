@@ -1,6 +1,7 @@
 import { forwardRef, useId, useState } from "react";
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from "react";
 import styles from "./InputText.module.css";
+import hidden from "../../internal/visuallyHidden.module.css";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
@@ -25,6 +26,12 @@ export interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
    * baking in a disclosure chevron would say it was. Both slots may be set.
    */
   iconEnd?: ReactNode;
+  /**
+   * Hide the label on screen while keeping it as the control's accessible
+   * name. Defaults to `false`: the label shows. Pass a `label` with it -
+   * a hidden label is still the name a screen reader announces.
+   */
+  hideLabel?: boolean;
 }
 
 /**
@@ -37,7 +44,7 @@ export interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
  * `value`, `onChange`, `disabled` and friends reach the control.
  */
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(
-  { label, icon, iconEnd, id, type = "text", className, ...props },
+  { label, hideLabel = false, icon, iconEnd, id, type = "text", className, ...props },
   ref,
 ) {
   const autoId = useId();
@@ -111,7 +118,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
         {slot(iconEnd)}
       </div>
       {label != null ? (
-        <label className={styles.label} htmlFor={inputId}>
+        <label className={hideLabel ? hidden.visuallyHidden : styles.label} htmlFor={inputId}>
           {label}
         </label>
       ) : null}

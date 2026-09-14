@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useId, useLayoutEffect, useRef } from "react";
 import type { ReactNode, TextareaHTMLAttributes } from "react";
 import styles from "./InputTextarea.module.css";
+import hidden from "../../internal/visuallyHidden.module.css";
 import { assignRef } from "../../internal/assignRef";
 
 // Same literal-expression note as Button: bundlers substitute this exact
@@ -19,6 +20,12 @@ export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaE
    * grabber. `rows` still sets the starting height, so it is the minimum.
    */
   autoResize?: boolean;
+  /**
+   * Hide the label on screen while keeping it as the control's accessible
+   * name. Defaults to `false`: the label shows. Pass a `label` with it -
+   * a hidden label is still the name a screen reader announces.
+   */
+  hideLabel?: boolean;
 }
 
 /**
@@ -36,7 +43,7 @@ export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaE
  * points at.
  */
 export const InputTextarea = forwardRef<HTMLTextAreaElement, InputTextareaProps>(
-  function InputTextarea({ label, autoResize = false, id, rows = 3, className, ...props }, ref) {
+  function InputTextarea({ label, hideLabel = false, autoResize = false, id, rows = 3, className, ...props }, ref) {
     const autoId = useId();
     const inputId = id ?? autoId;
     const innerRef = useRef<HTMLTextAreaElement | null>(null);
@@ -91,7 +98,7 @@ export const InputTextarea = forwardRef<HTMLTextAreaElement, InputTextareaProps>
           />
         </div>
         {label != null ? (
-          <label className={styles.label} htmlFor={inputId}>
+          <label className={hideLabel ? hidden.visuallyHidden : styles.label} htmlFor={inputId}>
             {label}
           </label>
         ) : null}
