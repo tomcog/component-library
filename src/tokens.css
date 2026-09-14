@@ -642,11 +642,11 @@
 
   /* -- SEGMENTED CONTROL -------------------------------------
      Figma: the `Segment` set (555:14966) and `SegmentedTrack` (558:15011),
-     both carrying a Size axis of LG | MD.
+     both carrying a Size axis of LG | MD | SM.
 
      The TRACK is a pale pill holding the segments; a segment is a pill inside
      it, and the selected one is the only one with a ground. Track height is
-     derived, not declared: 4 + the segment + 4, so LG is 48 and MD 40. Only
+     derived, not declared: 4 + the segment + 4, so LG is 48, MD 40 and SM 32. Only
      the segment is given a height, which is the same decomposition Button
      uses - size by height, never by vertical padding. */
   --ui-segmented-track-radius: 99px;
@@ -666,6 +666,12 @@
   --ui-segmented-md-padding-x: 12px;
   --ui-segmented-md-font-size: var(--ui-type-label-md-font-size);
   --ui-segmented-md-line-height: var(--ui-type-label-md-line-height);
+  /* SM exists because NextJob's section-header sort toggle wants a 32 track.
+     The padding steps 16 / 12 / 8 and the type steps down the label scale. */
+  --ui-segmented-sm-height: 24px;
+  --ui-segmented-sm-padding-x: 8px;
+  --ui-segmented-sm-font-size: var(--ui-type-label-sm-font-size);
+  --ui-segmented-sm-line-height: var(--ui-type-label-sm-line-height);
   --ui-segmented-font-weight: var(--ui-type-label-font-weight);
 
   --ui-card-radius: 8px;

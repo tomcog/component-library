@@ -41,6 +41,15 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.30.0 also adds SegmentedControl `size="sm"`** - a 24px segment on the
+Label SM step (10/12), padding-x 8, so the track stands 32. Purely additive: a
+third value on an existing prop and two new tokens, `--ui-segmented-sm-height`
+and `--ui-segmented-sm-padding-x`. Added for NextJob's section-header sort
+toggle. Figma carries it too: `Segment` has `Size=SM` in all four states (icon
+12, padding-y 6), `SegmentedTrack`'s unfinished `Size=Size3` variant was renamed
+`Size=SM`, and `Segmented Size/SM/Height` and `/Padding X` exist in both modes
+with their `--ui-*` code syntax. Not yet published from Figma.
+
 **0.29.0 -> 0.30.0 tightens Button's padding at three of its four sizes.**
 
     --ui-button-xl-padding-x   24 -> 16
@@ -3441,7 +3450,7 @@ instance.
 
 One choice from a short, fixed set - a filter row, a sort order. Figma: the
 `SegmentedTrack` set (558:15011) holding the `Segment` set (555:14966), both
-carrying a `Size` axis of LG | MD.
+carrying a `Size` axis of LG | MD | SM.
 
 ```tsx
 <SegmentedControl aria-label="Sort order">
@@ -3454,6 +3463,7 @@ carrying a `Size` axis of LG | MD.
     segment  radius 99, icon gap 8
     LG       segment 40 on 14/20, padding-x 16, so the track stands 48
     MD       segment 32 on 12/16, padding-x 12, so the track stands 40
+    SM       segment 24 on 10/12, padding-x 8, so the track stands 32
 
 ### It is a radiogroup, and that is the whole distinction
 
@@ -3597,8 +3607,9 @@ instances keeps rendering the old ones until someone accepts.
   `- LG` are loose groups posing three hand-placed segments, and their spacing
   disagrees with the set (6 and 8 against the track's 4). The SET is the spec -
   same call as Card's 350x200 frame.
-- **No `sm` or `xl`.** A step exists when something uses one, the rule that cut
-  the type scale from six to four and keeps Tabs at two sizes.
+- **No `xl`.** A step exists when something uses one, the rule that cut
+  the type scale from six to four. `sm` met that rule when NextJob's
+  section-header sort toggle wanted a 32 track.
 
 ## Component API conventions
 

@@ -1,6 +1,6 @@
 /* SegmentedControl - one choice from a short, fixed set. Figma: the
    `SegmentedTrack` set (558:15011) and the `Segment` set (555:14966), both
-   carrying a Size axis of LG | MD.
+   carrying a Size axis of LG | MD | SM.
 
    Not to be confused with Tabs or Pill. Tabs swaps what is shown inside the
    page and is a tablist; Pill is one independent toggle. This is N options of
@@ -16,8 +16,8 @@
   border-radius: var(--ui-segmented-track-radius);
   padding: var(--ui-segmented-track-padding);
   gap: var(--ui-segmented-track-gap);
-  /* Height is DERIVED - padding + the segment - so the track is 48 at LG and
-     40 at MD without either being declared. Giving it a height as well would
+  /* Height is DERIVED - padding + the segment - so the track is 48 at LG, 40
+     at MD and 32 at SM without any being declared. Giving it a height as well would
      be two numbers for one measurement, and they would disagree the moment
      the segment moved. */
 }
@@ -50,7 +50,8 @@
    pill that cannot accommodate it.
 
    Height and padding-inline, not padding-block - the same decomposition
-   Button uses. Padding Y is derived (LG (40-20)/2 = 10, MD (32-16)/2 = 8) and
+   Button uses. Padding Y is derived (LG (40-20)/2 = 10, MD (32-16)/2 = 8,
+   SM (24-12)/2 = 6) and
    stating it as well would be two numbers for one measurement. */
 .lg .segment {
   height: var(--ui-segmented-lg-height);
@@ -63,6 +64,12 @@
   padding-inline: var(--ui-segmented-md-padding-x);
   font-size: var(--ui-segmented-md-font-size);
   line-height: var(--ui-segmented-md-line-height);
+}
+.sm .segment {
+  height: var(--ui-segmented-sm-height);
+  padding-inline: var(--ui-segmented-sm-padding-x);
+  font-size: var(--ui-segmented-sm-font-size);
+  line-height: var(--ui-segmented-sm-line-height);
 }
 
 /* Hovering an idle segment changes the LABEL and nothing else. Figma draws the
@@ -132,6 +139,10 @@
 .md .icon {
   width: var(--ui-segmented-md-line-height);
   height: var(--ui-segmented-md-line-height);
+}
+.sm .icon {
+  width: var(--ui-segmented-sm-line-height);
+  height: var(--ui-segmented-sm-line-height);
 }
 .icon > svg,
 .icon > img {

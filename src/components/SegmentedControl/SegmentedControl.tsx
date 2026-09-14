@@ -8,10 +8,11 @@ declare const process: { env: { NODE_ENV?: string } };
  * Figma: the `Size` axis on both `Segment` (555:14966) and `SegmentedTrack`
  * (558:15011).
  *
- * Two steps, because two are drawn - the same rule Tabs follows. `xl` and `sm`
- * are not missing, they are unbuilt.
+ * Three steps, each because something uses it. `sm` was added for NextJob's
+ * section-header sort toggle, which wants a 32px track. `xl` is not missing,
+ * it is unbuilt.
  */
-export type SegmentedControlSize = "lg" | "md";
+export type SegmentedControlSize = "lg" | "md" | "sm";
 
 /**
  * Which ground the SELECTED segment takes. `primary` is the brand fill;
@@ -32,7 +33,7 @@ export interface SegmentedControlProps
   children: ReactNode;
   /**
    * `lg` is a 40px segment on 14/20 in a 48px track; `md` is 32 on 12/16 in a
-   * 40px track. Nothing else moves - the radius, the 4px inset, the gap
+   * 40px track; `sm` is 24 on 10/12 in a 32px track. Nothing else moves - the radius, the 4px inset, the gap
    * between segments and the icon gap are shared, so an MD control is the same
    * object set smaller.
    */

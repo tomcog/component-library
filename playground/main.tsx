@@ -10,7 +10,7 @@ const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
-const SEGMENTED_SIZES: SegmentedControlSize[] = ["lg", "md"];
+const SEGMENTED_SIZES: SegmentedControlSize[] = ["lg", "md", "sm"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
 /* Faces to audition. Each is a value for --ui-font-primary and nothing more -
