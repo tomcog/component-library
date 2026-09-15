@@ -559,6 +559,43 @@
      needs it; letterforms set for lowercase run tight in caps. */
   --ui-input-text-label-letter-spacing: 0.02em;
 
+  /* MD: the compact field. Figma: `Size=MD` (725:703), beside `Size=LG`
+     (553:5455) in the same set. Shared by InputText, InputSelect and
+     InputTextarea exactly as the unsized tokens above are.
+
+     The unsized tokens above ARE the LG step and keep their names: apps
+     override them today (NextJob and NextDraw both do), so renaming them to
+     `-lg-` would silently break those overrides. `size="md"` maps each of these
+     onto its unsized counterpart at the component's root - see the `.md` rule
+     in each module - so every rule and hook the three components already read
+     keeps working, and only the numbers change.
+
+     Only what differs is here. Inline padding (4), radius (2), rule (1), label
+     gap (2), label inset (4), label line height (12) and letter-spacing are
+     the same at both sizes.
+
+     Height and vertical padding are the RENDERED geometry, not Figma's padding
+     values. The MD frame is fixed at 24 but carries padding 6/3 around an 18
+     line box, which is 28 - more than the frame - so Figma centres the text
+     in what is left and draws its line box at y 4.5. 4 + 18 + 1 + the 1px rule
+     is 24 exactly and lands within half a pixel of that, the same half-pixel
+     LG already carries (see docs/components/InputText.md).
+
+     The value is 12/18 Regular, the same numbers Checkbox MD's label uses, and
+     like those they are the component's own rather than a label-scale alias:
+     Label MD is 12/16. The label is 8px - smaller than any step on the scale -
+     because that is what the design draws; its 12 line height is Label SM's,
+     which Figma binds. At 8px uppercase it is the smallest string the library
+     renders, and it repeats a value already visible in the field. */
+  --ui-input-text-md-height: 24px;
+  --ui-input-text-md-padding-top: 4px;
+  --ui-input-text-md-padding-bottom: 1px;
+  --ui-input-text-md-gap: 6px;
+  --ui-input-text-md-icon-size: 12px;
+  --ui-input-text-md-font-size: 12px;
+  --ui-input-text-md-line-height: 18px;
+  --ui-input-text-md-label-font-size: 8px;
+
   /* Spinner. The brand mark with its ring turning, from tomcoggia.com.
      These are animation periods, not state transitions, which is why they do
      not use --ui-motion-fast/base: those two describe how quickly a thing

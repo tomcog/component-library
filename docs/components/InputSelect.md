@@ -19,6 +19,13 @@ of that, and it keeps all of it here - the menu is styled without giving any of
 it up. See *The menu* below. `appearance: none` removes the UA arrow, and the
 chevron replaces it.
 
+## `size="md"`
+
+The same two sizes as InputText, through the same remap - see
+`InputText.md`. At MD the field is 24, the chevron 12, and a menu row 24: a row
+is the field's height by construction, so the alignment arithmetic below works
+unchanged. Measured: picker alignment enabled, option height 24px.
+
 ## It shares InputText's tokens rather than restating them
 
 Every measurement reads InputText's token behind an `--ui-input-select-*` hook:

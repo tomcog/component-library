@@ -5,10 +5,12 @@
 > or `CHANGELOG.md` under the same heading.
 
 A single-line text field: an underlined box with its label beneath it. Figma:
-`Input-Text` (`553:5455`), drawn as one state.
+set `725:702` (named `Button` - see open divergence #25), `Size` = LG
+(`553:5455`) | MD (`725:703`), each drawn as one state.
 
 ```tsx
 <InputText label="Input label" icon={<Layers />} value={v} onChange={…} />
+<InputText size="md" label="Input label" icon={<Layers />} value={v} onChange={…} />
 ```
 
 `className` lands on the outer wrapper — the component's root box — while every
@@ -24,6 +26,62 @@ focus.
 
 **No width token.** Figma hugs the field to 95px; that is the component posed
 on the canvas, not a property of it. Same call as Card's 350x200 frame.
+
+## Two sizes: `lg` (default) and `md`
+
+    size  field  pad (top/bottom)  value         icon  gap  label
+    lg    32     8 / 3             14/20 Regular 16    8    10/12 Medium
+    md    24     4 / 1             12/18 Regular 12    6    8/12 Medium
+
+Inline padding 4, radius 2, the 1px rule, label gap 2, label inset 4 and the
+label's 0.02em uppercase tracking are shared. `size` is on InputText,
+InputSelect and InputTextarea alike, so fields of one size line up - measured in
+the playground: an MD text field, select and textarea put their values on the
+same pixel row.
+
+**The unsized tokens are LG, and MD remaps them.** `--ui-input-text-height` and
+friends kept their names because apps override them (NextJob's CRM,
+SmartCapture and TaskLinkSelector; NextDraw's plot options). `size="md"` adds
+`src/internal/inputSize.module.css` to the root, which sets each unsized token
+to its `--ui-input-text-md-*` counterpart on that element. Nothing else in the
+three modules knows sizes exist - every rule and every `--ui-input-select-*` /
+`--ui-input-textarea-*` hook reads the same names it always did, and
+InputSelect's picker alignment picks up the 24px row without a change.
+
+Two consequences worth knowing:
+
+- **Retune MD through `--ui-input-text-md-*`**, not the unsized names. The
+  remap is declared on the element, so an unsized value set on `:root` or an
+  ancestor does not reach an MD field.
+- **A component hook still wins at both sizes.** `--ui-input-select-height` set
+  on an ancestor sizes every select, LG or MD, as it did before.
+
+**The native `size` attribute is omitted** from the props (a character width on
+`<input>`, an always-open listbox on `<select>`), the same trade Checkbox makes.
+
+### MD is the rendered Figma geometry, not its padding values
+
+Figma's MD frame is **fixed** at 24 but carries padding 6/3 around an 18px line
+box - 28px of content in a 24px frame. Auto-layout centres the text in what is
+left, so the line box renders at y 4.5. The code uses 4 + 18 + 1 + the 1px rule
+= 24, which lands within half a pixel of that render. Figma's 6 top padding is
+raw and its 3 bottom is `Input/Padding Bottom` - neither is what the canvas
+shows. See open divergence #25.
+
+### The MD type is off the label scale, deliberately
+
+The value is 12/18: the same numbers Checkbox MD's label uses, and like those
+they are the component's own rather than aliases - Label MD is 12/16. Figma
+sets it with an `Input Text MD` text style that binds no variables.
+
+The label is **8px**, below the smallest scale step (Label SM, 10). That is
+what the design draws; its 12 line height is Label SM's, which Figma binds.
+This does not contradict "the label snaps to Label SM" below - that was about an
+11 that sat one pixel off an existing step; 8 is a deliberate step down with
+nothing near it. It is the smallest string this library renders: faint,
+uppercase and 8px, justified only because it repeats a value already visible in
+the field above it. An app that needs it larger sets
+`--ui-input-text-md-label-font-size`.
 
 ## Three bindings were rebound to the semantic tier on arrival
 

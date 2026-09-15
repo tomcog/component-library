@@ -9,6 +9,26 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased (0.35.0) adds `size="md"` to InputText, InputSelect and
+InputTextarea** - a 24px field with 12/18 type, 12px icons, a 6px icon gap and
+an 8px label, from Figma's `Size=MD` (725:703). `lg` is the default and is the
+field as it was. **Minor** - a new optional prop and eight new
+`--ui-input-text-md-*` tokens; no token renamed. The unsized
+`--ui-input-text-*` tokens stay the LG values, so existing overrides keep
+working. `InputTextSize`, `InputSelectSize` and `InputTextareaSize` are
+exported.
+
+The native `size` attribute is no longer in these three components' prop
+types. Nothing passed it (checked NextJob and NextDraw).
+
+NextDraw's `.plotOptions` hand-rolls a compact field through six token
+overrides (24px, 12/16, 14px icons). It can move to `size="md"` and drop them;
+the line height and icon become 18 and 12, per the design.
+
+Also fixes a pre-existing 1px overflow on date-type inputs at both sizes:
+Chrome pads `::-webkit-datetime-edit-fields-wrapper` 1px top and bottom, so
+the control stood 2px taller than its line box. The value text does not move.
+
 **0.33.0 -> 0.34.0 adds `swatchProps` to `LayerController`** - pass them and
 the colour dot becomes a `<button>`, for NextDraw Studio's pen-colour menu.
 Omitted, the dot is the decorative span it was. **Minor** - one new optional

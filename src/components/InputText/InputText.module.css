@@ -174,6 +174,16 @@
   color: var(--ui-input-text-placeholder, var(--ui-text-faint));
 }
 
+/* Chrome pads the fields wrapper 1px top and bottom, so a date input stood 2px
+   taller than its own line box - 22 in a 20 line at LG, 20 in an 18 at MD -
+   and overflowed the field's content box by a pixel each way. The TEXT did not
+   move (it sat 1px into a box that started 1px early), so removing the padding
+   changes the box and not the glyphs: measured, the value stays at y 8 in LG
+   and y 4 in MD. It surfaced when MD made the overflow a visible 1px of 18. */
+.input::-webkit-datetime-edit-fields-wrapper {
+  padding-block: 0;
+}
+
 /* -- the date picker indicator ------------------------------- */
 /* A date input ships a browser calendar glyph that opens the picker. It is the
    one thing inside this field that is itself clickable, so it is --ui-primary

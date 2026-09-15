@@ -3,12 +3,24 @@ import type { ReactNode, SelectHTMLAttributes } from "react";
 import { assignRef } from "../../internal/assignRef";
 import styles from "./InputSelect.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
+import sizes from "../../internal/inputSize.module.css";
+import type { InputTextSize } from "../InputText/InputText";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
 declare const process: { env: { NODE_ENV?: string } };
 
-export interface InputSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+/** Figma: Size - the same two steps as InputText, so a select lines up with the field beside it. */
+export type InputSelectSize = InputTextSize;
+
+/**
+ * The native `size` attribute is omitted so `size` can be the design's size
+ * step. On a `<select>` it turns the dropdown into an always-open listbox,
+ * which this component does not style or support.
+ */
+export interface InputSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+  /** Figma: Size. Defaults to `lg`. */
+  size?: InputSelectSize;
   /**
    * Rendered BELOW the field, as InputText's is. Omit it and no `<label>` is
    * emitted, so pass `aria-label` instead or the control has no accessible
@@ -40,7 +52,7 @@ export interface InputSelectProps extends SelectHTMLAttributes<HTMLSelectElement
  * `<select>`, and the ref points at it.
  */
 export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(function InputSelect(
-  { label, hideLabel = false, icon, id, className, children, ...props },
+  { label, hideLabel = false, size = "lg", icon, id, className, children, ...props },
   ref,
 ) {
   const autoId = useId();
@@ -162,7 +174,7 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
   }
 
   return (
-    <div className={[styles.root, className].filter(Boolean).join(" ")}>
+    <div className={[styles.root, size === "md" ? sizes.md : null, className].filter(Boolean).join(" ")}>
       <div className={styles.field}>
         {icon ? (
           <span className={styles.icon} aria-hidden="true">

@@ -2,12 +2,26 @@ import { forwardRef, useId, useState } from "react";
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from "react";
 import styles from "./InputText.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
+import sizes from "../../internal/inputSize.module.css";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
 declare const process: { env: { NODE_ENV?: string } };
 
-export interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
+/**
+ * Figma: Size. `lg` is the 32px field; `md` is the compact 24px one. Shared by
+ * InputText, InputSelect and InputTextarea, so fields of one size line up.
+ */
+export type InputTextSize = "lg" | "md";
+
+/**
+ * The native `size` attribute (a width in characters) is omitted so `size`
+ * can be the design's size step. Width is the wrapper's job here - see
+ * `className` - so the attribute had no use on this component.
+ */
+export interface InputTextProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+  /** Figma: Size. Defaults to `lg`. */
+  size?: InputTextSize;
   /**
    * Figma: the `Input Label` text property. Rendered BELOW the field, which is
    * where the design puts it - see InputText.module.css. Omit it and no
@@ -36,7 +50,7 @@ export interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
 
 /**
  * A single-line text field: an underlined box with its label beneath it.
- * Figma: `Input-Text` (553:5455).
+ * Figma: `Input-Text` - `Size=LG` (553:5455) and `Size=MD` (725:703).
  *
  * `className` lands on the outer wrapper - the component's root box - while
  * every other prop spreads onto the `<input>`, which is also what the ref
@@ -44,7 +58,7 @@ export interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
  * `value`, `onChange`, `disabled` and friends reach the control.
  */
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(
-  { label, hideLabel = false, icon, iconEnd, id, type = "text", className, ...props },
+  { label, hideLabel = false, size = "lg", icon, iconEnd, id, type = "text", className, ...props },
   ref,
 ) {
   const autoId = useId();
@@ -103,7 +117,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     ) : null;
 
   return (
-    <div className={[styles.root, className].filter(Boolean).join(" ")}>
+    <div className={[styles.root, size === "md" ? sizes.md : null, className].filter(Boolean).join(" ")}>
       <div className={styles.field}>
         {slot(icon)}
         <input

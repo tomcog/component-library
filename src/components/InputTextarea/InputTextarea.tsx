@@ -3,12 +3,23 @@ import type { ReactNode, TextareaHTMLAttributes } from "react";
 import styles from "./InputTextarea.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
 import { assignRef } from "../../internal/assignRef";
+import sizes from "../../internal/inputSize.module.css";
+import type { InputTextSize } from "../InputText/InputText";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
 declare const process: { env: { NODE_ENV?: string } };
 
+/**
+ * The same two steps as InputText. Figma's `InputTextarea` set has no Size axis
+ * yet, so `md` is InputText's MD applied to a textarea: 12/18 type, the 8px
+ * label, and 4/1 padding around `rows` lines.
+ */
+export type InputTextareaSize = InputTextSize;
+
 export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  /** Defaults to `lg`. */
+  size?: InputTextareaSize;
   /**
    * Rendered BELOW the field, as InputText's and InputSelect's are. Omit it
    * and no `<label>` is emitted, so pass `aria-label` instead or the control
@@ -43,7 +54,10 @@ export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaE
  * points at.
  */
 export const InputTextarea = forwardRef<HTMLTextAreaElement, InputTextareaProps>(
-  function InputTextarea({ label, hideLabel = false, autoResize = false, id, rows = 3, className, ...props }, ref) {
+  function InputTextarea(
+    { label, hideLabel = false, size = "lg", autoResize = false, id, rows = 3, className, ...props },
+    ref,
+  ) {
     const autoId = useId();
     const inputId = id ?? autoId;
     const innerRef = useRef<HTMLTextAreaElement | null>(null);
@@ -78,7 +92,7 @@ export const InputTextarea = forwardRef<HTMLTextAreaElement, InputTextareaProps>
     useLayoutEffect(fit, [fit, props.value, props.defaultValue, rows]);
 
     return (
-      <div className={[styles.root, className].filter(Boolean).join(" ")}>
+      <div className={[styles.root, size === "md" ? sizes.md : null, className].filter(Boolean).join(" ")}>
         <div className={styles.field}>
           <textarea
             ref={(node) => {

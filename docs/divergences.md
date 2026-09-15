@@ -98,3 +98,33 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    sets and the Checkbox set, hiding the label layer so the field hugs its own
    height - to be done as its own session, per "Which direction to make a
    change".
+
+25. **The input set is inconsistent with itself and with the code.** Found
+   reading `Size=MD` (`725:703`); code followed the rendered canvas, and
+   these are the Figma-side fixes still pending:
+
+   - the set `725:702` is named **`Button`**. It holds `Size=LG`
+     (`553:5455`, the old `Input-Text`) and `Size=MD`. Rename it
+     `Input-Text` - a rename keeps every instance.
+   - **`Size=LG` is 30 tall; the code is 32.** Its field frame is fixed at 30
+     with padding 8/4 around a 20 line box, so it too centres the text in
+     less room than the padding asks for. `Input/Padding Bottom` is 3 and LG
+     no longer binds it (its bottom padding is a raw 4).
+   - **`Size=MD` is fixed at 24 with padding 6/3 around an 18 line box**
+     (28). The top 6 is raw, the bottom binds `Input/Padding Bottom` (3).
+     Code uses 4/1, which is what renders. Fix: padding 4/1, bound to new
+     `Input/MD/Padding Top` and `/Padding Bottom` variables carrying
+     `--ui-input-text-md-padding-*` as code syntax - or hug the frame and let
+     the padding set the height, as the code does.
+   - **MD's geometry is raw**: height 24, gap 6, icons 12, the value's
+     `Input Text MD` style (12/18, no bound variables) and the label's 8px
+     font size. Code has `--ui-input-text-md-*` tokens for all of them; Figma
+     has no variables to bind.
+
+26. **`InputTextarea` and InputSelect have no MD in Figma.** Code gives all
+   three inputs `size="md"` because they share one field. Figma's
+   `InputTextarea` set (`638:2383`) has only a `State` axis, and there is
+   no Input-Select set at all - the select is `Input-Text` with a chevron in
+   its trailing slot. The textarea wants a `Size` axis drawn from the code's
+   MD; that is design-shaped, so it happens in Figma as its own session.
+

@@ -601,6 +601,10 @@ function App() {
             placeholder="Anything worth remembering…"
           />
         </Row>
+        <Row label="size md">
+          <InputTextarea size="md" style={{ width: 260 }} label="Notes" rows={3} placeholder="Anything worth remembering…" />
+          <InputTextarea size="md" style={{ width: 260 }} label="Grows to fit" autoResize rows={1} defaultValue="Type to grow" />
+        </Row>
         <Row label="beside a field">
           <InputText style={{ width: 160 }} label="Company" defaultValue="Acme" />
           <InputTextarea style={{ width: 260 }} label="Description" rows={2} />
@@ -1127,6 +1131,14 @@ function App() {
             onChange={(e) => setWhere(e.target.value)}
           />
         </Row>
+        <Row label="size md">
+          <InputText size="md" style={{ width: 180 }} label="Input label" icon={<Layers />} iconEnd={<Layers />} defaultValue="Home" />
+          <InputText size="md" style={{ width: 180 }} label="Email address" placeholder="you@example.com" />
+          <InputText size="md" style={{ width: 180 }} label="Date posted" type="date" />
+        </Row>
+        <Row label="md, disabled">
+          <InputText size="md" style={{ width: 180 }} label="Input label" icon={<Layers />} value="Home" disabled readOnly />
+        </Row>
         <Row label="no icons">
           <InputText
             style={{ width: 220 }}
@@ -1208,6 +1220,21 @@ function App() {
             <option>Saved</option>
             <option>Applied</option>
           </InputSelect>
+        </Row>
+        <Row label="size md">
+          <InputSelect size="md" style={{ width: 180 }} label="Work mode" icon={<Layers />} defaultValue="Hybrid">
+            <option>Remote</option>
+            <option>Hybrid</option>
+            <option>On-site</option>
+          </InputSelect>
+        </Row>
+        <Row label="md family, one line">
+          <InputText size="md" style={{ width: 160 }} label="Company" icon={<Layers />} defaultValue="Acme" />
+          <InputSelect size="md" style={{ width: 160 }} label="Status" defaultValue="Saved">
+            <option>Saved</option>
+            <option>Applied</option>
+          </InputSelect>
+          <InputTextarea size="md" style={{ width: 200 }} label="Note" rows={1} defaultValue="One line" />
         </Row>
         <Row label="disabled">
           <InputSelect style={{ width: 220 }} label="Work mode" defaultValue="Remote" disabled>

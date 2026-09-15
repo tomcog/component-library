@@ -1,0 +1,28 @@
+/* The MD step for the input family - InputText, InputSelect, InputTextarea.
+
+   One rule rather than three copies, for the same reason the three modules
+   share InputText's tokens: they are the same field, and a size that moved one
+   of them and not the others would put a select 2px off the text field beside
+   it.
+
+   It REMAPS the unsized tokens at the component's root instead of adding
+   `.md .field { height: ... }` rules. Every declaration in the three modules -
+   and every `--ui-input-select-*` / `--ui-input-textarea-*` hook in front of
+   them - already reads the unsized names, so this is the whole implementation:
+   no rule has to know that sizes exist, and InputSelect's picker alignment,
+   which reads the row height through those same names in CSS and in JS, picks
+   up 24 without a change.
+
+   Declared on the element, so it beats a value inherited from `:root` or from
+   an ancestor, and resolves `--ui-input-text-md-*` at the element - an app
+   retunes MD by overriding those on `:root`. */
+.md {
+  --ui-input-text-height: var(--ui-input-text-md-height);
+  --ui-input-text-padding-top: var(--ui-input-text-md-padding-top);
+  --ui-input-text-padding-bottom: var(--ui-input-text-md-padding-bottom);
+  --ui-input-text-gap: var(--ui-input-text-md-gap);
+  --ui-input-text-icon-size: var(--ui-input-text-md-icon-size);
+  --ui-input-text-font-size: var(--ui-input-text-md-font-size);
+  --ui-input-text-line-height: var(--ui-input-text-md-line-height);
+  --ui-input-text-label-font-size: var(--ui-input-text-md-label-font-size);
+}

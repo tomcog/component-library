@@ -17,6 +17,14 @@ component afterwards rather than the component from a design. The drawn cells
 are `rows={3}`, so the field is `10 + 3×20 + 1 = 71px`; the 260px width is the
 pose, not a property.
 
+## `size="md"` is code-only
+
+The same two sizes as InputText, through the same remap - see `InputText.md`.
+At MD a row is 18px, so `rows={3}` is `4 + 3×18 + 1 + 1 = 60` and `rows={1}` is
+24, lining up with an MD text field. **Figma's `InputTextarea` set has no Size
+axis**, so this is InputText's MD applied to a textarea rather than a drawn
+design - open divergence #26.
+
 ## Height is the one real departure
 
 InputText pins `height: 32px` because a line *is* 32px. A textarea is as tall
