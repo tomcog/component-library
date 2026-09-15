@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -313,6 +313,7 @@ function Section({ title, note, className, children }: { title: string; note?: s
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [segMode, setSegMode] = useState("all");
+  const [printLayer, setPrintLayer] = useState("turquoise");
   const [segSort, setSegSort] = useState("newest");
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
      A hand-maintained list is one someone adds a Section without updating,
@@ -651,6 +652,44 @@ function App() {
             <Checkbox size={s} label="Hidden label" hideLabel defaultChecked />
           </Row>
         ))}
+      </Section>
+
+      <Section
+        title="LayerController"
+        note={
+          "One layer of a drawing. The box is a radio drawn like a checkbox: rows sharing a name are one "
+          + "group, so picking a layer moves the green printer to it (arrow keys move it too). Printed shows "
+          + "the grey printer with a green tick on layers done this session; the chosen layer's green printer "
+          + "wins. The label can be a string or a borderless input, and handleProps turns the grip into a button."
+        }
+      >
+        <Row label="group">
+          <div style={{ display: "flex", flexDirection: "column", gap: 4, width: 200 }}>
+            {[
+              { id: "navy", n: 4, color: "#211f45", name: "Navy blue" },
+              { id: "lime", n: 3, color: "#3cb227", name: "Lime green" },
+              { id: "turquoise", n: 2, color: "#00838a", name: "Turquoise" },
+              { id: "pink", n: 1, color: "#ee3f89", name: "Pink", printed: true },
+            ].map((l) => (
+              <LayerController
+                key={l.id}
+                name="playground-print-layer"
+                number={l.n}
+                color={l.color}
+                label={l.name}
+                printed={l.printed}
+                checked={printLayer === l.id}
+                onChange={() => setPrintLayer(l.id)}
+                handleProps={{ "aria-label": `Move ${l.name}` }}
+              />
+            ))}
+          </div>
+        </Row>
+        <Row label="editable">
+          <div style={{ width: 200 }}>
+            <LayerController name="playground-edit" number={1} color="#ee3f89" aria-label="Print Pink" label={<input defaultValue="Pink" aria-label="Layer name" />} />
+          </div>
+        </Row>
       </Section>
 
       <Section

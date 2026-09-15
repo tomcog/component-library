@@ -599,6 +599,29 @@
 
   --ui-checkbox-font-weight: 400;
 
+  /* -- LayerController -----------------------------------------
+     Figma: `LayerController` (719:555). A 24px print box butted against a
+     layer row, both ruled with Button/Tertiary/Default - which is
+     --ui-surface-muted in code, the tertiary button's fill - and both on
+     Button Size/SM's radius and padding-x. The row is 6 + the 12px Label SM
+     line + 6 = 24, the box's height, because Figma strokes inside.
+     The icon colours are semantic (--ui-confirm, --ui-text-muted), read at the
+     element with --ui-layer-controller-*-color hooks rather than declared. */
+  --ui-layer-controller-control-size: var(--ui-button-sm-height);
+  --ui-layer-controller-icon-size: 16px;
+  --ui-layer-controller-border-width: 1px;
+  --ui-layer-controller-border-color: var(--ui-surface-muted);
+  --ui-layer-controller-radius: var(--ui-button-sm-radius);
+  --ui-layer-controller-padding-x: var(--ui-button-sm-padding-x);
+  --ui-layer-controller-padding-y: 6px;
+  --ui-layer-controller-gap: 4px;
+  --ui-layer-controller-font-size: var(--ui-type-label-sm-font-size);
+  --ui-layer-controller-line-height: var(--ui-type-label-sm-line-height);
+  --ui-layer-controller-font-weight: var(--ui-type-label-font-weight);
+  --ui-layer-controller-number-width: 10px;
+  --ui-layer-controller-swatch-size: 12px;
+  --ui-layer-controller-handle-size: 12px;
+
   /* -- Tabs ----------------------------------------------------
      Figma: `PageTabs` (364:420), measured off the running app rather than the
      drawing - the icons render at 18 there even though the markup asks for

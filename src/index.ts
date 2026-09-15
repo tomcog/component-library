@@ -6,6 +6,7 @@ export * from "./components/Checkbox";
 export * from "./components/InputSelect";
 export * from "./components/InputText";
 export * from "./components/InputTextarea";
+export * from "./components/LayerController";
 export * from "./components/LeftRail";
 export * from "./components/Logo";
 export * from "./components/Nav";
