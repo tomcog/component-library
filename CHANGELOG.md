@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased (0.35.0) adds `size="md"` to InputText, InputSelect and
+**0.34.0 -> 0.35.0 adds `size="md"` to InputText, InputSelect and
 InputTextarea** - a 24px field with 12/18 type, 12px icons, a 6px icon gap and
 an 8px label, from Figma's `Size=MD` (725:703). `lg` is the default and is the
 field as it was. **Minor** - a new optional prop and eight new
