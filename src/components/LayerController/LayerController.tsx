@@ -9,6 +9,12 @@ export interface LayerControllerProps
   /** The swatch colour - any CSS colour. Omit it and the swatch is not drawn. */
   color?: string;
   /**
+   * Props for the swatch. Pass them to make the swatch a `<button>` - to open
+   * a colour picker, say; omit them and the swatch is decorative. Pass an
+   * `aria-label`: the swatch has no text of its own.
+   */
+  swatchProps?: ButtonHTMLAttributes<HTMLButtonElement>;
+  /**
    * The layer name. A string, or a control such as a borderless `<input>` when
    * the name is editable in place - it inherits this row's type and colour.
    */
@@ -64,7 +70,7 @@ export interface LayerControllerProps
  * pass `aria-label` when the label is a control.
  */
 export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps>(function LayerController(
-  { number, color, label, printed = false, visible = true, onVisibleChange, hideVisibility = false, handleProps, className, checked, disabled, ...props },
+  { number, color, swatchProps, label, printed = false, visible = true, onVisibleChange, hideVisibility = false, handleProps, className, checked, disabled, ...props },
   ref,
 ) {
   const ariaLabel = props["aria-label"] ?? (typeof label === "string" ? `Print ${label}` : undefined);
@@ -89,7 +95,16 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
       <div className={styles.layer}>
         <span className={styles.lead}>
           <span className={styles.number}>{number}</span>
-          {color ? <span className={styles.swatch} style={{ background: color }} aria-hidden /> : null}
+          {color && swatchProps ? (
+            <button
+              type="button"
+              {...swatchProps}
+              className={[styles.swatch, styles.swatchButton, swatchProps.className].filter(Boolean).join(" ")}
+              style={{ ...swatchProps.style, background: color }}
+            />
+          ) : color ? (
+            <span className={styles.swatch} style={{ background: color }} aria-hidden />
+          ) : null}
           <span className={styles.label}>{label}</span>
         </span>
         <span className={styles.end}>

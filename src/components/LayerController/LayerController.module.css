@@ -96,6 +96,19 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* A swatch that opens something: no UA button chrome, and the library's ring on focus. */
+.swatchButton {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+.swatchButton:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 1px;
+}
+.swatchButton:disabled { cursor: default; }
+
 .swatch {
   flex: none;
   width: var(--ui-layer-controller-swatch-size);

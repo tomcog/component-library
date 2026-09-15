@@ -41,6 +41,12 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.33.0 -> 0.34.0 adds `swatchProps` to `LayerController`** - pass them and
+the colour dot becomes a `<button>`, for NextDraw Studio's pen-colour menu.
+Omitted, the dot is the decorative span it was. **Minor** - one new optional
+prop. Figma draws no pressed or focus state for the dot; the focus ring is the
+library's.
+
 **0.32.0 -> 0.33.0 adds show/hide to `LayerController`** - `visible`
 (default `true`), `onVisibleChange` and `hideVisibility` (leaves the eye off,
 for NextDraw's Work mode, where only the layer to print matters), drawn from the updated Figma component
