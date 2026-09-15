@@ -55,8 +55,18 @@ Apps depend on a tag: `"@tomcoggia/ui": "github:tomcog/component-library#vX.Y.Z"
 `dist/` is gitignored, so `"prepare": "npm run build"` is what builds it on install —
 removing it silently ships an empty package.
 
-Release = bump `version`, add a `CHANGELOG.md` entry, commit, `git tag vX.Y.Z`, push with
-`--tags`, then move each app's ref. Never point an app at `#main`.
+**Releasing is one command, and it includes the apps: `npm run release`.** Once library
+changes are committed on `main`, it typechecks, builds, bumps the version (minor by
+default; `-- patch` / `-- major`), stamps `CHANGELOG.md`, commits, tags, pushes, then runs
+`npm run sync-consumers`: every app under `~/Sites` depending on `@tomcoggia/ui` gets the
+new tag installed, checked for a built `dist/`, and a local commit touching only
+`package.json` + lockfile. It never pushes an app (pushing can deploy) unless given
+`-- --push`. `-- --dry-run` shows the plan. When the user asks for a library change to be
+usable in their apps, finish by running this — don't hand-edit refs.
+
+Write an `**Unreleased**` changelog entry by hand when a change renames or removes a token
+or visibly changes an existing component; otherwise the script writes one from commit
+subjects. Never point an app at `#main`.
 
 Semver in practice: a new component or optional prop is **minor**; a visible change to an
 existing component (padding, shadow, colour) is also **minor**, never patch; a renamed or
