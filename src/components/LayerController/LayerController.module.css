@@ -128,6 +128,56 @@
   box-shadow: 0 1px 0 var(--ui-primary);
 }
 
+.end {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--ui-layer-controller-gap);
+}
+
+/* The eye: Text/Muted when shown; the eye-off in Accent when hidden. Both at
+   the 65% the file draws on every end icon. */
+.eye {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ui-layer-controller-eye-color, var(--ui-text-muted));
+}
+button.eye {
+  cursor: pointer;
+  border-radius: 2px;
+}
+.root[data-visible="false"] .eye {
+  color: var(--ui-layer-controller-eye-off-color, var(--ui-accent));
+}
+.eyeGlyph {
+  display: block;
+  width: var(--ui-layer-controller-handle-size);
+  height: var(--ui-layer-controller-handle-size);
+  fill: currentColor;
+  opacity: 0.65;
+}
+
+/* Hidden: the rules go and the number and name grey to Text/Disabled. The
+   swatch keeps its colour, which is what Figma draws - the layer is still
+   that pen. */
+.root[data-visible="false"] .control,
+.root[data-visible="false"] .layer {
+  box-shadow: none;
+}
+.root[data-visible="false"] .number,
+.root[data-visible="false"] .label {
+  color: var(--ui-layer-controller-hidden-text, var(--ui-text-disabled));
+}
+.root[data-visible="false"] .control {
+  cursor: default;
+}
+
 .handle {
   display: inline-flex;
   flex: none;

@@ -314,6 +314,7 @@ function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [segMode, setSegMode] = useState("all");
   const [printLayer, setPrintLayer] = useState("turquoise");
+  const [hiddenLayers, setHiddenLayers] = useState<string[]>(["lime"]);
   const [segSort, setSegSort] = useState("newest");
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
      A hand-maintained list is one someone adds a Section without updating,
@@ -660,7 +661,8 @@ function App() {
           "One layer of a drawing. The box is a radio drawn like a checkbox: rows sharing a name are one "
           + "group, so picking a layer moves the green printer to it (arrow keys move it too). Printed shows "
           + "the grey printer with a green tick on layers done this session; the chosen layer's green printer "
-          + "wins. The label can be a string or a borderless input, and handleProps turns the grip into a button."
+          + "wins. The eye hides a layer: its rules go, number and name grey out, the eye turns to a red eye-off, and "
+          + "it can't be picked. The label can be a string or a borderless input, and handleProps turns the grip into a button."
         }
       >
         <Row label="group">
@@ -678,6 +680,8 @@ function App() {
                 color={l.color}
                 label={l.name}
                 printed={l.printed}
+                visible={!hiddenLayers.includes(l.id)}
+                onVisibleChange={(v) => setHiddenLayers((h) => (v ? h.filter((x) => x !== l.id) : [...h, l.id]))}
                 checked={printLayer === l.id}
                 onChange={() => setPrintLayer(l.id)}
                 handleProps={{ "aria-label": `Move ${l.name}` }}

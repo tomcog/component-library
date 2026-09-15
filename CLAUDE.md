@@ -41,6 +41,13 @@ hence `"prepare": "npm run build"`. npm clones the repo, installs devDeps, runs
 `prepare`, then packs what `files: ["dist"]` names. Removing `prepare` silently
 ships an empty package.
 
+**0.32.0 -> 0.33.0 adds show/hide to `LayerController`** - `visible`
+(default `true`), `onVisibleChange` and `hideVisibility` (leaves the eye off,
+for NextDraw's Work mode, where only the layer to print matters), drawn from the updated Figma component
+(719:567): an eye before the grip, and a hidden state. **Minor** - new props,
+defaults unchanged apart from the eye now being drawn on every row, which is
+what the file shows. See the LayerController section.
+
 **0.31.0 -> 0.32.0 adds `LayerController`** - one layer of a drawing with a
 box that picks the layer to print. Figma: `LayerController` (719:555). Built
 for NextDraw Studio's Layers card. **Minor** - a new component, nothing else
@@ -2598,7 +2605,10 @@ the number, a colour swatch, the name and a grip. Figma: `LayerController`
     type      Label SM 10/12, Medium; number Accent, name Text/Default
     swatch    12px circle, the caller's colour
     icons     16px lucide/printer (Confirm stroke) and lucide/printed
-              (Text/Muted with a Confirm tick); 12px grip, Surface Muted at 65%
+              (Text/Muted with a Confirm tick); 12px eye (Text/Muted) and
+              grip (Surface Muted), both at 65%, gap 4
+    hidden    (719:567) no rules on box or row; number and name
+              Text/Disabled; swatch unchanged; eye-off in Accent at 65%
 
 ### The box is a radio, drawn like a checkbox
 
@@ -2615,6 +2625,13 @@ green tick; **checked wins** when both are true, because which layer prints
 next matters more than what printed last. Figma's `printStatus` boolean plus an
 instance swap is two properties for one three-way state, so code has one
 visible outcome per combination instead.
+
+### Hidden layers can't be picked
+
+`visible={false}` disables the radio and draws the box empty even if
+`checked` is still true: a layer that isn't shown can't be the one that prints.
+The eye is a toggle `<button>` with `aria-pressed` (pressed = hidden) when
+`onVisibleChange` is passed, and a decorative span otherwise.
 
 ### Divergences - do not "fix" these
 
