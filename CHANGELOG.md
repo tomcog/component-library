@@ -39,9 +39,16 @@ and the `ButtonRoundTone` type. Figma dropped the `State=Confirm` and
 `State=Danger` cells from `Button/Round` (220:11857); code followed, and
 `primary` went with them because a one-value enum is not an axis.
 
-**NextJob uses this in ~8 places** and will not compile until they are
-migrated - `CRM`, `OpportunityDetail` (x2), `JobSites`, `Tasks`, `Companies`,
-`SmartCapture` (x2) and the `CircleIconButton` wrapper that forwards `tone`.
+**Both apps that used it have been migrated**, in the same release. NextJob
+had eight call sites - `CRM`, `OpportunityDetail` (x2), `JobSites`, `Tasks`,
+`Companies`, `SmartCapture` (x2) and the `CircleIconButton` wrapper that
+forwarded `tone`. NextDraw had one, `FileSection`'s clear-the-drawing X, plus
+five CSS references to `--ui-confirm`. PlantPal was unaffected.
+
+A grep for `tone=` is not enough to find these - the prop sits on its own line
+in most of them. Typecheck the app against the new version; the CSS half will
+not show up there at all, so grep `ui-confirm` separately.
+
 The swap is *not* mechanical:
 
     <ButtonRound tone="confirm" …/>  ->  <ConfirmButton tone="safety" …/>
