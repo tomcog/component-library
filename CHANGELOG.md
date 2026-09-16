@@ -9,6 +9,8 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**0.37.0 -> 0.38.0** - LayerController: the draw box is a pen nib, not a pencil.
+
 **0.36.0 -> 0.37.0** - LayerController: purpose says what picking a layer means; Correct the 0.36.0 migration note: NextDraw was affected too.
 
 **0.35.0 -> 0.36.0 adds `ConfirmButton`, and renames the `confirm` role to `safety`.**
