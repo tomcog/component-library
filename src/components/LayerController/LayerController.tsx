@@ -30,7 +30,7 @@ export interface LayerControllerProps
    * the default and is a plotter's: the picked layer is the one that will be
    * printed, so the box is a printer and `printed` marks the ones already done.
    * `draw` is an editor's: the picked layer is the one being drawn on, so the
-   * box is a pencil and `printed` means nothing. The row is otherwise identical
+   * box is a pen nib and `printed` means nothing. The row is otherwise identical
    * - same geometry, same swatch, same eye - because it is the same layer.
    */
   purpose?: "print" | "draw";
@@ -67,7 +67,7 @@ export interface LayerControllerProps
  *     <LayerController name="print-layer" number={2} color="#00838a"
  *       label="Turquoise" checked={target === id} onChange={() => setTarget(id)} />
  *
- * `purpose="draw"` turns the box into a pencil for an editor, where the picked
+ * `purpose="draw"` turns the box into a pen nib for an editor, where the picked
  * layer is the one being drawn on rather than the one that will be printed.
  *
  * **The box is a radio, drawn like a checkbox.** Only one layer prints at a
@@ -103,7 +103,7 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
           {...props}
           aria-label={ariaLabel}
         />
-        {state === "target" && (purpose === "draw" ? <PencilIcon className={styles.icon} /> : <PrinterIcon className={styles.icon} />)}
+        {state === "target" && (purpose === "draw" ? <PenToolIcon className={styles.icon} /> : <PrinterIcon className={styles.icon} />)}
         {state === "printed" && <PrintedIcon className={styles.icon} />}
       </label>
       <div className={styles.layer}>
@@ -168,16 +168,17 @@ function PrinterIcon({ className }: { className?: string }) {
   );
 }
 
-/* lucide/pencil, at the 24-unit box it is drawn in. Its stroke is 1.5 there, which is the same
+/* lucide/pen-tool, at the 24-unit box it is drawn in. Its stroke is 1.5 there, which is the same
    fraction of the box as the 1 the 16-unit glyphs carry, so it lands at the same weight. */
-function PencilIcon({ className }: { className?: string }) {
+function PenToolIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        className={styles.strokeConfirm}
-        strokeWidth={1.5}
-        d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-      />
+      <g className={styles.strokeConfirm} strokeWidth={1.5}>
+        <path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z" />
+        <path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18" />
+        <path d="m2.3 2.3 7.286 7.286" />
+        <circle cx="11" cy="11" r="2" />
+      </g>
     </svg>
   );
 }
