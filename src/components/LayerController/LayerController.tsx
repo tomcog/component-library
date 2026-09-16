@@ -26,6 +26,15 @@ export interface LayerControllerProps
    */
   printed?: boolean;
   /**
+   * What picking a layer means, which is not the same in every app. `print` is
+   * the default and is a plotter's: the picked layer is the one that will be
+   * printed, so the box is a printer and `printed` marks the ones already done.
+   * `draw` is an editor's: the picked layer is the one being drawn on, so the
+   * box is a pencil and `printed` means nothing. The row is otherwise identical
+   * - same geometry, same swatch, same eye - because it is the same layer.
+   */
+  purpose?: "print" | "draw";
+  /**
    * Whether the layer is shown. A hidden layer drops both rules, greys its
    * number and name, shows the red eye-off, and can't be picked to print.
    * Defaults to `true`.
@@ -58,6 +67,9 @@ export interface LayerControllerProps
  *     <LayerController name="print-layer" number={2} color="#00838a"
  *       label="Turquoise" checked={target === id} onChange={() => setTarget(id)} />
  *
+ * `purpose="draw"` turns the box into a pencil for an editor, where the picked
+ * layer is the one being drawn on rather than the one that will be printed.
+ *
  * **The box is a radio, drawn like a checkbox.** Only one layer prints at a
  * time, so rows sharing a `name` are one radio group: picking a layer moves the
  * green printer to it, and arrow keys move it along the group. It is a real
@@ -70,11 +82,13 @@ export interface LayerControllerProps
  * pass `aria-label` when the label is a control.
  */
 export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps>(function LayerController(
-  { number, color, swatchProps, label, printed = false, visible = true, onVisibleChange, hideVisibility = false, handleProps, className, checked, disabled, ...props },
+  { number, color, swatchProps, label, printed = false, purpose = "print", visible = true, onVisibleChange, hideVisibility = false, handleProps, className, checked, disabled, ...props },
   ref,
 ) {
-  const ariaLabel = props["aria-label"] ?? (typeof label === "string" ? `Print ${label}` : undefined);
-  const state = !visible ? "empty" : checked ? "target" : printed ? "printed" : "empty";
+  const verb = purpose === "draw" ? "Draw on" : "Print";
+  const ariaLabel = props["aria-label"] ?? (typeof label === "string" ? `${verb} ${label}` : undefined);
+  // Nothing has been "already drawn on", so `printed` only has a state to show in a plotter's row.
+  const state = !visible ? "empty" : checked ? "target" : printed && purpose === "print" ? "printed" : "empty";
   const labelText = typeof label === "string" ? label : "layer";
 
   return (
@@ -89,7 +103,7 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
           {...props}
           aria-label={ariaLabel}
         />
-        {state === "target" && <PrinterIcon className={styles.icon} />}
+        {state === "target" && (purpose === "draw" ? <PencilIcon className={styles.icon} /> : <PrinterIcon className={styles.icon} />)}
         {state === "printed" && <PrintedIcon className={styles.icon} />}
       </label>
       <div className={styles.layer}>
@@ -149,6 +163,20 @@ function PrinterIcon({ className }: { className?: string }) {
       <path
         className={styles.strokeConfirm}
         d="M4 12H2.66667C2.31304 12 1.97391 11.8595 1.72386 11.6095C1.47381 11.3594 1.33333 11.0203 1.33333 10.6667V7.33333C1.33333 6.97971 1.47381 6.64057 1.72386 6.39052C1.97391 6.14048 2.31304 6 2.66667 6H13.3333C13.687 6 14.0261 6.14048 14.2761 6.39052C14.5262 6.64057 14.6667 6.97971 14.6667 7.33333V10.6667C14.6667 11.0203 14.5262 11.3594 14.2761 11.6095C14.0261 11.8595 13.687 12 13.3333 12H12M4 6V2C4 1.82319 4.07024 1.65362 4.19526 1.5286C4.32029 1.40357 4.48986 1.33333 4.66667 1.33333H11.3333C11.5101 1.33333 11.6797 1.40357 11.8047 1.5286C11.9298 1.65362 12 1.82319 12 2V6M4.66667 9.33333H11.3333C11.7015 9.33333 12 9.63181 12 10V14C12 14.3682 11.7015 14.6667 11.3333 14.6667H4.66667C4.29848 14.6667 4 14.3682 4 14V10C4 9.63181 4.29848 9.33333 4.66667 9.33333Z"
+      />
+    </svg>
+  );
+}
+
+/* lucide/pencil, at the 24-unit box it is drawn in. Its stroke is 1.5 there, which is the same
+   fraction of the box as the 1 the 16-unit glyphs carry, so it lands at the same weight. */
+function PencilIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        className={styles.strokeConfirm}
+        strokeWidth={1.5}
+        d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
       />
     </svg>
   );

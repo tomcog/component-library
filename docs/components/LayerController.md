@@ -22,7 +22,8 @@ the number, a colour swatch, the name and a grip. Figma: `LayerController`
               inside - drawn with an inset box-shadow, not a border
     type      Label SM 10/12, Medium; number Accent, name Text/Default
     swatch    12px circle, the caller's colour
-    icons     16px lucide/printer (Confirm stroke) and lucide/printed
+    icons     16px lucide/printer (Confirm stroke) and lucide/printed;
+              lucide/pencil at 24px/1.5 stroke for purpose="draw" - same weight
               (Text/Muted with a Confirm tick); 12px eye (Text/Muted) and
               grip (Surface Muted), both at 65%, gap 4
     hidden    (719:567) no rules on box or row; number and name
@@ -43,6 +44,21 @@ green tick; **checked wins** when both are true, because which layer prints
 next matters more than what printed last. Figma's `printStatus` boolean plus an
 instance swap is two properties for one three-way state, so code has one
 visible outcome per combination instead.
+
+## `purpose` is what picking a layer means
+
+`print` is the default and is a plotter's: the picked layer is the one that
+will be printed, the box is a printer, and `printed` marks the ones already
+done. `draw` is an editor's: the picked layer is the one being drawn on, so the
+box is lucide/pencil and `printed` is ignored - nothing has been "already drawn
+on", so there is no third state for it to show. The accessible name follows,
+"Draw on Sky Blue" rather than "Print Sky Blue".
+
+Everything else is deliberately identical - same geometry, same swatch, same
+eye, same radio-group behaviour - because it is the same layer either way. The
+two apps that use it sit side by side, and a row that changed shape between them
+would read as a different kind of thing rather than the same one doing a
+different job.
 
 ## Hidden layers can't be picked
 
