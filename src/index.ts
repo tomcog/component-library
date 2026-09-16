@@ -3,6 +3,7 @@ export * from "./components/ButtonRound";
 export * from "./components/BottomNav";
 export * from "./components/Card";
 export * from "./components/Checkbox";
+export * from "./components/ConfirmButton";
 export * from "./components/InputSelect";
 export * from "./components/InputText";
 export * from "./components/InputTextarea";

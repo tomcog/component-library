@@ -89,10 +89,13 @@ axis is how someone ends up adding a fifth `Level` called Danger:
 | Loading | the `loading` prop, a State because a Figma boolean can only drive `visible` |
 | Confirm, Danger | the `tone` prop, cutting across the four Levels |
 
-**`Confirm` remains Figma-only.** `tone="confirm"` exists on `ButtonRound` and
-not on `Button` - no rectangular confirm has been needed - so that cell has no
-counterpart in code. It is named as such in the description rather than left
-for someone to discover.
+**`Confirm` remains Figma-only**, and is now the last of its kind. No
+rectangular confirm has been needed, so that cell has no counterpart in code;
+it is named as such in the description rather than left for someone to
+discover. The round equivalents it used to sit beside - `Button/Round`'s
+`State=Confirm` and `State=Danger` - moved out into `ConfirmButton` in 0.36.0.
+This `Button` set keeps its `Danger` cell and its `tone="danger"` prop; only
+the round button was split.
 
 This went code-first and was pushed at the user's explicit instruction, the
 same documented exception the Tabs size axis used.

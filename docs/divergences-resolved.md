@@ -291,3 +291,25 @@ Nothing here needs action.
    - a set-level read cannot distinguish "bound everywhere" from "bound on a
    few". Only walking all 82 variants found it. Do that before trusting a
    size's geometry.
+
+28. ~~The four new tints are raw values on semantic names in Figma.~~
+   **Resolved in the 0.36.0 token push.** `Safety/Lighter|Darker` and
+   `Danger/Lighter|Darker` arrived holding literal hex in both modes - the tier
+   break CLAUDE.md flags as recurring, and none of them carried Dev Mode code
+   syntax, so `get_design_context` emitted `var(--safety\/lighter,#cafac8)`
+   instead of a token name. Four primitives were added to match the code -
+   `Color/TC Red Lighter|Darker`, `Color/TC Green Lighter|Darker` - and the
+   four semantics now alias them, with code syntax set.
+
+   Three neighbours had the same defect and were fixed in the same pass:
+   `Primary/Lighter` held a raw `#f7dce0` (the same value as `Danger/Lighter`,
+   now the same primitive), and `Danger/Base` and `Safety/Base` aliased
+   `Color/TC Red` / `Color/TC Green` in Dark but held a raw literal in Light -
+   agreeing by coincidence rather than by construction. Every rendered colour
+   is unchanged; the screenshot before and after is identical.
+
+29. ~~`Text/OnConfirm` still carries the old spelling.~~
+   **Resolved.** Renamed `Text/OnSafety` beside `Safety/Base`, code syntax
+   `var(--ui-text-on-safety)`. The rename kept the variable's ID, so every
+   binding survived untouched - the third time that has held on this variable
+   (`Button/Confirm` -> `Confirm/Base` -> `Safety/Base` for its partner).

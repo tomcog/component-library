@@ -59,7 +59,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.strokeConfirm { stroke: var(--ui-layer-controller-target-color, var(--ui-confirm)); }
+.strokeConfirm { stroke: var(--ui-layer-controller-target-color, var(--ui-safety)); }
 .strokeMuted { stroke: var(--ui-layer-controller-printed-color, var(--ui-text-muted)); }
 
 /* No width: Figma poses the row at 200, which is the frame, not the component.

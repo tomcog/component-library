@@ -21,20 +21,41 @@ Four roles, settable apart:
 |---|---|---|---|
 | `--ui-primary` | the **CTA** colour | `--ui-tc-red` | nearly every component - every interactive control |
 | `--ui-accent` | the **brand/chrome** colour — headers, rules, borders, dividers | `--ui-tc-red` | LayerController's layer number |
-| `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | `Button` and `ButtonRound` `tone="danger"` |
-| `--ui-confirm` | the **affirmative** action — Save, Apply, Accept, Done | `--ui-tc-green` | `ButtonRound tone="confirm"`, LayerController's printer icon |
+| `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | `Button tone="danger"`, `ConfirmButton tone="danger"` |
+| `--ui-safety` | the **affirmative** action — Save, Apply, Accept, Done | `--ui-tc-green` | `ConfirmButton tone="safety"`, LayerController's printer icon |
+
+`--ui-safety` was `--ui-confirm` until 0.36.0. `confirm` is also the name of the
+*act* of pressing either button in a yes/no dialog, so the old pair read as "the
+confirm one" and "the other one" rather than as opposites; Figma's group has
+been `Safety/*` throughout. The `ConfirmButton` component keeps its name — the
+component *is* the confirmation, and its tones are its two answers.
+
+**Danger and safety each carry two tints as well as a base**, because
+`ConfirmButton` draws three grounds per tone:
+
+| token | default | drawn as |
+|---|---|---|
+| `--ui-danger-lighter` / `--ui-safety-lighter` | `#f7dce0` / `#cafac8` | the resting disc |
+| `--ui-danger-darker` / `--ui-safety-darker` | `#a31c30` / `#378f34` | the pressed disc |
+
+These alias primitives rather than being mixed from the base — they are
+hand-drawn and no percentage reproduces them, least of all the green, whose
+drawn tint is more saturated than any mix with white can be. So **repointing a
+role means repointing its trio**, not just its base; see
+[ConfirmButton](components/ConfirmButton.md). An app that sets only the base
+still gets a coherent button, it just does not carry the whole component.
 
 Each carries its own **on** colour — `--ui-text-on-primary`,
-`--ui-text-on-accent`, `--ui-text-on-danger`, `--ui-text-on-confirm` — rather
+`--ui-text-on-accent`, `--ui-text-on-danger`, `--ui-text-on-safety` — rather
 than sharing one. That is the whole point of splitting the roles: an app that
 gives itself a pale accent and a dark CTA needs different text on each, and a
 single shared name would be wrong for one of them. The playground's pairings
 panel renders all four, so a recolour that breaks contrast shows up there.
 
-**`--ui-confirm` is the one that does not default to the brand.** The other
+**`--ui-safety` is the one that does not default to the brand.** The other
 three can all share TC Red because red says nothing contradictory as a CTA, as
-chrome, or as a warning. Confirm is doing for "yes" what danger does for "no":
-carrying a meaning by convention. A confirm button that came out brand-red
+chrome, or as a warning. Safety is doing for "yes" what danger does for "no":
+carrying a meaning by convention. A safety button that came out brand-red
 would say *danger* in the one place the user most needs to hear the opposite,
 so it ships green (`#59cf55`, Figma's `Confirm`) and stays green until an app
 says otherwise. It is also untouched in the dark block, for the same reason
@@ -43,10 +64,12 @@ the theme does.
 
 Know what the default pairing costs. White on `#59cf55` is **2.0:1**, and a
 glyph is a graphical object, which WCAG asks 3:1 of. It is Figma's spec and it
-is what ships. Two things make it tolerable rather than fine: the fill is a
-*hover* state, so it is transient rather than the resting appearance, and it is
-never the only signal that a control is there. An app that wants the contrast
-sets `--ui-text-on-confirm` and nothing else moves.
+is what ships. This got sharper in 0.36.0: on `ButtonRound`'s departed tone the
+green was a *hover* fill, transient and never the only signal a control was
+there, but `ConfirmButton` takes the green on hover and holds it for as long as
+the pointer is on the button. `--ui-safety-darker` (`#378f34`) clears 3:1
+against white, so an app that wants the contrast at every state can point
+`--ui-safety` at it, or set `--ui-text-on-safety` and move nothing else.
 
 **Almost everything this library renders is an interactive control**, and
 every one of those is a call to action, so they are on `--ui-primary` -
@@ -93,8 +116,12 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-text-on-accent:       /* text on an accent fill                */;
   --ui-danger:               /* destructive actions, error states     */;
   --ui-text-on-danger:       /* text on a danger fill                 */;
-  --ui-confirm:              /* the affirmative action                */;
-  --ui-text-on-confirm:      /* text on a confirm fill                */;
+  --ui-danger-lighter:       /* ConfirmButton's resting disc          */;
+  --ui-danger-darker:        /* ConfirmButton's pressed disc          */;
+  --ui-safety:               /* the affirmative action                */;
+  --ui-text-on-safety:       /* text on a safety fill                 */;
+  --ui-safety-lighter:       /* ConfirmButton's resting disc          */;
+  --ui-safety-darker:        /* ConfirmButton's pressed disc          */;
 
   --ui-surface-inverse:      /* secondary: dark fill                  */;
   --ui-text-on-inverse:      /* text on that dark fill                */;

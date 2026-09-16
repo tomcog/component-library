@@ -128,3 +128,18 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    its trailing slot. The textarea wants a `Size` axis drawn from the code's
    MD; that is design-shaped, so it happens in Figma as its own session.
 
+27. **`ConfirmButton` has no `Size` axis in Figma.** The set (`735:398`) is
+   drawn at 48 only; code ships `xl | lg | md | sm`, aliasing `ButtonRound`'s
+   geometry tokens, because the two get used side by side and have to sit
+   level. Direction: **Figma**, which needs a `Size` axis taking 48/40/32/24
+   with 28/24/20/16 icon boxes — the same ramp `Button/Round` already draws.
+   Design-shaped, so it happens in Figma as its own session.
+
+30. **`Button` (`135:9598`) still draws a `State=Confirm` cell.** It was left
+   alone when `Button/Round`'s Confirm and Danger moved into `ConfirmButton`,
+   and it has no counterpart in code — `Button`'s `tone` is
+   `"primary" | "danger"` only. This is the pre-existing Figma-only cell
+   `docs/components/Button.md` already names; it is listed here now because it
+   is the last one left, and because "confirm" no longer names anything in the
+   code. Direction: undecided — either code grows a rectangular safety tone or
+   the cell is renamed `Safety` and left as a documented Figma-only. Ask.

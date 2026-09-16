@@ -103,14 +103,15 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
 
 ### Tokens: the rules that bite
 
-- **The semantic tier is the public API.** 21 colour names (`--ui-primary`, `--ui-surface-*`,
+- **The semantic tier is the public API.** 25 colour names (`--ui-primary`, `--ui-surface-*`,
   `--ui-text-*`, `--ui-border-default`, …) are what an app overrides. Primitives
   (`--ui-tc-red`, `--ui-neutral-*`) are internal — components read semantics, not primitives.
   The one deliberate exception is `Logo`/`Spinner` reading `--ui-tc-red`.
 - **Pick the role by what the element *is*:**
   `--ui-primary` for a control/CTA (and every focus ring), `--ui-accent` for chrome — a rule,
   divider, decorative border, a label that doesn't act — `--ui-danger` for destructive actions
-  and errors, `--ui-confirm` for the affirmative action. Each has its own `--ui-text-on-*`.
+  and errors, `--ui-safety` for the affirmative action. Each has its own `--ui-text-on-*`,
+  and danger and safety each carry a `-lighter` and `-darker` ground as well.
   They mostly resolve to the same red today, so a wrong pick is invisible until an app splits
   them.
 - **`var()` inside a custom property resolves where it is *declared*.** A component token
@@ -118,10 +119,14 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   `[data-theme="dark"]` or a scoped `--ui-primary` on a subtree can't move it. So either don't
   declare the component token and read it with a fallback at the element —
   `background: var(--ui-left-rail-bg, var(--ui-surface-pale))` — or redeclare it in the dark
-  block. Tints are derived at the element with `color-mix()`, never declared on `:root`.
+  block. A tint **composed from a semantic** is derived at the element with `color-mix()`,
+  never declared on `:root` — that is what freezes. A tint that is its own hand-picked value
+  holds no `var()`, so it goes on the primitive tier like any other literal and the semantic
+  aliases it: `--ui-safety-lighter: var(--ui-tc-green-lighter)`. The cost is that repointing
+  a role no longer moves its tints, so such a role is repointed as a trio.
   The build is green and light mode looks right either way; check a scoped theme.
 - **Only semantics change in dark mode.** Primitives are identical in both themes; the dark
-  block re-points semantics. Role colours (primary, accent, danger, confirm) don't move.
+  block re-points semantics. Role colours (primary, accent, danger, safety) do not move.
 - **Every component colour reads an override hook first**: `var(--ui-<component>-<part>,
   var(--ui-<semantic>))`, so an app can retune one component without moving the semantic.
 - **Geometry that is the same object is shared, not copied**: read the other component's

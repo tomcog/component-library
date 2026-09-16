@@ -156,13 +156,29 @@ It arrived as `Button/Confirm` holding a **raw `#59cf55`** — a component-tier
 name carrying a literal value, which is both tiers wrong at once and exactly
 the mistake the paragraph above warns about. It is now:
 
-    Confirm/Base   #59cf55        var(--ui-confirm)
-    Text/OnConfirm -> Color/White var(--ui-text-on-confirm)
+    Safety/Base    -> Color/TC Green  var(--ui-safety)
+    Text/OnConfirm -> Color/White     var(--ui-text-on-safety)
 
 sitting beside `Primary/Base`, `Accent/Base` and `Danger/Base` as the fourth
 semantic role. The rename kept the variable's ID, so the binding on the
 `State=Confirm` cell survived it untouched — **renaming is safe, deleting and
 recreating is not.**
+
+It has been renamed twice more since, on the same reasoning and with the same
+safety: `Confirm/Base` -> `Safety/Base` in the file, `Text/OnConfirm` ->
+`Text/OnSafety` beside it, and `--ui-confirm` -> `--ui-safety` in code (0.36.0).
+Three renames, every binding intact, because a rename keeps the ID.
+
+The same pass closed the other half of the original defect. `Safety/Base` and
+`Danger/Base` aliased `Color/TC Green` / `Color/TC Red` in **Dark** but held a
+raw literal in **Light** — so the two modes agreed by coincidence rather than by
+construction, and the Light value would have survived a change to the primitive.
+Both now alias in both modes, as do the four tints `ConfirmButton` added and
+`Primary/Lighter`, which had held a raw `#f7dce0` since it was created.
+
+**A mode that agrees by luck reads exactly like a mode that agrees by
+construction.** Resolving a variable in one mode tells you nothing about the
+other; walk both, as the invariant check at the end of a session does.
 
 The cell's glyph was bound to the `Color/White` primitive; it now reads
 `Text/OnConfirm`. Same class of fix as the `Neutral/350` rule and the

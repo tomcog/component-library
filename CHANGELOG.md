@@ -9,6 +9,64 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased adds `ConfirmButton`, and renames the `confirm` role to `safety`.**
+**Breaking** - two tokens renamed and one prop removed. Read the whole entry
+before moving an app's ref.
+
+**New component `ConfirmButton`** - the round button at the end of a decision,
+from Figma's `ConfirmButton` set (735:398). `tone="safety" | "danger"`
+(required, no default), `variant="filled" | "ghost"`, `size="xl" | "lg" | "md"
+| "sm"`, plus the usual `icon`, `asChild` and spread props. Unlike the
+`ButtonRound` tones it replaces it is coloured **at rest**, because a
+confirmation has to be read before it is pressed. `ConfirmButtonProps`,
+`ConfirmButtonTone`, `ConfirmButtonSize` and `ConfirmButtonVariant` are
+exported. See `docs/components/ConfirmButton.md`.
+
+**Renamed tokens**, old -> new:
+
+    --ui-confirm          ->  --ui-safety
+    --ui-text-on-confirm  ->  --ui-text-on-safety
+
+Both fail silently if an app still sets the old names - the override simply
+stops applying. Grep for `ui-confirm` before moving a ref. The rename is
+Figma's spelling (`Safety/*`), and it stops `--ui-confirm` and `--ui-danger`
+reading as "the confirm one" and "the other one" on the two halves of one
+dialog. The `ConfirmButton` component keeps its name: the component *is* the
+confirmation, and its tones are its two answers.
+
+**Removed `ButtonRound`'s `tone` prop** (`"primary" | "confirm" | "danger"`)
+and the `ButtonRoundTone` type. Figma dropped the `State=Confirm` and
+`State=Danger` cells from `Button/Round` (220:11857); code followed, and
+`primary` went with them because a one-value enum is not an axis.
+
+**NextJob uses this in ~8 places** and will not compile until they are
+migrated - `CRM`, `OpportunityDetail` (x2), `JobSites`, `Tasks`, `Companies`,
+`SmartCapture` (x2) and the `CircleIconButton` wrapper that forwards `tone`.
+The swap is *not* mechanical:
+
+    <ButtonRound tone="confirm" …/>  ->  <ConfirmButton tone="safety" …/>
+    <ButtonRound tone="danger"  …/>  ->  <ConfirmButton tone="danger"  …/>
+
+The replacement **rests** in its role colour where the original rested in the
+brand, so every migrated button gets louder in its row. Where the button is a
+toolbar action rather than the end of a decision, dropping the prop and leaving
+a plain `ButtonRound` is the right answer. Decide per call site.
+
+**Four new tokens**, the grounds `ConfirmButton` draws either side of each role:
+
+    --ui-danger-lighter  #f7dce0    --ui-safety-lighter  #cafac8
+    --ui-danger-darker   #a31c30    --ui-safety-darker   #378f34
+
+plus the primitives behind them (`--ui-tc-red-lighter|-darker`,
+`--ui-tc-green-lighter|-darker`) and twelve `--ui-confirm-button-*` geometry
+tokens aliasing `ButtonRound`'s. They alias primitives rather than mixing from
+the base, because the tints are hand-drawn and no percentage reproduces them -
+so **an app repointing `--ui-danger` or `--ui-safety` should repoint its trio**,
+not just the base. A base-only override still renders a coherent button.
+
+`LayerController`'s printer glyph moved from `--ui-confirm` to `--ui-safety`
+with no visual change.
+
 **0.34.0 -> 0.35.0 adds `size="md"` to InputText, InputSelect and
 InputTextarea** - a 24px field with 12/18 type, 12px icons, a 6px icon gap and
 an 8px label, from Figma's `Size=MD` (725:703). `lg` is the default and is the

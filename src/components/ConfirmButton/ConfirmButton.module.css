@@ -1,0 +1,179 @@
+/* ConfirmButton. Figma: `ConfirmButton` (735:398).
+   State=Default|Hover|Active|Ghost x Style=Safety|Danger, drawn at 48px.
+
+   Geometry is ButtonRound's, aliased through --ui-confirm-button-*-size in
+   tokens.css rather than restated, so the 48/40/32/24 ramp stays one fact.
+   Everything below this line is the colour, which is the whole difference
+   between the two components.
+
+   Four grounds per tone, and each one is a variable Figma draws:
+
+     rest     Safety/Lighter  --ui-safety-lighter   glyph --ui-safety
+     hover    Safety/Base     --ui-safety           glyph --ui-text-on-safety
+     press    Safety/Darker   --ui-safety-darker    glyph --ui-text-on-safety
+     ghost    none                                  glyph --ui-safety
+
+   and the same four against Danger/*. Note what that means next to
+   ButtonRound: this button is coloured at REST. ButtonRound's departed tones
+   were hover-only so a toolbar row kept one rhythm; a confirmation is read
+   before it is pressed, so it wears its answer from the start. */
+
+.button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+
+/* -- tone="safety" ------------------------------------------- */
+/* The affirmative half - Save, Apply, Accept, Keep.
+
+   Every colour reads an override hook first, so an app can retune this one
+   component without moving --ui-safety itself. The hooks are per-tone
+   (--ui-confirm-button-safety-*) rather than shared: the two tones are the two
+   ANSWERS, and an app that wants to restyle one of them almost never means
+   both. A shared hook would make "make Delete darker" also darken Save. */
+.safety {
+  background: var(--ui-confirm-button-safety-bg, var(--ui-safety-lighter));
+  color: var(--ui-confirm-button-safety-icon, var(--ui-safety));
+}
+
+.safety:hover:not(:disabled) {
+  background: var(--ui-confirm-button-safety-bg-hover, var(--ui-safety));
+  color: var(--ui-confirm-button-safety-icon-hover, var(--ui-text-on-safety));
+}
+
+/* Pressed is Safety/Darker, NOT the inverse surface ButtonRound presses to.
+   ButtonRound's press means "the pointer is down on this" and says nothing
+   about what the button does, so ink is right for it. Here the press is the
+   last frame of a decision the user has already made, and dropping the role
+   colour at exactly that moment would read as the button changing its mind. */
+.safety:active:not(:disabled) {
+  background: var(--ui-confirm-button-safety-bg-active, var(--ui-safety-darker));
+  color: var(--ui-confirm-button-safety-icon-active, var(--ui-text-on-safety));
+}
+
+/* -- tone="danger" ------------------------------------------- */
+/* The destructive half - Delete, Discard, Remove. Same structure, Danger/*.
+
+   This resting red is the deliberate opposite of the call ButtonRound makes,
+   and the reason the components split. A red disc in a toolbar is the loudest
+   thing in the row and buys nothing, because nothing is about to happen. A red
+   disc in a confirmation is the only warning the user gets. */
+.danger {
+  background: var(--ui-confirm-button-danger-bg, var(--ui-danger-lighter));
+  color: var(--ui-confirm-button-danger-icon, var(--ui-danger));
+}
+
+.danger:hover:not(:disabled) {
+  background: var(--ui-confirm-button-danger-bg-hover, var(--ui-danger));
+  color: var(--ui-confirm-button-danger-icon-hover, var(--ui-text-on-danger));
+}
+
+.danger:active:not(:disabled) {
+  background: var(--ui-confirm-button-danger-bg-active, var(--ui-danger-darker));
+  color: var(--ui-confirm-button-danger-icon-active, var(--ui-text-on-danger));
+}
+
+/* -- variant="ghost" ----------------------------------------- */
+/* Figma: State=Ghost, which drops the disc and keeps the glyph in the role
+   colour - Safety/Base or Danger/Base, the same fill the Default cell gives
+   its glyph. So ghost differs from filled at REST by the disc alone.
+
+   Only the resting pair is declared; hover and press fall through to the tone
+   rules above, so a ghost fills exactly as a filled one does. `.ghost` lands
+   at the same specificity as `.safety` (one class each), so unlike
+   ButtonRound - where `.ghost` is outranked by `.button:hover` and the order
+   does not matter - here source order IS the sequencing. These blocks must
+   stay below the tone blocks. The `:not(:disabled)` on every interactive tone
+   rule keeps them off a disabled ghost without restating it.
+
+   Figma draws no Ghost x Hover or Ghost x Active cell, and no Disabled cell at
+   all; those are derived here and listed as code-only in the doc. */
+.ghost.safety {
+  background: var(--ui-confirm-button-safety-ghost-bg, transparent);
+  color: var(--ui-confirm-button-safety-ghost-icon, var(--ui-safety));
+}
+
+.ghost.danger {
+  background: var(--ui-confirm-button-danger-ghost-bg, transparent);
+  color: var(--ui-confirm-button-danger-ghost-icon, var(--ui-danger));
+}
+
+/* The focus ring is --ui-primary for every control in the library, including
+   this one. It marks where the keyboard IS, which is the same fact whatever
+   the button goes on to do - a ring that changed colour per tone would be
+   saying the tone twice and the focus position less clearly. Code-only:
+   Figma models no focus state. */
+.button:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+/* Derived from ButtonRound's disabled state, which is the nearest existing
+   component, and shared across both tones: a disabled button does nothing, so
+   it has no answer to colour. Declared after the tone and ghost blocks, and at
+   two classes to beat `.ghost.safety` - a disabled ghost takes the disc here,
+   unlike ButtonRound's, because this control is never the quiet one in a row;
+   leaving it transparent would make an unavailable confirmation invisible. */
+.button:disabled,
+.button:disabled.ghost {
+  background: var(--ui-confirm-button-bg-disabled, var(--ui-surface-disabled));
+  color: var(--ui-confirm-button-icon-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+
+.xl { width: var(--ui-confirm-button-xl-size); height: var(--ui-confirm-button-xl-size); }
+.lg { width: var(--ui-confirm-button-lg-size); height: var(--ui-confirm-button-lg-size); }
+.md { width: var(--ui-confirm-button-md-size); height: var(--ui-confirm-button-md-size); }
+.sm { width: var(--ui-confirm-button-sm-size); height: var(--ui-confirm-button-sm-size); }
+
+.icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.xl .icon { width: var(--ui-confirm-button-xl-icon-size); height: var(--ui-confirm-button-xl-icon-size); }
+.lg .icon { width: var(--ui-confirm-button-lg-icon-size); height: var(--ui-confirm-button-lg-icon-size); }
+.md .icon { width: var(--ui-confirm-button-md-icon-size); height: var(--ui-confirm-button-md-icon-size); }
+.sm .icon { width: var(--ui-confirm-button-sm-icon-size); height: var(--ui-confirm-button-sm-icon-size); }
+
+/* Icon stroke. Same mechanism ButtonRound documents: without
+   non-scaling-stroke, stroke-width is in the icon's own user units, so the
+   rendered weight would depend on the viewBox as well as the size. */
+.icon svg * { vector-effect: non-scaling-stroke; }
+/* Set on the shapes as well as the <svg>: a presentation attribute on an
+   element beats a value inherited from its parent, so an svg-only rule loses
+   to icons that put stroke-width on each <path>. */
+.xl .icon svg, .xl .icon svg * { stroke-width: var(--ui-confirm-button-xl-icon-stroke); }
+.lg .icon svg, .lg .icon svg * { stroke-width: var(--ui-confirm-button-lg-icon-stroke); }
+.md .icon svg, .md .icon svg * { stroke-width: var(--ui-confirm-button-md-icon-stroke); }
+.sm .icon svg, .sm .icon svg * { stroke-width: var(--ui-confirm-button-sm-icon-stroke); }
+
+/* Keep both a direct Lucide SVG and an optional consumer wrapper inside the
+   component's icon box. The extra specificity prevents wrapper classes from
+   restoring their own intrinsic dimensions. */
+.button .icon > *,
+.button .icon svg,
+.button .icon img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button { transition: none; }
+}

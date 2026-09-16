@@ -1,14 +1,16 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
-import type { ButtonVariant, ButtonSize, ButtonRoundSize, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
+import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
+const CONFIRM_SIZES: ConfirmButtonSize[] = ["xl", "lg", "md", "sm"];
+const CONFIRM_TONES: ConfirmButtonTone[] = ["safety", "danger"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 const SEGMENTED_SIZES: SegmentedControlSize[] = ["lg", "md", "sm"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
@@ -55,8 +57,8 @@ const TYPE_TOKENS = [
 const SEMANTIC_TOKENS = [
   "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
   "--ui-accent", "--ui-text-on-accent",
-  "--ui-danger", "--ui-text-on-danger",
-  "--ui-confirm", "--ui-text-on-confirm",
+  "--ui-danger", "--ui-danger-lighter", "--ui-danger-darker", "--ui-text-on-danger",
+  "--ui-safety", "--ui-safety-lighter", "--ui-safety-darker", "--ui-text-on-safety",
   "--ui-surface-inverse", "--ui-text-on-inverse",
   "--ui-surface-muted", "--ui-surface-muted-hover", "--ui-surface-muted-active",
   "--ui-text-default", "--ui-text-muted", "--ui-text-faint", "--ui-surface-raised",
@@ -69,7 +71,9 @@ const TOKEN_PAIRS: [string, string, string][] = [
   ["--ui-primary", "--ui-text-on-primary", "On primary"],
   ["--ui-accent", "--ui-text-on-accent", "On accent"],
   ["--ui-danger", "--ui-text-on-danger", "On danger"],
-  ["--ui-confirm", "--ui-text-on-confirm", "On confirm"],
+  ["--ui-safety", "--ui-text-on-safety", "On safety"],
+  ["--ui-danger-darker", "--ui-text-on-danger", "On danger darker"],
+  ["--ui-safety-darker", "--ui-text-on-safety", "On safety darker"],
   ["--ui-surface-inverse", "--ui-text-on-inverse", "On inverse"],
   ["--ui-surface-muted", "--ui-text-default", "On muted"],
   ["--ui-surface-raised", "--ui-text-default", "On raised"],
@@ -127,7 +131,7 @@ const House = () => (
     <path d="M9 22V12h6v10" />
   </svg>
 );
-// lucide `save`, the glyph the confirm tone was asked for.
+// lucide `save`, the affirmative glyph - ConfirmButton's tone="safety".
 const Save = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
     <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
@@ -135,7 +139,7 @@ const Save = () => (
     <path d="M7 3v4a1 1 0 0 0 1 1h7" />
   </svg>
 );
-// lucide `trash-2`, for the danger tone.
+// lucide `trash-2`, the destructive glyph - ConfirmButton's tone="danger".
 const Trash2 = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
     <path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -516,12 +520,14 @@ function App() {
       <Section
         title="ButtonRound"
         note={
-          "Figma sizes and interaction states. Hover and press each icon button. The third in " +
-          "each row is tone=\"confirm\" and the fourth tone=\"danger\" \u2014 both rest exactly like " +
-          "the first, and answer the pointer in --ui-confirm and --ui-danger instead of " +
-          "--ui-primary. A tone changes the hover pair only: pressed is the inverse surface for " +
-          "every round button, whatever it goes on to do, and a destructive button that rested red " +
-          "would be the loudest thing in its row. " +
+          "Figma sizes and interaction states. Hover and press each icon button. The toolbar " +
+          "round button, and only that: its tone=\"confirm\" and tone=\"danger\" moved out into " +
+          "ConfirmButton below in 0.36.0, following Figma, where Button/Round now draws " +
+          "Default, Hover, Active, Disabled and Ghost and nothing else. They were hover-only " +
+          "recolours, so a Delete and a Back button here were indistinguishable until the " +
+          "pointer was already on one \u2014 right for a row that wants one resting rhythm, wrong " +
+          "for a confirmation. Pressed is the inverse surface, which means \"the pointer is down " +
+          "on this\" and says nothing about what the button does. " +
           "The last two are variant=\"ghost\": no fill and a muted glyph at rest, then the same " +
           "primary fill as the first on hover \u2014 weight arriving with the pointer rather than a " +
           "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
@@ -532,10 +538,41 @@ function App() {
           <Row key={s} label={s}>
             <ButtonRound size={s} icon={<House />} aria-label={`${s} home action`} />
             <ButtonRound size={s} icon={<House />} aria-label={`${s} disabled action`} disabled />
-            <ButtonRound size={s} tone="confirm" icon={<Save />} aria-label={`${s} save`} />
-            <ButtonRound size={s} tone="danger" icon={<Trash2 />} aria-label={`${s} delete`} />
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost home action`} />
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
+          </Row>
+        ))}
+      </Section>
+
+      <Section
+        title="ConfirmButton"
+        note={
+          "The two halves of \u201Care you sure?\u201D. Figma: ConfirmButton (735:398), lifted out of "
+          + "Button/Round's Confirm and Danger cells. Unlike the tones it replaces, this one is "
+          + "coloured AT REST \u2014 tone=\"safety\" on --ui-safety-lighter, tone=\"danger\" on "
+          + "--ui-danger-lighter \u2014 because a confirmation has to be read before it is pressed, "
+          + "not after the pointer lands. Hover fills the base colour and press goes to the darker "
+          + "one, which is the other break from ButtonRound: its press drops to ink, meaning \u201Cthe "
+          + "pointer is down\u201D, while these keep the role colour through the last frame of a "
+          + "decision already made. The third and fourth in each row are variant=\"ghost\": the disc "
+          + "goes and the glyph keeps its colour, where a ghost ButtonRound rests muted. Disabled "
+          + "(last two) takes the disc in both variants \u2014 this control is never the quiet one, so "
+          + "an unavailable confirmation should still be visible. Figma draws XL only; the other "
+          + "three sizes alias ButtonRound's, so the two sit level in a row."
+        }
+      >
+        {CONFIRM_SIZES.map((s) => (
+          <Row key={s} label={s}>
+            {CONFIRM_TONES.map((t) => (
+              <ConfirmButton key={t} size={s} tone={t} icon={t === "safety" ? <Save /> : <Trash2 />}
+                aria-label={`${s} ${t === "safety" ? "save" : "delete"}`} />
+            ))}
+            {CONFIRM_TONES.map((t) => (
+              <ConfirmButton key={`${t}-ghost`} size={s} tone={t} variant="ghost" icon={t === "safety" ? <Save /> : <Trash2 />}
+                aria-label={`${s} ghost ${t === "safety" ? "save" : "delete"}`} />
+            ))}
+            <ConfirmButton size={s} tone="safety" icon={<Save />} aria-label={`${s} save unavailable`} disabled />
+            <ConfirmButton size={s} tone="danger" variant="ghost" icon={<Trash2 />} aria-label={`${s} ghost delete unavailable`} disabled />
           </Row>
         ))}
       </Section>

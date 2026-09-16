@@ -10,23 +10,15 @@ export type ButtonRoundSize = "xl" | "lg" | "md" | "sm";
  * How much weight the button carries. `filled` is the tinted disc; `ghost`
  * drops the fill and rests as a muted glyph alone.
  *
- * NOT named `primary`, though that is what `Button` calls its filled variant:
- * `tone` already takes the value `"primary"` here, and one component holding
- * two props that both accept that word - meaning different things - is a
- * lookup table nobody should have to keep in their head. Not a boolean either,
- * so a third weight can join without changing the API shape.
+ * NOT named `primary`, though that is what `Button` calls its filled variant.
+ * This component carried a `tone` prop until 0.36.0 that also took the value
+ * `"primary"`, and one component holding two props that both accept that word -
+ * meaning different things - is a lookup table nobody should have to keep in
+ * their head. The name outlives the clash on purpose: `ConfirmButton` uses
+ * `variant` for the same axis, so the two round buttons read alike. Not a
+ * boolean either, so a third weight can join without changing the API shape.
  */
 export type ButtonRoundVariant = "filled" | "ghost";
-/**
- * What the button DOES, not what colour it is. `confirm` marks the affirmative
- * action - Save, Apply, Accept - and turns the hover fill green; `danger`
- * marks the destructive one - Delete, Discard, Remove - and turns it red.
- *
- * The pair is deliberate: they are "yes" and "no", and an app that recolours
- * its primary gets neither of them by accident.
- */
-export type ButtonRoundTone = "primary" | "confirm" | "danger";
-
 export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */
   icon: ReactNode;
@@ -44,20 +36,13 @@ export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement
    * library had no round button with a transparent resting state.
    */
   variant?: ButtonRoundVariant;
-  /**
-   * Figma: the `Confirm` and `Danger` states. Each turns the HOVER pair -
-   * `--ui-confirm` / `--ui-text-on-confirm`, or `--ui-danger` /
-   * `--ui-text-on-danger` - and leaves the resting and pressed appearances
-   * alone. Defaults to `primary`.
-   */
-  tone?: ButtonRoundTone;
   /** Render the single child element, such as an anchor, as the control. */
   asChild?: boolean;
 }
 
 export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
   function ButtonRound(
-    { icon, size = "lg", variant = "filled", tone = "primary", type = "button", className, asChild = false, children, ...props },
+    { icon, size = "lg", variant = "filled", type = "button", className, asChild = false, children, ...props },
     ref,
   ) {
     const child =
@@ -81,7 +66,6 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
       styles.button,
       styles[size],
       variant === "ghost" ? styles.ghost : null,
-      tone !== "primary" ? styles[tone] : null,
       className,
       child?.props.className,
     ]
