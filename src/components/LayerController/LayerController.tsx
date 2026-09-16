@@ -56,6 +56,13 @@ export interface LayerControllerProps
    * decorative.
    */
   handleProps?: ButtonHTMLAttributes<HTMLButtonElement>;
+  /**
+   * Leave the grip off the row, for lists whose order isn't the reader's to
+   * change - a list that only reports an order set somewhere else. A decorative
+   * grip invites a drag that does nothing, so a row that can't be reordered
+   * should not show one. Defaults to `false`: the grip shows.
+   */
+  hideHandle?: boolean;
   /** Class for the outer row. Every other prop spreads onto the radio. */
   className?: string;
 }
@@ -82,7 +89,7 @@ export interface LayerControllerProps
  * pass `aria-label` when the label is a control.
  */
 export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps>(function LayerController(
-  { number, color, swatchProps, label, printed = false, purpose = "print", visible = true, onVisibleChange, hideVisibility = false, handleProps, className, checked, disabled, ...props },
+  { number, color, swatchProps, label, printed = false, purpose = "print", visible = true, onVisibleChange, hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
   ref,
 ) {
   const verb = purpose === "draw" ? "Draw on" : "Print";
@@ -138,7 +145,7 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
             {visible ? <EyeIcon /> : <EyeOffIcon />}
           </span>
         )}
-        {handleProps ? (
+        {hideHandle ? null : handleProps ? (
           <button type="button" {...handleProps} className={[styles.handle, handleProps.className].filter(Boolean).join(" ")}>
             <GripIcon />
           </button>

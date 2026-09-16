@@ -79,3 +79,7 @@ The eye is a toggle `<button>` with `aria-pressed` (pressed = hidden) when
   edit state.
 - **The grip is a button only when `handleProps` is passed.** Reordering is the
   caller's behaviour; without it the grip is decorative and `aria-hidden`.
+- **`hideHandle` leaves the grip off entirely**, for a list whose order isn't the
+  reader's to change - one that reports an order decided somewhere else. Prefer
+  it to a decorative grip there: a grip that can be grabbed and does nothing
+  reads as a broken drag rather than as an absent feature.
