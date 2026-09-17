@@ -9,6 +9,18 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**0.39.0 -> 0.40.0** - LayerController: bigger swatch and name, and a swatch that can be struck through.
+
+The swatch goes 12px -> 16px and the name goes Label SM -> Label MD (10px -> 12px), on
+the same 12px leading, so the row's height and the number beside it are unchanged
+(Figma 719:337). `swatchCut` draws Figma's rule across the swatch (741:386): the colour
+shown and cancelled at once, for a colour nothing available can draw - a plotter with no
+pen in that ink. It marks a fact about the colour and changes nothing else about the row.
+
+New tokens: `--ui-layer-controller-label-font-size`, `--ui-layer-controller-cut-color`
+(white, as Figma draws it) and `--ui-layer-controller-cut-width` (3px). Nothing renamed,
+so an app moving to this ref picks up the two size changes and needs no edits.
+
 **0.38.0 -> 0.39.0** - LayerController: a row can leave its grip off.
 
 **0.38.0 -> 0.39.0** - LayerController: `hideHandle` leaves the grip off a row.
