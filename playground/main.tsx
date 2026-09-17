@@ -713,12 +713,14 @@ function App() {
               { id: "lime", n: 3, color: "#3cb227", name: "Lime green" },
               { id: "turquoise", n: 2, color: "#00838a", name: "Turquoise" },
               { id: "pink", n: 1, color: "#ee3f89", name: "Pink", printed: true },
+              { id: "gone", n: 0, color: "#fdb212", name: "Marigold", cut: true },
             ].map((l) => (
               <LayerController
                 key={l.id}
                 name="playground-print-layer"
                 number={l.n}
                 color={l.color}
+                swatchCut={l.cut}
                 label={l.name}
                 printed={l.printed}
                 visible={!hiddenLayers.includes(l.id)}

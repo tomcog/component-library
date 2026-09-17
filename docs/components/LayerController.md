@@ -20,14 +20,31 @@ the number, a colour swatch, the name and a grip. Figma: `LayerController`
     row       padding 6 / Button Size/SM padding-x (8), gap 4, same stroke
               and radius on the other two corners; 24 tall, as Figma strokes
               inside - drawn with an inset box-shadow, not a border
-    type      Label SM 10/12, Medium; number Accent, name Text/Default
-    swatch    12px circle, the caller's colour
+    type      number Label SM 10/12 in Accent; name Label MD 12px on the same
+              12px leading, Text/Default - the row is the 24px button box, and
+              Label MD's own 16px leading would burst it (719:337)
+    swatch    16px circle, the caller's colour; `swatchCut` strikes it through
+              with Figma's 3px rule, overhanging it at both ends (741:386)
     icons     16px lucide/printer (Confirm stroke) and lucide/printed;
               lucide/pen-tool at 24px/1.5 stroke for purpose="draw" - same weight
               (Text/Muted with a Confirm tick); 12px eye (Text/Muted) and
               grip (Surface Muted), both at 65%, gap 4
     hidden    (719:567) no rules on box or row; number and name
               Text/Disabled; swatch unchanged; eye-off in Accent at 65%
+
+## A struck-through swatch is about the colour, not the layer
+
+`swatchCut` says there is nothing available that draws this colour - no pen in
+that ink in the plotter, a palette the colour isn't in. It is drawn as the
+colour cancelled rather than replaced, because the layer really is that colour;
+what's missing is the means to draw it. So it changes nothing else: the swatch
+still opens whatever it opened, the eye still hides, and the layer still prints
+(in whatever the machine has). A row that refused to print would be answering a
+question the component isn't being asked.
+
+The rule overhangs the circle at both ends, which is what keeps it reading as a
+cut rather than as a highlight drawn inside the dot; that's why it's Figma's
+vector at an 18.12 box rather than a gradient clipped to the swatch.
 
 ## The box is a radio, drawn like a checkbox
 

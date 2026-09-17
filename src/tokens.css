@@ -752,7 +752,16 @@
   --ui-layer-controller-line-height: var(--ui-type-label-sm-line-height);
   --ui-layer-controller-font-weight: var(--ui-type-label-font-weight);
   --ui-layer-controller-number-width: 10px;
-  --ui-layer-controller-swatch-size: 12px;
+  /* The name reads a step up from the number beside it: the number is an index,
+     the name is the thing. Label MD's size on Label SM's leading, because the
+     row's height is the 24px button box and 16px of leading would burst it. */
+  --ui-layer-controller-label-font-size: var(--ui-type-label-md-font-size);
+  --ui-layer-controller-swatch-size: 16px;
+  /* The rule struck through an unavailable swatch, and how thick it is. White
+     rather than the surface colour: it reads as a cut through the colour, which
+     is the point, and it is what Figma draws (741:386). */
+  --ui-layer-controller-cut-color: #ffffff;
+  --ui-layer-controller-cut-width: 3px;
   --ui-layer-controller-handle-size: 12px;
 
   /* -- Tabs ----------------------------------------------------

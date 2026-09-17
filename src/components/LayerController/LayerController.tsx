@@ -15,6 +15,14 @@ export interface LayerControllerProps
    */
   swatchProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   /**
+   * Strike the swatch through with a diagonal rule: the colour is shown and
+   * cancelled at once, for a colour nothing available can draw - a plotter with
+   * no pen in that ink, a palette the colour isn't in. It marks a fact about the
+   * colour, so it changes nothing else about the row: the swatch still opens
+   * whatever it opened, and the layer still prints. Figma: 741:386.
+   */
+  swatchCut?: boolean;
+  /**
    * The layer name. A string, or a control such as a borderless `<input>` when
    * the name is editable in place - it inherits this row's type and colour.
    */
@@ -89,7 +97,7 @@ export interface LayerControllerProps
  * pass `aria-label` when the label is a control.
  */
 export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps>(function LayerController(
-  { number, color, swatchProps, label, printed = false, purpose = "print", visible = true, onVisibleChange, hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
+  { number, color, swatchProps, swatchCut = false, label, printed = false, purpose = "print", visible = true, onVisibleChange, hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
   ref,
 ) {
   const verb = purpose === "draw" ? "Draw on" : "Print";
@@ -122,9 +130,13 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
               {...swatchProps}
               className={[styles.swatch, styles.swatchButton, swatchProps.className].filter(Boolean).join(" ")}
               style={{ ...swatchProps.style, background: color }}
-            />
+            >
+              {swatchCut && <CutMark />}
+            </button>
           ) : color ? (
-            <span className={styles.swatch} style={{ background: color }} aria-hidden />
+            <span className={styles.swatch} style={{ background: color }} aria-hidden>
+              {swatchCut && <CutMark />}
+            </span>
           ) : null}
           <span className={styles.label}>{label}</span>
         </span>
@@ -159,6 +171,18 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
     </div>
   );
 });
+
+/* Figma's own line across the swatch (741:386), at the box it is drawn in: a
+   16px circle inside an 18.12 box, so the rule runs past the colour at both
+   ends. Kept as the vector rather than redrawn with a gradient, because the
+   overhang and the 3px weight are the whole of what makes it read as a cut. */
+function CutMark() {
+  return (
+    <svg className={styles.cut} viewBox="0 0 18.1213 18.1213" fill="none" aria-hidden>
+      <path className={styles.cutStroke} d="M17.0607 1.06066L1.06066 17.0607" />
+    </svg>
+  );
+}
 
 /* The three glyphs are Figma's exported vectors (lucide/printer, lucide/printed
    and icon-end), with their fills and strokes moved onto currentColor and

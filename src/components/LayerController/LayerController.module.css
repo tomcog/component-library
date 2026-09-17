@@ -110,13 +110,30 @@
 .swatchButton:disabled { cursor: default; }
 
 .swatch {
+  position: relative; /* the cut hangs off it */
   flex: none;
   width: var(--ui-layer-controller-swatch-size);
   height: var(--ui-layer-controller-swatch-size);
   border-radius: 50%;
 }
 
+/* A swatch struck through: the colour is shown and cancelled at once, which is
+   what "there is no pen for this" looks like. Figma draws it as one rule across
+   the dot, overhanging it at both ends (741:386) - the overhang is what keeps it
+   reading as a cut rather than as a highlight drawn inside the circle. */
+.cut {
+  position: absolute;
+  inset: -6.63%; /* the overhang, as Figma's 18.12 box is to its 16px circle */
+  overflow: visible;
+  pointer-events: none;
+}
+.cutStroke {
+  stroke: var(--ui-layer-controller-cut-color, #ffffff);
+  stroke-width: var(--ui-layer-controller-cut-width, 3px);
+}
+
 .label {
+  font-size: var(--ui-layer-controller-label-font-size);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
