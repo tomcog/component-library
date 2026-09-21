@@ -9,6 +9,17 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ConfirmButton: `tone="safety"` rests on a darker glyph.
+
+The filled safety button drew its icon in `--ui-safety` on `--ui-safety-lighter` - two
+light greens together, which made the glyph a shape to look for rather than read. It is
+`--ui-safety-darker` (#378f34) now. Danger is untouched: a red on a pale pink was never
+the problem, and moving it for symmetry would cost contrast rather than gain it. Ghost
+keeps `--ui-safety`, having no disc to be lost against. No token renamed, and the
+existing `--ui-confirm-button-safety-icon` hook still overrides it.
+
+Figma still draws the rest glyph on `Safety/Base`; see `docs/divergences.md`.
+
 **0.39.0 -> 0.40.0** - LayerController: bigger swatch and name, and a swatch that can be struck through.
 
 The swatch goes 12px -> 16px and the name goes Label SM -> Label MD (10px -> 12px), on

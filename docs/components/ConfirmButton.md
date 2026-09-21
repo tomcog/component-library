@@ -71,7 +71,7 @@ the same kind of axis.
 
     tone="safety"                              tone="danger"
     rest    --ui-safety-lighter  #cafac8       --ui-danger-lighter  #f7dce0
-            glyph --ui-safety                          glyph --ui-danger
+            glyph --ui-safety-darker                   glyph --ui-danger
     hover   --ui-safety          #59cf55       --ui-danger          #e51a38
             glyph --ui-text-on-safety                  glyph --ui-text-on-danger
     press   --ui-safety-darker   #378f34       --ui-danger-darker   #a31c30
@@ -81,6 +81,15 @@ the same kind of axis.
 
 Figma: `Safety/Lighter`, `Safety/Base`, `Safety/Darker` and the matching
 `Danger/*`, all three bound on every variant.
+
+**Safety rests on the darker glyph, danger on the base one.** `--ui-safety` on
+`--ui-safety-lighter` is two light greens together, and the icon inside it was a
+shape you had to look for rather than read; `--ui-safety-darker` (#378f34) is
+the same role colour with the contrast to carry a 16px glyph. Danger does not
+have the problem — `--ui-danger` on `--ui-danger-lighter` is already a red on a
+pale pink — so it is left where it is rather than moved for symmetry. Ghost
+keeps `--ui-safety` (see below): with no disc behind it there is nothing for the
+glyph to be lost against.
 
 **Press is the darker role colour, not the inverse surface.** `ButtonRound`
 presses to `--ui-surface-inverse`, which means "the pointer is down on this" and

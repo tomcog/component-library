@@ -41,7 +41,10 @@
    both. A shared hook would make "make Delete darker" also darken Save. */
 .safety {
   background: var(--ui-confirm-button-safety-bg, var(--ui-safety-lighter));
-  color: var(--ui-confirm-button-safety-icon, var(--ui-safety));
+  /* Safety/Darker, not Safety: the glyph sits on Safety/Lighter, and the two
+     lighter greens together were a shape you had to look for rather than read.
+     Darker is the same role colour with enough contrast to carry the icon. */
+  color: var(--ui-confirm-button-safety-icon, var(--ui-safety-darker));
 }
 
 .safety:hover:not(:disabled) {

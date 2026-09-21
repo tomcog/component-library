@@ -143,3 +143,12 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    is the last one left, and because "confirm" no longer names anything in the
    code. Direction: undecided — either code grows a rectangular safety tone or
    the cell is renamed `Safety` and left as a documented Figma-only. Ask.
+
+31. **`ConfirmButton`'s safety rest glyph is `Safety/Darker` in code,
+   `Safety/Base` in Figma.** Changed in code on 2026-09-20 (see CHANGELOG):
+   `--ui-safety` on `--ui-safety-lighter` was two light greens, and the icon
+   read as a shape rather than a glyph. Direction: **Figma** — the Default cell
+   of `tone=Safety` (node `606:15107` and its siblings) binds its icon stroke to
+   `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
+   throughout. Not done in the session that made the code change: writes need
+   the Desktop Bridge plugin, which wasn't connected.
