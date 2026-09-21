@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - ConfirmButton: `tone="safety"` rests on a darker glyph.
+**0.40.0 -> 0.41.0** - ConfirmButton: `tone="safety"` rests on a darker glyph.
 
 The filled safety button drew its icon in `--ui-safety` on `--ui-safety-lighter` - two
 light greens together, which made the glyph a shape to look for rather than read. It is
