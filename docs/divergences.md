@@ -167,6 +167,18 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    The code's tokens are the list to build from; `docs/components/SegmentedControl.md`
    has the table.
 
+   **The track's two are worse, because they are inert as well as stale.**
+   `Segmented/Track Padding` says 4 and `/Track Gap` says 4, where the worked
+   frames draw 0 and 8. They are bound to the six `SegmentedTrack` variants —
+   which have no children and `layoutMode: "NONE"`, so Figma never applies
+   either one. The set cannot be wrong on canvas and cannot be right either;
+   it simply does not spend the values it holds. Repointing the two variables
+   is half the fix. The other half is giving the set auto-layout and a real
+   slot so the numbers have somewhere to land, which is design-shaped and is
+   its own session. Until then the frames 756:478 / 485 / 498 are the only
+   statement of the track's layout, and `docs/components/SegmentedControl.md`
+   says so under "Read the worked frames, not the track set".
+
 34. **The `Segment`'s icon stroke binds `Color/White` in `Active` and
    `Dark`.** A primitive, at all three sizes, on both states — where the label
    beside it correctly reads `Text/OnPrimary` and `Text/OnInverse`. The set's

@@ -9,6 +9,33 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: the track's inset is gone and its gap is 8.
+
+The other half of the 0.42.0 respec, missed first time round. Figma draws the selected
+pill **flush with the track's ends** (frames 756:478 / 485 / 498, one per size): the 4px
+inset is zero, and the gap between segments doubles 4 -> 8, so the track's ground is seen
+only between the segments and behind the idle ones rather than as a ring around the
+chosen one.
+
+    --ui-segmented-track-padding   4px -> 0px
+    --ui-segmented-track-gap       4px -> 8px
+
+**The track's height changes with it**, and this is the part to check: it is derived, so
+with no inset it is now exactly the segment - **40 / 30 / 26** where 0.42.0 gave 48 / 38 /
+34 and 0.41.0 gave 48 / 40 / 32. A control in a fixed-height row has moved twice; measure
+it once against this ref rather than against 0.42.0. Nothing else moved: same sizes, same
+type, same radii, same grounds, same keyboard.
+
+No token renamed or removed. `--ui-segmented-track-padding` is kept at zero rather than
+deleted — it is still what an app would set to put the ring back.
+
+Why it was missed: `SegmentedTrack` (558:15011) is six empty shells with `layoutMode:
+"NONE"`, so the `padding: 4` / `gap: 4` bound on them is inert, and the set was read as
+the spec over the worked frames. The set's own poses stand 40 / 30 / 26 — the segment
+height, not segment + 8 — which was the tell. `docs/components/SegmentedControl.md` has
+it under "Read the worked frames, not the track set", and divergence #33 now covers the
+two inert track variables.
+
 **0.41.0 -> 0.42.0** - SegmentedControl: a respec of the segment's insides, and a `tone` on the track.
 
 Fetched from Figma, where both sets were redrawn (`Segment` 555:14966, `SegmentedTrack`

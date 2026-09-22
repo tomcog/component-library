@@ -812,15 +812,24 @@
 
      The TRACK is a pill holding the segments; a segment is a pill inside it,
      and the selected one is the only one with a ground. Track height is
-     derived, not declared: 4 + the segment + 4, so LG stands 48, MD 38 and
-     SM 34. Only the segment is given a height, which is the same
-     decomposition Button uses - size by height, never by vertical padding. */
+     derived, not declared - and since 0.43.0 the derivation is just the
+     segment: with no inset, the track stands exactly 40, 30 and 26. Only the
+     segment is given a height, which is the same decomposition Button uses -
+     size by height, never by vertical padding. */
   --ui-segmented-track-radius: 99px;
-  /* The inset that lets the track show around the selected pill. */
-  --ui-segmented-track-padding: 4px;
+  /* ZERO since 0.43.0. The track used to hold a 4px inset so it showed as a
+     ring around the selected pill; Figma now draws the pill flush to the
+     track's ends (756:478 and its two siblings), so the ground reads only
+     BETWEEN the segments and behind the idle ones. Kept as a token rather
+     than deleted: it is still the thing an app would reach for to put the
+     ring back, and Figma still holds the variable. */
+  --ui-segmented-track-padding: 0px;
   /* Between two segments. A gap, not padding inside each one - the same
-     distinction Tabs' tokens spell out, and for the same reasons. */
-  --ui-segmented-track-gap: 4px;
+     distinction Tabs' tokens spell out, and for the same reasons. Doubled to
+     8 in the same pass that zeroed the inset: with the pills flush to the
+     ends, this gap is the only place the track's ground is seen as a groove,
+     and at 4 it read as a seam. */
+  --ui-segmented-track-gap: 8px;
   --ui-segmented-radius: 99px;
   /* Height, padding-x, icon and icon gap all step per size, and each step is
      a value Figma draws rather than one derived from the type. The icon is

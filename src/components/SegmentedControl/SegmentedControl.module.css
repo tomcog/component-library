@@ -12,14 +12,16 @@
   align-items: center;
   /* The pill the segments sit in. It is the one ground that is always drawn -
      an idle segment has none, so what you see behind an unselected label is
-     this. Which ground it takes is `tone`, below. */
+     this, along with the gap between segments. With the inset at zero the
+     selected pill runs flush to the track's ends, so that gap is the only
+     place the ground reads as a groove. Which ground it takes is `tone`. */
   border-radius: var(--ui-segmented-track-radius);
   padding: var(--ui-segmented-track-padding);
   gap: var(--ui-segmented-track-gap);
-  /* Height is DERIVED - padding + the segment - so the track is 48 at LG, 38
-     at MD and 34 at SM without any being declared. Giving it a height as well
-     would be two numbers for one measurement, and they would disagree the
-     moment the segment moved. */
+  /* Height is DERIVED - padding + the segment - and since the inset went to
+     zero that is just the segment: 40 at LG, 30 at MD, 26 at SM. Giving the
+     track a height as well would be two numbers for one measurement, and they
+     would disagree the moment the segment moved. */
 }
 
 /* -- the track ground ---------------------------------------- */
@@ -120,9 +122,12 @@
 
 .segment:focus-visible {
   outline: 2px solid var(--ui-segmented-focus-ring, var(--ui-primary));
-  /* Inside, not offset. An outset ring on a segment sitting 4px from the
-     track's edge would be clipped by the pill it lives in; every other focus
-     ring in this library is offset because nothing is boxing it in. */
+  /* Inside, not offset - and more so since 0.43.0. The reason used to be that
+     a segment sat 4px in from the track's edge, so an outset ring would be
+     drawn over the pill it lives in; now the segment is FLUSH with that edge,
+     and an outset ring would leave the control altogether and land on
+     whatever sits beside it. Every other focus ring in this library is offset
+     because nothing is boxing it in. */
   outline-offset: -2px;
 }
 

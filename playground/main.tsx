@@ -584,9 +584,11 @@ function App() {
           + "not a tablist and not a row of Pills: Tabs swaps what is shown inside the page, and a "
           + "Pill is one independent toggle, where these N options are mutually exclusive. Arrow "
           + "keys move and select, Home and End jump, and both wrap; only the current choice is in "
-          + "the tab order. The track's pale pill is the only ground always drawn \u2014 an idle "
+          + "the tab order. The track's pill is the only ground always drawn \u2014 an idle "
           + "segment has none, and hovering one changes the LABEL alone, because a second ground "
-          + "inside the track would read as two things chosen. The second column is variant=\"dark\". "
+          + "inside the track would read as two things chosen. The selected pill is flush with the "
+          + "track's ends, so that ground is seen in the 8px gaps between segments rather than as a "
+          + "ring around the chosen one. The second column is variant=\"dark\". "
           + "tone picks the track's own ground \u2014 gray is the pale surface, white the raised one, "
           + "which is what a control sitting on a pale page wants."
         }

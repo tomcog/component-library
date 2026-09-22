@@ -16,12 +16,12 @@ Gray | White as well.
 </SegmentedControl>
 ```
 
-    track    radius 99, 4 inset, 4 between segments
+    track    radius 99, NO inset, 8 between segments
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
     segment  radius 99
-    LG       segment 40 on 14/20, padding-x 10, icon 24, icon gap 6 -> track 48
-    MD       segment 30 on 12/16, padding-x 8,  icon 18, icon gap 6 -> track 38
-    SM       segment 26 on 10/12, padding-x 6,  icon 14, icon gap 4 -> track 34
+    LG       segment 40 on 14/20, padding-x 10, icon 24, icon gap 6 -> track 40
+    MD       segment 30 on 12/16, padding-x 8,  icon 18, icon gap 6 -> track 30
+    SM       segment 26 on 10/12, padding-x 6,  icon 14, icon gap 4 -> track 26
 
 Every number above is a token: `--ui-segmented-{lg,md,sm}-{height,padding-x,
 icon-size,icon-gap,font-size,line-height}`, plus the shared
@@ -78,13 +78,22 @@ the height instead means a track can mix segments with and without icons
 without its row stepping, and the vertical padding simply falls out of it - 8
 around the glyph, 10 around the label, at LG.
 
+## The selected pill is flush with the track
+
+The track carried a 4px inset until 0.43.0, so the ground showed as a ring all
+the way around the chosen segment. It does not any more: `--ui-segmented-track-padding`
+is **0**, the pill runs to the track's ends, and the ground is seen only in the
+8px gaps between segments and behind the idle ones. The gap doubled from 4 in
+the same pass - with the pills flush, that gap is the only place the groove
+reads, and at 4 it was a seam.
+
 ## The track is not given a height
 
-48, 38 and 34 are derived - 4 + the segment + 4. Declaring a track height as
-well would be two numbers for one measurement, and they would disagree the
-moment the segment moved. The segment itself takes `height` plus
-`padding-inline`, never `padding-block`: the same decomposition Button uses,
-for the same reason.
+40, 30 and 26 are derived - padding + the segment, which with no padding is
+just the segment. Declaring a track height as well would be two numbers for one
+measurement, and they would disagree the moment the segment moved. The segment
+itself takes `height` plus `padding-inline`, never `padding-block`: the same
+decomposition Button uses, for the same reason.
 
 ## `tone` picks the TRACK's ground
 
@@ -172,17 +181,17 @@ the `Segment` icon property all went out in the same snapshot.
   this is no longer a divergence; kept here because the shape of the mistake
   keeps recurring and `Neutral/800` is the obvious thing to reach for.
 - **The focus ring is INSET** (`outline-offset: -2px`), where every other ring
-  in this library is offset outward by 2. A segment sits 4px inside the track's
-  pill, so an outset ring is clipped by the thing it lives in. Figma models no
-  focus state, so this is code-only, matching Button and Tabs.
+  in this library is offset outward by 2. The reason got stronger in 0.43.0:
+  the segment used to sit 4px inside the track's pill, so an outset ring was
+  drawn over the thing it lives in; now it is FLUSH with the track's edge, so
+  an outset ring would leave the control entirely. Figma models no focus state,
+  so this is code-only, matching Button and Tabs.
 - **The icon takes `currentColor`**, where Tabs gives its icon a colour of its
   own. In Tabs an idle tab is a dark label beside a muted glyph, so the two
   cannot inherit together; here the icon and label are one object and move
   together through every state.
-- **The example frames are not modelled.** `Segmented Control - MD` and
-  `- LG` are loose groups posing three hand-placed segments, and their spacing
-  disagrees with the set (6 and 8 against the track's 4). The SET is the spec -
-  same call as Card's 350x200 frame.
+- ~~**The example frames are not modelled**, so the SET is the spec.~~
+  **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
 - **No `xl`.** A step exists when something uses one, the rule that cut
   the type scale from six to four. `sm` met that rule when NextJob's
   section-header sort toggle wanted a short track.
@@ -193,14 +202,36 @@ the `Segment` icon property all went out in the same snapshot.
   same shape `variant` already has, and for a weaker reason: an axis is simply
   how Figma says a choice. No open question here.
 
-## What 0.42.0 changed, and what is still owed in Figma
+## Read the worked frames, not the track set
+
+`SegmentedTrack` (558:15011) is a set of six **empty shells**: no children, and
+`layoutMode: "NONE"`. Its `paddingTop: 4` and `itemSpacing: 4` are bound to
+`Segmented/Track Padding` and `/Track Gap` and are **inert** - Figma does not
+apply either without auto-layout, so they are values sitting on a node that
+cannot spend them. Read them as the spec and you get a control that has not
+been drawn that way since 0.42.0.
+
+What the track's layout actually is lives in the three worked frames
+**756:478 / 756:485 / 756:498** (LG / MD / SM), each a real auto-layout row of
+three `Segment` instances: padding 0, gap 8, and a height equal to the segment
+exactly. `756:544` poses all nine together.
+
+This cost a release. 0.42.0 shipped the respec with the track still at a 4px
+inset and a 4px gap, because the set was read as authoritative and the frames
+were dismissed under the old "the example frames are not modelled" divergence -
+which was written about a different, genuinely loose pair of groups. The tell
+was there and was explained away: **the set's own poses stand 40 / 30 / 26,
+which is the segment height, not segment + 8.** When a set's geometry and its
+poses disagree, the poses are measuring something and the inert values are not.
+
+## What 0.42.0 and 0.43.0 changed, and what is still owed in Figma
 
 The respec was drawn in Figma first and fetched, so this was a fetch rather
 than an independent edit. Padding, icon size and icon gap all moved, MD and SM
 stand 30 and 26 where they stood 32 and 24, and the track grew its `Color`
-axis. What did NOT move: the type scale, both radii, the 4px inset, the 4px
-gap between segments, the two selected grounds, and every keyboard and ARIA
-behaviour.
+axis (0.42.0); the track's inset went to zero and its gap to 8 (0.43.0, the
+half that was missed first time round). What did NOT move: the type scale,
+both radii, the two selected grounds, and every keyboard and ARIA behaviour.
 
 Three defects came back with it, all Figma-side. The White variants had kept
 Figma's placeholder `Size4/5/6` names; those are renamed `LG/MD/SM` in the file

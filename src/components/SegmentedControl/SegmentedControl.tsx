@@ -49,10 +49,10 @@ export interface SegmentedControlProps
   /** The `<Segment>` children. */
   children: ReactNode;
   /**
-   * `lg` is a 40px segment on 14/20 in a 48px track; `md` is 30 on 12/16 in a
-   * 38px track; `sm` is 26 on 10/12 in a 34px track. Height, padding-x, icon
-   * and icon gap all step; the radius and the track's 4px inset and 4px gap
-   * are shared.
+   * `lg` is a 40px segment on 14/20, `md` is 30 on 12/16, `sm` is 26 on
+   * 10/12 - and the track stands the same, the inset being zero. Height,
+   * padding-x, icon and icon gap all step; the radius and the track's 8px
+   * gap are shared.
    */
   size?: SegmentedControlSize;
   /** The selected segment's ground. Defaults to `primary`. */
