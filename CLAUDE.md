@@ -238,6 +238,11 @@ direction it still has to travel.
   trailing `-base` (`Surface/Muted Hover` -> `--ui-surface-muted-hover`). Set every new
   variable's Dev Mode code syntax to its `var(--ui-*)` name. Bind geometry to variables;
   a raw value is how drift starts.
+- **A divergence names a wrong value, a binding that will break, or a wrong render — nothing
+  else.** How a set is *built* is not a defect: empty cells, an unexercised boolean property,
+  a stale loose frame, an untidy structure. Three entries were withdrawn on 2026-09-22 for
+  exactly this, and the cost is not neutral — reporting tidiness as drift buries the findings
+  that matter. If it renders right and reads right, it is right.
 - **The component sets and the variables ARE the library; nothing else on the canvas is.**
   Loose frames, mock-ups and worked examples are sketches — never the spec, never a
   divergence, and not to be reported as problems however stale they look. If a set cannot

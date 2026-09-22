@@ -152,22 +152,3 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
-
-42. **`SegmentedTrack` (558:15011) cannot express its own layout.** All eight
-   cells are empty frames with `layoutMode: "NONE"` and no slot, so the
-   `Segmented/Track Padding` and `Segmented Size/*/Track Gap` variables bound
-   to them are inert — Figma has no layout to spend them on, and the cells
-   cannot show a segment sitting in a track at all.
-
-   This is now the whole of the problem rather than half of it. It used to be
-   survivable because loose mock frames on the canvas showed the real layout;
-   those are out of scope, so **the set is the only thing that speaks for this
-   component and it currently says nothing.** A reader inspecting it sees
-   padding 4 and a gap on a frame that applies neither.
-
-   Direction: **Figma** — give each cell auto-layout with padding 0 and its
-   size's gap, and a slot that takes `Segment` instances, so the bound
-   variables render and the set states the track. Design-shaped, so it happens
-   in Figma as its own session. Code is not waiting on it: the track is
-   `display: inline-flex`, padding 0, gap 8 / 8 / 6 / 4 per size.
-

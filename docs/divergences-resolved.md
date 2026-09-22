@@ -442,3 +442,23 @@ Nothing here needs action.
    disagree about. Only a value, a binding or a structure that the set itself
    states can diverge.
 
+42. ~~`SegmentedTrack` cannot express its own layout.~~ **Withdrawn - not a
+   defect.** The set renders a correct track: right height per size (48/40/32/
+   24), right ground, radius 99. Its padding is 0, so applied and unapplied are
+   the same thing, and its per-size gaps hold the right numbers if read. The
+   cells being empty is not a fault either - a Figma instance cannot take
+   arbitrary children, so "a track you drop segments into" is barely
+   expressible as a component, and `LeftRail` (#10) is the same shape of thing.
+   Nothing in the file instantiates it.
+
+   The entry described a real harm - inert values that read as spec, which cost
+   the 0.42.0 release - but that harm was fixed earlier the same day by setting
+   the padding to 0 and binding the correct per-size gaps. The ticket outlived
+   its own cause.
+
+   **The rule this establishes, and the reason #38 and #36 were also
+   withdrawn:** a divergence has to name a value that is wrong, a binding that
+   will break, or something that renders incorrectly. How a set is built -
+   empty cells, loose frames, an unexercised property, an untidy structure - is
+   not a defect on its own. Recorded in CLAUDE.md under Figma sync.
+
