@@ -16,12 +16,13 @@ Gray | White as well.
 </SegmentedControl>
 ```
 
-    track    radius 99, NO inset, 8 between segments
+    track    radius 99, NO inset; between segments 8 / 6 / 4 by size
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
     segment  radius 99; padding-y is derived, not declared - 6 / 6 / 4
-    LG       segment 36 on 14/20, padding-x 10, icon 24, icon gap 6 -> track 36
-    MD       segment 30 on 12/16, padding-x 8,  icon 18, icon gap 6 -> track 30
-    SM       segment 22 on 10/12, padding-x 6,  icon 14, icon gap 4 -> track 22
+    LG       segment 36 on 14/20, padding-x 10, icon 24, icon gap 6, track gap 8
+    MD       segment 30 on 12/16, padding-x 8,  icon 18, icon gap 6, track gap 6
+    SM       segment 22 on 10/12, padding-x 6,  icon 14, icon gap 4, track gap 4
+             the track stands exactly as tall as its segment: 36 / 30 / 22
     icon     0.65 beside a label, 1 alone
 
 Every number above is a token: `--ui-segmented-{lg,md,sm}-{height,padding-x,
@@ -117,9 +118,15 @@ its own `Label?` boolean, not a drawn size.
 The track carried a 4px inset until 0.43.0, so the ground showed as a ring all
 the way around the chosen segment. It does not any more: `--ui-segmented-track-padding`
 is **0**, the pill runs to the track's ends, and the ground is seen only in the
-8px gaps between segments and behind the idle ones. The gap doubled from 4 in
-the same pass - with the pills flush, that gap is the only place the groove
-reads, and at 4 it was a seam.
+gaps between segments and behind the idle ones. That is why the gap grew from
+its old shared 4 - with the pills flush it is the only place the groove reads,
+and at 4 it was a seam.
+
+**Two gaps per size, and they are different objects.**
+`--ui-segmented-*-track-gap` (8 / 6 / 4) separates two segments and sits on the
+track; `--ui-segmented-*-icon-gap` (6 / 6 / 4) separates a glyph from its label
+inside one segment. They happen to agree at SM and nowhere else, which is
+exactly the kind of coincidence a single shared token turns into a bug.
 
 ## The track is not given a height
 
@@ -234,6 +241,9 @@ the `Segment` icon property all went out in the same snapshot.
   SM - padding-x + the icon, which is what hiding the label leaves behind.
   Figma poses no icon-only segment, so squaring it would be inventing a
   decision rather than reading one.
+- **The per-size track gap is code-first and Figma still draws 8 at every
+  size.** Spacing is token-shaped, so code leads and the file follows; the
+  three worked frames are owed 6 at MD and 4 at SM. Divergence #37.
 - **No `xl`.** A step exists when something uses one, the rule that cut
   the type scale from six to four. `sm` met that rule when NextJob's
   section-header sort toggle wanted a short track.

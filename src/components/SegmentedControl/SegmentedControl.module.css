@@ -17,7 +17,7 @@
      place the ground reads as a groove. Which ground it takes is `tone`. */
   border-radius: var(--ui-segmented-track-radius);
   padding: var(--ui-segmented-track-padding);
-  gap: var(--ui-segmented-track-gap);
+  /* `gap` is per size, with the size blocks below. */
   /* Height is DERIVED - padding + the segment - and since the inset went to
      zero that is just the segment: 36 at LG, 30 at MD, 22 at SM. Giving the
      track a height as well would be two numbers for one measurement, and they
@@ -86,6 +86,15 @@
    there would come out 32 / 28 / 20 against the 36 / 30 / 22 of one with a
    glyph; holding the height means a track can mix the two without its
    segments stepping. */
+/* The gap between segments steps with the size too. It goes on the TRACK,
+   which is what these three classes are on - `.lg .segment` below is the
+   segment's own geometry. Two gaps per size, and they are different objects:
+   this one separates two segments, --ui-segmented-*-icon-gap separates a
+   glyph from its label inside one. */
+.lg { gap: var(--ui-segmented-lg-track-gap); }
+.md { gap: var(--ui-segmented-md-track-gap); }
+.sm { gap: var(--ui-segmented-sm-track-gap); }
+
 .lg .segment {
   height: var(--ui-segmented-lg-height);
   padding-inline: var(--ui-segmented-lg-padding-x);

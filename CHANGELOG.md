@@ -35,15 +35,24 @@ their tracks stand **36** and **22**. Every height is padding-y + the icon + pad
 (LG 48 -> 40 -> 36, SM 32 -> 26 -> 22); measure against this ref rather than diffing from
 the last one.
 
+**The gap between segments is per size**, stepping 8 / 6 / 4 where one shared value served
+all three. At SM a flat 8 was a groove as wide as LG's between segments a third the width.
+Note there are now two gaps per size and they are different objects: `*-track-gap`
+separates two segments, `*-icon-gap` separates a glyph from its label inside one.
+
     --ui-segmented-lg-height          40px -> 36px
     --ui-segmented-sm-height          26px -> 22px
+    --ui-segmented-track-gap          RENAMED -> --ui-segmented-{lg,md,sm}-track-gap
+                                      8px -> 8px / 6px / 4px
     --ui-segmented-icon-opacity       new, 0.65
     --ui-segmented-icon-only-opacity  new, 1
 
-Nothing renamed or removed. Two Figma defects recorded: LG's `Active` and `Dark` cells still
+`--ui-segmented-track-gap` is the only rename; nothing in `~/Sites` sets it, and an app that
+does gets the default gaps back rather than an error. Three Figma items recorded: LG's `Active` and `Dark` cells still
 draw the glyph at full opacity where the other ten are 0.65 (#35, and it is visible), and no
 icon-only segment is posed anywhere in the file, so the code's 44x36 is derived rather than
-drawn (#36).
+drawn (#36). The per-size track gap is **code-first by the rule** - spacing is token-shaped,
+so code leads - and Figma is owed 6 at MD and 4 at SM (#37).
 
 **0.42.0 -> 0.43.0** - SegmentedControl: the track's inset is gone and its gap is 8.
 

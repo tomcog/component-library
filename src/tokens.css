@@ -825,11 +825,14 @@
      ring back, and Figma still holds the variable. */
   --ui-segmented-track-padding: 0px;
   /* Between two segments. A gap, not padding inside each one - the same
-     distinction Tabs' tokens spell out, and for the same reasons. Doubled to
-     8 in the same pass that zeroed the inset: with the pills flush to the
-     ends, this gap is the only place the track's ground is seen as a groove,
-     and at 4 it read as a seam. */
-  --ui-segmented-track-gap: 8px;
+     distinction Tabs' tokens spell out, and for the same reasons. It is the
+     only place the track's ground is seen as a groove now that the pills run
+     flush to the ends, which is why it grew from 4 - at 4 it read as a seam.
+
+     Per size since 0.44.0, and it steps with the segment rather than with the
+     icon gap inside it: 8 / 6 / 4. One shared value left the SM groove looking
+     like the LG one between segments a third the width. The three names live
+     down with the other per-size geometry. */
   --ui-segmented-radius: 99px;
   /* How far back the glyph sits from its label. The pair is CONDITIONAL and
      that is the whole point: a segment showing both draws the icon at 0.65 so
@@ -852,6 +855,9 @@
      6+24+6, 6+18+6, 4+14+4. */
   --ui-segmented-lg-height: 36px;
   --ui-segmented-lg-padding-x: 10px;
+  /* Between two LG segments, on the track. Not to be confused with
+     --ui-segmented-lg-icon-gap, which is inside one segment. */
+  --ui-segmented-lg-track-gap: 8px;
   --ui-segmented-lg-icon-size: 24px;
   /* Icon to label, inside one segment. Per size since 0.42.0: LG and MD agree
      at 6 today, SM is 4, and one shared token could not say that. */
@@ -860,6 +866,7 @@
   --ui-segmented-lg-line-height: var(--ui-type-label-lg-line-height);
   --ui-segmented-md-height: 30px;
   --ui-segmented-md-padding-x: 8px;
+  --ui-segmented-md-track-gap: 6px;
   --ui-segmented-md-icon-size: 18px;
   --ui-segmented-md-icon-gap: 6px;
   --ui-segmented-md-font-size: var(--ui-type-label-md-font-size);
@@ -868,6 +875,7 @@
      track. The type steps down the label scale. */
   --ui-segmented-sm-height: 22px;
   --ui-segmented-sm-padding-x: 6px;
+  --ui-segmented-sm-track-gap: 4px;
   --ui-segmented-sm-icon-size: 14px;
   --ui-segmented-sm-icon-gap: 4px;
   --ui-segmented-sm-font-size: var(--ui-type-label-sm-font-size);
