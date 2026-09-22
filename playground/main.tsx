@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Toolbar, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -145,6 +145,32 @@ const Trash2 = () => (
     <path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
     <path d="M10 11v6" /><path d="M14 11v6" />
+  </svg>
+);
+// lucide `undo-2` / `redo-2`, and the three the Figma toolbar poses.
+const Undo = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M9 14 4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11" />
+  </svg>
+);
+const Redo = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="m15 14 5-5-5-5" /><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13" />
+  </svg>
+);
+const Outline = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+  </svg>
+);
+const Eye = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" />
+  </svg>
+);
+const Frame = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M4 8h16M4 16h16M8 4v16M16 4v16" />
   </svg>
 );
 const Info = () => (
@@ -320,6 +346,8 @@ function App() {
   const [printLayer, setPrintLayer] = useState("turquoise");
   const [hiddenLayers, setHiddenLayers] = useState<string[]>(["lime"]);
   const [segSort, setSegSort] = useState("newest");
+  const [tbView, setTbView] = useState("preview");
+  const [tbZoom, setTbZoom] = useState("plot");
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
      A hand-maintained list is one someone adds a Section without updating,
      and a jump menu missing the newest entry is worse than none. Runs once:
@@ -575,6 +603,101 @@ function App() {
             <ConfirmButton size={s} tone="danger" variant="ghost" icon={<Trash2 />} aria-label={`${s} ghost delete unavailable`} disabled />
           </Row>
         ))}
+      </Section>
+
+      <Section
+        title="Toolbar"
+        note={
+          "A rounded bar holding several SegmentedControls \u2014 undo/redo beside the view beside "
+          + "the zoom target. It owns a ground, a 4px inset and the gap between its controls, and "
+          + "nothing else: what a segment shows is Segment's business, so a bar of icon-only "
+          + "controls and a bar of labelled ones are the same Toolbar with different children. The "
+          + "gap is the argument \u2014 16 between controls against 4 between segments, so segments "
+          + "crowd because they answer one question and controls stand apart because they answer "
+          + "several. Each control picks its own selected ground with variant, which is why Preview "
+          + "and Zoom below read dark while History stays brand. role=\"group\", not "
+          + "role=\"toolbar\": the ARIA toolbar pattern claims the arrow keys, and every "
+          + "SegmentedControl inside has already bound them."
+        }
+      >
+        <Row label="tone=&quot;gray&quot;">
+          <Toolbar aria-label="Drawing tools, gray">
+            <SegmentedControl size="sm" aria-label="History">
+              <Segment icon={<Undo />}>Undo</Segment>
+              <Segment icon={<Redo />}>Redo</Segment>
+            </SegmentedControl>
+            <SegmentedControl size="sm" variant="dark" aria-label="View">
+              <Segment icon={<Outline />} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+              <Segment icon={<Eye />} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+            </SegmentedControl>
+            <SegmentedControl size="sm" variant="dark" aria-label="Zoom">
+              <Segment icon={<Frame />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Plot area</Segment>
+              <Segment icon={<Outline />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+              <Segment icon={<Eye />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+            </SegmentedControl>
+          </Toolbar>
+        </Row>
+        {/* Posed on a pale ground, which is the page tone="white" exists for. */}
+        <Row label="tone=&quot;white&quot;">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
+            <Toolbar tone="white" aria-label="Drawing tools, white">
+              <SegmentedControl size="sm" aria-label="History on white">
+                <Segment icon={<Undo />}>Undo</Segment>
+                <Segment icon={<Redo />}>Redo</Segment>
+              </SegmentedControl>
+              <SegmentedControl size="sm" variant="dark" aria-label="View on white">
+                <Segment icon={<Outline />} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+                <Segment icon={<Eye />} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+              </SegmentedControl>
+            </Toolbar>
+          </div>
+        </Row>
+        {/* The same bar, with every segment switched to hideLabel. Nothing about
+            the Toolbar changes - this is the point of it owning so little. */}
+        <Row label="icon-only">
+          <Toolbar aria-label="Drawing tools, icons">
+            <SegmentedControl size="sm" aria-label="History icons">
+              <Segment icon={<Undo />} hideLabel>Undo</Segment>
+              <Segment icon={<Redo />} hideLabel>Redo</Segment>
+            </SegmentedControl>
+            <SegmentedControl size="sm" variant="dark" aria-label="View icons">
+              <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+              <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+            </SegmentedControl>
+            <SegmentedControl size="sm" variant="dark" aria-label="Zoom icons">
+              <Segment icon={<Frame />} hideLabel selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Plot area</Segment>
+              <Segment icon={<Outline />} hideLabel selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+              <Segment icon={<Eye />} hideLabel selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+            </SegmentedControl>
+          </Toolbar>
+        </Row>
+        {/* Text-only is simply a Segment with no icon - the third configuration,
+            and it needs nothing from Toolbar either. */}
+        <Row label="text-only">
+          <Toolbar aria-label="Drawing tools, text">
+            <SegmentedControl size="sm" variant="dark" aria-label="View text">
+              <Segment selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+              <Segment selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+            </SegmentedControl>
+            <SegmentedControl size="sm" aria-label="Zoom text">
+              <Segment selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Plot area</Segment>
+              <Segment selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+            </SegmentedControl>
+          </Toolbar>
+        </Row>
+        {/* Nothing forces SM. A bar of LG controls derives to 48 tall. */}
+        <Row label="lg controls">
+          <Toolbar aria-label="Drawing tools, large">
+            <SegmentedControl aria-label="History large">
+              <Segment icon={<Undo />}>Undo</Segment>
+              <Segment icon={<Redo />}>Redo</Segment>
+            </SegmentedControl>
+            <SegmentedControl variant="dark" aria-label="View large">
+              <Segment icon={<Outline />} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+              <Segment icon={<Eye />} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+            </SegmentedControl>
+          </Toolbar>
+        </Row>
       </Section>
 
       <Section

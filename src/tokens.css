@@ -273,6 +273,15 @@
   --ui-surface-pale: var(--ui-neutral-100);
 
   --ui-surface-disabled: var(--ui-neutral-150);
+  /* A ground a step BELOW the page, for a bar that things sit down inside -
+     Toolbar's, holding pale segmented tracks that read lighter than it. The
+     value is --ui-neutral-150, which is what Figma's toolbar is drawn in once
+     its eyedropped #e1e3e2 is matched to the palette.
+
+     A semantic rather than reading the neutral directly, because the ramp
+     cannot invert: in dark the relationship flips and the bar LIFTS off the
+     page instead of sinking into it, which a primitive could not express. */
+  --ui-surface-sunken: var(--ui-neutral-150);
   /* Figma: Text/Disabled, moved to Neutral/350. #d4d4d4 on the #ededed
      disabled fill is 1.2:1 - a label you cannot read at all rather than one
      that reads as inert. This is the value ButtonRound's comment records it
@@ -938,6 +947,23 @@
 
   --ui-card-radius: 8px;
 
+  /* -- TOOLBAR -----------------------------------------------
+     Figma: the `Toolbars` frame (772:1200). A rounded bar holding N
+     SegmentedControls, each of which is one independent choice - undo/redo,
+     the view, the zoom target. The bar groups them; the gap is what says
+     they are separate questions, which is why it is four times the gap
+     INSIDE a track.
+
+     Height is derived, as everywhere else: padding + the tallest control.
+     With Figma's SM controls that is 4 + 24 + 4 = 32, and a bar given LG
+     controls stands 48 without anything here changing. */
+  --ui-toolbar-radius: 99px;
+  --ui-toolbar-padding: 4px;
+  /* Between two segmented controls, NOT between two segments: 16 against the
+     4 inside a track. The one number that says "these are separate
+     controls" rather than one long row of options. */
+  --ui-toolbar-gap: 16px;
+
   /* -- TYPEFACE ----------------------------------------------
      The same identity/role split the colours have, for the same reason.
      --ui-dm-sans is the face this package SHIPS and is the counterpart of
@@ -1020,6 +1046,10 @@
   --ui-surface-pale: var(--ui-ink);
 
   --ui-surface-disabled: var(--ui-neutral-800);
+  /* Lighter than the page, not darker: on a dark ground a bar cannot sink out
+     of sight, so it rises instead. One step above --ui-surface-raised, which
+     keeps the pale tracks inside it legible against it. */
+  --ui-surface-sunken: var(--ui-neutral-700);
   --ui-text-disabled: var(--ui-neutral-550);
 
   --ui-border-default: var(--ui-neutral-550);

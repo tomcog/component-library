@@ -9,6 +9,47 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - New component: Toolbar.
+
+A rounded bar holding several `SegmentedControl`s - undo/redo beside the view beside the zoom
+target. Figma: the `Toolbars` frame (772:1200).
+
+```tsx
+<Toolbar aria-label="Drawing tools">
+  <SegmentedControl size="sm" aria-label="History">…</SegmentedControl>
+  <SegmentedControl size="sm" variant="dark" aria-label="View">…</SegmentedControl>
+</Toolbar>
+```
+
+**It owns a ground, a 4px inset and the gap between its controls, and nothing else.** Every
+question of what a segment shows already belongs to `Segment`, so the three configurations -
+icon + label, label alone, and icon alone via `hideLabel` - need nothing from Toolbar: a bar
+of icon-only controls and a bar of labelled ones are the same Toolbar with different children.
+Each control likewise picks its own selected ground with the existing `variant`, so one bar
+can mix brand and dark, which is what Figma draws.
+
+The gap is the point: **16 between controls against 4 between segments**. Segments crowd
+because they answer one question, controls stand apart because they answer several.
+
+`tone="gray" | "white"` names the BAR's own ground, matching `SegmentedControl`'s prop.
+Figma's layers are named for the page instead, so the two read inverted - `Toolbar on white`
+is the gray bar. Height is derived, so a bar of SM controls stands 32 and a bar of LG ones 48.
+
+`role="group"`, not `role="toolbar"`: the ARIA toolbar pattern claims the arrow keys and every
+`SegmentedControl` inside has already bound them. Tab moves between controls.
+
+New tokens: `--ui-toolbar-{radius,padding,gap}` and the override hooks
+`--ui-toolbar-bg` / `--ui-toolbar-white-bg`.
+
+**New semantic: `--ui-surface-sunken`** (26th in the tier) - a ground a step below the page,
+for a bar things sit down inside. `--ui-neutral-150` in light; in dark it inverts and lifts
+one step ABOVE `--ui-surface-raised`, because a bar cannot sink out of sight on a dark ground.
+That inversion is why it is a semantic rather than a neutral read directly.
+
+Figma draws the bar in an unbound `#e1e3e2` - four points off its own `Neutral/200`, with a
+2/255 green cast where this library's ramp is strictly hueless. Matched to the nearest colour
+the library already has rather than mirrored; see `docs/components/Toolbar.md`.
+
 **0.47.0 -> 0.48.0** - SegmentedControl XL takes Type/Label XL's 24 line height.
 
 **0.46.0 -> 0.47.0** - The control ladder gets tokens, and SegmentedControl joins it with a new `xl`.

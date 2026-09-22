@@ -1,0 +1,38 @@
+/* Toolbar - a rounded bar holding N SegmentedControls. Figma: the `Toolbars`
+   frame (772:1200).
+
+   It owns three things and nothing else: a ground, a 4px inset, and the gap
+   between the controls it holds. Everything inside is a SegmentedControl
+   doing its own job, so a Toolbar has no opinion about segments, icons,
+   labels or selection - which is why it is thirty lines and not three
+   hundred. */
+
+.toolbar {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--ui-toolbar-radius);
+  padding: var(--ui-toolbar-padding);
+  /* Four times the gap inside a track. That ratio is the whole visual
+     argument: segments crowd together because they are one question, and the
+     controls stand apart because they are several. */
+  gap: var(--ui-toolbar-gap);
+  /* Height is DERIVED - padding + the tallest control - so a bar of SM
+     controls stands 32 and a bar of LG ones stands 48, with nothing here to
+     keep in step. */
+}
+
+/* -- the bar's ground ---------------------------------------- */
+/* `tone` names the bar's OWN colour, matching SegmentedControl's prop of the
+   same name. Figma's layers are named for the page they sit on instead, so
+   the two read inverted: `Toolbar on white` is the GRAY bar (tone="gray")
+   and `Toolbar on gray` is the WHITE one (tone="white"). Worth knowing before
+   comparing the two sides.
+
+   Both are semantics, so both follow the theme. In dark, `gray` lifts off the
+   page rather than sinking into it - see --ui-surface-sunken. */
+.gray {
+  background: var(--ui-toolbar-bg, var(--ui-surface-sunken));
+}
+.white {
+  background: var(--ui-toolbar-white-bg, var(--ui-surface-raised));
+}
