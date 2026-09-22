@@ -153,17 +153,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
 
-34. **The `Segment`'s icon stroke binds `Color/White` in `Active` and
-   `Dark`.** A primitive, at all three sizes, on both states — where the label
-   beside it correctly reads `Text/OnPrimary` and `Text/OnInverse`. The set's
-   own description claims the glyph "binds the same variable as the label in
-   every state", and in `Inactive` and `Hover` it does (`Text/Default`,
-   `Primary/Base`). It is invisible today because both semantics resolve to
-   white in both modes, and it is the seventh time this file has recorded a
-   component reaching for a primitive. Direction: **Figma** — bind the two to
-   `Text/OnPrimary` and `Text/OnInverse`. Code is unaffected: the icon takes
-   `currentColor` and cannot diverge from its label.
-
 36. **Figma poses no icon-only `Segment`.** `Label?` exists as a boolean on the
    set and is `true` in every instance in the file, so what a segment looks
    like with its label off has never been drawn. Code ships it as `hideLabel`

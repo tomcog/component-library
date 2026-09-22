@@ -46,6 +46,12 @@ interchangeable. Choose by what the row MEANS:
 | `Pill` | `aria-pressed` per pill | each is one independent toggle |
 | `SegmentedControl` | `radiogroup` | N options, exactly one holds |
 
+Figma's `State` axis reads `Off | Hover | Active | Dark`, and the mapping to
+code is: `Off` is the resting segment, `Hover` is the CSS state, `Active` is
+`selected`, and `Dark` is the track's `variant="dark"` - an alternate Active
+for when the brand fill is too loud, not a state of its own. Only `Off` and
+`Active` are things a consumer sets.
+
 Saying `radiogroup` is what tells a screen reader that choosing one
 **un-chooses the rest** - which a row of `aria-pressed` pills does not, however
 the app happens to behave. The keyboard follows from it and is the reason this
@@ -65,10 +71,10 @@ track's own pill, whichever `tone` it is drawn in. Hovering one changes the
 LABEL and nothing else.
 
 That is not an inference: Figma draws the `Hover` cell with its fill switched
-OFF at both sizes, and the `Inactive` cell likewise. Reading the fills without
-checking `visible` makes Inactive look like a brand-red chip with near-black
-text on it, and MD Hover look like red text on red. Both are hidden paints.
-**Check `visible` before believing a fill.**
+OFF, and the `Off` cell likewise. Reading the fills without checking `visible`
+makes `Off` look like a brand-red chip with near-black text on it, and Hover
+look like red text on red. Both are hidden paints. **Check `visible` before
+believing a fill.**
 
 The icon's opacity has the same shape of trap, and it bit once. Figma composes
 opacity down the tree, so a 0.65 on the icon instance AND a 0.65 on the vector
@@ -136,6 +142,13 @@ A glyph shown **beside a label** draws at `--ui-segmented-icon-opacity` (0.65),
 so the label leads and the icon supports it. A glyph shown **alone** draws at
 full strength: it is the whole message then, and a faded one beside a solid
 neighbour reads as disabled rather than as secondary.
+
+The rule is **system-wide, not this component's**, and `ButtonRound` is the
+other half of the proof: it never carries a label, so its glyph is 1.0 in every
+state including rest. Both sides of that were settled in Figma on 2026-09-22 -
+Segment's `Hover` came down to 0.65 to join its siblings, and ButtonRound's
+`Off` went up to 1.0. All four of Segment's states mute the glyph; the label's
+presence is the only thing that decides it.
 
 Opacity rather than a muted colour, deliberately. The glyph is `currentColor`
 and has to sit back from its label across four grounds - the pale track, brand

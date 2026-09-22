@@ -405,3 +405,23 @@ Nothing here needs action.
    matching the other eleven. **Verify a binding by reading `boundVariables`,
    not by measuring the node.**
 
+34. ~~The `Segment`'s icon stroke binds `Color/White` in `Active` and `Dark`.~~
+   **Resolved.** All sixteen cells now bind the icon to the same variable as
+   the label beside it: `Text/Default` (Off), `Primary/Base` (Hover),
+   `Text/OnPrimary` (Active), `Text/OnInverse` (Dark). No `Color/*` or
+   `Neutral/*` primitive remains on any icon in the set, which is the eighth
+   time this file has recorded that fix and the first time the component came
+   out uniform.
+
+   It took two passes, and the second is the instructive one: replacing the
+   primitive in `Active` picked up `Text/OnInverse` — `Dark`'s variable, the
+   fix applied moments earlier — instead of `Text/OnPrimary`. Both resolve to
+   white in both modes, so the canvas looked right and the set was *still*
+   wrong. **A colour that renders correctly is not evidence the binding is
+   correct**, the same lesson as #41's locked proportions: check
+   `boundVariables` against what the neighbouring element reads, not against
+   the pixels.
+
+   Code was never affected: the icon takes `currentColor` and cannot diverge
+   from its label.
+
