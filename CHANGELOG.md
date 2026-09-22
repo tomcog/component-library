@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: `hideLabel` draws the icon alone, the glyph sits back from its label, and LG comes down to 36.
+**0.43.0 -> 0.44.0** - SegmentedControl: `hideLabel` draws the icon alone, the glyph sits back from its label, and LG comes down to 36.
 
 Three changes from the same Figma pass.
 
