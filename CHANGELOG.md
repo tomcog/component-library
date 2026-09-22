@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - The control ladder gets tokens, and SegmentedControl joins it with a new `xl`.
+**0.46.0 -> 0.47.0** - The control ladder gets tokens, and SegmentedControl joins it with a new `xl`.
 
 **New: `--ui-control-{xl,lg,md,sm}-height`** (48/40/32/24) and
 **`--ui-control-{xl,lg,md,sm}-icon-size`** (28/24/20/16). `Button`, `ButtonRound`,
