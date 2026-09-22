@@ -26,7 +26,7 @@ the wrong one is visible.
 
 **SegmentedControl is fetched onto the ladder and gains `size="xl"`.**
 
-    XL   height 48   padding 10   icon 28   icon gap 10   track gap 8   type 18/20
+    XL   height 48   padding 10   icon 28   icon gap 10   track gap 8   type 18/24
     LG   height 40   padding 8    icon 24   icon gap 8    track gap 8   type 14/20
     MD   height 32   padding 6    icon 20   icon gap 6    track gap 6   type 12/16
     SM   height 24   padding 4    icon 16   icon gap 4    track gap 4   type 10/12
@@ -43,8 +43,9 @@ two components: one is a radio in a group and the other an independent action, a
 completely different things to a screen reader. The playground's `vs ButtonRound` row puts
 them side by side so a future divergence shows up by eye.
 
-XL's label is 18/20 where Type/Label XL is 18/24, marked `OFF-SCALE` in `tokens.css` and taken
-from the drawing - `Checkbox` XL draws the same tighter pair.
+Every type step aliases `Type/Label`, XL included: the set drew 18/20 and 18/24 is correct, so
+the code takes the scale and the drawing is corrected to match. No visible change - the height
+is the icon's, not the label's, and a single centred line sits in the same place either way.
 
 Three Figma items recorded, all from the same editing pass: three superseded worked frames are
 still on the page under the same layer names as their replacements (#38), the `Segment` set's

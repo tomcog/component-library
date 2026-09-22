@@ -19,7 +19,7 @@ of Gray | White as well.
     track    radius 99, NO inset; between segments 8 / 6 / 4 by size
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
     segment  radius 99; padding is UNIFORM on all four sides
-    XL       segment 48 on 18/20, padding 10, icon 28, icon gap 10, track gap 8
+    XL       segment 48 on 18/24, padding 10, icon 28, icon gap 10, track gap 8
     LG       segment 40 on 14/20, padding 8,  icon 24, icon gap 8,  track gap 8
     MD       segment 32 on 12/16, padding 6,  icon 20, icon gap 6,  track gap 6
     SM       segment 24 on 10/12, padding 4,  icon 16, icon gap 4,  track gap 4
@@ -283,10 +283,6 @@ the `Segment` icon property all went out in the same snapshot.
   together through every state.
 - ~~**The example frames are not modelled**, so the SET is the spec.~~
   **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
-- **XL's label is 18/20 where Type/Label XL is 18/24.** Marked `OFF-SCALE` in
-  `tokens.css` and taken from the drawing. `Checkbox` XL draws the same tighter
-  pair. The height is the icon's, not the label's, so this changes the leading
-  and nothing else - but confirm it is intended rather than a leftover.
 - **An icon-only segment is a perfect circle** - and identical to
   `ButtonRound`. Intentional now, though it arrived by arithmetic: it was a
   44x36 rectangle two releases ago. It holds only while the padding stays

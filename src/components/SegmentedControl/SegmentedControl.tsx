@@ -50,7 +50,7 @@ export interface SegmentedControlProps
   /** The `<Segment>` children. */
   children: ReactNode;
   /**
-   * The control ladder: `xl` 48 on 18/20, `lg` 40 on 14/20, `md` 32 on
+   * The control ladder: `xl` 48 on 18/24, `lg` 40 on 14/20, `md` 32 on
    * 12/16, `sm` 24 on 10/12 - and the track stands the same, the inset being
    * zero. Height, padding, icon and both gaps step; only the radius is
    * shared.

@@ -908,10 +908,7 @@
   --ui-segmented-xl-icon-gap: 10px;
   --ui-segmented-xl-track-gap: 8px;
   --ui-segmented-xl-font-size: var(--ui-type-label-xl-font-size);
-  /* OFF-SCALE: Label XL is 18/24, the set draws 18/20. Checkbox XL draws the
-     same tighter pair. The height is the icon's, not the label's, so this
-     changes the leading and nothing else. */
-  --ui-segmented-xl-line-height: 20px;
+  --ui-segmented-xl-line-height: var(--ui-type-label-xl-line-height);
 
   --ui-segmented-lg-height: var(--ui-control-lg-height);
   --ui-segmented-lg-padding-x: 8px;
