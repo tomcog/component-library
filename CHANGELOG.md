@@ -9,6 +9,48 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - The control ladder gets tokens, and SegmentedControl joins it with a new `xl`.
+
+**New: `--ui-control-{xl,lg,md,sm}-height`** (48/40/32/24) and
+**`--ui-control-{xl,lg,md,sm}-icon-size`** (28/24/20/16). `Button`, `ButtonRound`,
+`ConfirmButton` and `SegmentedControl` now alias them rather than each restating the numbers.
+For the three buttons this is a **pure refactor with no rendered change** - every value
+resolves as before. It means one place to change a step, and a component can no longer leave
+the ladder quietly, which is how SegmentedControl spent five releases at 44/34/26.
+
+Two icon ladders exist and the distinction is now written down: `--ui-control-*-icon-size` is
+the glyph sized off the CONTROL, where the box is the subject (ButtonRound, SegmentedControl).
+`Button`'s icon is sized off the TYPE - its line box, 24/20/16/12 - so glyph and label sit on
+one optical line, and those stay literals deliberately. They differ from LG down, so picking
+the wrong one is visible.
+
+**SegmentedControl is fetched onto the ladder and gains `size="xl"`.**
+
+    XL   height 48   padding 10   icon 28   icon gap 10   track gap 8   type 18/20
+    LG   height 40   padding 8    icon 24   icon gap 8    track gap 8   type 14/20
+    MD   height 32   padding 6    icon 20   icon gap 6    track gap 6   type 12/16
+    SM   height 24   padding 4    icon 16   icon gap 4    track gap 4   type 10/12
+
+LG/MD/SM all move (44/34/26 -> 40/32/24), the tracks with them. **This is the last of the
+height changes** - the component is now on the same ladder as everything else, so a segmented
+control in a fixed row finally lines up with the buttons beside it. That was the original
+complaint behind NextDraw's six SM controls stepping 2px against their neighbours; they now
+match at 24.
+
+An **icon-only segment is a perfect circle, pixel-identical to a `ButtonRound`** at the same
+step - same box, same glyph, both reading `--ui-control-*`. Intentional. It does NOT merge the
+two components: one is a radio in a group and the other an independent action, and they say
+completely different things to a screen reader. The playground's `vs ButtonRound` row puts
+them side by side so a future divergence shows up by eye.
+
+XL's label is 18/20 where Type/Label XL is 18/24, marked `OFF-SCALE` in `tokens.css` and taken
+from the drawing - `Checkbox` XL draws the same tighter pair.
+
+Three Figma items recorded, all from the same editing pass: three superseded worked frames are
+still on the page under the same layer names as their replacements (#38), the `Segment` set's
+type bindings came off and are now raw numbers (#39), and `SegmentedTrack` has no XL cell yet
+(#40).
+
 **0.45.0 -> 0.46.0** - Checkbox, Tabs and InputText read the type scale instead of repeating it.
 
 **No rendered change.** Eight tokens that held a raw number equal to a Type/Label step now

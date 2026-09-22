@@ -6,8 +6,8 @@
 
 One choice from a short, fixed set - a filter row, a sort order. Figma: the
 `SegmentedTrack` set (558:15011) holding the `Segment` set (555:14966), both
-carrying a `Size` axis of LG | MD | SM; the track carries a `Color` axis of
-Gray | White as well.
+carrying a `Size` axis of XL | LG | MD | SM; the track carries a `Color` axis
+of Gray | White as well.
 
 ```tsx
 <SegmentedControl aria-label="Sort order">
@@ -18,11 +18,16 @@ Gray | White as well.
 
     track    radius 99, NO inset; between segments 8 / 6 / 4 by size
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
-    segment  radius 99; padding is UNIFORM - 10 / 8 / 6 on all four sides
-    LG       segment 44 on 14/20, padding 10, icon 24, icon gap 6, track gap 8
-    MD       segment 34 on 12/16, padding 8,  icon 18, icon gap 6, track gap 6
-    SM       segment 26 on 10/12, padding 6,  icon 14, icon gap 4, track gap 4
-             the track stands exactly as tall as its segment: 44 / 34 / 26
+    segment  radius 99; padding is UNIFORM on all four sides
+    XL       segment 48 on 18/20, padding 10, icon 28, icon gap 10, track gap 8
+    LG       segment 40 on 14/20, padding 8,  icon 24, icon gap 8,  track gap 8
+    MD       segment 32 on 12/16, padding 6,  icon 20, icon gap 6,  track gap 6
+    SM       segment 24 on 10/12, padding 4,  icon 16, icon gap 4,  track gap 4
+             the track stands exactly as tall as its segment: 48 / 40 / 32 / 24
+
+Height and icon size are NOT this component's numbers - they alias
+`--ui-control-*-height` and `--ui-control-*-icon-size`, the ladder shared with
+Button, ButtonRound and ConfirmButton. See below.
     icon     0.65 beside a label, 1 alone
 
 Every number above is a token: `--ui-segmented-{lg,md,sm}-{height,padding-x,
@@ -75,6 +80,35 @@ puts its `opacity` on the icon span for the same reason, so the two sides agree
 in structure and not only in value. **Read both the container and its contents
 before believing an opacity.**
 
+## It is on the control ladder, and the icon-only segment is a ButtonRound
+
+Every height aliases `--ui-control-{xl,lg,md,sm}-height` (48/40/32/24) and every
+icon aliases `--ui-control-*-icon-size` (28/24/20/16). Nothing here is this
+component's own number, which is the point: a segment, a Button and a
+ButtonRound at the same step stand level without anyone measuring.
+
+That is also the formal version of the "glyph larger than the line box"
+decision. There are two icon ladders in the library - one sized off the CONTROL
+(this, and ButtonRound) and one sized off the TYPE (Button's, which is its line
+box). This component takes the control one, which is why its glyph outgrows its
+label.
+
+The consequence: **an icon-only segment is a perfect circle, pixel-identical to
+a `ButtonRound` at the same size** - same box, same glyph. Deliberate, and the
+reason both now read the ladder instead of agreeing by hand. The playground's
+`vs ButtonRound` row puts them side by side so a future divergence is visible
+rather than theoretical.
+
+It does **not** mean they should be one component. `ButtonRound` is an
+independent action - a plain `<button>`, no state, fires and forgets. A
+`Segment` is one option of N inside a `radiogroup`: `role="radio"`,
+`aria-checked`, roving `tabIndex`, arrow keys that move *and* select, and it
+only functions inside a track that names the group. A screen reader says "radio
+button, 2 of 4, selected" for one and "button" for the other. Merging them would
+force `ButtonRound` to carry radio semantics it must never have, or strip
+`Segment` of the semantics that are its whole reason for existing - the same
+call the Tabs / Pill / SegmentedControl table above makes, one level down.
+
 ## The icon is bigger than the type, and that is why height is a token
 
 0.42.0 pulled the glyph off the line box: 24 / 18 / 14 against a 20 / 16 / 12
@@ -85,8 +119,8 @@ of its own now.
 
 It is also why the segment keeps an explicit height. Figma hugs, so its segment
 is `padding + the tallest child`, and the tallest child is the glyph - every
-height in the table is **padding + the icon + padding**: 10+24+10, 8+18+8,
-6+14+6. Holding the height in code instead means a track can mix segments with
+height in the table is **padding + the icon + padding**: 10+28+10, 8+24+8,
+6+20+6, 4+16+4. Holding the height in code instead means a track can mix segments with
 and without icons without its row stepping, and the vertical padding falls out
 of it: 10 around the glyph, 12 around the shorter label, at LG.
 
@@ -146,8 +180,8 @@ exactly the kind of coincidence a single shared token turns into a bug.
 
 ## The track is not given a height
 
-44, 34 and 26 are derived - padding + the segment, which with no padding is
-just the segment. Declaring a track height as well would be two numbers for one
+48, 40, 32 and 24 are derived - padding + the segment, which with no padding
+is just the segment, which is the control ladder. Declaring a track height as well would be two numbers for one
 measurement, and they would disagree the moment the segment moved. The segment
 itself takes `height` plus `padding-inline`, never `padding-block`: the same
 decomposition Button uses, for the same reason.
@@ -249,14 +283,14 @@ the `Segment` icon property all went out in the same snapshot.
   together through every state.
 - ~~**The example frames are not modelled**, so the SET is the spec.~~
   **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
-- **An icon-only segment comes out square** - 44, 34, 26 - because the padding
-  is uniform and the icon is square, not because anything says it should be.
-  Figma poses no icon-only segment, so this is derived. It stopped being a
-  rectangle in 0.45.0 without anyone deciding it should, which is the thing to
-  notice if the padding ever splits again.
-- **No `xl`.** A step exists when something uses one, the rule that cut
-  the type scale from six to four. `sm` met that rule when NextJob's
-  section-header sort toggle wanted a short track.
+- **XL's label is 18/20 where Type/Label XL is 18/24.** Marked `OFF-SCALE` in
+  `tokens.css` and taken from the drawing. `Checkbox` XL draws the same tighter
+  pair. The height is the icon's, not the label's, so this changes the leading
+  and nothing else - but confirm it is intended rather than a leftover.
+- **An icon-only segment is a perfect circle** - and identical to
+  `ButtonRound`. Intentional now, though it arrived by arithmetic: it was a
+  44x36 rectangle two releases ago. It holds only while the padding stays
+  uniform.
 - **The segment has a height; Figma's hugs.** See above - the two agree at
   40 / 30 / 26 as long as the segment carries a glyph, and deliberately
   disagree when it does not.
@@ -273,10 +307,15 @@ apply either without auto-layout, so they are values sitting on a node that
 cannot spend them. Read them as the spec and you get a control that has not
 been drawn that way since 0.42.0.
 
-What the track's layout actually is lives in the three worked frames
-**756:478 / 756:485 / 756:498** (LG / MD / SM), each a real auto-layout row of
-three `Segment` instances: padding 0, gap 8, and a height equal to the segment
-exactly. `756:544` poses all nine together.
+What the track's layout actually is lives in the worked frames, each a real
+auto-layout row of three `Segment` instances: padding 0, a gap, and a height
+equal to the segment exactly. As of 0.47.0 the current four are **762:741
+(XL) / 756:545 (LG) / 756:549 (MD) / 756:553 (SM)**.
+
+**Three superseded frames are still on the page** - `756:478 / 756:485 /
+756:498`, the pre-ladder LG/MD/SM at 44/34/26 - and they carry the SAME LAYER
+NAMES as three of the current four (`Frame 31/32/33`). Searching by name finds
+the wrong one as easily as the right one. Divergence #38.
 
 This cost a release. 0.42.0 shipped the respec with the track still at a 4px
 inset and a 4px gap, because the set was read as authoritative and the frames
@@ -286,7 +325,7 @@ was there and was explained away: **the set's own poses stand 40 / 30 / 26,
 which is the segment height, not segment + 8.** When a set's geometry and its
 poses disagree, the poses are measuring something and the inert values are not.
 
-## What 0.42.0 - 0.45.0 changed, and what is still owed in Figma
+## What 0.42.0 - 0.47.0 changed, and what is still owed in Figma
 
 The respec was drawn in Figma first and fetched, so this was a fetch rather
 than an independent edit. Padding, icon size and icon gap all moved, MD and SM
@@ -295,7 +334,9 @@ axis (0.42.0); the track's inset went to zero and its gap to 8 (0.43.0, the
 half that was missed first time round); and the padding-y came down - LG 8 -> 6
 and SM 6 -> 4, taking them to 36 and 22 - alongside the conditional icon
 opacity and `hideLabel` (0.44.0); then the padding went uniform at 10 / 8 / 6,
-taking the heights to 44 / 34 / 26 (0.45.0). What did NOT move across any of it: the type scale, both radii, the
+taking the heights to 44 / 34 / 26 (0.45.0); and finally the whole set moved
+onto the control ladder - 48 / 40 / 32 / 24 with padding 10 / 8 / 6 / 4 and
+icons 28 / 24 / 20 / 16 - and grew an XL (0.47.0). What did NOT move across any of it: the type scale, both radii, the
 two selected grounds, and every keyboard and ARIA behaviour.
 
 Three defects came back with it, all Figma-side. The White variants had kept

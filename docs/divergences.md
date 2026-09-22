@@ -200,3 +200,29 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    44x36 / 34x30 / 26x22. Direction: **Figma** — pose one per size, so the
    shape is authored rather than falling out of whatever the padding happens
    to be. Until then the code's sizes are the only statement.
+
+38. **Three superseded `Segment` worked frames are still on the page, under the
+   same names as their replacements.** `756:478`, `756:485` and `756:498` are
+   the pre-ladder LG/MD/SM rows at 44/34/26; the current ones are `756:545`,
+   `756:549`, `756:553` plus `762:741` for XL. Both sets are called
+   `Frame 31/32/33`, so a search by name returns the stale one as readily as
+   the live one — and these frames are the ONLY statement of the track's
+   layout, because the `SegmentedTrack` set cannot hold it (#33). Direction:
+   **Figma** — delete the three old frames, or rename all seven so the live
+   ones say which size they are. Not done here: deleting nodes someone may
+   still be working in is theirs to confirm.
+
+39. **The `Segment` set's type bindings were lost.** `Type/Label */Font Size`
+   and `/Line Height` were bound on every variant when the set was fetched in
+   0.42.0; all twelve now hold raw numbers. The values still match the scale
+   at LG, MD and SM, so nothing renders differently — which is exactly what
+   makes it worth recording, since the file no longer says the type came from
+   anywhere. Direction: **Figma** — rebind. Same defect as the geometry in
+   #33, and it arrived the same way, by editing variants directly.
+
+40. **`SegmentedTrack` has no XL.** The set is LG/MD/SM x Gray/White, six
+   cells, while `Segment` now carries four sizes and the worked frames include
+   an XL row (`762:741`). Code ships `size="xl"` on the track. Direction:
+   **Figma** — add `Size=XL` in both colours. Worth doing in the same pass as
+   #33, which has to rebuild that set's layout anyway.
+

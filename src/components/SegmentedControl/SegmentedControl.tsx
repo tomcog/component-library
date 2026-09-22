@@ -9,11 +9,11 @@ declare const process: { env: { NODE_ENV?: string } };
  * Figma: the `Size` axis on both `Segment` (555:14966) and `SegmentedTrack`
  * (558:15011).
  *
- * Three steps, each because something uses it. `sm` was added for NextJob's
- * section-header sort toggle, which wants a short track. `xl` is not missing,
- * it is unbuilt.
+ * The full control ladder - 48 / 40 / 32 / 24 - aliased from
+ * `--ui-control-*-height`, so a segment stands level with a Button or a
+ * ButtonRound at the same step without anyone measuring.
  */
-export type SegmentedControlSize = "lg" | "md" | "sm";
+export type SegmentedControlSize = "xl" | "lg" | "md" | "sm";
 
 /**
  * Which ground the SELECTED segment takes. `primary` is the brand fill;
@@ -50,10 +50,10 @@ export interface SegmentedControlProps
   /** The `<Segment>` children. */
   children: ReactNode;
   /**
-   * `lg` is a 44px segment on 14/20, `md` is 34 on 12/16, `sm` is 26 on
-   * 10/12 - and the track stands the same, the inset being zero. Height,
-   * padding-x, icon and icon gap all step; the radius and the track's 8px
-   * gap are shared.
+   * The control ladder: `xl` 48 on 18/20, `lg` 40 on 14/20, `md` 32 on
+   * 12/16, `sm` 24 on 10/12 - and the track stands the same, the inset being
+   * zero. Height, padding, icon and both gaps step; only the radius is
+   * shared.
    */
   size?: SegmentedControlSize;
   /** The selected segment's ground. Defaults to `primary`. */
@@ -193,10 +193,12 @@ export interface SegmentProps
    * Leaving `children` out entirely also works and warns in dev unless you
    * pass `aria-label`, `aria-labelledby` or `title`.
    *
-   * The segment stays as tall as it was and hugs to padding + icon. Since
-   * Figma's padding is uniform and the icon is square, that comes out SQUARE
-   * at every size - 44, 34, 26 - which is a consequence rather than a rule:
-   * Figma poses no icon-only segment, so nothing says it must stay that way. Figma has not posed one - this is the
+   * The segment keeps its height and hugs to padding + icon. The padding is
+   * uniform and the icon is square, so this comes out a PERFECT CIRCLE at
+   * every step - 48, 40, 32, 24 - and it is the same circle `ButtonRound`
+   * draws, both reading `--ui-control-*`. That is intentional, and it does
+   * NOT make them one component: this is one option in a radio group and that
+   * is an independent action, which is the whole of the difference. Figma has not posed one - this is the
    * mechanical result of its own `Label?` boolean, not a drawn size.
    */
   hideLabel?: boolean;

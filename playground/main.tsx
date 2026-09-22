@@ -12,7 +12,7 @@ const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const CONFIRM_SIZES: ConfirmButtonSize[] = ["xl", "lg", "md", "sm"];
 const CONFIRM_TONES: ConfirmButtonTone[] = ["safety", "danger"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
-const SEGMENTED_SIZES: SegmentedControlSize[] = ["lg", "md", "sm"];
+const SEGMENTED_SIZES: SegmentedControlSize[] = ["xl", "lg", "md", "sm"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
 
 /* Faces to audition. Each is a value for --ui-font-primary and nothing more -
@@ -590,7 +590,9 @@ function App() {
           + "track's ends, so that ground is seen in the 8px gaps between segments rather than as a "
           + "ring around the chosen one. A glyph shown beside a label sits at 0.65 so the label "
           + "leads; hideLabel draws it alone and at full strength, keeping the text as the "
-          + "accessible name. The second column is variant=\"dark\". "
+          + "accessible name. Every height is the control ladder \u2014 48 / 40 / 32 / 24, the same "
+          + "--ui-control-* tokens Button and ButtonRound read \u2014 so an icon-only segment is the "
+          + "same circle a ButtonRound draws. The last row puts the two side by side. The second column is variant=\"dark\". "
           + "tone picks the track's own ground \u2014 gray is the pale surface, white the raised one, "
           + "which is what a control sitting on a pale page wants."
         }
@@ -653,6 +655,20 @@ function App() {
             <Segment icon={<House />} hideLabel selected={segSort === "newest"} onClick={() => setSegSort("newest")}>Newest</Segment>
             <Segment icon={<Save />} hideLabel selected={segSort === "az"} onClick={() => setSegSort("az")}>A–Z</Segment>
           </SegmentedControl>
+        </Row>
+        {/* The circle claim, checkable by eye: a ButtonRound beside an
+            icon-only Segment at each step. They read the same ladder, so if
+            these ever stop matching, one of them has left it. */}
+        <Row label="vs ButtonRound">
+          {SEGMENTED_SIZES.map((s) => (
+            <div key={s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <SegmentedControl size={s} aria-label={`${s} circle check`}>
+                <Segment icon={<House />} hideLabel selected>Home</Segment>
+                <Segment icon={<Save />} hideLabel>Saved</Segment>
+              </SegmentedControl>
+              <ButtonRound size={s} icon={<House />} aria-label={`${s} round for comparison`} />
+            </div>
+          ))}
         </Row>
         <Row label="disabled">
           <SegmentedControl aria-label="Disabled example">

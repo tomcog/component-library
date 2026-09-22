@@ -340,6 +340,43 @@
   --ui-type-label-xl-font-size: 18px;
   --ui-type-label-xl-line-height: 24px;
 
+  /* -- THE CONTROL LADDER ------------------------------------
+     One height per size step, and every control that can sit in a row with
+     another takes it: xl 48, lg 40, md 32, sm 24. That is what makes a UI
+     pattern built at one size line up without anyone measuring - only the
+     characters, whether a label or an icon shows, and the colours differ.
+
+     Button, ButtonRound, ConfirmButton and SegmentedControl all alias these.
+     They agreed by hand before 0.47.0, which is how SegmentedControl spent
+     five releases at 44/34/26 without anyone noticing it had left the ladder.
+
+     A component that genuinely cannot take these heights doesn't get a new
+     number here - it keeps its own and says why in its doc. The input family
+     is the open case: it draws lg at 32 and md at 24, one step short at both.
+
+     NOT a theming surface. A var() inside a custom property resolves where it
+     is DECLARED, so scoping --ui-control-lg-height on a subtree will not move
+     a button - the alias below already froze against :root. To size a region
+     differently, override the component's own token, which still resolves at
+     the element. The ladder is a system constant, and the components are the
+     surface. */
+  --ui-control-xl-height: 48px;
+  --ui-control-lg-height: 40px;
+  --ui-control-md-height: 32px;
+  --ui-control-sm-height: 24px;
+  /* The glyph sized off the CONTROL - the box is the subject and the icon
+     fills it, growing faster than its container (58% / 60% / 62.5% / 67%) so
+     it stays legible at Small. ButtonRound and SegmentedControl take this.
+
+     A glyph sized off the TYPE is a different object and is not here: that is
+     Button, whose icon is its line box so the glyph and label sit on one
+     optical line. The two ladders differ from LG down (24/20/16 against
+     20/16/12), so picking the wrong one is visible. */
+  --ui-control-xl-icon-size: 28px;
+  --ui-control-lg-icon-size: 24px;
+  --ui-control-md-icon-size: 20px;
+  --ui-control-sm-icon-size: 16px;
+
   /* XL exists for touch: at 48 it clears both the 44pt iOS and 48dp
      Android minimum target, which Large at 40 does not. Its type steps up to
      18/24 because a phone is held closer but read at a glance, and its icon
@@ -356,7 +393,7 @@
      even though all four currently agree. That would be geometry riding on
      the type scale, which is the coupling --ui-nav-rail-slat-height was split
      out to undo - move the scale and every icon would silently resize. */
-  --ui-button-xl-height: 48px;
+  --ui-button-xl-height: var(--ui-control-xl-height);
   --ui-button-xl-padding-x: 16px;
   --ui-button-xl-gap: 10px;
   --ui-button-xl-radius: 4px;
@@ -365,7 +402,7 @@
   --ui-button-xl-icon-size: 24px;
   --ui-button-xl-icon-stroke: 2;
 
-  --ui-button-lg-height: 40px;
+  --ui-button-lg-height: var(--ui-control-lg-height);
   --ui-button-lg-padding-x: 12px;
   --ui-button-lg-gap: 8px;
   --ui-button-lg-radius: 4px;
@@ -374,7 +411,7 @@
   --ui-button-lg-icon-size: 20px;
   --ui-button-lg-icon-stroke: 1.5;
 
-  --ui-button-md-height: 32px;
+  --ui-button-md-height: var(--ui-control-md-height);
   --ui-button-md-padding-x: 10px;
   --ui-button-md-gap: 8px;
   --ui-button-md-radius: 4px;
@@ -383,7 +420,7 @@
   --ui-button-md-icon-size: 16px;
   --ui-button-md-icon-stroke: 1;
 
-  --ui-button-sm-height: 24px;
+  --ui-button-sm-height: var(--ui-control-sm-height);
   --ui-button-sm-padding-x: 8px;
   --ui-button-sm-gap: 4px;
   --ui-button-sm-radius: 4px;
@@ -398,14 +435,14 @@
      2.5/2/1.5/1 icon stroke. The icon grows faster than the container
      (58% / 60% / 62.5% / 67%) so the glyph stays legible at Small.
      XL matches Button's 48 so the two sit level in a touch layout. */
-  --ui-button-round-xl-size: 48px;
-  --ui-button-round-lg-size: 40px;
-  --ui-button-round-md-size: 32px;
-  --ui-button-round-sm-size: 24px;
-  --ui-button-round-xl-icon-size: 28px;
-  --ui-button-round-lg-icon-size: 24px;
-  --ui-button-round-md-icon-size: 20px;
-  --ui-button-round-sm-icon-size: 16px;
+  --ui-button-round-xl-size: var(--ui-control-xl-height);
+  --ui-button-round-lg-size: var(--ui-control-lg-height);
+  --ui-button-round-md-size: var(--ui-control-md-height);
+  --ui-button-round-sm-size: var(--ui-control-sm-height);
+  --ui-button-round-xl-icon-size: var(--ui-control-xl-icon-size);
+  --ui-button-round-lg-icon-size: var(--ui-control-lg-icon-size);
+  --ui-button-round-md-icon-size: var(--ui-control-md-icon-size);
+  --ui-button-round-sm-icon-size: var(--ui-control-sm-icon-size);
   /* Rendered stroke, in px. Unitless because SVG stroke-width is a number;
      `vector-effect: non-scaling-stroke` in ButtonRound.module.css is what
      makes these render as literal px whatever the icon's viewBox. */
@@ -822,89 +859,84 @@
 
   /* -- SEGMENTED CONTROL -------------------------------------
      Figma: the `Segment` set (555:14966) and `SegmentedTrack` (558:15011).
-     Segment carries Size (LG | MD | SM) x State; the track carries Size and,
-     since 0.42.0, a Color axis of Gray | White.
+     Segment carries Size (XL | LG | MD | SM) x State; the track carries Size
+     and a Color axis of Gray | White.
 
-     The TRACK is a pill holding the segments; a segment is a pill inside it,
-     and the selected one is the only one with a ground. Track height is
-     derived, not declared - and since 0.43.0 the derivation is just the
-     segment: with no inset, the track stands exactly 40, 30 and 26. Only the
-     segment is given a height, which is the same decomposition Button uses -
-     size by height, never by vertical padding. */
+     Every height is the CONTROL LADDER, aliased above - so a segment and a
+     Button and a ButtonRound at the same step stand level without anyone
+     checking. The icons take the ladder too, which is the formal version of
+     the "glyph larger than the line box" decision: this component sizes its
+     glyph off the CONTROL, not off the type, exactly as ButtonRound does.
+
+     Four values step and nothing else does: height, padding, icon, and the
+     gaps. The padding is uniform on all four sides, so each height is just
+     padding + icon + padding - 10+28+10, 8+24+8, 6+20+6, 4+16+4. Only the
+     horizontal half is declared, as padding-inline; the height carries the
+     vertical, which is the decomposition Button uses.
+
+     An icon-only segment is therefore a PERFECT CIRCLE at every step, and the
+     same circle ButtonRound draws. That is deliberate and it is why both now
+     read the ladder rather than agreeing by hand. It does NOT make them one
+     component: this is a radio in a group and that is a button, and the two
+     say completely different things to a screen reader. */
   --ui-segmented-track-radius: 99px;
-  /* ZERO since 0.43.0. The track used to hold a 4px inset so it showed as a
-     ring around the selected pill; Figma now draws the pill flush to the
-     track's ends (756:478 and its two siblings), so the ground reads only
-     BETWEEN the segments and behind the idle ones. Kept as a token rather
-     than deleted: it is still the thing an app would reach for to put the
-     ring back, and Figma still holds the variable. */
+  /* Zero. The pill runs flush to the track's ends, so the ground reads only
+     between the segments and behind the idle ones. Kept as a token because it
+     is still what an app would set to put the old inset ring back. */
   --ui-segmented-track-padding: 0px;
-  /* Between two segments. A gap, not padding inside each one - the same
-     distinction Tabs' tokens spell out, and for the same reasons. It is the
-     only place the track's ground is seen as a groove now that the pills run
-     flush to the ends, which is why it grew from 4 - at 4 it read as a seam.
-
-     Per size since 0.44.0, and it steps with the segment rather than with the
-     icon gap inside it: 8 / 6 / 4. One shared value left the SM groove looking
-     like the LG one between segments a third the width. The three names live
-     down with the other per-size geometry. */
   --ui-segmented-radius: 99px;
-  /* How far back the glyph sits from its label. The pair is CONDITIONAL and
-     that is the whole point: a segment showing both draws the icon at 0.65 so
-     the label leads, and one showing the icon ALONE draws it at full strength,
-     because then the glyph is the whole message and a faded one would read as
-     disabled. Figma carries it as a layer opacity on the icon instance.
+  /* How far back the glyph sits from its label. CONDITIONAL, and that is the
+     point: a segment showing both draws the icon at 0.65 so the label leads,
+     and one showing the icon ALONE draws it at full strength, because then
+     the glyph is the whole message and a faded one reads as disabled.
 
-     Opacity rather than a colour, deliberately: the glyph is currentColor and
-     has to sit back from the label through four grounds - pale, brand red,
-     near-black and the hover red - which one muted colour cannot do. */
+     Opacity rather than a colour: the glyph is currentColor and has to sit
+     back across four grounds - pale track, brand red, near-black, hover red -
+     which no one muted colour does. Figma carries it as a layer opacity on the
+     icon CONTAINER; putting it on the paths as well composes to 0.42. */
   --ui-segmented-icon-opacity: 0.65;
   --ui-segmented-icon-only-opacity: 1;
-  /* Height, padding-x, icon and icon gap all step per size, and each step is
-     a value Figma draws rather than one derived from the type. The icon is
-     LARGER than the line box (24 against 20 at LG), which is what makes the
-     height its own number. Sizing the icon off --ui-segmented-*-line-height,
-     as this did until 0.42.0, would silently undo that.
 
-     The padding is UNIFORM on all four sides since 0.45.0 - 10 / 8 / 6, the
-     same value the padding-x token already held - so each height below is
-     just padding + the icon + padding: 10+24+10, 8+18+8, 6+14+6. Only the
-     horizontal half is declared, as padding-inline; the vertical half is what
-     the height encodes, which is the decomposition Button uses. The two are
-     not restated because they would then be two numbers for one measurement.
-     Around the LABEL the vertical clearance is larger (12 at LG against the
-     glyph's 10), the label being the shorter of the two. */
-  --ui-segmented-lg-height: 44px;
-  /* Named -padding-x because it is applied horizontally, though Figma now
-     draws the same 10 on all four sides. The vertical half lives in the
-     height above; a token called -padding that only reached one axis would
-     be the misleading half of that trade. */
-  --ui-segmented-lg-padding-x: 10px;
-  /* Between two LG segments, on the track. Not to be confused with
-     --ui-segmented-lg-icon-gap, which is inside one segment. */
+  /* Two gaps per size and they are different objects: `-track-gap` separates
+     two segments and sits on the track, `-icon-gap` separates a glyph from its
+     label inside one. The icon gap equals the padding at every step and the
+     track gap does not - don't collapse them into one token because three of
+     the four happen to agree. */
+  --ui-segmented-xl-height: var(--ui-control-xl-height);
+  --ui-segmented-xl-padding-x: 10px;
+  --ui-segmented-xl-icon-size: var(--ui-control-xl-icon-size);
+  --ui-segmented-xl-icon-gap: 10px;
+  --ui-segmented-xl-track-gap: 8px;
+  --ui-segmented-xl-font-size: var(--ui-type-label-xl-font-size);
+  /* OFF-SCALE: Label XL is 18/24, the set draws 18/20. Checkbox XL draws the
+     same tighter pair. The height is the icon's, not the label's, so this
+     changes the leading and nothing else. */
+  --ui-segmented-xl-line-height: 20px;
+
+  --ui-segmented-lg-height: var(--ui-control-lg-height);
+  --ui-segmented-lg-padding-x: 8px;
+  --ui-segmented-lg-icon-size: var(--ui-control-lg-icon-size);
+  --ui-segmented-lg-icon-gap: 8px;
   --ui-segmented-lg-track-gap: 8px;
-  --ui-segmented-lg-icon-size: 24px;
-  /* Icon to label, inside one segment. Per size since 0.42.0: LG and MD agree
-     at 6 today, SM is 4, and one shared token could not say that. */
-  --ui-segmented-lg-icon-gap: 6px;
   --ui-segmented-lg-font-size: var(--ui-type-label-lg-font-size);
   --ui-segmented-lg-line-height: var(--ui-type-label-lg-line-height);
-  --ui-segmented-md-height: 34px;
-  --ui-segmented-md-padding-x: 8px;
-  --ui-segmented-md-track-gap: 6px;
-  --ui-segmented-md-icon-size: 18px;
+
+  --ui-segmented-md-height: var(--ui-control-md-height);
+  --ui-segmented-md-padding-x: 6px;
+  --ui-segmented-md-icon-size: var(--ui-control-md-icon-size);
   --ui-segmented-md-icon-gap: 6px;
+  --ui-segmented-md-track-gap: 6px;
   --ui-segmented-md-font-size: var(--ui-type-label-md-font-size);
   --ui-segmented-md-line-height: var(--ui-type-label-md-line-height);
-  /* SM exists because NextJob's section-header sort toggle wants a short
-     track. The type steps down the label scale. */
-  --ui-segmented-sm-height: 26px;
-  --ui-segmented-sm-padding-x: 6px;
-  --ui-segmented-sm-track-gap: 4px;
-  --ui-segmented-sm-icon-size: 14px;
+
+  --ui-segmented-sm-height: var(--ui-control-sm-height);
+  --ui-segmented-sm-padding-x: 4px;
+  --ui-segmented-sm-icon-size: var(--ui-control-sm-icon-size);
   --ui-segmented-sm-icon-gap: 4px;
+  --ui-segmented-sm-track-gap: 4px;
   --ui-segmented-sm-font-size: var(--ui-type-label-sm-font-size);
   --ui-segmented-sm-line-height: var(--ui-type-label-sm-line-height);
+
   --ui-segmented-font-weight: var(--ui-type-label-font-weight);
 
   --ui-card-radius: 8px;

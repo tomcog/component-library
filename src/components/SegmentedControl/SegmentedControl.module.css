@@ -19,7 +19,8 @@
   padding: var(--ui-segmented-track-padding);
   /* `gap` is per size, with the size blocks below. */
   /* Height is DERIVED - padding + the segment - and since the inset went to
-     zero that is just the segment: 44 at LG, 34 at MD, 26 at SM. Giving the
+     zero that is just the segment - which is the control ladder: 48 at XL,
+     40 at LG, 32 at MD, 24 at SM. Giving the
      track a height as well would be two numbers for one measurement, and they
      would disagree the moment the segment moved. */
 }
@@ -77,25 +78,32 @@
    pill that cannot accommodate it.
 
    Height and padding-inline, not padding-block - the same decomposition
-   Button uses. Figma's padding is uniform (10 / 8 / 6, the same number as the
-   padding-x here), so the height IS that padding twice plus the icon; stating
-   the vertical half as well would be two numbers for one measurement, and the
-   two would not even agree, since the icon stands taller than the line box -
-   at LG the glyph clears 10 above and below where the label clears 12.
+   Button uses. Figma's padding is uniform (10 / 8 / 6 / 4, the same number as
+   the padding-x here), so the height IS that padding twice plus the icon;
+   stating the vertical half as well would be two numbers for one measurement,
+   and the two would not even agree, since the icon stands taller than the line
+   box - at LG the glyph clears 8 above and below where the label clears 10.
 
    Height is what keeps the row straight. Figma hugs, so an icon-less segment
-   there would come out 40 / 32 / 24 against the 44 / 34 / 26 of one with a
-   glyph; holding the height means a track can mix the two without its
-   segments stepping. */
+   there would come out short of the ladder; holding the height means a track
+   can mix segments with and without glyphs without its row stepping. */
 /* The gap between segments steps with the size too. It goes on the TRACK,
-   which is what these three classes are on - `.lg .segment` below is the
+   which is what these four classes are on - `.lg .segment` below is the
    segment's own geometry. Two gaps per size, and they are different objects:
    this one separates two segments, --ui-segmented-*-icon-gap separates a
    glyph from its label inside one. */
+.xl { gap: var(--ui-segmented-xl-track-gap); }
 .lg { gap: var(--ui-segmented-lg-track-gap); }
 .md { gap: var(--ui-segmented-md-track-gap); }
 .sm { gap: var(--ui-segmented-sm-track-gap); }
 
+.xl .segment {
+  height: var(--ui-segmented-xl-height);
+  padding-inline: var(--ui-segmented-xl-padding-x);
+  gap: var(--ui-segmented-xl-icon-gap);
+  font-size: var(--ui-segmented-xl-font-size);
+  line-height: var(--ui-segmented-xl-line-height);
+}
 .lg .segment {
   height: var(--ui-segmented-lg-height);
   padding-inline: var(--ui-segmented-lg-padding-x);
@@ -187,6 +195,10 @@
   /* Its colour is currentColor by inheritance, deliberately: unlike Tabs,
      where an idle tab is a dark label beside a muted glyph, a segment's icon
      and label are one object and move together through every state. */
+}
+.xl .icon {
+  width: var(--ui-segmented-xl-icon-size);
+  height: var(--ui-segmented-xl-icon-size);
 }
 .lg .icon {
   width: var(--ui-segmented-lg-icon-size);

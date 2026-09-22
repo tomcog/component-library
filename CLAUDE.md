@@ -143,15 +143,25 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   and what the scale says, so the next reader can tell intent from drift.
 - Size vocabulary is two-letter everywhere: `xl | lg | md | sm`. A size exists only when
   something uses it.
-- **A size step is a shared ladder, not a per-component opinion: `xl` 48, `lg` 40, `md` 32,
-  `sm` 24.** Everything at one step stands the same height and sets the same label size, so
-  a UI pattern built at LG lines up without anyone checking. Only the characters, whether
-  label or icon shows, and the colours differ. A new component with a size axis takes those
-  heights; a component that cannot must say why in its doc. `Button`, `ButtonRound` and
-  `ConfirmButton` hold the ladder. **The input family is the known exception** — `InputText`
-  (and `InputSelect`/`InputTextarea`, which alias its size type) draws `lg` at 32 and `md`
-  at 24, one step short at both, so an LG field beside an LG button steps by 8. Undecided
-  whether the heights move or the steps are renamed; don't copy it.
+- **A size step is a shared ladder, and it has tokens: `--ui-control-{xl,lg,md,sm}-height`
+  (48/40/32/24).** Everything at one step stands the same height and sets the same label
+  size, so a UI pattern built at LG lines up without anyone checking. Only the characters,
+  whether label or icon shows, and the colours differ. A new component with a size axis
+  **aliases** these — it does not restate the number, which is how SegmentedControl spent
+  five releases at 44/34/26. `Button`, `ButtonRound`, `ConfirmButton` and `SegmentedControl`
+  all read them. A component that genuinely cannot take these heights keeps its own and says
+  why in its doc.
+  There are **two icon ladders** and picking the wrong one is visible from LG down.
+  `--ui-control-*-icon-size` (28/24/20/16) is the glyph sized off the CONTROL, where the box
+  is the subject — `ButtonRound` and `SegmentedControl`. `Button`'s icon is sized off the
+  TYPE instead (24/20/16/12, its line box) so glyph and label sit on one optical line; those
+  stay literals **deliberately**, and the note in `tokens.css` says why — geometry riding on
+  the type scale is the coupling `--ui-nav-rail-slat-height` was split out to undo. The
+  "never write the scale's number by hand" rule above is about type tokens, not geometry.
+  **The input family is the known exception to the ladder** — `InputText` (and
+  `InputSelect`/`InputTextarea`, which alias its size type) draws `lg` at 32 and `md` at 24,
+  one step short at both, so an LG field beside an LG button steps by 8. Undecided whether
+  the heights move or the steps are renamed; don't copy it.
 
 ### Build
 
