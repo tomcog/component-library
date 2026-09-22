@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Checkbox, Tabs and InputText read the type scale instead of repeating it.
+**0.45.0 -> 0.46.0** - Checkbox, Tabs and InputText read the type scale instead of repeating it.
 
 **No rendered change.** Eight tokens that held a raw number equal to a Type/Label step now
 alias that step: Checkbox's three font sizes and its LG line height, Tabs' two font sizes and
