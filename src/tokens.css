@@ -977,6 +977,17 @@
      4 inside a track. The one number that says "these are separate
      controls" rather than one long row of options. */
   --ui-toolbar-gap: 16px;
+  /* The ground of the TRACKS the bar holds, which is a relationship rather
+     than a colour: they sit against the bar, not with it. A gray bar holds
+     white tracks; a white bar holds pale ones, which is SegmentedControl's
+     own default and so needs nothing here.
+
+     Set by the bar rather than asked of the consumer - nesting a segmented
+     control in a toolbar should not require remembering to flip its tone.
+     It lands on --ui-segmented-track-bg, the hook that already exists for
+     exactly this, so an explicit tone="white" track is untouched: that one
+     reads --ui-segmented-track-white-bg instead. */
+  --ui-toolbar-track-bg: var(--ui-surface-raised);
 
   /* -- TYPEFACE ----------------------------------------------
      The same identity/role split the colours have, for the same reason.

@@ -17,14 +17,26 @@ beside the zoom target. Figma: the `Toolbars` frame (772:1200).
 ```
 
     bar      radius 99, padding 4, gap 16 between controls
-             tone="gray" Surface/Sunken (default) | tone="white" Surface/Raised
+             tone="gray"   bar Surface/Sunken, tracks Surface/Raised  (default)
+             tone="white"  bar Surface/Raised, tracks Surface/Pale
     height   DERIVED: padding + the tallest control, so 32 with SM, 48 with LG
 
-## It owns three things
+## It owns the grounds, a 4px inset, and the gap
 
-A ground, a 4px inset, and the gap between its controls. That is the whole
-component — it has no opinion about segments, icons, labels or selection,
-because every one of those already belongs to `SegmentedControl` and `Segment`.
+Grounds plural, because the bar decides its own **and** the one its tracks
+take: they sit *against* it rather than with it. A gray bar holds white
+tracks; a white bar holds pale ones. It is a relationship, not two colours —
+the track is always the step that lifts off the bar.
+
+That is set by the bar, not asked of the consumer. Nesting a `SegmentedControl`
+in a `Toolbar` should not require remembering to flip its tone, so the bar
+declares `--ui-segmented-track-bg` on itself and the tracks inherit it. A
+control given an explicit `tone="white"` is unaffected — that one reads
+`--ui-segmented-track-white-bg` instead.
+
+Beyond the grounds it has no opinion about segments, icons, labels or
+selection, because every one of those already belongs to `SegmentedControl`
+and `Segment`.
 
 That is what makes the three configurations free. **Icon + label**, **label
 alone** and **icon alone** are all `Segment` props, so a bar of icon-only

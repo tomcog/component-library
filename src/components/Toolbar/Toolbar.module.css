@@ -32,7 +32,15 @@
    page rather than sinking into it - see --ui-surface-sunken. */
 .gray {
   background: var(--ui-toolbar-bg, var(--ui-surface-sunken));
+  /* The tracks inside sit AGAINST this bar, not with it: on the gray bar they
+     are white. Declared here rather than on :root so it resolves in the
+     toolbar's own scope, and it reaches the tracks through the hook that
+     already exists for their default ground - so a SegmentedControl given an
+     explicit tone="white" is unaffected, reading its own hook instead. */
+  --ui-segmented-track-bg: var(--ui-toolbar-track-bg, var(--ui-surface-raised));
 }
 .white {
   background: var(--ui-toolbar-white-bg, var(--ui-surface-raised));
+  /* No track declaration: against a white bar the tracks are pale, which is
+     already SegmentedControl's default. */
 }

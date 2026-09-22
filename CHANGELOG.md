@@ -9,6 +9,20 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Toolbar: the gray bar holds WHITE tracks.
+
+    tone="gray"    bar --ui-surface-sunken, tracks --ui-surface-raised   (tracks were pale)
+    tone="white"   bar --ui-surface-raised, tracks --ui-surface-pale     (unchanged)
+
+The tracks sit *against* the bar rather than with it, and that is a relationship rather than
+two colours: the track is always the step that lifts off the bar. Only the gray case was
+wrong - a white bar's pale tracks are already `SegmentedControl`'s default.
+
+The bar sets it, not the consumer. Nesting a `SegmentedControl` in a `Toolbar` should not
+require remembering to flip its tone, so `.gray` declares `--ui-segmented-track-bg` on itself
+and the tracks inherit it. A control given an explicit `tone="white"` is untouched, reading
+`--ui-segmented-track-white-bg` instead. New hook: `--ui-toolbar-track-bg`.
+
 **0.50.0 -> 0.51.0** - SegmentedControl: hovering an idle segment lights a ground.
 
     .segment:not(.selected):hover   background: --ui-action-lighter   (was: nothing)
