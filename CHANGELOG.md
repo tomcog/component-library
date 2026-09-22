@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: the segment's padding is uniform on all four sides.
+**0.44.0 -> 0.45.0** - SegmentedControl: the segment's padding is uniform on all four sides.
 
 10 / 8 / 6, the same number the padding-x already held, so the vertical padding comes UP to
 meet the horizontal rather than the other way round. Heights follow: every one is padding +
