@@ -136,8 +136,22 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   18/24), weight `--ui-type-label-font-weight` (Medium). A step exists only where something
   uses it; don't add a step to size a container. Component `font-family` is always
   `var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback))`.
+  **Never write the scale's number out by hand** — a raw `14px` that happens to equal
+  Label LG is a value that has stopped being shared without anyone touching it, and it does
+  not move when an app retunes the scale. Checkbox, Tabs and InputText each carried one until
+  0.46.0. A value that is genuinely off-scale is fine; mark it `OFF-SCALE` with the reason
+  and what the scale says, so the next reader can tell intent from drift.
 - Size vocabulary is two-letter everywhere: `xl | lg | md | sm`. A size exists only when
   something uses it.
+- **A size step is a shared ladder, not a per-component opinion: `xl` 48, `lg` 40, `md` 32,
+  `sm` 24.** Everything at one step stands the same height and sets the same label size, so
+  a UI pattern built at LG lines up without anyone checking. Only the characters, whether
+  label or icon shows, and the colours differ. A new component with a size axis takes those
+  heights; a component that cannot must say why in its doc. `Button`, `ButtonRound` and
+  `ConfirmButton` hold the ladder. **The input family is the known exception** — `InputText`
+  (and `InputSelect`/`InputTextarea`, which alias its size type) draws `lg` at 32 and `md`
+  at 24, one step short at both, so an LG field beside an LG button steps by 8. Undecided
+  whether the heights move or the steps are renamed; don't copy it.
 
 ### Build
 

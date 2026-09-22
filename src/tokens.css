@@ -677,9 +677,9 @@
      is 24 exactly and lands within half a pixel of that, the same half-pixel
      LG already carries (see docs/components/InputText.md).
 
-     The value is 12/18 Regular, the same numbers Checkbox MD's label uses, and
-     like those they are the component's own rather than a label-scale alias:
-     Label MD is 12/16. The label is 8px - smaller than any step on the scale -
+     The value is 12/18 Regular, the same pair Checkbox MD's label uses. The
+     SIZE is Label MD's and aliases it; the 18 LINE HEIGHT and the Regular
+     weight are the component's own - Label MD is 12/16 Medium. The label is 8px - smaller than any step on the scale -
      because that is what the design draws; its 12 line height is Label SM's,
      which Figma binds. At 8px uppercase it is the smallest string the library
      renders, and it repeats a value already visible in the field. */
@@ -688,7 +688,8 @@
   --ui-input-text-md-padding-bottom: 1px;
   --ui-input-text-md-gap: 6px;
   --ui-input-text-md-icon-size: 12px;
-  --ui-input-text-md-font-size: 12px;
+  --ui-input-text-md-font-size: var(--ui-type-label-md-font-size);
+  /* OFF-SCALE on purpose: Label MD is 12/16, the field draws 12/18. */
   --ui-input-text-md-line-height: 18px;
   --ui-input-text-md-label-font-size: 8px;
 
@@ -710,24 +711,31 @@
      the LG box reads as 13px inside a 20px target.
 
      The label is DM Sans Regular at these sizes rather than the Label scale's
-     Medium: the design sets it as body text beside a control. XL's 20px line
-     height and MD's 18px are the design's own, and are why these are not
-     --ui-type-label-* aliases. */
+     Medium: the design sets it as body text beside a control. So the WEIGHT is
+     this component's own (--ui-checkbox-font-weight below), while the SIZE is
+     the scale's and now says so - 18 / 14 / 12 were raw literals until 0.46.0,
+     agreeing with Type/Label by coincidence rather than by construction.
+
+     The LINE HEIGHTS are a mix, and the two that stay raw are marked. XL's 20
+     and MD's 18 are the design's own; LG's 20 is Label LG's and aliases it. */
   --ui-checkbox-gap: 2px;
 
   --ui-checkbox-xl-slot-size: 24px;
   --ui-checkbox-xl-glyph-size: 20px;
-  --ui-checkbox-xl-font-size: 18px;
+  --ui-checkbox-xl-font-size: var(--ui-type-label-xl-font-size);
+  /* OFF-SCALE on purpose: Label XL is 18/24, the design draws 18/20. */
   --ui-checkbox-xl-line-height: 20px;
 
   --ui-checkbox-lg-slot-size: 20px;
   --ui-checkbox-lg-glyph-size: 16px;
-  --ui-checkbox-lg-font-size: 14px;
-  --ui-checkbox-lg-line-height: 20px;
+  --ui-checkbox-lg-font-size: var(--ui-type-label-lg-font-size);
+  --ui-checkbox-lg-line-height: var(--ui-type-label-lg-line-height);
 
   --ui-checkbox-md-slot-size: 16px;
   --ui-checkbox-md-glyph-size: 14px;
-  --ui-checkbox-md-font-size: 12px;
+  --ui-checkbox-md-font-size: var(--ui-type-label-md-font-size);
+  /* OFF-SCALE on purpose: Label MD is 12/16, the design draws 12/18 - the same
+     pair InputText MD uses. */
   --ui-checkbox-md-line-height: 18px;
 
   --ui-checkbox-font-weight: 400;
@@ -783,11 +791,18 @@
      XL takes Type/Label XL's 18/24 rather than holding 21. That rule was about
      not SHRINKING an existing strip; a new size is free to sit on the type
      scale, and 18px in a 21px box is 1.17 leading, which is tight for a
-     label. It stands 35 tall: 24 + 8 + 3. */
-  --ui-tabs-lg-font-size: 14px;
+     label. It stands 35 tall: 24 + 8 + 3.
+
+     All four were raw literals until 0.46.0. Three of them were the scale's
+     numbers written out by hand, which is how a shared value stops being
+     shared without anyone touching it; they alias now. Only LG's 21 is really
+     this component's, and it is marked. */
+  --ui-tabs-lg-font-size: var(--ui-type-label-lg-font-size);
+  /* OFF-SCALE on purpose, and the reason is three paragraphs up: Label LG is
+     14/20, and holding 21 is what keeps the strip 32 tall. */
   --ui-tabs-lg-line-height: 21px;
-  --ui-tabs-xl-font-size: 18px;
-  --ui-tabs-xl-line-height: 24px;
+  --ui-tabs-xl-font-size: var(--ui-type-label-xl-font-size);
+  --ui-tabs-xl-line-height: var(--ui-type-label-xl-line-height);
   --ui-tabs-font-weight: 500;
   /* Icon to label, inside one tab. */
   --ui-tabs-icon-gap: 8px;

@@ -9,6 +9,34 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Checkbox, Tabs and InputText read the type scale instead of repeating it.
+
+**No rendered change.** Eight tokens that held a raw number equal to a Type/Label step now
+alias that step: Checkbox's three font sizes and its LG line height, Tabs' two font sizes and
+its XL line height, and InputText MD's font size. Every one resolves to exactly the value it
+did before - verified against the rendered playground, not just the build.
+
+What changes is what happens when the scale MOVES. Button, SegmentedControl, Pill and Tag
+already followed `--ui-type-label-*`; Checkbox, Tabs and InputText did not, because their
+numbers agreed by coincidence rather than by construction. An app retuning
+`--ui-type-label-lg-font-size` used to move four components and leave two behind. It now
+moves all six.
+
+Four line heights are genuinely off the scale and stay raw, each now marked `OFF-SCALE` in
+`tokens.css` with the reason and what the scale says, so intent is distinguishable from drift:
+Checkbox XL (18/20 against Label XL's 18/24), Checkbox MD and InputText MD (both 12/18 against
+12/16), and Tabs LG (14/21, which is what holds the strip at 32 tall).
+
+`CLAUDE.md` gains the rule this closes - never write a scale number out by hand - and, newly
+written down, **the size ladder**: `xl` 48, `lg` 40, `md` 32, `sm` 24, one height and one
+label size per step across every component, so a UI pattern built at one size lines up without
+anyone checking. `Button`, `ButtonRound` and `ConfirmButton` hold it today.
+
+It also records the one component family that does NOT: `InputText` draws `lg` at 32 and `md`
+at 24 - one step short at both - and `InputSelect` and `InputTextarea` alias its size type, so
+an LG field beside an LG button steps by 8px. Unchanged here; it needs a decision on whether
+the heights move or the steps are renamed, and the name gives no warning today.
+
 **0.44.0 -> 0.45.0** - SegmentedControl: the segment's padding is uniform on all four sides.
 
 10 / 8 / 6, the same number the padding-x already held, so the vertical padding comes UP to
