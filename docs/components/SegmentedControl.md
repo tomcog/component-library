@@ -16,7 +16,7 @@ of Gray | White as well.
 </SegmentedControl>
 ```
 
-    track    radius 99, NO inset; between segments 8 / 6 / 4 by size
+    track    radius 99, NO inset; between segments 8 / 8 / 6 / 4 by size
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
     segment  radius 99; padding is UNIFORM on all four sides
     XL       segment 48 on 18/24, padding 10, icon 28, icon gap 10, track gap 8
@@ -185,19 +185,17 @@ gaps between segments and behind the idle ones. That is why the gap grew from
 its old shared 4 - with the pills flush it is the only place the groove reads,
 and at 4 it was a seam.
 
+The track is never given a height. 48 / 40 / 32 / 24 are derived - padding plus
+the segment, which with no padding is just the segment. Declaring one as well
+would be two numbers for one measurement, disagreeing the moment the segment
+moved. The segment itself takes `height` plus `padding-inline`, never
+`padding-block`: the same decomposition Button uses.
+
 **Two gaps per size, and they are different objects.**
-`--ui-segmented-*-track-gap` (8 / 6 / 4) separates two segments and sits on the
-track; `--ui-segmented-*-icon-gap` (6 / 6 / 4) separates a glyph from its label
-inside one segment. They happen to agree at SM and nowhere else, which is
-exactly the kind of coincidence a single shared token turns into a bug.
-
-## The track is not given a height
-
-48, 40, 32 and 24 are derived - padding + the segment, which with no padding
-is just the segment, which is the control ladder. Declaring a track height as well would be two numbers for one
-measurement, and they would disagree the moment the segment moved. The segment
-itself takes `height` plus `padding-inline`, never `padding-block`: the same
-decomposition Button uses, for the same reason.
+`--ui-segmented-*-track-gap` (8 / 8 / 6 / 4) separates two segments and sits on
+the track; `--ui-segmented-*-icon-gap` (10 / 8 / 6 / 4) separates a glyph from
+its label inside one segment. They agree at LG, MD and SM and part at XL, which
+is exactly the kind of near-coincidence a single shared token turns into a bug.
 
 ## `tone` picks the TRACK's ground
 
@@ -225,65 +223,29 @@ same modelling difference `Tabs` has with its size, and recorded here for the
 same reason. A control whose selected segment came out red or black depending
 on which one you clicked would be a different control each time.
 
-## Figma was reconciled after the code landed
+## How the set is modelled in Figma
 
-The set was drawn first and the code followed, so this was a fetch rather than
-an independent edit - the documented exception to "never change both sides in
-the same session". What moved in Figma, none of it changing a rendered value
-except where noted:
+Three rules, each of which has been broken at least once and is expensive to
+break again:
 
-- **`State=Dark` came off the `Neutral/800` PRIMITIVE** onto `Surface/Inverse`
-  / `Text/OnInverse`, so it follows the theme. This DID change the value:
-  `#2e2e2e` -> `#262626`, 8/255 on one channel, and the code's number.
-- **Every `Button/*` token is gone from the set.** `Active` was on
-  `Button/Primary/Default` and `Button/Primary/Label`, and all four LG cells
-  took `Button Size/LG/Padding Y` and `Button Size/LG/Font Size`. A Segment
-  would have moved whenever a Button did - the trap NavSlat and Pill each hit
-  once. Colours now read `Primary/Base` / `Text/OnPrimary`, type reads the
-  `Type/Label */*` scale, and vertical padding is unbound: the code has no
-  padding-Y token at all, sizing by height exactly as Button does, so there is
-  nothing to point at.
-- **Nine `Segmented/*` and `Segmented Size/*/*` FLOAT variables** now carry the
-  geometry, each with its `--ui-*` name as Dev Mode code syntax, and each set
-  to the same value in both modes. Radius, padding, gap, height and padding-x
-  were raw on the variants - the defect `Pill/Padding X` was created to close.
-  **Undone by the 0.42.0 respec**, which edited the variants directly and left
-  the variables holding the old numbers: divergence #33.
-- **Both sets were given descriptions.** They were empty, and a description is
-  the surface every `get_design_context` returns.
-
-- **`Icon?` and `SegmentIcon` were added to the set**, the same boolean +
-  instance-swap shape Button carries. Deliberately NOT a variant axis: that is
-  what once doubled Button's set to 96 and was reverted, and the note is under
-  "Icons: two slots, not a position enum". It defaults OFF so existing
-  instances do not sprout a glyph, and the icon's stroke binds the same
-  variable as the label in every state - what the code gets for free from
-  `currentColor`. Sized to the LINE BOX (LG 20, MD 16), matching the CSS.
-  **Both halves of that last sentence have since moved**: 0.42.0 draws the
-  glyph larger than the line box, and `Active` and `Dark` bind the
-  `Color/White` primitive rather than the label's variable (divergence #34).
-- **A worked `Segmented Control - LG (icons)` frame** sits below the other two,
-  built the way they are: a track instance with Segment instances posed on it.
-
-Verified after: geometry unchanged at 40/32, padding-x 16/12, padding-y 10/8,
-radius 99, gap 4, type 14/20 and 12/16; no `Button/*` binding remains; and both
-file invariants still hold - zero non-colour variables and zero primitives
-differ across modes.
-
-**Published by the user** once the reconciliation landed - which covers this
-whole pass, not just SegmentedControl: the `Text/Muted` and `Surface/Pale`
-value fixes, `Button/Round`'s rewritten description and its ghost variant, and
-the `Segment` icon property all went out in the same snapshot.
+- **No `Button/*` token may appear in the set.** `Active` once read
+  `Button/Primary/Default` and the LG cells took `Button Size/LG/*`, which
+  meant a Segment moved whenever a Button did - the trap NavSlat and Pill each
+  hit. Colours read `Primary/Base` / `Text/OnPrimary`, type reads
+  `Type/Label */*`, geometry reads `Segmented Size/*` and `Control/*`.
+- **`State=Dark` reads `Surface/Inverse` / `Text/OnInverse`, never
+  `Neutral/800`.** A primitive cannot follow the theme, so a dark-selected
+  segment would stay near-black on a near-black page. This is the sixth time
+  the file has needed that fix - after ButtonRound's pressed state, Pill's
+  ground, NavSlat's icons, `Input-Text`'s rule and Checkbox's box - and
+  `Neutral/800` is always the obvious thing to reach for.
+- **`Icon?` and `Label?` are boolean properties, not variant axes.** A variant
+  axis is what once doubled Button's set to 96 and was reverted. The cost is
+  that neither state can be *posed* in the set, only on an instance - which is
+  why the icon-only circle is checked in the playground instead.
 
 ## Divergences - do not "fix" these
 
-- **The dark ground is `--ui-surface-inverse` on both sides now.** Figma drew
-  it on the `Neutral/800` PRIMITIVE, which cannot follow the theme - the sixth
-  time this file has had to record that fix, after ButtonRound's pressed state
-  (`Color/Ink`), Pill's ground (`Color/White`), NavSlat's icons, `Input-Text`'s
-  rule and Checkbox's box. Reconciled in Figma rather than copied into code, so
-  this is no longer a divergence; kept here because the shape of the mistake
-  keeps recurring and `Neutral/800` is the obvious thing to reach for.
 - **The focus ring is INSET** (`outline-offset: -2px`), where every other ring
   in this library is offset outward by 2. The reason got stronger in 0.43.0:
   the segment used to sit 4px inside the track's pill, so an outset ring was
@@ -294,57 +256,12 @@ the `Segment` icon property all went out in the same snapshot.
   own. In Tabs an idle tab is a dark label beside a muted glyph, so the two
   cannot inherit together; here the icon and label are one object and move
   together through every state.
-- ~~**The example frames are not modelled**, so the SET is the spec.~~
-  **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
-- **An icon-only segment is a perfect circle** - and identical to
-  `ButtonRound`. Intentional now, though it arrived by arithmetic: it was a
-  44x36 rectangle two releases ago. It holds only while the padding stays
-  uniform.
-- **The segment has a height; Figma's hugs.** See above - the two agree at
-  40 / 30 / 26 as long as the segment carries a glyph, and deliberately
-  disagree when it does not.
+- **An icon-only segment is a perfect circle, identical to `ButtonRound`.**
+  Intentional, but it is arithmetic rather than a drawn decision: it holds only
+  while the padding stays uniform and the icon stays square.
+- **The segment has a height; Figma's hugs.** They agree at 48 / 40 / 32 / 24
+  while the segment carries a glyph, and deliberately disagree when it does
+  not - the code holds the height so a track can mix the two without stepping.
 - **`tone` is a prop on the track; Figma's `Color` is a variant axis.** The
   same shape `variant` already has, and for a weaker reason: an axis is simply
   how Figma says a choice. No open question here.
-
-## `SegmentedTrack` says nothing about the track
-
-The set (558:15011) is eight empty frames with `layoutMode: "NONE"` and no
-slot. `Segmented/Track Padding` and `Segmented Size/*/Track Gap` are bound to
-them and are **inert** - Figma applies neither without a layout, so they are
-values sitting on nodes that cannot spend them.
-
-So do not read the track's layout off that set; it does not have one. The code
-is the statement until the set is rebuilt to carry it (divergence #42):
-`inline-flex`, padding 0, gap 8 / 8 / 6 / 4, height derived from the segment.
-
-This cost a release. 0.42.0 shipped with the track still at a 4px inset and a
-4px gap because the set's inert numbers were read as the spec. The tell was
-there and was explained away: **the set's own poses stood at the segment's
-height, not segment + 8.** When a set's stated geometry and its drawn poses
-disagree, the poses are measuring something and the inert values are not.
-
-## What 0.42.0 - 0.47.0 changed, and what is still owed in Figma
-
-The respec was drawn in Figma first and fetched, so this was a fetch rather
-than an independent edit. Padding, icon size and icon gap all moved, MD and SM
-stand 30 and 26 where they stood 32 and 24, and the track grew its `Color`
-axis (0.42.0); the track's inset went to zero and its gap to 8 (0.43.0, the
-half that was missed first time round); and the padding-y came down - LG 8 -> 6
-and SM 6 -> 4, taking them to 36 and 22 - alongside the conditional icon
-opacity and `hideLabel` (0.44.0); then the padding went uniform at 10 / 8 / 6,
-taking the heights to 44 / 34 / 26 (0.45.0); and finally the whole set moved
-onto the control ladder - 48 / 40 / 32 / 24 with padding 10 / 8 / 6 / 4 and
-icons 28 / 24 / 20 / 16 - and grew an XL (0.47.0). What did NOT move across any of it: the type scale, both radii, the
-two selected grounds, and every keyboard and ARIA behaviour.
-
-Three defects came back with it, all Figma-side. The White variants had kept
-Figma's placeholder `Size4/5/6` names; those are renamed `LG/MD/SM` in the file
-and both sets' descriptions, which still gave the pre-0.42.0 geometry, are
-rewritten (divergence #32, now resolved - **the sets read `CHANGED` and need
-publishing**, which is UI-only). Two stay open in `docs/divergences.md`: the
-drawn geometry is raw while the `Segmented Size/*` variables still hold the old
-numbers (#33), and the icon stroke binds the `Color/White` primitive in
-`Active` and `Dark` (#34). Neither changes a rendered value; both make the file
-lie to the next reader, so **do not read this component's geometry off its
-variables** until #33 is closed.

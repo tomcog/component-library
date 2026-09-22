@@ -1,7 +1,7 @@
 /* SegmentedControl - one choice from a short, fixed set. Figma: the
    `SegmentedTrack` set (558:15011) and the `Segment` set (555:14966), both
-   carrying a Size axis of LG | MD | SM; the track carries a Color axis of
-   Gray | White as well.
+   carrying a Size axis of XL | LG | MD | SM; the track carries a Color axis
+   of Gray | White, and the segment a State of Off | Hover | Active | Dark.
 
    Not to be confused with Tabs or Pill. Tabs swaps what is shown inside the
    page and is a tablist; Pill is one independent toggle. This is N options of
@@ -10,19 +10,18 @@
 .track {
   display: inline-flex;
   align-items: center;
-  /* The pill the segments sit in. It is the one ground that is always drawn -
-     an idle segment has none, so what you see behind an unselected label is
-     this, along with the gap between segments. With the inset at zero the
-     selected pill runs flush to the track's ends, so that gap is the only
-     place the ground reads as a groove. Which ground it takes is `tone`. */
+  /* The pill the segments sit in, and the one ground always drawn: an idle
+     segment has none, so this is what shows behind an unselected label and in
+     the gaps. The inset is zero, so the selected pill runs flush to the ends
+     and those gaps are the only place the ground reads as a groove. Which
+     ground it takes is `tone`, below; `gap` is per size, with the size blocks.
+
+     Height is DERIVED and with a zero inset that is just the segment - the
+     control ladder, 48 / 40 / 32 / 24. Giving the track a height of its own
+     would be two numbers for one measurement, disagreeing the moment the
+     segment moved. */
   border-radius: var(--ui-segmented-track-radius);
   padding: var(--ui-segmented-track-padding);
-  /* `gap` is per size, with the size blocks below. */
-  /* Height is DERIVED - padding + the segment - and since the inset went to
-     zero that is just the segment - which is the control ladder: 48 at XL,
-     40 at LG, 32 at MD, 24 at SM. Giving the
-     track a height as well would be two numbers for one measurement, and they
-     would disagree the moment the segment moved. */
 }
 
 /* -- the track ground ---------------------------------------- */
@@ -48,9 +47,7 @@
   flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  /* The icon gap is set per size with the height and padding below, not here:
-     LG and MD agree at 6 today and SM is 4, which one shared token could not
-     say. */
+  /* The icon gap is set per size with the height and padding below, not here. */
   /* Anchors the visually-hidden label of an icon-only segment. That label is
      `position: absolute` and 1px square; without a positioned ancestor it
      resolves against whatever is further up the tree, which is how a clipped
@@ -127,7 +124,7 @@
 }
 
 /* Hovering an idle segment changes the LABEL and nothing else. Figma draws the
-   hover cell with its fill switched OFF at both sizes, which is the drawing
+   Hover cell with its fill switched OFF at every size, which is the drawing
    saying exactly this: a second ground inside the track would read as two
    things chosen at once. */
 .segment:not(.selected):hover:not(:disabled) {
