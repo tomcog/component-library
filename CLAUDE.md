@@ -238,6 +238,11 @@ direction it still has to travel.
   trailing `-base` (`Surface/Muted Hover` -> `--ui-surface-muted-hover`). Set every new
   variable's Dev Mode code syntax to its `var(--ui-*)` name. Bind geometry to variables;
   a raw value is how drift starts.
+- **The component sets and the variables ARE the library; nothing else on the canvas is.**
+  Loose frames, mock-ups and worked examples are sketches — never the spec, never a
+  divergence, and not to be reported as problems however stale they look. If a set cannot
+  state something about itself (`SegmentedTrack` cannot express its own layout, #42), the
+  fix is to make the set able to say it, not to read a frame that happens to show it.
 - **After any Figma session, assert both invariants**: zero non-colour variables and zero
   primitives differ between Light and Dark. The single collection doesn't enforce it.
 - **Walk every variant** when auditing; a set-level read can't tell "bound everywhere" from

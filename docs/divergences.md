@@ -175,13 +175,21 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    shape is authored rather than falling out of whatever the padding happens
    to be. Until then the code's sizes are the only statement.
 
-38. **Three superseded `Segment` worked frames are still on the page, under the
-   same names as their replacements.** `756:478`, `756:485` and `756:498` are
-   the pre-ladder LG/MD/SM rows at 44/34/26; the current ones are `756:545`,
-   `756:549`, `756:553` plus `762:741` for XL. Both sets are called
-   `Frame 31/32/33`, so a search by name returns the stale one as readily as
-   the live one — and these frames are the ONLY statement of the track's
-   layout, because the `SegmentedTrack` set cannot hold it (#33). Direction:
-   **Figma** — delete the three old frames, or rename all seven so the live
-   ones say which size they are. Not done here: deleting nodes someone may
-   still be working in is theirs to confirm.
+42. **`SegmentedTrack` (558:15011) cannot express its own layout.** All eight
+   cells are empty frames with `layoutMode: "NONE"` and no slot, so the
+   `Segmented/Track Padding` and `Segmented Size/*/Track Gap` variables bound
+   to them are inert — Figma has no layout to spend them on, and the cells
+   cannot show a segment sitting in a track at all.
+
+   This is now the whole of the problem rather than half of it. It used to be
+   survivable because loose mock frames on the canvas showed the real layout;
+   those are out of scope, so **the set is the only thing that speaks for this
+   component and it currently says nothing.** A reader inspecting it sees
+   padding 4 and a gap on a frame that applies neither.
+
+   Direction: **Figma** — give each cell auto-layout with padding 0 and its
+   size's gap, and a slot that takes `Segment` instances, so the bound
+   variables render and the set states the track. Design-shaped, so it happens
+   in Figma as its own session. Code is not waiting on it: the track is
+   `display: inline-flex`, padding 0, gap 8 / 8 / 6 / 4 per size.
+

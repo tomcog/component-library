@@ -294,36 +294,22 @@ the `Segment` icon property all went out in the same snapshot.
   same shape `variant` already has, and for a weaker reason: an axis is simply
   how Figma says a choice. No open question here.
 
-## Read the worked frames, not the track set
+## `SegmentedTrack` says nothing about the track
 
-`SegmentedTrack` (558:15011) is a set of six **empty shells**: no children, and
-`layoutMode: "NONE"`. Its `paddingTop: 4` and `itemSpacing: 4` are bound to
-`Segmented/Track Padding` and `/Track Gap` and are **inert** - Figma does not
-apply either without auto-layout, so they are values sitting on a node that
-cannot spend them. Read them as the spec and you get a control that has not
-been drawn that way since 0.42.0.
+The set (558:15011) is eight empty frames with `layoutMode: "NONE"` and no
+slot. `Segmented/Track Padding` and `Segmented Size/*/Track Gap` are bound to
+them and are **inert** - Figma applies neither without a layout, so they are
+values sitting on nodes that cannot spend them.
 
-What the track's layout actually is lives in the worked frames, each a real
-auto-layout row of three `Segment` instances: padding 0, a gap, and a height
-equal to the segment exactly. As of 0.47.0 the current four are **762:741
-(XL) / 756:545 (LG) / 756:549 (MD) / 756:553 (SM)**.
+So do not read the track's layout off that set; it does not have one. The code
+is the statement until the set is rebuilt to carry it (divergence #42):
+`inline-flex`, padding 0, gap 8 / 8 / 6 / 4, height derived from the segment.
 
-The four are bound: padding to `Segmented/Track Padding` (0), item spacing to
-`Segmented Size/*/Track Gap` (8 / 8 / 6 / 4), radius to `Segmented/Track
-Radius`.
-
-**Three superseded frames are still on the page** - `756:478 / 756:485 /
-756:498`, the pre-ladder LG/MD/SM at 44/34/26 - and they carry the SAME LAYER
-NAMES as three of the current four (`Frame 31/32/33`). Searching by name finds
-the wrong one as easily as the right one. Divergence #38.
-
-This cost a release. 0.42.0 shipped the respec with the track still at a 4px
-inset and a 4px gap, because the set was read as authoritative and the frames
-were dismissed under the old "the example frames are not modelled" divergence -
-which was written about a different, genuinely loose pair of groups. The tell
-was there and was explained away: **the set's own poses stand 40 / 30 / 26,
-which is the segment height, not segment + 8.** When a set's geometry and its
-poses disagree, the poses are measuring something and the inert values are not.
+This cost a release. 0.42.0 shipped with the track still at a 4px inset and a
+4px gap because the set's inert numbers were read as the spec. The tell was
+there and was explained away: **the set's own poses stood at the segment's
+height, not segment + 8.** When a set's stated geometry and its drawn poses
+disagree, the poses are measuring something and the inert values are not.
 
 ## What 0.42.0 - 0.47.0 changed, and what is still owed in Figma
 
