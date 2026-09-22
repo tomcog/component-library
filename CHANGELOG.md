@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: hovering an idle segment lights a ground.
+**0.50.0 -> 0.51.0** - SegmentedControl: hovering an idle segment lights a ground.
 
     .segment:not(.selected):hover   background: --ui-action-lighter   (was: nothing)
 
