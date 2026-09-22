@@ -208,14 +208,3 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    the mechanical answer is not square and a designer may not want it that way.
    Until then the code's sizes are the only statement, and they are derived
    rather than authored.
-
-37. **The track's gap between segments is per size in code and a flat 8 in
-   Figma.** Code steps it 8 / 6 / 4 with the size; the three worked frames
-   (756:478 / 485 / 498) all still say 8, which at SM is a groove as wide as
-   LG's between segments a third the width. Token-shaped, so this one went
-   **code-first by the rule** rather than by accident, and the direction is
-   **Figma**: set `756:485` to 6 and `756:498` to 4. Worth doing in the same
-   pass as #33, which has to give `SegmentedTrack` real auto-layout before
-   `Segmented/Track Gap` can mean anything — at which point that one variable
-   should become three, matching `--ui-segmented-{lg,md,sm}-track-gap`.
-

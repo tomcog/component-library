@@ -333,3 +333,16 @@ Nothing here needs action.
    costs. They now also say which geometry is raw, so a reader is not sent to
    the stale `Segmented Size/*` variables (#33, still open).
 
+37. ~~The track's gap between segments is per size in code and a flat 8 in
+   Figma.~~ **Resolved in the same session.** `756:485` set to 6 and `756:498`
+   to 4, so the three worked frames now step 8 / 6 / 4 with the code. This is
+   what the code-first half of the direction rule looks like when it is
+   actually finished: spacing is token-shaped, so the code led, and the push
+   followed immediately rather than being left for a later pass — which is how
+   #33 and #8 each became a stale value someone could read with confidence.
+
+   It does NOT close the `Segmented/Track Gap` variable, which still says 4 and
+   is still bound to six `SegmentedTrack` variants that have no auto-layout to
+   spend it on (#33). When that set is given real layout, that one variable
+   should become three, matching `--ui-segmented-{lg,md,sm}-track-gap`.
+

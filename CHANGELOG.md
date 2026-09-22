@@ -51,8 +51,9 @@ separates two segments, `*-icon-gap` separates a glyph from its label inside one
 does gets the default gaps back rather than an error. Three Figma items recorded: LG's `Active` and `Dark` cells still
 draw the glyph at full opacity where the other ten are 0.65 (#35, and it is visible), and no
 icon-only segment is posed anywhere in the file, so the code's 44x36 is derived rather than
-drawn (#36). The per-size track gap is **code-first by the rule** - spacing is token-shaped,
-so code leads - and Figma is owed 6 at MD and 4 at SM (#37).
+drawn (#36). The per-size track gap went **code-first by the rule** - spacing is
+token-shaped, so code leads - and was pushed to the three worked frames in the same session,
+so that half is already closed (#37).
 
 **0.42.0 -> 0.43.0** - SegmentedControl: the track's inset is gone and its gap is 8.
 

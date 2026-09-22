@@ -241,9 +241,6 @@ the `Segment` icon property all went out in the same snapshot.
   SM - padding-x + the icon, which is what hiding the label leaves behind.
   Figma poses no icon-only segment, so squaring it would be inventing a
   decision rather than reading one.
-- **The per-size track gap is code-first and Figma still draws 8 at every
-  size.** Spacing is token-shaped, so code leads and the file follows; the
-  three worked frames are owed 6 at MD and 4 at SM. Divergence #37.
 - **No `xl`.** A step exists when something uses one, the rule that cut
   the type scale from six to four. `sm` met that rule when NextJob's
   section-header sort toggle wanted a short track.
