@@ -153,17 +153,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
 
-36. **Figma poses no icon-only `Segment`.** `Label?` exists as a boolean on the
-   set and is `true` in every instance in the file, so what a segment looks
-   like with its label off has never been drawn. Code ships it as `hideLabel`
-   and lets the frame hug — padding + icon, which since 0.45.0's uniform
-   padding comes out SQUARE at 44 / 34 / 26. That is the mechanical result of
-   Figma's own property rather than a decision, and it changed shape once
-   already without anyone choosing it: before the padding went uniform it was
-   44x36 / 34x30 / 26x22. Direction: **Figma** — pose one per size, so the
-   shape is authored rather than falling out of whatever the padding happens
-   to be. Until then the code's sizes are the only statement.
-
 42. **`SegmentedTrack` (558:15011) cannot express its own layout.** All eight
    cells are empty frames with `layoutMode: "NONE"` and no slot, so the
    `Segmented/Track Padding` and `Segmented Size/*/Track Gap` variables bound

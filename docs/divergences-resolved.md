@@ -425,3 +425,20 @@ Nothing here needs action.
    Code was never affected: the icon takes `currentColor` and cannot diverge
    from its label.
 
+36. ~~Figma poses no icon-only `Segment`.~~ **Withdrawn - it was never a
+   defect.** `Label?` is a BOOLEAN component property, not a variant axis, so
+   it cannot have a cell in the set: only `Size` and `State` get cells. Asking
+   for the icon-only state to be "posed" was asking for an instance on the
+   canvas, which is not the library. Making it poseable would mean promoting it
+   to a variant axis - the change that once doubled Button's set to 96 and was
+   reverted.
+
+   It was stale as well as misfiled: six instances in the file already carry
+   `Label?` off, four at 48x48, which is the perfect-circle behaviour the code
+   ships.
+
+   The lesson is about classification, not Figma. **A component property that
+   has not been exercised is not drift**; there is nothing for the two sides to
+   disagree about. Only a value, a binding or a structure that the set itself
+   states can diverge.
+
