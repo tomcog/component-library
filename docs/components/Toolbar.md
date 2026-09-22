@@ -1,7 +1,8 @@
 # Toolbar
 
 A rounded bar holding several `SegmentedControl`s — undo/redo beside the view
-beside the zoom target. Figma: the `Toolbars` frame (772:1200).
+beside the zoom target. Figma: the `Toolbar` set (777:1325), a `Color` axis of
+Gray | White.
 
 ```tsx
 <Toolbar aria-label="Drawing tools">
@@ -104,18 +105,11 @@ keyboard behaviour.
 
 ## Divergences — do not "fix" these
 
-- **The gray bar is `#ededed`; Figma draws `#e1e3e2`.** The drawn fill is
-  unbound and four points off `Neutral/200`, with a 2/255 green cast where
-  every neutral in this library is strictly hueless — an eyedropped value
-  rather than a chosen one. Matched to the nearest colour the library already
-  has (`--ui-neutral-150`, via `--ui-surface-sunken`) by decision, not by
-  accident. `--ui-surface-muted` (`#d4d4d4`) is the next nearest and is
-  further away.
-- **Toolbar exists as frames in Figma, not a component set.** Three of them:
-  `Toolbar on white`, `Toolbar on gray`, `Toolbar on gray Icon only`. Nothing
-  to instance, so the two sides are compared by measurement. Promoting them to
-  a set with a `Color` axis would close it; that is design-shaped, so it
-  happens in Figma first. Same situation as `LeftRail` (divergence #10).
+The component set is bound throughout, so the two sides agree on every value.
+The loose frames it was built from are still on the canvas and still carry the
+eyedropped `#e1e3e2` the bar was drawn in; they are sketches, not the library,
+and are not tracked. The set binds `Surface/Sunken`.
+
 - **Nothing forces `size="sm"` on the children.** Figma draws SM only, and the
   bar derives its height from whatever it holds, so an LG bar is supported and
   undrawn rather than forbidden.
