@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./SegmentedControl.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
@@ -84,9 +84,15 @@ export interface SegmentedControlProps
  *
  * **Keyboard**: the arrow keys move between segments and select as they go,
  * which is the radio-group pattern and what suits a filter - the list follows
- * the selection. Home and End jump to the ends, and both directions wrap. Only
- * the selected segment is in the tab order, so Tab enters the group at the
- * current choice and leaves rather than walking every option.
+ * the selection. Home and End jump to the ends, and both directions wrap. One
+ * segment is in the tab order, so Tab enters the group at the current choice
+ * and leaves rather than walking every option.
+ *
+ * That one segment is the selected one WHERE THERE IS ONE. A group need not
+ * carry a selection - two actions that are never "current" are a real case -
+ * and a group with none still has to be reachable, so the tab stop falls to
+ * the first segment that is not disabled. Without that the stop rides on a
+ * selection that never comes and Tab walks straight past the whole control.
  *
  * Selection is the consumer's: the arrow handler fires the focused segment's
  * own `onClick`, so it composes with whatever state that handler already
@@ -107,6 +113,22 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
         );
       }
     }
+
+    // The tab stop is owned here rather than by the segment, because a segment
+    // knows only whether IT is selected and this is a question about the group:
+    // when none of them is, the stop has to fall somewhere anyway. Re-applied
+    // after every render, since React writes each segment's own `tabIndex` from
+    // its `selected` prop and would otherwise leave a stop behind on a segment
+    // that has since lost it.
+    useEffect(() => {
+      const segments = Array.from(
+        track.current?.querySelectorAll<HTMLButtonElement>('[role="radio"]') ?? [],
+      );
+      if (!segments.length) return;
+      const selected = segments.find((s) => s.getAttribute("aria-checked") === "true");
+      const stop = selected ?? segments.find((s) => !s.disabled);
+      for (const segment of segments) segment.tabIndex = segment === stop ? 0 : -1;
+    });
 
     function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
       const keys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];

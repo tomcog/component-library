@@ -9,6 +9,28 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: hover has no ground again, reverting 0.51.0.
+
+    .segment:not(.selected):hover   background removed; label and glyph stay --ui-action
+
+Figma's `Hover` cell has its fill switched OFF at all four sizes again, so the track shows
+through and the only ground in the control is the selected segment's. `--ui-segmented-bg-hover`,
+added in 0.51.0, is removed with it - nothing reads it now, and a token that does nothing is
+how the next reader gets a wrong idea confidently.
+
+**This is the second flip in one day**, and both releases matched the drawing at the time:
+0.51.0 added the ground when the cell's fill was visible, 0.53.0 removes it now that it is
+not. The `Action/Lighter` paint is still sitting in the cell either way, which is exactly what
+makes the state easy to misread.
+
+If you are moving an app between 0.50.0 and here, the net effect is nil - hover is label-only
+in both. Only 0.51.0 and 0.52.0 drew the tint.
+
+The lesson is recorded in the component doc, the module CSS and the Figma description, all
+three now saying the same thing: **read `visible` on the fill before changing the hover rule**,
+and trust neither the prose nor a remembered look at the cell. A fill that becomes visible is
+as easy to miss as one that never was.
+
 **0.51.0 -> 0.52.0** - Toolbar: the gray bar holds WHITE tracks.
 
     tone="gray"    bar --ui-surface-sunken, tracks --ui-surface-raised   (tracks were pale)

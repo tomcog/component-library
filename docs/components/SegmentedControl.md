@@ -64,30 +64,29 @@ drawn.
 Selection stays the consumer's: the arrow handler calls the focused segment's
 own `click()`, the same contract Tabs has.
 
-## Three grounds, and only one of them is an answer
+## Only the selected segment has a ground
 
-    Off      no fill at all - the track's own pill shows through
-    Hover    --ui-action-lighter, a pale tint under the pointer
+    Off      no fill - the track shows through
+    Hover    no fill - the label and glyph turn to --ui-action
     Active   --ui-action at full strength
     Dark     --ui-surface-inverse at full strength
 
-`Off` is the only state with nothing drawn: what you see behind its label is
-the track, whichever `tone` that is in. Hover's tint is deliberately pale
-enough to read as "the pointer is here" rather than as a second thing chosen -
-the full-strength ground is what says chosen, and only the selected segment
-gets one.
+Two of the four states draw nothing. What you see behind an `Off` or `Hover`
+label is the track, whichever `tone` that is in, and a ground is what says
+*chosen* - so only the selected segment gets one.
 
-**Hover was label-only until 0.51.0**, and that was correct at the time: the
-`Hover` cell's fill was switched OFF in Figma, so the drawing said the label
-changed and nothing else. The fill is visible now at all four sizes, so the
-code follows. If you find prose anywhere claiming "a second ground inside the
-track would read as two things chosen", it predates this and is stale.
+**This flipped twice on 2026-09-22.** A ground was added in 0.51.0, when the
+`Hover` cell's fill was visible and bound to `Action/Lighter`, and removed
+again in 0.53.0 when it was switched back off. Both releases matched the
+drawing at the time. The paint is still sitting in the cell either way, which
+is precisely what makes it easy to misread.
 
-Both hidden-fill cells remain a reading trap. Figma still carries an invisible
-`Action/Base` paint on `Off`, so reading fills without checking `visible` makes
-`Off` look like a brand-red chip with near-black text on it. **Check `visible`
-before believing a fill** - and note the lesson cuts both ways now: a fill that
-*became* visible is just as easy to miss as one that never was.
+So: **read `visible` on the fill before changing the hover rule**, and do not
+trust this paragraph or a remembered look at the cell. The same invisible-paint
+trap is on `Off`, where an `Action/Base` fill would make it look like a
+brand-red chip with near-black text. The lesson runs in both directions - a
+fill that *became* visible is as easy to miss as one that never was, and
+nothing re-reads a cell you have already concluded about.
 
 The icon's opacity has the same shape of trap, and it bit once. Figma composes
 opacity down the tree, so a 0.65 on the icon instance AND a 0.65 on the vector
