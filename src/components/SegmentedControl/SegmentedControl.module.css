@@ -123,11 +123,25 @@
   line-height: var(--ui-segmented-sm-line-height);
 }
 
-/* Hovering an idle segment changes the LABEL and nothing else. Figma draws the
-   Hover cell with its fill switched OFF at every size, which is the drawing
-   saying exactly this: a second ground inside the track would read as two
-   things chosen at once. */
+/* Hovering an idle segment lights a PALE GROUND under it and turns its label
+   and glyph to the action colour. Figma draws the Hover cell with a visible
+   Action/Lighter fill at all four sizes.
+
+   This used to be label-only, on the reasoning that a second ground inside
+   the track would read as two things chosen at once. That was read off the
+   drawing when the Hover cell's fill was switched OFF; the fill is visible
+   now, and the tint is pale enough that it reads as "under the pointer"
+   rather than as a second answer - which the selected segment's full-strength
+   ground still owns.
+
+   --ui-action-lighter is derived at the element, never declared on :root: a
+   var() inside a custom property resolves where it is DECLARED, so composing
+   it there would freeze it against :root and a scoped --ui-action could not
+   move it. Same expression ButtonRound and NavRail use. */
 .segment:not(.selected):hover:not(:disabled) {
+  background: var(--ui-segmented-bg-hover,
+              var(--ui-action-lighter,
+              color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
   color: var(--ui-segmented-text-hover, var(--ui-action));
 }
 

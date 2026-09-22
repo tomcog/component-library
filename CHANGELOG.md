@@ -9,6 +9,32 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: hovering an idle segment lights a ground.
+
+    .segment:not(.selected):hover   background: --ui-action-lighter   (was: nothing)
+
+The label and glyph already turned to the action colour; now a pale tint comes up under
+them too. Figma draws the `Hover` cell with a visible `Action/Lighter` fill at all four
+sizes, and the code drew no ground at all.
+
+**This was correct when it was written and stopped being correct.** The `Hover` cell's fill
+used to be switched OFF, so the drawing said the label changed and nothing else - and the
+code's comment argued the case, that a second ground inside the track would read as two
+things chosen. The fill is visible now. The tint is pale enough to read as "the pointer is
+here" rather than as an answer, and full strength still belongs to the selected segment
+alone.
+
+New override hook: `--ui-segmented-bg-hover`. It derives `--ui-action-lighter` at the
+element - `color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))` - never on `:root`,
+the same expression `ButtonRound` and `NavRail` use, because a var() inside a custom
+property freezes where it is declared and a scoped `--ui-action` could not move it.
+
+The hidden-fill trap is worth restating with the opposite sign: `Off` still carries an
+invisible `Action/Base` paint, so reading fills without checking `visible` misreads it - but
+a fill that *became* visible is just as easy to miss as one that never was. The component
+doc, the playground note and the Figma description all said Hover had no ground; all three
+are corrected.
+
 **0.49.0 -> 0.50.0** - BREAKING: the two colour roles are renamed for what they are for.
 
     --ui-primary          -> --ui-action

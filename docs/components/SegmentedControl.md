@@ -64,24 +64,37 @@ drawn.
 Selection stays the consumer's: the arrow handler calls the focused segment's
 own `click()`, the same contract Tabs has.
 
-## Only the selected segment has a ground
+## Three grounds, and only one of them is an answer
 
-An idle segment has **no fill at all** - what you see behind its label is the
-track's own pill, whichever `tone` it is drawn in. Hovering one changes the
-LABEL and nothing else.
+    Off      no fill at all - the track's own pill shows through
+    Hover    --ui-action-lighter, a pale tint under the pointer
+    Active   --ui-action at full strength
+    Dark     --ui-surface-inverse at full strength
 
-That is not an inference: Figma draws the `Hover` cell with its fill switched
-OFF, and the `Off` cell likewise. Reading the fills without checking `visible`
-makes `Off` look like a brand-red chip with near-black text on it, and Hover
-look like red text on red. Both are hidden paints. **Check `visible` before
-believing a fill.**
+`Off` is the only state with nothing drawn: what you see behind its label is
+the track, whichever `tone` that is in. Hover's tint is deliberately pale
+enough to read as "the pointer is here" rather than as a second thing chosen -
+the full-strength ground is what says chosen, and only the selected segment
+gets one.
+
+**Hover was label-only until 0.51.0**, and that was correct at the time: the
+`Hover` cell's fill was switched OFF in Figma, so the drawing said the label
+changed and nothing else. The fill is visible now at all four sizes, so the
+code follows. If you find prose anywhere claiming "a second ground inside the
+track would read as two things chosen", it predates this and is stale.
+
+Both hidden-fill cells remain a reading trap. Figma still carries an invisible
+`Action/Base` paint on `Off`, so reading fills without checking `visible` makes
+`Off` look like a brand-red chip with near-black text on it. **Check `visible`
+before believing a fill** - and note the lesson cuts both ways now: a fill that
+*became* visible is just as easy to miss as one that never was.
 
 The icon's opacity has the same shape of trap, and it bit once. Figma composes
 opacity down the tree, so a 0.65 on the icon instance AND a 0.65 on the vector
 inside it renders at 0.42, not 0.65 - and a reader who queries
 `instance.opacity`, as every walk in this file's history has, sees 0.65 and
 believes it. The set is uniform now: **0.65 on the icon container, 1 on the
-paths within it**, at all twelve cells. CSS composes the same way, and the code
+paths within it**, at all sixteen cells. CSS composes the same way, and the code
 puts its `opacity` on the icon span for the same reason, so the two sides agree
 in structure and not only in value. **Read both the container and its contents
 before believing an opacity.**
