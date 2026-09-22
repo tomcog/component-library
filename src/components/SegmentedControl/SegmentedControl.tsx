@@ -9,7 +9,7 @@ declare const process: { env: { NODE_ENV?: string } };
  * (558:15011).
  *
  * Three steps, each because something uses it. `sm` was added for NextJob's
- * section-header sort toggle, which wants a 32px track. `xl` is not missing,
+ * section-header sort toggle, which wants a short track. `xl` is not missing,
  * it is unbuilt.
  */
 export type SegmentedControlSize = "lg" | "md" | "sm";
@@ -27,19 +27,38 @@ export type SegmentedControlSize = "lg" | "md" | "sm";
  */
 export type SegmentedControlVariant = "primary" | "dark";
 
+/**
+ * Which ground the TRACK takes - the pill the segments sit in. Figma: the
+ * `Color` axis on `SegmentedTrack` (558:15011).
+ *
+ * `gray` is `--ui-surface-pale` and `white` is `--ui-surface-raised`, so the
+ * names say what light mode draws and both still follow the theme: a `white`
+ * track is the raised near-black in dark mode, exactly as `Card` is. Kept as
+ * Figma names them rather than renamed to the semantics, because the two
+ * sides are meant to be readable as one thing.
+ *
+ * `white` exists because the pale track disappears on a pale page - NextJob's
+ * dashboard ground IS `#f5f5f5`, and it has been overriding
+ * `--ui-segmented-track-bg` by hand to get out of the collision. This says it
+ * as a prop.
+ */
+export type SegmentedControlTone = "gray" | "white";
+
 export interface SegmentedControlProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   /** The `<Segment>` children. */
   children: ReactNode;
   /**
-   * `lg` is a 40px segment on 14/20 in a 48px track; `md` is 32 on 12/16 in a
-   * 40px track; `sm` is 24 on 10/12 in a 32px track. Nothing else moves - the radius, the 4px inset, the gap
-   * between segments and the icon gap are shared, so an MD control is the same
-   * object set smaller.
+   * `lg` is a 40px segment on 14/20 in a 48px track; `md` is 30 on 12/16 in a
+   * 38px track; `sm` is 26 on 10/12 in a 34px track. Height, padding-x, icon
+   * and icon gap all step; the radius and the track's 4px inset and 4px gap
+   * are shared.
    */
   size?: SegmentedControlSize;
   /** The selected segment's ground. Defaults to `primary`. */
   variant?: SegmentedControlVariant;
+  /** The TRACK's ground. Defaults to `gray`. */
+  tone?: SegmentedControlTone;
   /**
    * Names the group. Required in practice: a screen reader announces "radio
    * group" with nothing to say which one, on a page that may hold several.
@@ -74,7 +93,7 @@ export interface SegmentedControlProps
  */
 export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps>(
   function SegmentedControl(
-    { children, size = "lg", variant = "primary", className, ...props },
+    { children, size = "lg", variant = "primary", tone = "gray", className, ...props },
     ref,
   ) {
     const track = useRef<HTMLDivElement | null>(null);
@@ -126,7 +145,7 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
         role="radiogroup"
         aria-label={props["aria-label"]}
         aria-labelledby={props["aria-labelledby"]}
-        className={[styles.track, styles[size], styles[variant], className]
+        className={[styles.track, styles[size], styles[variant], styles[tone], className]
           .filter(Boolean)
           .join(" ")}
         onKeyDown={onKeyDown}
@@ -149,6 +168,10 @@ export interface SegmentProps
    * Decorative icon, e.g. any Lucide React icon. Always `aria-hidden`: the
    * label is the accessible name. Its stroke is `currentColor`, so it follows
    * the label through idle, hover and selected without a rule of its own.
+   *
+   * Drawn LARGER than the label's line box - 24 / 18 / 14 against 20 / 16 /
+   * 12 - which is why the segment's height is a token rather than something
+   * the type derives.
    */
   icon?: ReactNode;
 }

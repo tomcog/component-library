@@ -152,3 +152,28 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
+
+33. **The `Segment` set's geometry went raw again, and the
+   `Segmented Size/*` variables are now stale.** The 0.42.0 respec was drawn
+   by editing the variants directly: padding is `8/10`, `6/8`, `6/6`, the icon
+   gaps are 6, 6, 4 and the icon frames 24, 18, 14 — none of them bound, while
+   `Segmented Size/LG/Padding X` still says 16, `/MD/Height` still says 32,
+   `/SM/Height` 24 and `Segmented/Icon Gap` 8. A reader who trusts the
+   variables gets the *old* component confidently, which is the failure mode
+   `Pill/Padding X` was created to end. Direction: **Figma** — repoint the six
+   existing floats to the drawn values, add `Segmented Size/*/Icon Size` and
+   `/Icon Gap` (nine new floats, each carrying its `--ui-segmented-*` name as
+   Dev Mode code syntax, same value in both modes), and rebind every variant.
+   The code's tokens are the list to build from; `docs/components/SegmentedControl.md`
+   has the table.
+
+34. **The `Segment`'s icon stroke binds `Color/White` in `Active` and
+   `Dark`.** A primitive, at all three sizes, on both states — where the label
+   beside it correctly reads `Text/OnPrimary` and `Text/OnInverse`. The set's
+   own description claims the glyph "binds the same variable as the label in
+   every state", and in `Inactive` and `Hover` it does (`Text/Default`,
+   `Primary/Base`). It is invisible today because both semantics resolve to
+   white in both modes, and it is the seventh time this file has recorded a
+   component reaching for a primitive. Direction: **Figma** — bind the two to
+   `Text/OnPrimary` and `Text/OnInverse`. Code is unaffected: the icon takes
+   `currentColor` and cannot diverge from its label.

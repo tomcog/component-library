@@ -1,6 +1,7 @@
 /* SegmentedControl - one choice from a short, fixed set. Figma: the
    `SegmentedTrack` set (558:15011) and the `Segment` set (555:14966), both
-   carrying a Size axis of LG | MD | SM.
+   carrying a Size axis of LG | MD | SM; the track carries a Color axis of
+   Gray | White as well.
 
    Not to be confused with Tabs or Pill. Tabs swaps what is shown inside the
    page and is a tablist; Pill is one independent toggle. This is N options of
@@ -9,17 +10,34 @@
 .track {
   display: inline-flex;
   align-items: center;
-  /* The pale pill the segments sit in. It is the one ground that is always
-     drawn - an idle segment has none, so what you see behind an unselected
-     label is this. */
-  background: var(--ui-segmented-track-bg, var(--ui-surface-pale));
+  /* The pill the segments sit in. It is the one ground that is always drawn -
+     an idle segment has none, so what you see behind an unselected label is
+     this. Which ground it takes is `tone`, below. */
   border-radius: var(--ui-segmented-track-radius);
   padding: var(--ui-segmented-track-padding);
   gap: var(--ui-segmented-track-gap);
-  /* Height is DERIVED - padding + the segment - so the track is 48 at LG, 40
-     at MD and 32 at SM without any being declared. Giving it a height as well would
-     be two numbers for one measurement, and they would disagree the moment
-     the segment moved. */
+  /* Height is DERIVED - padding + the segment - so the track is 48 at LG, 38
+     at MD and 34 at SM without any being declared. Giving it a height as well
+     would be two numbers for one measurement, and they would disagree the
+     moment the segment moved. */
+}
+
+/* -- the track ground ---------------------------------------- */
+/* Figma's `Color` axis on the track: Gray is Surface/Pale, White is
+   Surface/Raised. Both are SEMANTIC, so both follow the theme - the names say
+   which ground the light mode draws, not a literal colour, and in dark mode
+   `white` is the raised near-black exactly as Card is.
+
+   Two hooks rather than one, because one would flatten the axis: an app that
+   retuned --ui-segmented-track-bg to fix a collision on a pale page would
+   silently repaint the white track too. The gray hook keeps the name it has
+   carried since 0.24.0 - NextJob's dashboard already overrides it to the
+   raised surface, which is what this axis now says as a prop instead. */
+.gray {
+  background: var(--ui-segmented-track-bg, var(--ui-surface-pale));
+}
+.white {
+  background: var(--ui-segmented-track-white-bg, var(--ui-surface-raised));
 }
 
 .segment {
@@ -27,7 +45,9 @@
   flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  gap: var(--ui-segmented-icon-gap);
+  /* The icon gap is set per size with the height and padding below, not here:
+     LG and MD agree at 6 today and SM is 4, which one shared token could not
+     say. */
   /* Zeroed explicitly: a <button> carries UA padding (1px 6px in Chrome), and
      the library cannot assume the consuming app has reset it. */
   padding-block: 0;
@@ -50,24 +70,33 @@
    pill that cannot accommodate it.
 
    Height and padding-inline, not padding-block - the same decomposition
-   Button uses. Padding Y is derived (LG (40-20)/2 = 10, MD (32-16)/2 = 8,
-   SM (24-12)/2 = 6) and
-   stating it as well would be two numbers for one measurement. */
+   Button uses. Stating a padding Y as well would be two numbers for one
+   measurement, and since the icon now stands TALLER than the line box the two
+   would not even agree with each other: at LG the glyph clears 8 above and
+   below where the label clears 10.
+
+   Height is what keeps the row straight. Figma hugs, so an icon-less segment
+   there would come out 36 / 28 / 24 against the 40 / 30 / 26 of one with a
+   glyph; holding the height means a track can mix the two without its
+   segments stepping. */
 .lg .segment {
   height: var(--ui-segmented-lg-height);
   padding-inline: var(--ui-segmented-lg-padding-x);
+  gap: var(--ui-segmented-lg-icon-gap);
   font-size: var(--ui-segmented-lg-font-size);
   line-height: var(--ui-segmented-lg-line-height);
 }
 .md .segment {
   height: var(--ui-segmented-md-height);
   padding-inline: var(--ui-segmented-md-padding-x);
+  gap: var(--ui-segmented-md-icon-gap);
   font-size: var(--ui-segmented-md-font-size);
   line-height: var(--ui-segmented-md-line-height);
 }
 .sm .segment {
   height: var(--ui-segmented-sm-height);
   padding-inline: var(--ui-segmented-sm-padding-x);
+  gap: var(--ui-segmented-sm-icon-gap);
   font-size: var(--ui-segmented-sm-font-size);
   line-height: var(--ui-segmented-sm-line-height);
 }
@@ -121,8 +150,10 @@
 
 /* Icon sets ship intrinsic dimensions, so the SVG would render at its own size
    rather than the slot's - the same note Button, ButtonRound and Tabs carry.
-   Sized off the line box so the glyph and the label sit on one optical line,
-   which is what Button's icon frame does too. */
+   Sized by a token of its own, NOT off the line box: Figma draws the glyph
+   deliberately larger than the type (24 against 20 at LG, 18 against 16, 14
+   against 12), and reading --ui-segmented-*-line-height here - which is what
+   this did until 0.42.0 - would quietly pull it back down every time. */
 .icon {
   display: inline-flex;
   flex: none;
@@ -133,16 +164,16 @@
      and label are one object and move together through every state. */
 }
 .lg .icon {
-  width: var(--ui-segmented-lg-line-height);
-  height: var(--ui-segmented-lg-line-height);
+  width: var(--ui-segmented-lg-icon-size);
+  height: var(--ui-segmented-lg-icon-size);
 }
 .md .icon {
-  width: var(--ui-segmented-md-line-height);
-  height: var(--ui-segmented-md-line-height);
+  width: var(--ui-segmented-md-icon-size);
+  height: var(--ui-segmented-md-icon-size);
 }
 .sm .icon {
-  width: var(--ui-segmented-sm-line-height);
-  height: var(--ui-segmented-sm-line-height);
+  width: var(--ui-segmented-sm-icon-size);
+  height: var(--ui-segmented-sm-icon-size);
 }
 .icon > svg,
 .icon > img {

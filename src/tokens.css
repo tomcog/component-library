@@ -806,35 +806,49 @@
   --ui-tabs-border-width: 1px;
 
   /* -- SEGMENTED CONTROL -------------------------------------
-     Figma: the `Segment` set (555:14966) and `SegmentedTrack` (558:15011),
-     both carrying a Size axis of LG | MD | SM.
+     Figma: the `Segment` set (555:14966) and `SegmentedTrack` (558:15011).
+     Segment carries Size (LG | MD | SM) x State; the track carries Size and,
+     since 0.42.0, a Color axis of Gray | White.
 
-     The TRACK is a pale pill holding the segments; a segment is a pill inside
-     it, and the selected one is the only one with a ground. Track height is
-     derived, not declared: 4 + the segment + 4, so LG is 48, MD 40 and SM 32. Only
-     the segment is given a height, which is the same decomposition Button
-     uses - size by height, never by vertical padding. */
+     The TRACK is a pill holding the segments; a segment is a pill inside it,
+     and the selected one is the only one with a ground. Track height is
+     derived, not declared: 4 + the segment + 4, so LG stands 48, MD 38 and
+     SM 34. Only the segment is given a height, which is the same
+     decomposition Button uses - size by height, never by vertical padding. */
   --ui-segmented-track-radius: 99px;
-  /* The inset that lets the pale track show around the selected pill. */
+  /* The inset that lets the track show around the selected pill. */
   --ui-segmented-track-padding: 4px;
   /* Between two segments. A gap, not padding inside each one - the same
      distinction Tabs' tokens spell out, and for the same reasons. */
   --ui-segmented-track-gap: 4px;
   --ui-segmented-radius: 99px;
-  /* Icon to label, inside one segment. */
-  --ui-segmented-icon-gap: 8px;
+  /* Height, padding-x, icon and icon gap all step per size, and each step is
+     a value Figma draws rather than one derived from the type. The icon is
+     now LARGER than the line box (24 against 20 at LG), which is what makes
+     the height its own number: at LG the glyph clears 8 top and bottom where
+     the label clears 10, and MD and SM stand 30 and 26 for the same reason.
+     Sizing the icon off --ui-segmented-*-line-height, as this did until
+     0.42.0, would silently undo that. */
   --ui-segmented-lg-height: 40px;
-  --ui-segmented-lg-padding-x: 16px;
+  --ui-segmented-lg-padding-x: 10px;
+  --ui-segmented-lg-icon-size: 24px;
+  /* Icon to label, inside one segment. Per size since 0.42.0: LG and MD agree
+     at 6 today, SM is 4, and one shared token could not say that. */
+  --ui-segmented-lg-icon-gap: 6px;
   --ui-segmented-lg-font-size: var(--ui-type-label-lg-font-size);
   --ui-segmented-lg-line-height: var(--ui-type-label-lg-line-height);
-  --ui-segmented-md-height: 32px;
-  --ui-segmented-md-padding-x: 12px;
+  --ui-segmented-md-height: 30px;
+  --ui-segmented-md-padding-x: 8px;
+  --ui-segmented-md-icon-size: 18px;
+  --ui-segmented-md-icon-gap: 6px;
   --ui-segmented-md-font-size: var(--ui-type-label-md-font-size);
   --ui-segmented-md-line-height: var(--ui-type-label-md-line-height);
-  /* SM exists because NextJob's section-header sort toggle wants a 32 track.
-     The padding steps 16 / 12 / 8 and the type steps down the label scale. */
-  --ui-segmented-sm-height: 24px;
-  --ui-segmented-sm-padding-x: 8px;
+  /* SM exists because NextJob's section-header sort toggle wants a short
+     track. The type steps down the label scale. */
+  --ui-segmented-sm-height: 26px;
+  --ui-segmented-sm-padding-x: 6px;
+  --ui-segmented-sm-icon-size: 14px;
+  --ui-segmented-sm-icon-gap: 4px;
   --ui-segmented-sm-font-size: var(--ui-type-label-sm-font-size);
   --ui-segmented-sm-line-height: var(--ui-type-label-sm-line-height);
   --ui-segmented-font-weight: var(--ui-type-label-font-weight);

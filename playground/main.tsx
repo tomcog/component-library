@@ -586,7 +586,9 @@ function App() {
           + "keys move and select, Home and End jump, and both wrap; only the current choice is in "
           + "the tab order. The track's pale pill is the only ground always drawn \u2014 an idle "
           + "segment has none, and hovering one changes the LABEL alone, because a second ground "
-          + "inside the track would read as two things chosen. The second column is variant=\"dark\"."
+          + "inside the track would read as two things chosen. The second column is variant=\"dark\". "
+          + "tone picks the track's own ground \u2014 gray is the pale surface, white the raised one, "
+          + "which is what a control sitting on a pale page wants."
         }
       >
         {SEGMENTED_SIZES.map((s) => (
@@ -603,10 +605,34 @@ function App() {
           </Row>
         ))}
         <Row label="icons">
-          <SegmentedControl aria-label="View with icons">
-            <Segment icon={<House />} selected={segMode === "all"} onClick={() => setSegMode("all")}>Home</Segment>
-            <Segment icon={<Save />} selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Saved</Segment>
+          {SEGMENTED_SIZES.map((s) => (
+            <SegmentedControl key={s} size={s} aria-label={`${s} view with icons`}>
+              <Segment icon={<House />} selected={segMode === "all"} onClick={() => setSegMode("all")}>Home</Segment>
+              <Segment icon={<Save />} selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Saved</Segment>
+            </SegmentedControl>
+          ))}
+        </Row>
+        {/* Posed on a pale ground, because that IS the case the white track
+            exists for: the section's own card is white, and a gray track shown
+            on it would only prove the easy half. Here the two sit side by side
+            on the surface they collide with - NextJob's dashboard ground. */}
+        <Row label="tone=&quot;white&quot;">
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, padding: 12, borderRadius: 8, background: "var(--ui-surface-pale)" }}>
+          <SegmentedControl aria-label="Gray on a pale ground">
+            <Segment selected>Gray</Segment>
+            <Segment>track</Segment>
           </SegmentedControl>
+          {SEGMENTED_SIZES.map((s) => (
+            <SegmentedControl key={s} size={s} tone="white" aria-label={`${s} white work mode`}>
+              <Segment selected={segMode === "all"} onClick={() => setSegMode("all")}>All</Segment>
+              <Segment selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Remote</Segment>
+            </SegmentedControl>
+          ))}
+          <SegmentedControl tone="white" variant="dark" aria-label="White dark sort order">
+            <Segment icon={<House />} selected={segSort === "newest"} onClick={() => setSegSort("newest")}>Newest</Segment>
+            <Segment selected={segSort === "az"} onClick={() => setSegSort("az")}>A–Z</Segment>
+          </SegmentedControl>
+          </div>
         </Row>
         <Row label="disabled">
           <SegmentedControl aria-label="Disabled example">

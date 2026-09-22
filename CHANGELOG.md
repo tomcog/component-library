@@ -9,6 +9,48 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: a respec of the segment's insides, and a `tone` on the track.
+
+Fetched from Figma, where both sets were redrawn (`Segment` 555:14966, `SegmentedTrack`
+558:15011). Every number that moved:
+
+    LG   padding-x 16 -> 10   icon 20 -> 24   icon gap 8 -> 6   height 40 (unchanged)
+    MD   padding-x 12 ->  8   icon 16 -> 18   icon gap 8 -> 6   height  32 -> 30
+    SM   padding-x  8 ->  6   icon 12 -> 14   icon gap 8 -> 4   height  24 -> 26
+
+Derived from those, the track now stands **48 / 38 / 34** where it stood 48 / 40 / 32.
+A control in a fixed-height row may need its neighbour re-checked at MD and SM. The type
+scale, both radii, the 4px inset, the 4px gap between segments, the two selected grounds
+and every keyboard and ARIA behaviour are unchanged.
+
+The icon is the part to know about: it used to be sized off the line box, and Figma now
+draws it deliberately **larger** than the type. It has `--ui-segmented-{lg,md,sm}-icon-size`
+of its own, and the segment keeps an explicit height so a track can mix segments with and
+without glyphs without its row stepping.
+
+**New: `tone="gray" | "white"` on `SegmentedControl`**, defaulting to `gray` - Figma's new
+`Color` axis on the track. `gray` is `--ui-surface-pale` as before; `white` is
+`--ui-surface-raised`, for the case where a pale track disappears into a pale page. Both
+are semantics, so `white` is the raised near-black in dark mode.
+
+**Renamed: `--ui-segmented-icon-gap` -> `--ui-segmented-lg-icon-gap`,
+`--ui-segmented-md-icon-gap`, `--ui-segmented-sm-icon-gap`.** One value could not say
+6 / 6 / 4. Nothing in `~/Sites` overrides the old name; an app that does gets no error,
+just the default gaps back.
+
+New tokens: `--ui-segmented-{lg,md,sm}-icon-size`, the three `-icon-gap` above, and
+`--ui-segmented-track-white-bg`. `--ui-segmented-track-bg` keeps its name and its
+meaning - the **gray** track's ground - so NextJob's dashboard override still works. That
+override is what `tone="white"` now says properly, and the app can drop it whenever.
+
+Three Figma-side defects came back with the fetch. The White track variants were named
+`Size4/5/6` and are renamed `LG/MD/SM` in the file, along with both sets' descriptions,
+which still gave the pre-respec geometry (#32, resolved). Two stay open in
+`docs/divergences.md`: the drawn geometry is raw while the `Segmented Size/*` variables
+still hold the pre-respec numbers (#33), and the icon stroke binds the `Color/White`
+primitive in `Active` and `Dark` (#34). **Both sets read `CHANGED` and need publishing**,
+which is UI-only.
+
 **0.40.0 -> 0.41.0** - ConfirmButton: `tone="safety"` rests on a darker glyph.
 
 The filled safety button drew its icon in `--ui-safety` on `--ui-safety-lighter` - two

@@ -313,3 +313,23 @@ Nothing here needs action.
    `var(--ui-text-on-safety)`. The rename kept the variable's ID, so every
    binding survived untouched - the third time that has held on this variable
    (`Button/Confirm` -> `Confirm/Base` -> `Safety/Base` for its partner).
+
+32. ~~`SegmentedTrack`'s three White variants are named `Size=Size4`, `Size5`,
+   `Size6`.~~ **Resolved.** Renamed `LG`, `MD`, `SM`, so the set is the 3x2 it
+   was drawn as - Size LG | MD | SM against Color White | Gray, all six cells
+   filled - rather than a 6x2 grid half of whose cells do not exist, with
+   `Size=LG` unable to pair with `Color=White` on an instance. The three are
+   the placeholder names Figma hands a duplicated variant, and this is the
+   second time this exact set has needed the repair: `Size=Size3` -> `Size=SM`
+   in 0.30.0. The lesson is that adding a second axis by duplicating a column
+   silently invents Size values, so **read the set's `variantGroupProperties`
+   after adding an axis** - the canvas looks correct either way.
+
+   Both sets' descriptions were rewritten in the same pass, which is the other
+   half of the same job: they still gave the pre-0.42.0 geometry (LG 40/16,
+   MD 32/12, SM 24/8, icon sized to the line box) and said nothing about the
+   Color axis. A description is the surface every `get_design_context` returns,
+   and divergence #9 is the standing reminder of what a confident stale one
+   costs. They now also say which geometry is raw, so a reader is not sent to
+   the stale `Segmented Size/*` variables (#33, still open).
+

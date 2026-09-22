@@ -3,5 +3,6 @@ export type {
   SegmentedControlProps,
   SegmentedControlSize,
   SegmentedControlVariant,
+  SegmentedControlTone,
   SegmentProps,
 } from "./SegmentedControl";
