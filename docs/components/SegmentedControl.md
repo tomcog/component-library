@@ -65,6 +65,16 @@ checking `visible` makes Inactive look like a brand-red chip with near-black
 text on it, and MD Hover look like red text on red. Both are hidden paints.
 **Check `visible` before believing a fill.**
 
+The icon's opacity has the same shape of trap, and it bit once. Figma composes
+opacity down the tree, so a 0.65 on the icon instance AND a 0.65 on the vector
+inside it renders at 0.42, not 0.65 - and a reader who queries
+`instance.opacity`, as every walk in this file's history has, sees 0.65 and
+believes it. The set is uniform now: **0.65 on the icon container, 1 on the
+paths within it**, at all twelve cells. CSS composes the same way, and the code
+puts its `opacity` on the icon span for the same reason, so the two sides agree
+in structure and not only in value. **Read both the container and its contents
+before believing an opacity.**
+
 ## The icon is bigger than the type, and that is why height is a token
 
 0.42.0 pulled the glyph off the line box: 24 / 18 / 14 against a 20 / 16 / 12
@@ -233,10 +243,6 @@ the `Segment` icon property all went out in the same snapshot.
   together through every state.
 - ~~**The example frames are not modelled**, so the SET is the spec.~~
   **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
-- **The glyph is 0.65 in every cell that shows a label, including LG
-  Active and LG Dark.** Figma draws those two at full opacity where its other
-  ten are 0.65 - the two oldest cells in the set, drawn before the rule
-  existed. The rule is what is implemented; the two cells are divergence #35.
 - **An icon-only segment is not square.** 44x36 at LG, 34x30 at MD, 26x22 at
   SM - padding-x + the icon, which is what hiding the label leaves behind.
   Figma poses no icon-only segment, so squaring it would be inventing a

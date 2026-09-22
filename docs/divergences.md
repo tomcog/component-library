@@ -190,15 +190,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    `Text/OnPrimary` and `Text/OnInverse`. Code is unaffected: the icon takes
    `currentColor` and cannot diverge from its label.
 
-35. **The `Segment`'s icon is full-opacity in `Size=LG, State=Active` and
-   `Size=LG, State=Dark`.** Every other cell that shows a glyph beside a label
-   draws it at 0.65 — the other two LG cells, and all four of MD and SM. These
-   two are the oldest cells in the set and predate the rule. Direction:
-   **Figma** — set both icon instances to 0.65. Code implements the rule
-   (`--ui-segmented-icon-opacity`), so LG Active and LG Dark render a muted
-   glyph where Figma renders a solid one; it is the most prominent cell of the
-   most prominent size, so this one is visible rather than theoretical.
-
 36. **Figma poses no icon-only `Segment`.** `Label?` exists as a boolean on the
    set and is `true` in every instance in the file, so what a segment looks
    like with its label off has never been drawn. Code ships it as `hideLabel`

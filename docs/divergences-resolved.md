@@ -346,3 +346,23 @@ Nothing here needs action.
    spend it on (#33). When that set is given real layout, that one variable
    should become three, matching `--ui-segmented-{lg,md,sm}-track-gap`.
 
+35. ~~The `Segment`'s icon is full-opacity in `Size=LG, State=Active` and
+   `Size=LG, State=Dark`.~~ **Resolved, and it was worse than recorded.** The
+   opacity had been applied inconsistently across the set - sometimes to the
+   icon instance, sometimes to the vector inside it, and in places to **both**,
+   which Figma composes to 0.42 rather than 0.65. All twelve cells now carry
+   0.65 on the icon container with the paths at 1.
+
+   The lesson is about reading, not drawing. Every walk of this set in this
+   file's history has queried `instance.opacity` and stopped there, which
+   reports 0.65 for a doubled node exactly as it does for a correct one - so
+   the defect was invisible to the tool and visible on the canvas. It is the
+   same shape as "check `visible` before believing a fill", already recorded on
+   this component after hidden paints made `Inactive` look like a red chip:
+   **an effect can be composed from more than the node you asked about**. Now
+   in `docs/components/SegmentedControl.md` beside the fill note.
+
+   The code needed no change: CSS composes opacity the same way, and it was
+   already set on the icon span rather than on the SVG's paths, so the two
+   sides agree in structure as well as value.
+

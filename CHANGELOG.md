@@ -48,8 +48,11 @@ separates two segments, `*-icon-gap` separates a glyph from its label inside one
     --ui-segmented-icon-only-opacity  new, 1
 
 `--ui-segmented-track-gap` is the only rename; nothing in `~/Sites` sets it, and an app that
-does gets the default gaps back rather than an error. Three Figma items recorded: LG's `Active` and `Dark` cells still
-draw the glyph at full opacity where the other ten are 0.65 (#35, and it is visible), and no
+does gets the default gaps back rather than an error. Three Figma items recorded. LG's `Active` and `Dark` cells drew the glyph at full opacity
+where the other ten were 0.65 (#35) - **closed just after this release**, along with a
+doubling defect it was hiding: some cells carried the 0.65 on both the icon instance and its
+paths, which composes to 0.42. All twelve now carry it on the container alone, which is where
+the code has always put it, so no code change followed. No
 icon-only segment is posed anywhere in the file, so the code's 44x36 is derived rather than
 drawn (#36). The per-size track gap went **code-first by the rule** - spacing is
 token-shaped, so code leads - and was pushed to the three worked frames in the same session,
