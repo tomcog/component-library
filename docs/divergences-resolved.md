@@ -33,7 +33,7 @@ Nothing here needs action.
 5. ~~NavRail's type and pipe moved in code and not yet in Figma.~~
    **Resolved.** Pushed once the Desktop Bridge came back: the three
    `Level=Primary` labels went to 14/20, and the Hover chip's glyph off the
-   `Color/White` primitive onto `Text/OnPrimary` - the same defect fixed
+   `Color/White` primitive onto `Text/OnAction` - the same defect fixed
    earlier in the session and reintroduced when the set was redrawn, which is
    a fair sign that binding is easy to reach for by accident.
 
@@ -45,8 +45,8 @@ Nothing here needs action.
    well - a hidden node is out of auto-layout, so STRETCH does not reach it
    until it is shown.
 
-   Verified after: the set uses only `Primary/Base`, `Primary/Lighter`,
-   `Text/Default`, `Text/Muted` and `Text/OnPrimary` - no primitives, no
+   Verified after: the set uses only `Action/Base`, `Action/Lighter`,
+   `Text/Default`, `Text/Muted` and `Text/OnAction` - no primitives, no
    Button component tokens - and no primitive differs between modes.
    **Still needs publishing.**
 
@@ -239,7 +239,7 @@ Nothing here needs action.
    discover it.
 
 22. ~~`Button/Round` carries a 7th state, `ConfirmButton`, at XL only.~~
-   **Resolved, and the caution was the reason.** It was `Primary/Lighter` with
+   **Resolved, and the caution was the reason.** It was `Action/Lighter` with
    the glyph on `Danger/Base`, so it rendered identically to `Default` and read
    as scaffolding. It was left alone on the rule that a previous session broke
    - never assume an unfamiliar variant is leftover - and flagged instead. It
@@ -302,7 +302,7 @@ Nothing here needs action.
    four semantics now alias them, with code syntax set.
 
    Three neighbours had the same defect and were fixed in the same pass:
-   `Primary/Lighter` held a raw `#f7dce0` (the same value as `Danger/Lighter`,
+   `Action/Lighter` held a raw `#f7dce0` (the same value as `Danger/Lighter`,
    now the same primitive), and `Danger/Base` and `Safety/Base` aliased
    `Color/TC Red` / `Color/TC Green` in Dark but held a raw literal in Light -
    agreeing by coincidence rather than by construction. Every rendered colour
@@ -407,15 +407,15 @@ Nothing here needs action.
 
 34. ~~The `Segment`'s icon stroke binds `Color/White` in `Active` and `Dark`.~~
    **Resolved.** All sixteen cells now bind the icon to the same variable as
-   the label beside it: `Text/Default` (Off), `Primary/Base` (Hover),
-   `Text/OnPrimary` (Active), `Text/OnInverse` (Dark). No `Color/*` or
+   the label beside it: `Text/Default` (Off), `Action/Base` (Hover),
+   `Text/OnAction` (Active), `Text/OnInverse` (Dark). No `Color/*` or
    `Neutral/*` primitive remains on any icon in the set, which is the eighth
    time this file has recorded that fix and the first time the component came
    out uniform.
 
    It took two passes, and the second is the instructive one: replacing the
    primitive in `Active` picked up `Text/OnInverse` — `Dark`'s variable, the
-   fix applied moments earlier — instead of `Text/OnPrimary`. Both resolve to
+   fix applied moments earlier — instead of `Text/OnAction`. Both resolve to
    white in both modes, so the canvas looked right and the set was *still*
    wrong. **A colour that renders correctly is not evidence the binding is
    correct**, the same lesson as #41's locked proportions: check

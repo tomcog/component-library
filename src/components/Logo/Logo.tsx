@@ -27,10 +27,10 @@ export interface LogoProps extends Omit<SVGAttributes<SVGSVGElement>, "children"
  * ink. Note an ancestor's plain `color` does NOT reach it: `.logo` declares
  * colour on the element itself.
  *
- * The red is `--ui-tc-red`, never `--ui-primary`. The mark is a personal identity, not a themeable surface:
+ * The red is `--ui-tc-red`, never `--ui-action`. The mark is a personal identity, not a themeable surface:
  * an app that recolours its primary recolours its buttons and its nav, and
  * this stays TC red regardless. That is exactly why the two are separate
- * names in tokens.css, with --ui-primary merely defaulting to the brand.
+ * names in tokens.css, with --ui-action merely defaulting to the brand.
  */
 export const Logo = forwardRef<SVGSVGElement, LogoProps>(function Logo(
   { weight = "medium", size = 40, label, className, ...props },

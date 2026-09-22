@@ -16,7 +16,7 @@ A small label pill. Figma: the `Tag` set (`685:584`), one axis
     padding   4 / 8
     type      Type/Label MD, 12/16, weight 600, +1% letter-spacing
     fill      Surface/Raised
-    label     Text/Muted, going Primary/Base on hover
+    label     Text/Muted, going Action/Base on hover
     height    none - 24 is padding plus the line box, as Pill's is
 
 ## It is not Pill, and the difference is the ARIA

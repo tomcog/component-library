@@ -1,7 +1,7 @@
 /* LeftRail. Figma: `LeftRail-NoIcons` (482:2517) and `LeftRail-Icons`
    (458:2612).
 
-   Colours resolve at the element, so --ui-primary and [data-theme] are picked
+   Colours resolve at the element, so --ui-action and [data-theme] are picked
    up from wherever they sit in the tree - the same rule as NavRail and Button.
    The first name in each var() is the optional component-level override. */
 

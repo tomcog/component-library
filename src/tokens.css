@@ -8,26 +8,30 @@
    tokens (--ui-button-*) exist only as optional overrides, declared
    as fallbacks inside each component's CSS:
 
-       background: var(--ui-button-primary-bg, var(--ui-primary));
+       background: var(--ui-button-primary-bg, var(--ui-action));
 
    Why: a custom property substitutes var() at the element where it
    is DECLARED. A component tier declared here on :root would resolve
-   against :root's brand/theme and freeze — so overriding --ui-primary
+   against :root's brand/theme and freeze — so overriding --ui-action
    or [data-theme] on a subtree would have no effect. Resolving in the
    component instead means every var() is evaluated at the button, and
    picks up whatever is in scope at that point in the tree.
 
    Consequences, all supported:
-     app recolour     :root { --ui-primary: #2563eb }
+     app recolour     :root { --ui-action: #2563eb }
      app dark mode    <html data-theme="dark">
-     scoped theming   <div data-theme="dark"> or <div style="--ui-primary:…">
+     scoped theming   <div data-theme="dark"> or <div style="--ui-action:…">
    ============================================================= */
 
 :root {
   /* -- 1. PRIMITIVE ------------------------------------------ */
-  /* TC Red - the fixed brand identity. This value is the brand; it does not
-     change per app. An app that wants different colours overrides the
-     SEMANTIC --ui-primary below, never this. */
+  /* TC Red - THIS LIBRARY's identity, and a fixed fact: #e51a38 does not
+     change per app or per theme. An app that wants different colours
+     overrides the semantics below, never this.
+
+     Not to be confused with the semantic --ui-brand, which is the CONSUMING
+     app's identity and defaults to this. The primitive is whose red it is;
+     the semantic is the role an app repoints to its own colour. */
   --ui-tc-red: #e51a38;           /* Figma: Color/TC Red */
   /* The safety green. A primitive rather than a raw hex on the semantic
      name below, so it sits beside TC Red in the palette where a designer
@@ -40,7 +44,7 @@
      its resting ground (lighter) and its pressed ground (darker).
 
      PRIMITIVES rather than semantics composed with color-mix(), which is what
-     --ui-primary-lighter does further down. Two reasons, and the second is the
+     --ui-action-lighter does further down. Two reasons, and the second is the
      deciding one:
 
        - They are hand-picked in Figma, not derived. Only TC Red Lighter falls
@@ -52,9 +56,9 @@
          with white can be. TC Green Darker and TC Red Darker are likewise
          their own colours rather than a percentage towards black.
        - The freeze that rules out composing a tint on :root does not apply to
-         a literal. `--ui-primary-lighter` cannot be declared here because a
+         a literal. `--ui-action-lighter` cannot be declared here because a
          var() inside a custom property resolves where it is DECLARED, so a
-         tint composed from var(--ui-primary) would pin itself to :root's
+         tint composed from var(--ui-action) would pin itself to :root's
          brand. These hold no var() at all, so there is nothing to freeze, and
          the semantic names below can alias them exactly as --ui-danger
          aliases --ui-tc-red.
@@ -98,22 +102,32 @@
   --ui-neutral-800: #2e2e2e;   /* (dark)  was 850, and #302d2b before that */
 
   /* -- 2. SEMANTIC — light (default) ------------------------- */
-  /* The colour scheme an app owns. Defaults to TC Red; override this one
-     name to recolour every primary surface - buttons, active nav, focus
-     rings - without touching the palette:  :root { --ui-primary: #634509 } */
-  --ui-primary: var(--ui-tc-red);
-  /* The app's ACCENT — headers, borders, rules, decorative chrome.
-     Independently settable, and defaults to the same TC Red, so a component
-     added today looks red either way and nothing moves until an app sets it.
+  /* ACTION — what the user can DO. Every control: buttons, active nav, the
+     selected segment, and every focus ring. Override this one name to
+     recolour all of them without touching the palette:
+     :root { --ui-action: #2563eb }
 
-     The pair is the point: --ui-primary is the CTA colour, --ui-accent is the
-     brand colour. An app branded end-to-end in one colour leaves them equal;
-     an app with a loud action colour and quieter chrome sets them apart.
+     Named for its JOB, not its rank. It was `--ui-primary` until 0.50.0,
+     which said where it came in the hierarchy and nothing about what it is
+     for - and collided with the four component props that also take the value
+     "primary" and mean emphasis, which is a different question entirely. Those
+     props are unchanged; only the colour roles were renamed. */
+  --ui-action: var(--ui-tc-red);
+  /* BRAND — the app's own aesthetic. Headers, rules, dividers, decorative
+     borders, a badge that labels rather than acts. Independently settable,
+     and defaults to the same TC Red, so a component added today looks right
+     either way and nothing moves until an app sets it.
+
+     The pair is the point, and the names now say it: BRAND is what the app
+     looks like, ACTION is what its controls do. This library is red for both
+     because the brand is red and the buttons are too. A plant app would be
+     green because it is about plants, and could still put its buttons in blue
+     - one brand, a different action colour, no conflict.
 
      No component consumes it YET. Everything the library currently renders is
      an interactive control - a button, a nav item, a rail slat, a focus ring -
      and every one of those is a call to action, so they all read
-     --ui-primary. That is a fact about what has been built so far, not a rule
+     --ui-action. That is a fact about what has been built so far, not a rule
      against using this name.
 
      **New components should reach for it whenever the element is chrome
@@ -123,16 +137,16 @@
      both resolve to TC Red today, so the choice is invisible until the day an
      app splits them, which is exactly when getting it wrong would hurt.
 
-     --ui-accent-lighter is deliberately NOT declared, for the same reason
-     --ui-primary-lighter is not: a var() inside a custom property resolves at
+     --ui-brand-lighter is deliberately NOT declared, for the same reason
+     --ui-action-lighter is not: a var() inside a custom property resolves at
      the element that DECLARES it, so composing a tint here would freeze it
      against :root. Derive it in the component, as ButtonRound does. */
-  --ui-accent: var(--ui-tc-red);
-  /* What sits ON an accent fill. Its own name rather than reusing
-     --ui-text-on-primary: the three roles are settable apart, so the moment an
-     app gives itself a pale accent and a dark CTA, one shared "on" colour is
-     wrong for one of them. */
-  --ui-text-on-accent: var(--ui-white);
+  --ui-brand: var(--ui-tc-red);
+  /* What sits ON a brand fill. Its own name rather than reusing
+     --ui-text-on-action: the three roles are settable apart, so the moment an
+     app gives itself a pale brand and a dark action colour, one shared "on"
+     colour is wrong for one of them. */
+  --ui-text-on-brand: var(--ui-white);
   /* DANGER - destructive actions and error states. Delete and Remove, the
      confirm button in a "this cannot be undone" dialog, an invalid field, a
      failing score.
@@ -146,13 +160,13 @@
      colour everywhere and never has to think about it. An app with a
      non-red brand sets this one name and keeps the warning legible:
 
-         :root { --ui-primary: #2e7d32; --ui-danger: #d4183d; }
+         :root { --ui-action: #2e7d32; --ui-danger: #d4183d; }
 
      Consumed by `ConfirmButton`'s `tone="danger"` and by Button's and
      ButtonRound's `tone="danger"`. */
   --ui-danger: var(--ui-tc-red);
   /* What sits ON a danger fill — the label of a Delete button. Same reasoning
-     as --ui-text-on-accent: independent roles need independent pairings, or a
+     as --ui-text-on-brand: independent roles need independent pairings, or a
      divergent theme silently loses contrast on one of them. */
   --ui-text-on-danger: var(--ui-white);
   /* The two grounds either side of --ui-danger, drawn by `ConfirmButton`:
@@ -206,7 +220,7 @@
      by ButtonRound's deprecated `tone="safety"`, which recolours hover alone.
      LayerController's target glyph also reads it. */
   --ui-safety: var(--ui-tc-green);
-  /* What sits ON a safety fill. Same reasoning as --ui-text-on-accent and
+  /* What sits ON a safety fill. Same reasoning as --ui-text-on-brand and
      --ui-text-on-danger: independent roles need independent pairings.
 
      Figma draws the icon white, and this keeps that. Be aware of what it
@@ -225,15 +239,15 @@
      mix of #59cf55 with white reaches #cafac8 at all. */
   --ui-safety-lighter: var(--ui-tc-green-lighter);
   --ui-safety-darker: var(--ui-tc-green-darker);
-  /* Figma: Primary/Lighter. Deliberately NOT declared here. Composed at
-     :root it would freeze against :root's --ui-primary, so recolouring the
+  /* Figma: Action/Lighter. Deliberately NOT declared here. Composed at
+     :root it would freeze against :root's --ui-action, so recolouring the
      brand on a subtree would leave the tint behind - the same trap the
      --ui-button-* overrides avoid. The components derive it themselves, at
      the element, and read this name first so an app can still pin it:
-         color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))
+         color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))
      At 15% that reproduces Figma's #f7dce0 for the default red to within a
      point on one channel. */
-  --ui-text-on-primary: var(--ui-white);
+  --ui-text-on-action: var(--ui-white);
 
   --ui-surface-inverse: var(--ui-ink);
   --ui-text-on-inverse: var(--ui-white);
@@ -563,7 +577,7 @@
      cannot drift apart.
 
      No colours here: like the rail's, they are component-side fallbacks so a
-     [data-theme] or a scoped --ui-primary can still move them. */
+     [data-theme] or a scoped --ui-action can still move them. */
   --ui-bottom-nav-height: 64px;
   --ui-bottom-nav-padding-x: 8px;
   --ui-bottom-nav-padding-y: 8px;
@@ -661,7 +675,7 @@
      design calls the state active, but `-active` means pressed here, as it
      does in CSS - the same collision that made NavItem's current-page token
      `-current`. It is a component-side fallback rather than a value declared
-     on :root, so a scoped --ui-primary still moves it. */
+     on :root, so a scoped --ui-action still moves it. */
   --ui-input-text-height: 32px;
   --ui-input-text-padding: 4px;          /* inline */
   /* Vertical padding is deliberately lopsided: the value sits DOWN against the
@@ -984,7 +998,7 @@
      custom property resolves at the element that DECLARES it, so composing
      the face and the fallback together on :root would freeze the pair
      against :root and a scoped override could never move it - the same trap
-     --ui-primary-lighter documents at the top of this file. Every component
+     --ui-action-lighter documents at the top of this file. Every component
      composes it at the element instead, reading --ui-font-family first so
      that an app already setting that name keeps working unchanged.
 
@@ -1026,7 +1040,7 @@
 
 /* -- 2. SEMANTIC — dark ------------------------------------- */
 /* Attribute selector, NOT :root[data-theme] — so it applies to the
-   document or to any subtree. --ui-primary is intentionally untouched: an
+   document or to any subtree. --ui-action is intentionally untouched: an
    app's primary colour is its primary colour in either theme. */
 [data-theme="dark"] {
   --ui-surface-inverse: var(--ui-neutral-150);
@@ -1054,7 +1068,7 @@
 
   --ui-border-default: var(--ui-neutral-550);
 
-  /* Untouched in dark, exactly as --ui-primary is: a role colour that carries
+  /* Untouched in dark, exactly as --ui-action is: a role colour that carries
      a MEANING rather than a contrast relationship does not get to change when
      the theme does. #59cf55 is 6.3:1 against the dark page and 2.0:1 against
      white in both modes - the same trade the light block documents. */

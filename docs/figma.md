@@ -38,10 +38,10 @@ it bound four things it should not have, none of which looked wrong on the
 canvas because every one resolved to the right colour *in Light*:
 
     Primary Default icon    Button/Tertiary/Label     -> Text/Default
-    Primary Active icon     Color/White               -> Text/OnPrimary
+    Primary Active icon     Color/White               -> Text/OnAction
     Secondary Default icon  Button/Secondary/Default  -> Text/Default
     Secondary Hover icon    IconDefault               -> Text/Default
-    Secondary Active icon   IconDefault               -> Primary/Base
+    Secondary Active icon   IconDefault               -> Action/Base
 
 Three lessons, each already recorded elsewhere and each repeated here:
 
@@ -72,18 +72,18 @@ user's call. Only NavSlat's own bindings moved. Likewise `Button/Tertiary/Label`
 (38 bindings) and `Color/White` (602) were not touched as variables.
 
 Secondary Active was also internally inconsistent: its icon's `Union` fill was
-on `Primary/Base` while the three stroke shapes under it were still on
+on `Action/Base` while the three stroke shapes under it were still on
 `IconDefault`. Invisible, because the Union is drawn over them - but it would
 have surfaced the moment anyone edited the glyph. Checked that all four nodes
 were visible before touching them, per the rule below about not assuming an
 unfamiliar node is scaffolding.
 
 The semantic tier was also renamed to match the code's identity/role split:
-`Brand/*` -> `Primary/*` and `Text/OnBrand` -> `Text/OnPrimary`,
+`Brand/*` -> `Primary/*` and `Text/OnBrand` -> `Text/OnAction`,
 `TextSecondary` -> `Text/Muted`. `Surface/Raised`, ten `Nav/*` geometry floats
 and `Motion/Fast` / `Motion/Base` were added. **`Color/TC Red` already existed
 and was not renamed** — it is the Figma counterpart of `--ui-tc-red`, and
-`Primary/Base` aliases to it exactly as `--ui-primary` does in code.
+`Action/Base` aliases to it exactly as `--ui-action` does in code.
 
 ## Names need not match, but they must be *derivable*
 
@@ -99,8 +99,8 @@ trailing `-base`.
 
     Color/TC Red          -> --ui-tc-red
     Surface/Muted Hover   -> --ui-surface-muted-hover
-    Text/OnPrimary        -> --ui-text-on-primary
-    Primary/Base          -> --ui-primary
+    Text/OnAction        -> --ui-text-on-action
+    Action/Base          -> --ui-action
 
 Three pairs used to break that rule and were fixed by renaming the *Figma*
 side: `TextSecondary` -> `Text/Muted`, `Surface/Muted Pressed` ->
@@ -140,9 +140,9 @@ Four groups are deliberately left without one, and the absence is the signal:
 
 - `Button Size/*/Padding Y` — the code sizes buttons by height, not by
   vertical padding, so there is no token to point at.
-- `Primary/Dark`, `Primary/Darker`, and the `Button/{Primary,Secondary,Tertiary,Ghost}/{Hover,Pressed}`
+- `Action/Dark`, `Action/Darker`, and the `Button/{Primary,Secondary,Tertiary,Ghost}/{Hover,Pressed}`
   aliases that read them. Figma models button hover and press as darker shades
-  of the brand; the code does not have `--ui-primary-dark` at all. **This is a
+  of the brand; the code does not have `--ui-action-dark` at all. **This is a
   real divergence, not an oversight** — see Open divergences.
 - `Neutral/50`, `/200`, `/900` — in Figma, never mirrored into the ramp.
 - The file's own legacy screen colours (`Text`, `IconDefault`, `Column`,
@@ -159,7 +159,7 @@ the mistake the paragraph above warns about. It is now:
     Safety/Base    -> Color/TC Green  var(--ui-safety)
     Text/OnConfirm -> Color/White     var(--ui-text-on-safety)
 
-sitting beside `Primary/Base`, `Accent/Base` and `Danger/Base` as the fourth
+sitting beside `Action/Base`, `Brand/Base` and `Danger/Base` as the fourth
 semantic role. The rename kept the variable's ID, so the binding on the
 `State=Confirm` cell survived it untouched — **renaming is safe, deleting and
 recreating is not.**
@@ -174,7 +174,7 @@ The same pass closed the other half of the original defect. `Safety/Base` and
 raw literal in **Light** — so the two modes agreed by coincidence rather than by
 construction, and the Light value would have survived a change to the primitive.
 Both now alias in both modes, as do the four tints `ConfirmButton` added and
-`Primary/Lighter`, which had held a raw `#f7dce0` since it was created.
+`Action/Lighter`, which had held a raw `#f7dce0` since it was created.
 
 **A mode that agrees by luck reads exactly like a mode that agrees by
 construction.** Resolving a variable in one mode tells you nothing about the
@@ -255,7 +255,7 @@ rather than a later tidy-up.
 
 This is not theoretical. The snapshot was found roughly five renames behind:
 `Button` published 36 variants where the file had 60, `ButtonRound` 3 where it
-had 12, `Card` was absent entirely, and `Primary/Base` and `Color/Ink` still
+had 12, `Card` was absent entirely, and `Action/Base` and `Color/Ink` still
 resolved to their pre-rename names `Brand/Brand` and `Color/"Black"` — the
 quote bug included. None of it was visible from either the code or the Figma
 file; it only showed up when a consuming file tried to import by key.
@@ -351,7 +351,7 @@ Two traps inside the repair, both hit:
   main component's set is the one you mean.
 - **`setBoundVariableForPaint` still needs the resolved colour first**, and
   still does not chase an alias chain. The recipe in the Checkbox section
-  applies unchanged, and `Text/OnPrimary -> Color/White -> #ffffff` has to be
+  applies unchanged, and `Text/OnAction -> Color/White -> #ffffff` has to be
   walked by hand.
 
 Verified after by screenshot rather than by reading values back - the stored

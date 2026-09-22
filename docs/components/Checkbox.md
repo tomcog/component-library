@@ -22,7 +22,7 @@ have shrunk the hit area with it.
 ## Hover previews the tick
 
 The distinctive part of the design: hovering an **unchecked** box shows the
-check in `--ui-primary` on an unfilled square, so the row says what clicking it
+check in `--ui-action` on an unfilled square, so the row says what clicking it
 will do before it does it. The tick is in the DOM at every state and only its
 opacity moves, so it can fade rather than pop and the glyph never reflows.
 
@@ -112,7 +112,7 @@ the artwork was adopted.
 
 ## Hover previews the label too, and only while unchecked
 
-The label turns `--ui-primary` with the tick, so the whole row answers the
+The label turns `--ui-action` with the tick, so the whole row answers the
 pointer rather than just the glyph. That matters because the whole row IS the
 hit target - a row that lit only its box read as though the text were not part
 of it.
@@ -124,7 +124,7 @@ would say "this will become selected" about something that is - the same rule
 states cannot compound.
 
 Figma drew the Hover label as `Text/Default`; the cells now carry
-`Primary/Base` to match.
+`Action/Base` to match.
 
 ## Two things about this set that cost an hour, both worth knowing
 
@@ -182,7 +182,7 @@ extends its hit target — no `id`/`htmlFor` pair needed.
 The drawn cells had the box on `IconDefault` — which aliases `Neutral/500` in
 **both** modes and so is frozen against the theme, the same trap NavSlat's sub
 items and `Input-Text`'s icon carried — and the selected tick on the
-`Color/White` **primitive**. They now read `Text/Muted` and `Text/OnPrimary`.
+`Color/White` **primitive**. They now read `Text/Muted` and `Text/OnAction`.
 Fourth and fifth time this has come up in this file.
 
 The label is DM Sans **Regular**, not the Label scale's Medium: the design sets

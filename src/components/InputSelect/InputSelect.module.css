@@ -187,8 +187,8 @@
   .select option:hover,
   .select option:focus,
   .select option:checked {
-    background: var(--ui-input-select-option-highlight, var(--ui-primary));
-    color: var(--ui-input-select-option-highlight-text, var(--ui-text-on-primary));
+    background: var(--ui-input-select-option-highlight, var(--ui-action));
+    color: var(--ui-input-select-option-highlight-text, var(--ui-text-on-action));
   }
   .select option:disabled {
     color: var(--ui-input-select-color-disabled, var(--ui-text-disabled));
@@ -206,8 +206,8 @@
 
 /* -- chevron ------------------------------------------------- */
 /* RED by default: it is the one part of this control that says "there is more
-   here", which makes it a call to action rather than chrome - so --ui-primary,
-   not --ui-accent. Sits over the field's trailing edge, out of flow and
+   here", which makes it a call to action rather than chrome - so --ui-action,
+   not --ui-brand. Sits over the field's trailing edge, out of flow and
    pointer-transparent so the select beneath receives every click. */
 .chevron {
   position: absolute;
@@ -216,7 +216,7 @@
   pointer-events: none;
   width: var(--ui-input-select-chevron-size, var(--ui-input-text-icon-size));
   height: var(--ui-input-select-chevron-size, var(--ui-input-text-icon-size));
-  color: var(--ui-input-select-chevron, var(--ui-primary));
+  color: var(--ui-input-select-chevron, var(--ui-action));
 }
 .chevron > svg {
   width: 100%;

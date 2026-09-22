@@ -107,18 +107,18 @@ treatment changed from *darken the text and border* to *fill the button*:
 
 | state | fill | label | outline |
 |---|---|---|---|
-| Default | none | `--ui-primary` | 1px `--ui-primary` |
-| Hover | `Primary/Lighter` | `--ui-primary` | none |
+| Default | none | `--ui-action` | 1px `--ui-action` |
+| Hover | `Action/Lighter` | `--ui-action` | none |
 | Pressed | Figma `#ea929f` | `Button/Ghost/Darker` `#ac172d` | none |
 
 The outline drops away and the button fills, so it reads as the same object
 gaining weight rather than as a different colour of button. The label holds at
-`--ui-primary` on hover and **darkens on press**, so it keeps its footing
+`--ui-action` on hover and **darkens on press**, so it keeps its footing
 against the heavier fill under it. In code that is one `color` declaration,
 which carries the icon with it since icons draw in `currentColor`. The border is made **transparent through its own hook** rather than
 deleted, so an app can keep the outline under the fill.
 
-**Both tints are derived, not pinned**, for the reason `--ui-primary-lighter`
+**Both tints are derived, not pinned**, for the reason `--ui-action-lighter`
 is: an app that sets a green primary must get a green press, not a pink one.
 That costs some fidelity against the drawn values, and the pressed one is worth
 knowing about:
@@ -139,12 +139,12 @@ glowing on a dark page. One rule, correct in both modes, and why this component
 needs no dark block.
 
 That fixed a real bug. Figma's dark values had been left on the *old* darken
-model: `Button/Ghost/Hover` was `Primary/Lighter` in Light but `Primary/Dark`
-in Dark, and `Button/Ghost/Pressed` was `#ea929f` in Light but `Primary/Darker`
+model: `Button/Ghost/Hover` was `Action/Lighter` in Light but `Action/Dark`
+in Dark, and `Button/Ghost/Pressed` was `#ea929f` in Light but `Action/Darker`
 in Dark — one variable meaning a pale tint in one mode and a dark shade in the
 other. Under the old model those dark values were the *label* colour and
 nothing was filled; once they became a **fill**, dark mode filled dark red and
-wrote `Primary/Base` on top at **1.5:1**. Both dark values are now the
+wrote `Action/Base` on top at **1.5:1**. Both dark values are now the
 surface-mixed tints (`#492b30`, `#862433`), matching what the code derives.
 
 **The pressed label moves AWAY from its fill, in whichever direction that is.**

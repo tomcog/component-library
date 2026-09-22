@@ -9,7 +9,7 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
 `docs/divergences-resolved.md` rather than deleting it.
 
 3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
-   `True Black`, `Primary/Dark`, `Primary/Darker`. No
+   `True Black`, `Action/Dark`, `Action/Darker`. No
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a
    component actually needs the value. Check ownership before importing.
@@ -22,7 +22,7 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    light. Both were raw rather than aliased, which is the other half of the
    defect. Now `Neutral/100` in light and `Color/Ink` in dark, matching the
    code and aliasing the tier it should.
-   (`Primary/Lighter` was already in code as `--ui-primary-lighter`; it should
+   (`Action/Lighter` was already in code as `--ui-action-lighter`; it should
    not have been on this list.)
 
 8. ~~NavRail's slat gap moved in code and not yet in Figma.~~

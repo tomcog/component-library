@@ -88,7 +88,7 @@
    Named `-focus` rather than `-active`, since `-active` means pressed here as
    it does in CSS - see the Nav state-name table in CLAUDE.md. */
 .field:focus-within {
-  border-bottom-color: var(--ui-input-textarea-border-focus, var(--ui-primary));
+  border-bottom-color: var(--ui-input-textarea-border-focus, var(--ui-action));
 }
 
 /* -- auto-resize --------------------------------------------------- */

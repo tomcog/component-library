@@ -55,8 +55,8 @@ const TYPE_TOKENS = [
 
 // Tier 2: the theming contract. Map all semantic tokens or none.
 const SEMANTIC_TOKENS = [
-  "--ui-primary", "--ui-primary-lighter", "--ui-text-on-primary",
-  "--ui-accent", "--ui-text-on-accent",
+  "--ui-action", "--ui-action-lighter", "--ui-text-on-action",
+  "--ui-brand", "--ui-text-on-brand",
   "--ui-danger", "--ui-danger-lighter", "--ui-danger-darker", "--ui-text-on-danger",
   "--ui-safety", "--ui-safety-lighter", "--ui-safety-darker", "--ui-text-on-safety",
   "--ui-surface-inverse", "--ui-text-on-inverse",
@@ -68,8 +68,8 @@ const SEMANTIC_TOKENS = [
 ];
 // Fill + the text meant to sit on it. A recolour that breaks contrast shows here.
 const TOKEN_PAIRS: [string, string, string][] = [
-  ["--ui-primary", "--ui-text-on-primary", "On primary"],
-  ["--ui-accent", "--ui-text-on-accent", "On accent"],
+  ["--ui-action", "--ui-text-on-action", "On primary"],
+  ["--ui-brand", "--ui-text-on-brand", "On accent"],
   ["--ui-danger", "--ui-text-on-danger", "On danger"],
   ["--ui-safety", "--ui-text-on-safety", "On safety"],
   ["--ui-danger-darker", "--ui-text-on-danger", "On danger darker"],
@@ -230,7 +230,7 @@ const BOTTOM_TABS = [
    to resolve them the same way a component does rather than reading a name
    that is not there. Keep this in step with the component CSS. */
 const DERIVED_TOKENS: Record<string, string> = {
-  "--ui-primary-lighter": "color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))",
+  "--ui-action-lighter": "color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))",
 };
 
 const tokenValue = (name: string) =>
@@ -389,7 +389,7 @@ function App() {
     <div
       className="page ui-font-primary"
       data-theme={theme}
-      style={{ ["--ui-primary" as string]: primary, ["--ui-font-primary" as string]: face }}
+      style={{ ["--ui-action" as string]: primary, ["--ui-font-primary" as string]: face }}
     >
       <header>
         <h1>@tomcoggia/ui</h1>
@@ -471,7 +471,7 @@ function App() {
       <Section
         title="Typeface"
         note={
-          "One name to repoint, exactly like --ui-primary. Change `font` above: every component " +
+          "One name to repoint, exactly like --ui-action. Change `font` above: every component " +
           "follows, and so does this paragraph \u2014 the page carries the .ui-font-primary class, " +
           "which is how an app opts its OWN text in. The fallback stack is never restated, so a " +
           "face swap cannot drop it."
@@ -520,7 +520,7 @@ function App() {
           + "destructive either way. Hover and press each one: like ButtonRound's tones it changes "
           + "those pairs ONLY, so at rest a danger button is indistinguishable from its variant. "
           + "The red answers the pointer arriving rather than competing as a second resting style. "
-          + "On a palette that splits --ui-primary from --ui-danger that means a Delete rests in "
+          + "On a palette that splits --ui-action from --ui-danger that means a Delete rests in "
           + "the CTA colour \u2014 the cost of one resting rhythm."
         }
       >
@@ -1241,7 +1241,7 @@ function App() {
 
       <Section
         title="Logo"
-        note="The brand mark at five weights. It defaults to --ui-tc-red - the fixed personal brand, not --ui-primary: change the primary above and the mark stays TC red while everything else follows. Override it with --ui-logo-color, which inherits, so an ancestor can set it. Note an ancestor's plain `color` does NOT reach the mark: .logo declares its own colour, and its declaration beats inheritance."
+        note="The brand mark at five weights. It defaults to --ui-tc-red - the fixed personal brand, not --ui-action: change the primary above and the mark stays TC red while everything else follows. Override it with --ui-logo-color, which inherits, so an ancestor can set it. Note an ancestor's plain `color` does NOT reach the mark: .logo declares its own colour, and its declaration beats inheritance."
       >
         <Row label="weights">
           {LOGO_WEIGHTS.map((w) => (
@@ -1410,7 +1410,7 @@ function App() {
         note={
           "InputText's field with a chevron and a real <select> inside it. Every measurement reads " +
           "InputText's token behind an --ui-input-select-* hook, so the two cannot drift while an app " +
-          "can still retune the select alone. The chevron is --ui-primary: it is the part that says " +
+          "can still retune the select alone. The chevron is --ui-action: it is the part that says " +
           "there is more here, which makes it a call to action rather than chrome."
         }
       >

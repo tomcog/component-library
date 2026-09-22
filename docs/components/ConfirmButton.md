@@ -24,7 +24,7 @@ and Figma carried `Button/Round` `State=Confirm` and `State=Danger`. Both sides
 dropped them in the same release.
 
 The old tones recoloured the **hover pair only** — the resting disc stayed
-`--ui-primary-lighter` and the press stayed `--ui-surface-inverse`. So a Save, a
+`--ui-action-lighter` and the press stayed `--ui-surface-inverse`. So a Save, a
 Delete and a Back button in one row were indistinguishable until the pointer was
 already on one.
 
@@ -99,7 +99,7 @@ at exactly that moment would read as the button changing its mind.
 
 **The lighter and darker tints alias primitives** (`--ui-tc-green-lighter`,
 `--ui-tc-red-darker`, …) rather than being composed from the base with
-`color-mix()`, which is what `--ui-primary-lighter` does. They are hand-drawn in
+`color-mix()`, which is what `--ui-action-lighter` does. They are hand-drawn in
 Figma and no mix reproduces them: 30% of `#59cf55` on white gives `#cdf0cc`
 against the drawn `#cafac8`, and no percentage reaches it, because the drawn
 tint is *more saturated* than any mix of the base with white can be. Only
@@ -178,7 +178,7 @@ definition.
    button off never makes it louder. Here the control is never the quiet one in
    a row, and an unavailable confirmation that rendered as bare grey glyph would
    be easy to miss entirely.
-4. **No focus state in Figma.** 2px `--ui-primary` outline at 2px offset, like
+4. **No focus state in Figma.** 2px `--ui-action` outline at 2px offset, like
    every other control. The ring does not follow the tone: it marks where the
    keyboard is, which is the same fact whatever the button goes on to do, and a
    ring that changed colour would say the tone twice and the focus position less

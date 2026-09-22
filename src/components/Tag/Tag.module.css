@@ -37,7 +37,7 @@
    state on the component and a Tag is one object. A caller that wants the
    resting appearance under the pointer overrides --ui-tag-text-hover. */
 .tag:hover {
-  color: var(--ui-tag-text-hover, var(--ui-primary));
+  color: var(--ui-tag-text-hover, var(--ui-action));
 }
 
 /* Anything the caller puts inside inherits the type and the colour rather

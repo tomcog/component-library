@@ -89,7 +89,7 @@ be added over `active` later; the reverse cannot.
   restoring focus. tomcoggia.com uses a `<span>`, which no keyboard user can
   reach. Don't downgrade it to match.
 - **Sub items rest at `--ui-text-muted` and darken to `--ui-text-default` on
-  hover**, per Figma; the current one is `--ui-primary`.
+  hover**, per Figma; the current one is `--ui-action`.
   tomcoggia.com rests them at `#1c1917` and hovers to `#171717` — a transition
   too small to see, which looks like an oversight rather than a decision.
 - **Three different blacks exist.** Figma's nav binds to a variable literally

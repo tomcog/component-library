@@ -16,7 +16,7 @@
   /* The line runs the full width in primary; the selected tab thickens it to
      3px. One line, two weights - not two lines. */
   border-bottom: var(--ui-tabs-border-width) solid
-                 var(--ui-tabs-border, var(--ui-primary));
+                 var(--ui-tabs-border, var(--ui-action));
   /* A long set on a narrow screen scrolls rather than squashing; nothing is
      ever clipped to unreadability. */
   overflow-x: auto;
@@ -97,7 +97,7 @@
 /* An idle tab previews where it would take you. The icon needs no rule of its
    own - its stroke is currentColor, so it follows the label. */
 .tab:hover:not(:disabled) {
-  color: var(--ui-tabs-text-hover, var(--ui-primary));
+  color: var(--ui-tabs-text-hover, var(--ui-action));
 }
 
 .tab:disabled {
@@ -107,12 +107,12 @@
 
 /* The selected view. Label, icon and rule are one colour. */
 .current {
-  color: var(--ui-tabs-text-current, var(--ui-primary));
-  border-bottom-color: var(--ui-tabs-rule, var(--ui-primary));
+  color: var(--ui-tabs-text-current, var(--ui-action));
+  border-bottom-color: var(--ui-tabs-rule, var(--ui-action));
 }
 
 .tab:focus-visible {
-  outline: 2px solid var(--ui-tabs-focus-ring, var(--ui-primary));
+  outline: 2px solid var(--ui-tabs-focus-ring, var(--ui-action));
   outline-offset: 2px;
 }
 
@@ -129,10 +129,10 @@
   transition: color var(--ui-motion-fast) ease;
 }
 .tab:hover:not(:disabled) .icon {
-  color: var(--ui-tabs-icon-hover, var(--ui-primary));
+  color: var(--ui-tabs-icon-hover, var(--ui-action));
 }
 .current .icon {
-  color: var(--ui-tabs-icon-current, var(--ui-primary));
+  color: var(--ui-tabs-icon-current, var(--ui-action));
 }
 .tab:disabled .icon {
   color: var(--ui-tabs-icon-disabled, var(--ui-text-disabled));

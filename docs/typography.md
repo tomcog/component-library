@@ -15,7 +15,7 @@ The font is self-hosted in the package, not linked from Google's CDN — browser
 
 `--ui-font-family` carries a real fallback stack, so a missing font import degrades to `system-ui` rather than breaking. Verify a font change by rendering text in `var(--ui-font-family)` next to a forced `system-ui` and confirming the metrics differ — a silent fallback looks fine in isolation.
 
-## The typeface: one name, the same shape as `--ui-primary`
+## The typeface: one name, the same shape as `--ui-action`
 
 `--ui-font-family` used to be a single flat token holding the face *and* its
 fallbacks. Changing the face meant restating the whole list, so an app that
@@ -25,7 +25,7 @@ the same identity/role split the colours have:
 | | colour | typeface |
 |---|---|---|
 | identity — what this package ships | `--ui-tc-red` | `--ui-dm-sans` |
-| role — **what an app overrides** | `--ui-primary` | `--ui-font-primary` |
+| role — **what an app overrides** | `--ui-action` | `--ui-font-primary` |
 
 ```css
 :root { --ui-font-primary: "Inter", "Inter Fallback"; }
@@ -48,7 +48,7 @@ is not declared on `:root` any more, and that is deliberate: a `var()` inside a
 custom property resolves at the element that DECLARES it, so composing the face
 and the fallback together on `:root` would freeze the pair there and
 `<div style="--ui-font-primary: Georgia">` could never move it. Same trap
-`--ui-primary-lighter` documents. Every component composes it at the element:
+`--ui-action-lighter` documents. Every component composes it at the element:
 
 ```css
 font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));

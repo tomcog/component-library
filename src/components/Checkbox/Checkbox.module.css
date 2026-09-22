@@ -80,7 +80,7 @@
    primary on an unfilled square, so the row says what clicking it will do
    before it does it. */
 .root:hover:not(:has(.input:disabled)) .glyph {
-  color: var(--ui-checkbox-box-hover, var(--ui-primary));
+  color: var(--ui-checkbox-box-hover, var(--ui-action));
 }
 .root:hover:not(:has(.input:disabled)):not(:has(.input:checked)) .tick {
   opacity: 1;
@@ -94,7 +94,7 @@
    same reason NavItem, NavSlat and Segment all suppress hover on the current
    one. Excluded rather than overridden, so the two states can never compound. */
 .root:hover:not(:has(.input:disabled)):not(:has(.input:checked)) .label {
-  color: var(--ui-checkbox-label-hover, var(--ui-primary));
+  color: var(--ui-checkbox-label-hover, var(--ui-action));
 }
 
 /* -- checked -------------------------------------------------------
@@ -103,7 +103,7 @@
    through, not a second colour painted on top - which is why checked needs no
    tick token at all, and why disabled checked needs no second one either. */
 .root:has(.input:checked) .glyph {
-  color: var(--ui-checkbox-box-checked, var(--ui-primary));
+  color: var(--ui-checkbox-box-checked, var(--ui-action));
 }
 .root:has(.input:checked) .ring,
 .root:has(.input:checked) .tick {
@@ -144,7 +144,7 @@
    `:focus-visible` so a mouse click does not draw a ring the pointer already
    accounts for - the same call every other control here makes. */
 .input:focus-visible + .slot {
-  outline: 2px solid var(--ui-checkbox-focus-ring, var(--ui-primary));
+  outline: 2px solid var(--ui-checkbox-focus-ring, var(--ui-action));
   outline-offset: 2px;
   border-radius: 2px;
 }

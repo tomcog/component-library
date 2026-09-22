@@ -1,7 +1,7 @@
 /* Sitewide navigation. Figma: `Nav`, `Nav/Item`, `Nav/Dropdown`,
    `Nav/Dropdown/Item` (node 342:4239).
 
-   Every colour resolves at the link element, so --ui-primary and [data-theme]
+   Every colour resolves at the link element, so --ui-action and [data-theme]
    are picked up from wherever they sit in the tree - same rule as Button.
    The first name in each var() is the optional component-level override. */
 
@@ -41,7 +41,7 @@
   right: 0;
   top: calc(100% + var(--ui-nav-item-underline-offset, 0px));
   height: var(--ui-nav-accent-size);
-  background: var(--ui-nav-accent-color, var(--ui-primary));
+  background: var(--ui-nav-accent-color, var(--ui-action));
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--ui-motion-base) ease;
@@ -53,7 +53,7 @@
 /* Figma: State=On. The current page - red label, and no rule. Suppressed
    rather than overridden so hovering the current item does not draw one. */
 .current {
-  color: var(--ui-nav-item-text-current, var(--ui-primary));
+  color: var(--ui-nav-item-text-current, var(--ui-action));
 }
 .current::after {
   content: none;
@@ -68,7 +68,7 @@
 /* Focus is code-only, matching Button: Figma models no focus state. */
 .item:focus-visible,
 .subItem:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 2px;
 }
 
@@ -165,7 +165,7 @@
   width: 0;
   height: var(--ui-nav-line-height);
   border-radius: var(--ui-nav-pipe-radius);
-  background: var(--ui-nav-accent-color, var(--ui-primary));
+  background: var(--ui-nav-accent-color, var(--ui-action));
   scale: 1 0;
   transform-origin: top;
   transition:
@@ -190,7 +190,7 @@
    item adds nothing, so the two states never compound. */
 .subItemCurrent,
 .subItemCurrent:hover {
-  color: var(--ui-nav-sub-item-text-current, var(--ui-primary));
+  color: var(--ui-nav-sub-item-text-current, var(--ui-action));
 }
 .subItemCurrent:hover .subLabel {
   margin-right: 0;

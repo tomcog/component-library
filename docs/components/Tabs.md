@@ -24,7 +24,7 @@ shown inside the page you are already on, so it is a real `tablist` of
 **buttons** — and gets the ARIA tab pattern rather than `aria-current`.
 
     tab      icon 18 · label 14/500/21 · icon-gap 8 · padding-bottom 8 · rule 3
-    strip    gap between tabs 32 · rule 1 · both rules --ui-primary
+    strip    gap between tabs 32 · rule 1 · both rules --ui-action
 
 **There are two sizes.** The numbers above are `lg`, the default. `xl` is
 18/24 with a 20 icon and stands 35 tall; only font size, line height and icon

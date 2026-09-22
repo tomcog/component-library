@@ -32,7 +32,7 @@
 /* Not drawn in Figma: the only state it shows is what the box holds. Focus is
    the library's ring, on the box the keyboard is on. */
 .control:has(.input:focus-visible) {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 1px;
   z-index: 1;
 }
@@ -92,7 +92,7 @@
   flex: none;
   min-width: var(--ui-layer-controller-number-width);
   text-align: center;
-  color: var(--ui-layer-controller-number-color, var(--ui-accent));
+  color: var(--ui-layer-controller-number-color, var(--ui-brand));
   font-variant-numeric: tabular-nums;
 }
 
@@ -104,7 +104,7 @@
   cursor: pointer;
 }
 .swatchButton:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 1px;
 }
 .swatchButton:disabled { cursor: default; }
@@ -155,7 +155,7 @@
 }
 .label > input:focus-visible {
   outline: none;
-  box-shadow: 0 1px 0 var(--ui-primary);
+  box-shadow: 0 1px 0 var(--ui-action);
 }
 
 .end {
@@ -183,7 +183,7 @@ button.eye {
   border-radius: 2px;
 }
 .root[data-visible="false"] .eye {
-  color: var(--ui-layer-controller-eye-off-color, var(--ui-accent));
+  color: var(--ui-layer-controller-eye-off-color, var(--ui-brand));
 }
 .eyeGlyph {
   display: block;

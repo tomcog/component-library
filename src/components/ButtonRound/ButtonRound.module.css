@@ -5,8 +5,8 @@
   justify-content: center;
   border: none;
   border-radius: 50%;
-  background: var(--ui-button-round-bg, var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
-  color: var(--ui-button-round-icon, var(--ui-primary));
+  background: var(--ui-button-round-bg, var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
+  color: var(--ui-button-round-icon, var(--ui-action));
   cursor: pointer;
   transition:
     background-color var(--ui-motion-fast) ease,
@@ -14,8 +14,8 @@
 }
 
 .button:hover:not(:disabled) {
-  background: var(--ui-button-round-bg-hover, var(--ui-primary));
-  color: var(--ui-button-round-icon-hover, var(--ui-text-on-primary));
+  background: var(--ui-button-round-bg-hover, var(--ui-action));
+  color: var(--ui-button-round-icon-hover, var(--ui-text-on-action));
 }
 
 /* The pressed state is the inverse surface, not raw ink. Identical in light
@@ -37,7 +37,7 @@
    the right call for a confirmation and the wrong one for a toolbar. */
 
 .button:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 2px;
 }
 

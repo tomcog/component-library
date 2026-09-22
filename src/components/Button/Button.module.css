@@ -27,11 +27,11 @@
 
 /* The ring is the one colour on this component that had no override hook, so a
    variant retinted to another role - a ghost pointed at --ui-danger, say - kept
-   ringing in the brand colour. It defaults to --ui-primary as before: a ring is
+   ringing in the brand colour. It defaults to --ui-action as before: a ring is
    an interaction affordance, and the CTA colour is the one guaranteed to stay
    legible when an app picks something pale for its chrome. */
 .button:focus-visible {
-  outline: 2px solid var(--ui-button-focus-ring, var(--ui-primary));
+  outline: 2px solid var(--ui-button-focus-ring, var(--ui-action));
   outline-offset: 2px;
 }
 
@@ -70,21 +70,21 @@
 }
 
 /* -- variants ----------------------------------------------- */
-/* Each var() resolves at the button element, so --ui-primary and
+/* Each var() resolves at the button element, so --ui-action and
    [data-theme] are picked up from wherever they are in scope.
    The first name in each var() is the optional component-level
    override; the fallback is the themed default. */
 .primary {
-  background: var(--ui-button-primary-bg, var(--ui-primary));
-  color: var(--ui-button-primary-text, var(--ui-text-on-primary));
+  background: var(--ui-button-primary-bg, var(--ui-action));
+  color: var(--ui-button-primary-text, var(--ui-text-on-action));
 }
 .primary:hover:not(:disabled) {
   background: var(--ui-button-primary-bg-hover,
-              color-mix(in srgb, var(--ui-primary), black 22.3%));
+              color-mix(in srgb, var(--ui-action), black 22.3%));
 }
 .primary:active:not(:disabled) {
   background: var(--ui-button-primary-bg-active,
-              color-mix(in srgb, var(--ui-primary), black 40.7%));
+              color-mix(in srgb, var(--ui-action), black 40.7%));
 }
 
 .secondary {
@@ -93,13 +93,13 @@
 }
 .secondary:hover:not(:disabled) {
   background: var(--ui-button-secondary-bg-hover,
-              color-mix(in srgb, var(--ui-primary), black 22.3%));
-  color: var(--ui-text-on-primary);
+              color-mix(in srgb, var(--ui-action), black 22.3%));
+  color: var(--ui-text-on-action);
 }
 .secondary:active:not(:disabled) {
   background: var(--ui-button-secondary-bg-active,
-              color-mix(in srgb, var(--ui-primary), black 40.7%));
-  color: var(--ui-text-on-primary);
+              color-mix(in srgb, var(--ui-action), black 40.7%));
+  color: var(--ui-text-on-action);
 }
 
 .tertiary {
@@ -120,16 +120,16 @@
    costs no layout, so a ghost button is the same size as a filled one. */
 .ghost {
   background: transparent;
-  color: var(--ui-button-ghost-text, var(--ui-primary));
-  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border, var(--ui-primary));
+  color: var(--ui-button-ghost-text, var(--ui-action));
+  box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border, var(--ui-action));
 }
 /* Ghost FILLS on interaction; it does not darken. Figma: `Button` Level=Ghost
-   States Hover and Pressed (615:15224). The label holds at --ui-primary
+   States Hover and Pressed (615:15224). The label holds at --ui-action
    throughout and the outline drops away, so the button reads as the same
    object gaining weight rather than as a different colour of button.
 
-   Both tints are DERIVED from --ui-primary rather than pinned to Figma's
-   hexes, for the reason --ui-primary-lighter is: an app that sets a green
+   Both tints are DERIVED from --ui-action rather than pinned to Figma's
+   hexes, for the reason --ui-action-lighter is: an app that sets a green
    primary must get a green press, not a pink one. See CLAUDE.md for what that
    costs against the drawn values.
 
@@ -143,12 +143,12 @@
    an app that wants the outline kept under the fill can put it back. */
 .ghost:hover:not(:disabled) {
   background: var(--ui-button-ghost-bg-hover,
-              var(--ui-primary-lighter,
-              color-mix(in srgb, var(--ui-primary) 15%, var(--ui-surface-raised))));
-  color: var(--ui-button-ghost-text-hover, var(--ui-primary));
+              var(--ui-action-lighter,
+              color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
+  color: var(--ui-button-ghost-text-hover, var(--ui-action));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-hover, transparent);
 }
-/* Pressed is the one state whose label leaves --ui-primary: it moves AWAY from
+/* Pressed is the one state whose label leaves --ui-action: it moves AWAY from
    the fill under it, so it still holds once the ground gets heavy. Figma:
    `Button/Ghost/Darker`. `color` carries the icon too, since icons are drawn in
    currentColor.
@@ -164,9 +164,9 @@
    ever matters more than the dark mode being legible. */
 .ghost:active:not(:disabled) {
   background: var(--ui-button-ghost-bg-active,
-              color-mix(in srgb, var(--ui-primary) 48%, var(--ui-surface-raised)));
+              color-mix(in srgb, var(--ui-action) 48%, var(--ui-surface-raised)));
   color: var(--ui-button-ghost-text-active,
-         color-mix(in srgb, var(--ui-primary), var(--ui-text-default) 25%));
+         color-mix(in srgb, var(--ui-action), var(--ui-text-default) 25%));
   box-shadow: inset 0 0 0 1px var(--ui-button-ghost-border-active, transparent);
 }
 
@@ -282,7 +282,7 @@
    arriving, not a second resting style competing with the variant. A row of
    buttons keeps one resting rhythm and answers differently under the cursor.
 
-   The trade, stated because it is real: on a palette that splits `--ui-primary`
+   The trade, stated because it is real: on a palette that splits `--ui-action`
    from `--ui-danger`, a Delete button RESTS in the CTA colour and only turns
    red when reached for. That is the cost of one resting rhythm, and it is the
    cost ButtonRound already pays.
@@ -295,10 +295,10 @@
    first so an app override wins.
 
    Tints derive from `--ui-danger` with the mixes each variant already uses on
-   `--ui-primary`, so an app setting its own danger colour gets a coherent
+   `--ui-action`, so an app setting its own danger colour gets a coherent
    press rather than a pinned red.
 
-   The FOCUS RING is deliberately not retinted. It stays `--ui-primary`, as
+   The FOCUS RING is deliberately not retinted. It stays `--ui-action`, as
    ButtonRound's does at every tone: a ring is an interaction affordance, and a
    red ring around a button still resting in the brand colour would describe a
    state the button is not in. */
@@ -319,7 +319,7 @@
 }
 
 /* Secondary and tertiary fill danger on interaction, so their labels have to
-   move to the colour that sits on it. Secondary hard-codes --ui-text-on-primary
+   move to the colour that sits on it. Secondary hard-codes --ui-text-on-action
    in its own state rules and tertiary keeps its resting label, so neither can
    be reached by a hook alone. */
 .danger.secondary:hover:not(:disabled),

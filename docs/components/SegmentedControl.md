@@ -231,7 +231,7 @@ break again:
 - **No `Button/*` token may appear in the set.** `Active` once read
   `Button/Primary/Default` and the LG cells took `Button Size/LG/*`, which
   meant a Segment moved whenever a Button did - the trap NavSlat and Pill each
-  hit. Colours read `Primary/Base` / `Text/OnPrimary`, type reads
+  hit. Colours read `Action/Base` / `Text/OnAction`, type reads
   `Type/Label */*`, geometry reads `Segmented Size/*` and `Control/*`.
 - **`State=Dark` reads `Surface/Inverse` / `Text/OnInverse`, never
   `Neutral/800`.** A primitive cannot follow the theme, so a dark-selected

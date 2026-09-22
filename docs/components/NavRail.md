@@ -31,7 +31,7 @@ slat's height: the line box and the chip are both 32.
     height         none - the slat hugs its line box: 32, with a chip or without
     chip      32   a Button/Round Medium; icon 20 at stroke 1.5
     chip gap  8    chip -> label
-    pipe      4 wide, the height of the label's line box, --ui-primary
+    pipe      4 wide, the height of the label's line box, --ui-action
     indent    14   = pipe width + the 10 gap Figma sets after it
     sub       16   indent, or 32 + 8 = 40 once icons are on; 0 gap within a group
     badge          optional trailing slot (a count, a status dot), pinned to the
@@ -41,7 +41,7 @@ slat's height: the line box and the chip are both 32.
 |---|---|---|---|---|
 | Default | resting | `--ui-text-default` | - | - |
 | Hover | `:hover`, `:focus-visible` | unchanged | drawn | 14px |
-| Active | `active` | `--ui-primary` | - | - |
+| Active | `active` | `--ui-action` | - | - |
 
 ## The geometry moved when the set was redrawn
 
@@ -117,8 +117,8 @@ ButtonRound's**:
 | slat state | chip | ButtonRound's equivalent |
 |---|---|---|
 | Default | transparent, `--ui-text-muted` glyph | none - ButtonRound has no transparent state |
-| Hover | `--ui-primary` / `--ui-text-on-primary` | its Hover |
-| Active | `--ui-primary-lighter` / `--ui-primary` | its Default |
+| Hover | `--ui-action` / `--ui-text-on-action` | its Hover |
+| Active | `--ui-action-lighter` / `--ui-action` | its Default |
 
 The glyph takes the chip's colour by inheritance and sets none of its own -
 otherwise it wins inside the chip and draws a text-coloured icon on a red
@@ -164,7 +164,7 @@ circle.
   item would not respond to the pointer at all, which reads as disabled rather
   than quiet - so they rest at `--ui-text-muted` and darken to
   `--ui-text-default`, which is what `NavDropdownItem` already does with the
-  horizontal nav's sub items, and go `--ui-primary` when current.
+  horizontal nav's sub items, and go `--ui-action` when current.
 - **A sub item draws the hover pipe, exactly as a primary slat does** - the
   same 4px bar drawn top to bottom, the same 14px indent after it. Figma has
   no hovered secondary variant, so this is code-only, and it is a deliberate
@@ -209,7 +209,7 @@ It takes the chip's current treatment and **nothing else**:
 | | `active` | `sectionCurrent` |
 |---|---|---|
 | chip | current pair | current pair |
-| label | `--ui-primary` | unchanged |
+| label | `--ui-action` | unchanged |
 | `aria-current` | `"page"` | none |
 | pipe + indent on hover | suppressed | kept |
 

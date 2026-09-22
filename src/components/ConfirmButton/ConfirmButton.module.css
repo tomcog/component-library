@@ -109,13 +109,13 @@
   color: var(--ui-confirm-button-danger-ghost-icon, var(--ui-danger));
 }
 
-/* The focus ring is --ui-primary for every control in the library, including
+/* The focus ring is --ui-action for every control in the library, including
    this one. It marks where the keyboard IS, which is the same fact whatever
    the button goes on to do - a ring that changed colour per tone would be
    saying the tone twice and the focus position less clearly. Code-only:
    Figma models no focus state. */
 .button:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 2px;
 }
 

@@ -218,5 +218,5 @@ content the user typed, not a label naming a control, so
 - **No hover, no error state.** Neither is designed, and inventing one would
   be inventing a decision the file has not made — the same reason Card has no
   padding. When one is drawn, colour it with `--ui-danger` (which exists now,
-  for Button's and ButtonRound's `tone`), not `--ui-primary`: primary is red by
+  for Button's and ButtonRound's `tone`), not `--ui-action`: primary is red by
   default, so a red underline on primary would read as focus.

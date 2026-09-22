@@ -13,14 +13,14 @@ the public API** — those 21 names are what a consuming app overrides to make
 these components look like its own. The primitives are internal; an app should
 never alias `--ui-tc-red`.
 
-### CTA vs chrome: `--ui-primary` and `--ui-accent`
+### CTA vs chrome: `--ui-action` and `--ui-brand`
 
 Four roles, settable apart:
 
 | token | means | default | who reads it |
 |---|---|---|---|
-| `--ui-primary` | the **CTA** colour | `--ui-tc-red` | nearly every component - every interactive control |
-| `--ui-accent` | the **brand/chrome** colour — headers, rules, borders, dividers | `--ui-tc-red` | LayerController's layer number |
+| `--ui-action` | the **CTA** colour | `--ui-tc-red` | nearly every component - every interactive control |
+| `--ui-brand` | the **brand/chrome** colour — headers, rules, borders, dividers | `--ui-tc-red` | LayerController's layer number |
 | `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | `Button tone="danger"`, `ConfirmButton tone="danger"` |
 | `--ui-safety` | the **affirmative** action — Save, Apply, Accept, Done | `--ui-tc-green` | `ConfirmButton tone="safety"`, LayerController's printer icon |
 
@@ -45,8 +45,8 @@ role means repointing its trio**, not just its base; see
 [ConfirmButton](components/ConfirmButton.md). An app that sets only the base
 still gets a coherent button, it just does not carry the whole component.
 
-Each carries its own **on** colour — `--ui-text-on-primary`,
-`--ui-text-on-accent`, `--ui-text-on-danger`, `--ui-text-on-safety` — rather
+Each carries its own **on** colour — `--ui-text-on-action`,
+`--ui-text-on-brand`, `--ui-text-on-danger`, `--ui-text-on-safety` — rather
 than sharing one. That is the whole point of splitting the roles: an app that
 gives itself a pale accent and a dark CTA needs different text on each, and a
 single shared name would be wrong for one of them. The playground's pairings
@@ -59,7 +59,7 @@ carrying a meaning by convention. A safety button that came out brand-red
 would say *danger* in the one place the user most needs to hear the opposite,
 so it ships green (`#59cf55`, Figma's `Confirm`) and stays green until an app
 says otherwise. It is also untouched in the dark block, for the same reason
-`--ui-primary` is: a colour that carries a meaning does not get to change when
+`--ui-action` is: a colour that carries a meaning does not get to change when
 the theme does.
 
 Know what the default pairing costs. White on `#59cf55` is **2.0:1**, and a
@@ -72,48 +72,60 @@ against white, so an app that wants the contrast at every state can point
 `--ui-safety` at it, or set `--ui-text-on-safety` and move nothing else.
 
 **Almost everything this library renders is an interactive control**, and
-every one of those is a call to action, so they are on `--ui-primary` -
+every one of those is a call to action, so they are on `--ui-action` -
 button fills, ghost rules, the nav underline, the current-page label, the
 rail's pipe, the tinted nav chips, and every focus ring. That is a fact about
-what has been built, not a rule against `--ui-accent`; LayerController's layer
+what has been built, not a rule against `--ui-brand`; LayerController's layer
 number is the first thing that reads it.
 
-**New components should read `--ui-accent` whenever the element is chrome
+**New components should read `--ui-brand` whenever the element is chrome
 rather than a control**: a divider, a section rule, a page-header underline, a
 decorative border, a badge that labels rather than acts. Choose by what the
 element *is*, not by the colour it comes out — both resolve to TC Red today,
 so the choice is invisible right up until an app splits them, which is exactly
 when a wrong one bites.
 
-Focus rings stay on `--ui-primary` deliberately: a ring is an interaction
+Focus rings stay on `--ui-action` deliberately: a ring is an interaction
 affordance, and pinning it to the CTA colour keeps it legible when an app
 picks something pale for its chrome.
 
-### Identity vs role: `--ui-tc-red` and `--ui-primary`
+### Identity vs role: `--ui-tc-red`, `--ui-brand` and `--ui-action`
 
-These two are easy to conflate and must not be.
+Three things that are easy to conflate and must not be.
 
-- **`--ui-tc-red` (primitive) is the brand.** `#e51a38`, Tom Coggia's brand
-  red. It is a fixed fact and never varies per app or per theme.
-- **`--ui-primary` (semantic) is the role** — the colour scheme an app owns.
-  It defaults to `--ui-tc-red`, and an app recolours everything primary
-  (buttons, active nav, focus rings) by overriding this one name.
+- **`--ui-tc-red` (primitive) is THIS library's identity.** `#e51a38`, Tom
+  Coggia's red. A fixed fact; it never varies per app or per theme.
+- **`--ui-brand` (semantic) is the CONSUMING app's identity** — what the app
+  looks like. Defaults to `--ui-tc-red`, and a plant app repoints it to green.
+- **`--ui-action` (semantic) is what the app's controls DO** — buttons, active
+  nav, the selected segment, every focus ring. Also defaults to `--ui-tc-red`,
+  and that same plant app could put its buttons in blue without touching its
+  green.
 
-An earlier version called the overridable token `--ui-brand`, which had the
-mutability backwards: it asked consumers to "override the brand colour with
-your brand colour". Don't reintroduce `--ui-brand` in either tier, and don't
-let an app alias `--ui-tc-red` — overriding the primitive moves every role
-built on it, which today is `--ui-primary` but need not stay that way.
+The library leaves brand and action equal because its brand is red and its
+buttons are too. They are separately settable precisely so an app does not
+have to.
+
+**A note on the name, because this doc used to forbid it.** An earlier version
+called the *overridable CTA* token `--ui-brand`, and that had the mutability
+backwards: it asked consumers to "override the brand colour with your brand
+colour". The objection was to `brand` naming the **control** role, not to the
+word. Now that `--ui-brand` names the app's own aesthetic, overriding the brand
+colour with your brand colour is exactly what it is for, and the CTA role is
+`--ui-action`. Renamed from `--ui-primary`/`--ui-accent` in 0.50.0.
+
+Still don't let an app alias `--ui-tc-red` — overriding the primitive moves
+every role built on it rather than the one you meant.
 
 Declare them unlayered on `:root` (the library's defaults live inside
 `@layer ui`, so any unlayered declaration wins regardless of import order):
 
 ```css
 :root {
-  --ui-primary:              /* the CTA colour                        */;
-  --ui-text-on-primary:      /* text on a primary fill                */;
-  --ui-accent:               /* brand/chrome: rules, labels            */;
-  --ui-text-on-accent:       /* text on an accent fill                */;
+  --ui-action:              /* the CTA colour                        */;
+  --ui-text-on-action:      /* text on a primary fill                */;
+  --ui-brand:               /* brand/chrome: rules, labels            */;
+  --ui-text-on-brand:       /* text on an accent fill                */;
   --ui-danger:               /* destructive actions, error states     */;
   --ui-text-on-danger:       /* text on a danger fill                 */;
   --ui-danger-lighter:       /* ConfirmButton's resting disc          */;
@@ -141,10 +153,10 @@ Declare them unlayered on `:root` (the library's defaults live inside
 }
 ```
 
-`--ui-primary-lighter` is **not** in the list: it is deliberately not declared
+`--ui-action-lighter` is **not** in the list: it is deliberately not declared
 on `:root`, because a tint composed there would freeze against `:root`'s
 primary. Components derive it at the element
-(`color-mix(in srgb, var(--ui-primary) 15%, ...)`) and read the name first, so
+(`color-mix(in srgb, var(--ui-action) 15%, ...)`) and read the name first, so
 an app can still pin it.
 
 **Leave one out and it does not fail — it silently keeps the library's own

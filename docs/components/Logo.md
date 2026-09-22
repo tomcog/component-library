@@ -22,7 +22,7 @@ The mark defaults to `--ui-tc-red`. It is Tom Coggia's brand mark and red is
 what the brand is; `--ui-logo-color` overrides it, and that property inherits,
 so any ancestor can reverse the mark on ink or knock it back to text colour.
 
-**`--ui-tc-red`, deliberately not `--ui-primary`.** Primary is the role an app
+**`--ui-tc-red`, deliberately not `--ui-action`.** Primary is the role an app
 owns and recolours. An app recolouring its own primary to blue must not turn
 someone else's logo blue — so this is the identity half of the identity/role
 split, and the one component that legitimately reaches for the primitive.

@@ -9,6 +9,51 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - BREAKING: the two colour roles are renamed for what they are for.
+
+    --ui-primary          -> --ui-action
+    --ui-primary-lighter  -> --ui-action-lighter
+    --ui-text-on-primary  -> --ui-text-on-action
+    --ui-accent           -> --ui-brand
+    --ui-accent-lighter   -> --ui-brand-lighter
+    --ui-text-on-accent   -> --ui-text-on-brand
+
+**No value changes anywhere.** Both still default to `--ui-tc-red`; every component renders
+the colour it did before. This is a rename and nothing else.
+
+`primary` said where a colour came in a hierarchy and nothing about what it is for. **BRAND is
+what the app looks like; ACTION is what its controls do.** This library is red for both,
+because its brand is red and its buttons are too. A plant app would be green because it is
+about plants, and could still put its buttons in blue - one brand, a different action colour,
+no conflict. The division of labour already existed; the names now say it.
+
+**Scope is strictly the colour tokens.** These are deliberately UNCHANGED, because `primary`
+on a component means emphasis, which is a different question:
+
+- `ButtonVariant`, `ButtonTone`, `SegmentedControlVariant`, `NavSlatLevel` still take
+  `"primary"`.
+- `--ui-button-primary-bg` / `-hover` / `-active` / `-text` are named for Button's variant.
+- `--ui-font-primary` is the typeface role and has nothing to do with colour.
+
+A find-and-replace on the word "primary" would have broken all three groups. The four literal
+strings above are safe precisely because none of those names contains them.
+
+**Migrating an app:** replace the six strings. Nothing errors if you miss one - a custom
+property that no longer resolves falls back or renders wrong silently - so grep for
+`--ui-primary` and `--ui-accent` and expect zero hits. NextJob (94), NextDraw (228) and
+PlantPal (4) were migrated in this release.
+
+**Figma** carries the same names: `Primary/*` -> `Action/*`, `Accent/Base` -> `Brand/Base`,
+`Text/OnPrimary` -> `Text/OnAction`, `Text/OnAccent` -> `Text/OnBrand`. A Figma rename keeps
+the variable's ID, so every binding survived untouched. `Button/Primary/*` is a component
+token named for Button's variant and was left alone.
+
+`docs/theming.md` used to say "don't reintroduce `--ui-brand` in either tier" - an earlier
+version had used that name for the *overridable CTA* token, which asked consumers to
+"override the brand colour with your brand colour". That objection was to `brand` naming the
+CONTROL role. Now that it names the app's own aesthetic, overriding the brand colour with
+your brand colour is exactly what it is for. The note is rewritten rather than deleted.
+
 **0.48.0 -> 0.49.0** - New component: Toolbar.
 
 A rounded bar holding several `SegmentedControl`s - undo/redo beside the view beside the zoom

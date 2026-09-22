@@ -40,7 +40,7 @@ so a ghost lines up with a filled button standing beside it.
 ```
 
 **Only the resting pair is declared. Hover and press fall through to the base
-rules**, so a ghost fills `--ui-primary` under the pointer exactly as a filled
+rules**, so a ghost fills `--ui-action` under the pointer exactly as a filled
 one does — transparent at rest, weight arriving with the cursor. That is not
 invention: `NavRail` and `BottomNav` both hand-roll this exact chip today, and
 the reason their comments give is that ButtonRound "has no transparent resting
@@ -87,7 +87,7 @@ cells were lifted into the `ConfirmButton` set (`735:398`). Code followed.
 different and not a rename.** The old tones recoloured the HOVER pair and
 nothing else — `--ui-confirm` / `--ui-text-on-confirm` or `--ui-danger` /
 `--ui-text-on-danger` under the pointer, with the resting disc left on
-`--ui-primary-lighter` and the press left on `--ui-surface-inverse`. So a Save,
+`--ui-action-lighter` and the press left on `--ui-surface-inverse`. So a Save,
 a Delete and a Back button in one row were identical until the pointer was
 already on one.
 
@@ -152,8 +152,8 @@ published. Re-check a consumer after any publish rather than assuming it took.
 
 ## Every colour is on the semantic tier, deliberately
 
-    Default   --ui-primary-lighter  / --ui-primary
-    Hover     --ui-primary          / --ui-text-on-primary
+    Default   --ui-action-lighter  / --ui-action
+    Hover     --ui-action          / --ui-text-on-action
     Active    --ui-surface-inverse  / --ui-text-on-inverse
     Disabled  --ui-surface-disabled / --ui-text-disabled
 

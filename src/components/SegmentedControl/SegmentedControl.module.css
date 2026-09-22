@@ -128,7 +128,7 @@
    saying exactly this: a second ground inside the track would read as two
    things chosen at once. */
 .segment:not(.selected):hover:not(:disabled) {
-  color: var(--ui-segmented-text-hover, var(--ui-primary));
+  color: var(--ui-segmented-text-hover, var(--ui-action));
 }
 
 /* Hovering the SELECTED segment adds nothing - it is already the answer, and
@@ -141,7 +141,7 @@
 }
 
 .segment:focus-visible {
-  outline: 2px solid var(--ui-segmented-focus-ring, var(--ui-primary));
+  outline: 2px solid var(--ui-segmented-focus-ring, var(--ui-action));
   /* Inside, not offset - and more so since 0.43.0. The reason used to be that
      a segment sat 4px in from the track's edge, so an outset ring would be
      drawn over the pill it lives in; now the segment is FLUSH with that edge,
@@ -156,8 +156,8 @@
    the segment (Active and Dark), which is the only way a variant axis can say
    it - a modelling artefact, not drift. See the note in the .tsx. */
 .primary .selected {
-  background: var(--ui-segmented-selected-bg, var(--ui-primary));
-  color: var(--ui-segmented-selected-text, var(--ui-text-on-primary));
+  background: var(--ui-segmented-selected-bg, var(--ui-action));
+  color: var(--ui-segmented-selected-text, var(--ui-text-on-action));
 }
 
 /* Figma binds this pair to the `Neutral/800` PRIMITIVE, which cannot follow

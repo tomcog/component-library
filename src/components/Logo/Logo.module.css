@@ -1,5 +1,5 @@
 /* The mark defaults to TC Red, because it is Tom Coggia's brand mark and red
-   is what the brand is. --ui-tc-red and not --ui-primary: primary is the role
+   is what the brand is. --ui-tc-red and not --ui-action: primary is the role
    an app owns and recolours, and an app recolouring its own primary to blue
    must not turn someone else's logo blue. This is the identity half of the
    identity/role split, which is exactly what the primitive is for.

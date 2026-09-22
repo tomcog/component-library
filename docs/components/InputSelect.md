@@ -41,7 +41,7 @@ That is the same reasoning as `--ui-nav-rail-chip-size` aliasing
 `--ui-button-round-md-size`, one layer further out: a fallback chain instead of
 a declared alias, because nothing here needs a name of its own yet.
 
-## The chevron is `--ui-primary`, not `--ui-accent`
+## The chevron is `--ui-action`, not `--ui-brand`
 
 It is the one part of the control that says "there is more here", which makes
 it a call to action rather than chrome. Red by default like everything else,
@@ -57,10 +57,10 @@ make room would have left a dead strip that looks clickable and is not.
 
 The menu a native `<select>` drops is drawn by the platform in a window of its
 own, outside the page - so nothing declared on the component reaches it, and
-its highlight was the OS blue rather than `--ui-primary`. `appearance:
+its highlight was the OS blue rather than `--ui-action`. `appearance:
 base-select` moves the picker INTO the page as real DOM, where it styles like
 anything else: the raised surface, the field's radius, `--ui-shadow-float-2`,
-and `--ui-primary` / `--ui-text-on-primary` on `option:hover`, `:focus` and
+and `--ui-action` / `--ui-text-on-action` on `option:hover`, `:focus` and
 `:checked` alike - one pair for all three ways a row can be the one you mean.
 
 It is wrapped in `@supports selector(::picker(select))`, which is true only

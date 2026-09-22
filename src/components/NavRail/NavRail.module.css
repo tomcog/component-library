@@ -1,7 +1,7 @@
 /* Left rail navigation. Figma: the `NavSlat` set (444:791), assembled
    text-only at 458:2467.
 
-   Colours resolve at the link element, so --ui-primary and [data-theme] are
+   Colours resolve at the link element, so --ui-action and [data-theme] are
    picked up from wherever they sit in the tree - same rule as Nav and Button.
    The first name in each var() is the optional component-level override. */
 
@@ -72,7 +72,7 @@
   height: var(--ui-nav-rail-slat-height);
   margin-top: calc(var(--ui-nav-rail-slat-height) / -2);
   width: var(--ui-nav-rail-pipe-width);
-  background: var(--ui-nav-rail-pipe-color, var(--ui-primary));
+  background: var(--ui-nav-rail-pipe-color, var(--ui-action));
   scale: 1 0;
   transform-origin: top;
   transition: scale var(--ui-motion-base) ease;
@@ -129,8 +129,8 @@
 }
 .slat:hover .chip,
 .slat:focus-visible .chip {
-  background: var(--ui-nav-rail-chip-bg-hover, var(--ui-primary));
-  color: var(--ui-nav-rail-chip-icon-hover, var(--ui-text-on-primary));
+  background: var(--ui-nav-rail-chip-bg-hover, var(--ui-action));
+  color: var(--ui-nav-rail-chip-icon-hover, var(--ui-text-on-action));
 }
 
 /* The glyph. No colour of its own - it inherits the chip's, which is the part
@@ -198,7 +198,7 @@
 
 /* Current beats the hover colour above, as it does on a primary slat. */
 .secondary.current {
-  color: var(--ui-nav-rail-text-current, var(--ui-primary));
+  color: var(--ui-nav-rail-text-current, var(--ui-action));
 }
 
 /* -- a parent and its sub items ------------------------------- */
@@ -227,7 +227,7 @@
    compound. Mirrors NavItem and NavDropdownItem, which likewise drop their
    rule when current. */
 .current {
-  color: var(--ui-nav-rail-text-current, var(--ui-primary));
+  color: var(--ui-nav-rail-text-current, var(--ui-action));
 }
 .current .pipe {
   display: none;
@@ -236,8 +236,8 @@
    whatever the source order. Figma's current chip is ButtonRound's *default*
    pair, not its hover pair. */
 .slat.current .chip {
-  background: var(--ui-nav-rail-chip-bg-current, var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
-  color: var(--ui-nav-rail-chip-icon-current, var(--ui-primary));
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
+  color: var(--ui-nav-rail-chip-icon-current, var(--ui-action));
 }
 .current:hover .label,
 .current:focus-visible .label {
@@ -256,13 +256,13 @@
    stay, because unlike the current page this slat is still somewhere you can
    go. */
 .slat.sectionCurrent .chip {
-  background: var(--ui-nav-rail-chip-bg-current, var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
-  color: var(--ui-nav-rail-chip-icon-current, var(--ui-primary));
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
+  color: var(--ui-nav-rail-chip-icon-current, var(--ui-action));
 }
 
 /* Focus is code-only, matching Nav and Button: Figma models no focus state. */
 .slat:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 2px;
 }
 

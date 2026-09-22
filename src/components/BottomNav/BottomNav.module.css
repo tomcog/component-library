@@ -1,6 +1,6 @@
 /* Bottom navigation - the mobile counterpart to NavRail.
 
-   Colours resolve at the element, so --ui-primary and [data-theme] are picked
+   Colours resolve at the element, so --ui-action and [data-theme] are picked
    up from wherever they sit in the tree - same rule as Nav, NavRail and
    Button. The first name in each var() is the optional component override.
 
@@ -42,7 +42,7 @@
   color: var(--ui-bottom-nav-text, var(--ui-text-muted));
 }
 .item:focus-visible {
-  outline: 2px solid var(--ui-primary);
+  outline: 2px solid var(--ui-action);
   outline-offset: 2px;
 }
 
@@ -102,17 +102,17 @@
    never compound - the rule NavRail, NavItem and NavDropdownItem all follow. */
 .item:not(.current):hover .chip,
 .item:not(.current):focus-visible .chip {
-  background: var(--ui-bottom-nav-chip-bg-hover, var(--ui-primary));
-  color: var(--ui-bottom-nav-chip-icon-hover, var(--ui-text-on-primary));
+  background: var(--ui-bottom-nav-chip-bg-hover, var(--ui-action));
+  color: var(--ui-bottom-nav-chip-icon-hover, var(--ui-text-on-action));
 }
 
 /* Current: the tinted chip and the primary label. Figma's current chip is
    ButtonRound's *default* pair, as it is in the rail. */
 .item.current {
-  color: var(--ui-bottom-nav-text-current, var(--ui-primary));
+  color: var(--ui-bottom-nav-text-current, var(--ui-action));
 }
 .item.current .chip {
   background: var(--ui-bottom-nav-chip-bg-current,
-              var(--ui-primary-lighter, color-mix(in srgb, var(--ui-primary) 15%, var(--ui-white))));
-  color: var(--ui-bottom-nav-chip-icon-current, var(--ui-primary));
+              var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
+  color: var(--ui-bottom-nav-chip-icon-current, var(--ui-action));
 }

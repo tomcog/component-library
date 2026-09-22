@@ -103,12 +103,13 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
 
 ### Tokens: the rules that bite
 
-- **The semantic tier is the public API.** 25 colour names (`--ui-primary`, `--ui-surface-*`,
+- **The semantic tier is the public API.** 26 colour names (`--ui-action`, `--ui-brand`,
+  `--ui-surface-*`,
   `--ui-text-*`, `--ui-border-default`, …) are what an app overrides. Primitives
   (`--ui-tc-red`, `--ui-neutral-*`) are internal — components read semantics, not primitives.
   The one deliberate exception is `Logo`/`Spinner` reading `--ui-tc-red`.
 - **Pick the role by what the element *is*:**
-  `--ui-primary` for a control/CTA (and every focus ring), `--ui-accent` for chrome — a rule,
+  `--ui-action` for a control/CTA (and every focus ring), `--ui-brand` for chrome — a rule,
   divider, decorative border, a label that doesn't act — `--ui-danger` for destructive actions
   and errors, `--ui-safety` for the affirmative action. Each has its own `--ui-text-on-*`,
   and danger and safety each carry a `-lighter` and `-darker` ground as well.
@@ -116,7 +117,7 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   them.
 - **`var()` inside a custom property resolves where it is *declared*.** A component token
   composed on `:root` as `var(--ui-surface-pale)` freezes against `:root`, and
-  `[data-theme="dark"]` or a scoped `--ui-primary` on a subtree can't move it. So either don't
+  `[data-theme="dark"]` or a scoped `--ui-action` on a subtree can't move it. So either don't
   declare the component token and read it with a fallback at the element —
   `background: var(--ui-left-rail-bg, var(--ui-surface-pale))` — or redeclare it in the dark
   block. A tint **composed from a semantic** is derived at the element with `color-mix()`,
@@ -193,7 +194,7 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   selection stays the consumer's (the handler calls the item's own `click()`).
 - **`asChild`** (not `as`) on anything that may be a link, so `next/link` composes; omit
   `type` when it is set. Buttons inside forms default `type="button"`.
-- **Focus rings are code-only**: 2px `--ui-primary` outline, 2px offset (inset when clipped
+- **Focus rings are code-only**: 2px `--ui-action` outline, 2px offset (inset when clipped
   by a container). Input fields are the exception — the rule turning primary is their focus
   state. Figma models no focus state.
 - **Icons are slots** (`icon`, `iconEnd`: `ReactNode`, `aria-hidden`), drawn in
