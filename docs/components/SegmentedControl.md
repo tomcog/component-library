@@ -101,6 +101,43 @@ puts its `opacity` on the icon span for the same reason, so the two sides agree
 in structure and not only in value. **Read both the container and its contents
 before believing an opacity.**
 
+## `actions`: when the row is not a choice
+
+Undo and Redo are things you **do**. They are never "current", clicking one
+selects nothing, and a `radiogroup` announces them as "radio group, Undo, not
+checked" - radios that can never be chosen. `actions` says so:
+
+```tsx
+<SegmentedControl size="sm" actions aria-label="History">
+  <Segment icon={<Undo />}>Undo</Segment>
+  <Segment icon={<Redo />}>Redo</Segment>
+</SegmentedControl>
+```
+
+| | choice (default) | `actions` |
+|---|---|---|
+| track | `role="radiogroup"` | `role="group"` |
+| segment | `role="radio"`, `aria-checked` | plain `<button>` |
+| tab order | roving - one stop for the group | each button its own stop |
+| arrow keys | move and select, wrap, Home/End | not bound |
+| appearance | *identical* | *identical* |
+
+It changes what the control **is**, never how it looks, which is the whole
+reason it is a prop and not a second component: Figma draws an action pair
+exactly like a choice, so one visual form has to carry both meanings.
+
+`selected` means nothing here and warns in dev. An action is not chosen, it is
+taken. A control that is genuinely on or off is a toggle - that is `Pill`.
+
+This is the library's **first use of context**. A `Segment` cannot answer the
+question itself, since the same element is a radio in one group and a button in
+another, and `cloneElement` would reach only direct children and break the
+moment anything wraps one.
+
+It came from a real consumer: NextDraw Studio's toolbar carries an undo/redo
+pair, and the file that built it left a note saying the radiogroup was wrong
+and that it was "a question for the library rather than for this file". It was.
+
 ## Disabled was derived, then drawn, and they agreed
 
 The disabled state was code-only until 2026-09-22 - derived from the nearest

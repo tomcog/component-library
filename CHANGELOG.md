@@ -9,6 +9,36 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: `actions`, for a row that is not a choice.
+
+```tsx
+<SegmentedControl size="sm" actions aria-label="History">
+  <Segment icon={<Undo />}>Undo</Segment>
+  <Segment icon={<Redo />}>Redo</Segment>
+</SegmentedControl>
+```
+
+Undo and Redo are things you *do*. They are never current, clicking one selects nothing, and
+a `radiogroup` announces them as "radio group, Undo, not checked" - radios that can never be
+chosen. With `actions` the track is a `role="group"`, each segment a plain `<button>` with no
+`role="radio"` and no `aria-checked`, each its own tab stop, and the arrow keys are not bound
+because there is no selection to move.
+
+**Nothing changes visually.** That is the point of it being a prop rather than a second
+component: Figma draws an action pair exactly like a choice, so one visual form carries both
+meanings.
+
+`selected` means nothing in this mode and warns in dev - an action is taken, not chosen. A
+control that is genuinely on or off is a toggle, which is `Pill`.
+
+Purely additive; every existing `SegmentedControl` is unchanged. Internally this is the
+library's first use of React context: a `Segment` cannot answer the question itself, and
+`cloneElement` would reach only direct children.
+
+It came from a real consumer. NextDraw Studio's toolbar carries an undo/redo pair, and the
+file that built it left a note saying the radiogroup was wrong and that it was "a question
+for the library rather than for this file".
+
 **0.52.0 -> 0.53.0** - SegmentedControl: hover has no ground again, reverting 0.51.0.
 
     .segment:not(.selected):hover   background removed; label and glyph stay --ui-action

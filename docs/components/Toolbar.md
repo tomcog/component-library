@@ -54,6 +54,12 @@ The third keeps the text as the accessible name rather than dropping it, so
 switching a bar to icons costs nothing in screen-reader terms. See
 `hideLabel` in `SegmentedControl.md`.
 
+**A group that is not a choice takes `actions`.** An undo/redo pair is two
+things you do, not one-of-N, so the track becomes a `group` of plain buttons
+rather than a `radiogroup` of radios that can never be chosen. It looks
+identical - Figma draws such a pair exactly like the other groups - and it is
+the common case in a toolbar. See `actions` in `SegmentedControl.md`.
+
 Likewise **each control picks its own selected ground** with `variant`:
 `primary` for the brand fill, `dark` for the near-black one. It sits on the
 control, not on the segment or the bar, so one toolbar can mix them — which

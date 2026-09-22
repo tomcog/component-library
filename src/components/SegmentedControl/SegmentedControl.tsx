@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { createContext, forwardRef, useContext, useEffect, useRef } from "react";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./SegmentedControl.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
@@ -45,6 +45,12 @@ export type SegmentedControlVariant = "primary" | "dark";
  */
 export type SegmentedControlTone = "gray" | "white";
 
+/* Whether the group is a CHOICE or a row of ACTIONS. The only thing a Segment
+   needs from its track, and the first context in this library - a Segment has
+   to know because the answer changes what it renders, and `cloneElement` would
+   reach only direct children and break the moment anything wraps one. */
+const ActionsContext = createContext(false);
+
 export interface SegmentedControlProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   /** The `<Segment>` children. */
@@ -60,6 +66,24 @@ export interface SegmentedControlProps
   variant?: SegmentedControlVariant;
   /** The TRACK's ground. Defaults to `gray`. */
   tone?: SegmentedControlTone;
+  /**
+   * The segments are ACTIONS, not a choice - undo and redo, not one-of-N.
+   *
+   * Changes what the control IS rather than how it looks: the track becomes a
+   * `group` instead of a `radiogroup`, each segment a plain `button` with no
+   * `role="radio"` and no `aria-checked`, and every one its own tab stop the
+   * way buttons are. The arrow keys are not bound, because there is no
+   * selection to move. Nothing visual changes.
+   *
+   * Without it a pair of actions is announced as "radio group, Undo, not
+   * checked" and clicking never checks anything - radios that can never be
+   * chosen. Figma draws such a pair identically to a choice, which is why this
+   * is a prop here rather than a separate component.
+   *
+   * `selected` means nothing in this mode and warns in dev. A segment that is
+   * genuinely on or off is a toggle, which is `Pill`.
+   */
+  actions?: boolean;
   /**
    * Names the group. Required in practice: a screen reader announces "radio
    * group" with nothing to say which one, on a page that may hold several.
@@ -100,7 +124,7 @@ export interface SegmentedControlProps
  */
 export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps>(
   function SegmentedControl(
-    { children, size = "lg", variant = "primary", tone = "gray", className, ...props },
+    { children, size = "lg", variant = "primary", tone = "gray", actions = false, className, ...props },
     ref,
   ) {
     const track = useRef<HTMLDivElement | null>(null);
@@ -109,7 +133,7 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
       if (props["aria-label"] == null && props["aria-labelledby"] == null) {
         console.warn(
           "[@tomcoggia/ui] SegmentedControl: no accessible name. Pass `aria-label` - " +
-            'a page can hold more than one, and "radio group" alone does not say which.',
+            "a page can hold more than one, and the role alone does not say which.",
         );
       }
     }
@@ -121,6 +145,8 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
     // its `selected` prop and would otherwise leave a stop behind on a segment
     // that has since lost it.
     useEffect(() => {
+      // Actions are ordinary buttons and keep their own tab stops.
+      if (actions) return;
       const segments = Array.from(
         track.current?.querySelectorAll<HTMLButtonElement>('[role="radio"]') ?? [],
       );
@@ -165,16 +191,16 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
           if (typeof ref === "function") ref(node);
           else if (ref) ref.current = node;
         }}
-        role="radiogroup"
+        role={actions ? "group" : "radiogroup"}
         aria-label={props["aria-label"]}
         aria-labelledby={props["aria-labelledby"]}
         className={[styles.track, styles[size], styles[variant], styles[tone], className]
           .filter(Boolean)
           .join(" ")}
-        onKeyDown={onKeyDown}
+        onKeyDown={actions ? undefined : onKeyDown}
         {...props}
       >
-        {children}
+        <ActionsContext.Provider value={actions}>{children}</ActionsContext.Provider>
       </div>
     );
   },
@@ -241,6 +267,9 @@ export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segm
   { selected = false, icon, hideLabel = false, children, className, ...props },
   ref,
 ) {
+  /* What the track is. A segment cannot answer this itself: the same element
+     is a radio in a choice and a plain button in a row of actions. */
+  const actions = useContext(ActionsContext);
   /* `null`, `undefined` and `false` are all "no label" - the shapes a
      conditional child comes out as. An empty string is not treated specially:
      it is a label the caller passed, and guessing otherwise would hide a bug
@@ -249,6 +278,13 @@ export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segm
   const labelShown = hasLabel && !hideLabel;
 
   if (process.env.NODE_ENV !== "production") {
+    if (actions && selected) {
+      console.warn(
+        "[@tomcoggia/ui] Segment: `selected` means nothing inside an `actions` " +
+          "SegmentedControl - an action is not chosen, it is taken. A control that " +
+          "is genuinely on or off is a toggle, which is `Pill`.",
+      );
+    }
     if (
       !hasLabel &&
       props["aria-label"] == null &&
@@ -267,14 +303,17 @@ export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segm
     <button
       ref={ref}
       type="button"
-      role="radio"
-      aria-checked={selected}
+      // In `actions` mode this is just a button: no radio role, no checked
+      // state, and its own tab stop. The track sets none of the radiogroup
+      // keyboard behaviour either, so nothing is claimed that is not done.
+      role={actions ? undefined : "radio"}
+      aria-checked={actions ? undefined : selected}
       // Roving tabindex: Tab enters the group at the current choice rather
-      // than walking through every option.
-      tabIndex={selected ? 0 : -1}
+      // than walking through every option. Actions keep the natural order.
+      tabIndex={actions ? undefined : selected ? 0 : -1}
       className={[
         styles.segment,
-        selected ? styles.selected : null,
+        selected && !actions ? styles.selected : null,
         // Drives the icon's opacity, and keyed off the label being SHOWN: a
         // hidden-but-named label leaves the glyph alone on screen, which is
         // what the rule is about.

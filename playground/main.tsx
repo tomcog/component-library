@@ -631,14 +631,18 @@ function App() {
           + "gap is the argument \u2014 16 between controls against 4 between segments, so segments "
           + "crowd because they answer one question and controls stand apart because they answer "
           + "several. Each control picks its own selected ground with variant, which is why Preview "
-          + "and Zoom below read dark while History stays brand. role=\"group\", not "
+          + "and Zoom below read dark while History stays brand \u2014 and History is actions, so it is a "
+          + "group of buttons rather than a choice. role=\"group\", not "
           + "role=\"toolbar\": the ARIA toolbar pattern claims the arrow keys, and every "
           + "SegmentedControl inside has already bound them."
         }
       >
         <Row label="tone=&quot;gray&quot;">
           <Toolbar aria-label="Drawing tools, gray">
-            <SegmentedControl size="sm" aria-label="History">
+            {/* `actions`: undo and redo are things you DO, not one-of-N. The
+                track becomes a group, each segment a plain button. Identical
+                to look at, which is the point - Figma draws both the same. */}
+            <SegmentedControl size="sm" actions aria-label="History">
               <Segment icon={<Undo />}>Undo</Segment>
               <Segment icon={<Redo />}>Redo</Segment>
             </SegmentedControl>
@@ -657,7 +661,7 @@ function App() {
         <Row label="tone=&quot;white&quot;">
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
             <Toolbar tone="white" aria-label="Drawing tools, white">
-              <SegmentedControl size="sm" aria-label="History on white">
+              <SegmentedControl size="sm" actions aria-label="History on white">
                 <Segment icon={<Undo />}>Undo</Segment>
                 <Segment icon={<Redo />}>Redo</Segment>
               </SegmentedControl>
@@ -672,7 +676,7 @@ function App() {
             the Toolbar changes - this is the point of it owning so little. */}
         <Row label="icon-only">
           <Toolbar aria-label="Drawing tools, icons">
-            <SegmentedControl size="sm" aria-label="History icons">
+            <SegmentedControl size="sm" actions aria-label="History icons">
               <Segment icon={<Undo />} hideLabel>Undo</Segment>
               <Segment icon={<Redo />} hideLabel>Redo</Segment>
             </SegmentedControl>
@@ -704,7 +708,7 @@ function App() {
         {/* Nothing forces SM. A bar of LG controls derives to 48 tall. */}
         <Row label="lg controls">
           <Toolbar aria-label="Drawing tools, large">
-            <SegmentedControl aria-label="History large">
+            <SegmentedControl actions aria-label="History large">
               <Segment icon={<Undo />}>Undo</Segment>
               <Segment icon={<Redo />}>Redo</Segment>
             </SegmentedControl>
