@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: a respec of the segment's insides, and a `tone` on the track.
+**0.41.0 -> 0.42.0** - SegmentedControl: a respec of the segment's insides, and a `tone` on the track.
 
 Fetched from Figma, where both sets were redrawn (`Segment` 555:14966, `SegmentedTrack`
 558:15011). Every number that moved:
