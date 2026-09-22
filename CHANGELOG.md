@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - BREAKING: the two colour roles are renamed for what they are for.
+**0.49.0 -> 0.50.0** - BREAKING: the two colour roles are renamed for what they are for.
 
     --ui-primary          -> --ui-action
     --ui-primary-lighter  -> --ui-action-lighter
