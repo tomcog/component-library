@@ -50,7 +50,7 @@ export interface SegmentedControlProps
   /** The `<Segment>` children. */
   children: ReactNode;
   /**
-   * `lg` is a 36px segment on 14/20, `md` is 30 on 12/16, `sm` is 22 on
+   * `lg` is a 44px segment on 14/20, `md` is 34 on 12/16, `sm` is 26 on
    * 10/12 - and the track stands the same, the inset being zero. Height,
    * padding-x, icon and icon gap all step; the radius and the track's 8px
    * gap are shared.
@@ -193,8 +193,10 @@ export interface SegmentProps
    * Leaving `children` out entirely also works and warns in dev unless you
    * pass `aria-label`, `aria-labelledby` or `title`.
    *
-   * The segment stays as tall as it was and hugs to padding + icon, so an
-   * icon-only LG segment is 44x36 and an SM one 26x22. Figma has not posed one - this is the
+   * The segment stays as tall as it was and hugs to padding + icon. Since
+   * Figma's padding is uniform and the icon is square, that comes out SQUARE
+   * at every size - 44, 34, 26 - which is a consequence rather than a rule:
+   * Figma poses no icon-only segment, so nothing says it must stay that way. Figma has not posed one - this is the
    * mechanical result of its own `Label?` boolean, not a drawn size.
    */
   hideLabel?: boolean;

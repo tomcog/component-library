@@ -19,7 +19,7 @@
   padding: var(--ui-segmented-track-padding);
   /* `gap` is per size, with the size blocks below. */
   /* Height is DERIVED - padding + the segment - and since the inset went to
-     zero that is just the segment: 36 at LG, 30 at MD, 22 at SM. Giving the
+     zero that is just the segment: 44 at LG, 34 at MD, 26 at SM. Giving the
      track a height as well would be two numbers for one measurement, and they
      would disagree the moment the segment moved. */
 }
@@ -77,13 +77,14 @@
    pill that cannot accommodate it.
 
    Height and padding-inline, not padding-block - the same decomposition
-   Button uses. Stating a padding Y as well would be two numbers for one
-   measurement, and since the icon stands TALLER than the line box the two
-   would not even agree with each other: at LG the glyph clears 6 above and
-   below where the label clears 8.
+   Button uses. Figma's padding is uniform (10 / 8 / 6, the same number as the
+   padding-x here), so the height IS that padding twice plus the icon; stating
+   the vertical half as well would be two numbers for one measurement, and the
+   two would not even agree, since the icon stands taller than the line box -
+   at LG the glyph clears 10 above and below where the label clears 12.
 
    Height is what keeps the row straight. Figma hugs, so an icon-less segment
-   there would come out 32 / 28 / 20 against the 36 / 30 / 22 of one with a
+   there would come out 40 / 32 / 24 against the 44 / 34 / 26 of one with a
    glyph; holding the height means a track can mix the two without its
    segments stepping. */
 /* The gap between segments steps with the size too. It goes on the TRACK,

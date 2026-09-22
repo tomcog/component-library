@@ -9,6 +9,29 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: the segment's padding is uniform on all four sides.
+
+10 / 8 / 6, the same number the padding-x already held, so the vertical padding comes UP to
+meet the horizontal rather than the other way round. Heights follow: every one is padding +
+the icon + padding.
+
+    --ui-segmented-lg-height   36px -> 44px
+    --ui-segmented-md-height   30px -> 34px
+    --ui-segmented-sm-height   22px -> 26px   (back where 0.43.0 had it, by a different route)
+
+The tracks stand the same, the inset being zero. **This is the fourth height in four
+releases** (LG 48 -> 40 -> 36 -> 44); anything sized against a previous ref should be
+measured against this one rather than diffed.
+
+No token renamed or added. `--ui-segmented-*-padding-x` keeps its name although Figma now
+draws the same value on all four sides: the code still declares it horizontally only and lets
+the height carry the vertical half, which is Button's decomposition, and a token called
+`-padding` that reached one axis would be the misleading half of that trade.
+
+One consequence worth knowing: an **icon-only segment is now square** - 44, 34, 26 - because
+the padding is uniform and the icon is square. Nothing decided that, and Figma still poses no
+icon-only segment (#36).
+
 **0.43.0 -> 0.44.0** - SegmentedControl: `hideLabel` draws the icon alone, the glyph sits back from its label, and LG comes down to 36.
 
 Three changes from the same Figma pass.

@@ -18,11 +18,11 @@ Gray | White as well.
 
     track    radius 99, NO inset; between segments 8 / 6 / 4 by size
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
-    segment  radius 99; padding-y is derived, not declared - 6 / 6 / 4
-    LG       segment 36 on 14/20, padding-x 10, icon 24, icon gap 6, track gap 8
-    MD       segment 30 on 12/16, padding-x 8,  icon 18, icon gap 6, track gap 6
-    SM       segment 22 on 10/12, padding-x 6,  icon 14, icon gap 4, track gap 4
-             the track stands exactly as tall as its segment: 36 / 30 / 22
+    segment  radius 99; padding is UNIFORM - 10 / 8 / 6 on all four sides
+    LG       segment 44 on 14/20, padding 10, icon 24, icon gap 6, track gap 8
+    MD       segment 34 on 12/16, padding 8,  icon 18, icon gap 6, track gap 6
+    SM       segment 26 on 10/12, padding 6,  icon 14, icon gap 4, track gap 4
+             the track stands exactly as tall as its segment: 44 / 34 / 26
     icon     0.65 beside a label, 1 alone
 
 Every number above is a token: `--ui-segmented-{lg,md,sm}-{height,padding-x,
@@ -84,11 +84,17 @@ thing to know before touching this file. The icon has `--ui-segmented-*-icon-siz
 of its own now.
 
 It is also why the segment keeps an explicit height. Figma hugs, so its segment
-is `padding-y + the tallest child`, and the tallest child is the glyph - every
-height in the table is **padding-y + the icon + padding-y**: 6+24+6, 6+18+6,
-4+14+4. Holding the height in code instead means a track can mix segments with
+is `padding + the tallest child`, and the tallest child is the glyph - every
+height in the table is **padding + the icon + padding**: 10+24+10, 8+18+8,
+6+14+6. Holding the height in code instead means a track can mix segments with
 and without icons without its row stepping, and the vertical padding falls out
-of it: 6 around the glyph, 8 around the label at LG.
+of it: 10 around the glyph, 12 around the shorter label, at LG.
+
+The padding is uniform on all four sides, so only one number per size exists -
+but the code still declares it **horizontally only**, as `padding-inline`, and
+lets the height carry the vertical half. That is Button's decomposition and the
+reason the token is still called `-padding-x`: a token named `-padding` that
+reached one axis would be the misleading half of the trade.
 
 ## The icon's opacity is conditional, and that is a rule, not a value
 
@@ -140,7 +146,7 @@ exactly the kind of coincidence a single shared token turns into a bug.
 
 ## The track is not given a height
 
-36, 30 and 22 are derived - padding + the segment, which with no padding is
+44, 34 and 26 are derived - padding + the segment, which with no padding is
 just the segment. Declaring a track height as well would be two numbers for one
 measurement, and they would disagree the moment the segment moved. The segment
 itself takes `height` plus `padding-inline`, never `padding-block`: the same
@@ -243,10 +249,11 @@ the `Segment` icon property all went out in the same snapshot.
   together through every state.
 - ~~**The example frames are not modelled**, so the SET is the spec.~~
   **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
-- **An icon-only segment is not square.** 44x36 at LG, 34x30 at MD, 26x22 at
-  SM - padding-x + the icon, which is what hiding the label leaves behind.
-  Figma poses no icon-only segment, so squaring it would be inventing a
-  decision rather than reading one.
+- **An icon-only segment comes out square** - 44, 34, 26 - because the padding
+  is uniform and the icon is square, not because anything says it should be.
+  Figma poses no icon-only segment, so this is derived. It stopped being a
+  rectangle in 0.45.0 without anyone deciding it should, which is the thing to
+  notice if the padding ever splits again.
 - **No `xl`.** A step exists when something uses one, the rule that cut
   the type scale from six to four. `sm` met that rule when NextJob's
   section-header sort toggle wanted a short track.
@@ -279,7 +286,7 @@ was there and was explained away: **the set's own poses stand 40 / 30 / 26,
 which is the segment height, not segment + 8.** When a set's geometry and its
 poses disagree, the poses are measuring something and the inert values are not.
 
-## What 0.42.0 - 0.44.0 changed, and what is still owed in Figma
+## What 0.42.0 - 0.45.0 changed, and what is still owed in Figma
 
 The respec was drawn in Figma first and fetched, so this was a fetch rather
 than an independent edit. Padding, icon size and icon gap all moved, MD and SM
@@ -287,7 +294,8 @@ stand 30 and 26 where they stood 32 and 24, and the track grew its `Color`
 axis (0.42.0); the track's inset went to zero and its gap to 8 (0.43.0, the
 half that was missed first time round); and the padding-y came down - LG 8 -> 6
 and SM 6 -> 4, taking them to 36 and 22 - alongside the conditional icon
-opacity and `hideLabel` (0.44.0). What did NOT move across any of it: the type scale, both radii, the
+opacity and `hideLabel` (0.44.0); then the padding went uniform at 10 / 8 / 6,
+taking the heights to 44 / 34 / 26 (0.45.0). What did NOT move across any of it: the type scale, both radii, the
 two selected grounds, and every keyboard and ARIA behaviour.
 
 Three defects came back with it, all Figma-side. The White variants had kept

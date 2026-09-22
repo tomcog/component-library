@@ -193,9 +193,10 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
 36. **Figma poses no icon-only `Segment`.** `Label?` exists as a boolean on the
    set and is `true` in every instance in the file, so what a segment looks
    like with its label off has never been drawn. Code ships it as `hideLabel`
-   and lets the frame hug — padding-x + icon, giving 44x36 / 34x30 / 26x26 —
-   which is the mechanical result of Figma's own property rather than a
-   decision. Direction: **Figma**, and it is worth drawing precisely because
-   the mechanical answer is not square and a designer may not want it that way.
-   Until then the code's sizes are the only statement, and they are derived
-   rather than authored.
+   and lets the frame hug — padding + icon, which since 0.45.0's uniform
+   padding comes out SQUARE at 44 / 34 / 26. That is the mechanical result of
+   Figma's own property rather than a decision, and it changed shape once
+   already without anyone choosing it: before the padding went uniform it was
+   44x36 / 34x30 / 26x22. Direction: **Figma** — pose one per size, so the
+   shape is authored rather than falling out of whatever the padding happens
+   to be. Until then the code's sizes are the only statement.
