@@ -153,32 +153,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
 
-33. **The `Segment` set's geometry went raw again, and the
-   `Segmented Size/*` variables are now stale.** The 0.42.0 respec was drawn
-   by editing the variants directly: padding is `8/10`, `6/8`, `6/6`, the icon
-   gaps are 6, 6, 4 and the icon frames 24, 18, 14 — none of them bound, while
-   `Segmented Size/LG/Padding X` still says 16, `/MD/Height` still says 32,
-   `/SM/Height` 24 and `Segmented/Icon Gap` 8. A reader who trusts the
-   variables gets the *old* component confidently, which is the failure mode
-   `Pill/Padding X` was created to end. Direction: **Figma** — repoint the six
-   existing floats to the drawn values, add `Segmented Size/*/Icon Size` and
-   `/Icon Gap` (nine new floats, each carrying its `--ui-segmented-*` name as
-   Dev Mode code syntax, same value in both modes), and rebind every variant.
-   The code's tokens are the list to build from; `docs/components/SegmentedControl.md`
-   has the table.
-
-   **The track's two are worse, because they are inert as well as stale.**
-   `Segmented/Track Padding` says 4 and `/Track Gap` says 4, where the worked
-   frames draw 0 and 8. They are bound to the six `SegmentedTrack` variants —
-   which have no children and `layoutMode: "NONE"`, so Figma never applies
-   either one. The set cannot be wrong on canvas and cannot be right either;
-   it simply does not spend the values it holds. Repointing the two variables
-   is half the fix. The other half is giving the set auto-layout and a real
-   slot so the numbers have somewhere to land, which is design-shaped and is
-   its own session. Until then the frames 756:478 / 485 / 498 are the only
-   statement of the track's layout, and `docs/components/SegmentedControl.md`
-   says so under "Read the worked frames, not the track set".
-
 34. **The `Segment`'s icon stroke binds `Color/White` in `Active` and
    `Dark`.** A primitive, at all three sizes, on both states — where the label
    beside it correctly reads `Text/OnPrimary` and `Text/OnInverse`. The set's
@@ -211,18 +185,3 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    **Figma** — delete the three old frames, or rename all seven so the live
    ones say which size they are. Not done here: deleting nodes someone may
    still be working in is theirs to confirm.
-
-39. **The `Segment` set's type bindings were lost.** `Type/Label */Font Size`
-   and `/Line Height` were bound on every variant when the set was fetched in
-   0.42.0; all twelve now hold raw numbers. The values still match the scale
-   at LG, MD and SM, so nothing renders differently — which is exactly what
-   makes it worth recording, since the file no longer says the type came from
-   anywhere. Direction: **Figma** — rebind. Same defect as the geometry in
-   #33, and it arrived the same way, by editing variants directly.
-
-40. **`SegmentedTrack` has no XL.** The set is LG/MD/SM x Gray/White, six
-   cells, while `Segment` now carries four sizes and the worked frames include
-   an XL row (`762:741`). Code ships `size="xl"` on the track. Direction:
-   **Figma** — add `Size=XL` in both colours. Worth doing in the same pass as
-   #33, which has to rebuild that set's layout anyway.
-

@@ -308,6 +308,10 @@ auto-layout row of three `Segment` instances: padding 0, a gap, and a height
 equal to the segment exactly. As of 0.47.0 the current four are **762:741
 (XL) / 756:545 (LG) / 756:549 (MD) / 756:553 (SM)**.
 
+The four are bound: padding to `Segmented/Track Padding` (0), item spacing to
+`Segmented Size/*/Track Gap` (8 / 8 / 6 / 4), radius to `Segmented/Track
+Radius`.
+
 **Three superseded frames are still on the page** - `756:478 / 756:485 /
 756:498`, the pre-ladder LG/MD/SM at 44/34/26 - and they carry the SAME LAYER
 NAMES as three of the current four (`Frame 31/32/33`). Searching by name finds

@@ -49,10 +49,18 @@ Every type step aliases `Type/Label`, XL included: the set drew 18/20 and 18/24 
 the code takes the scale and the drawing is corrected to match. No visible change - the height
 is the icon's, not the label's, and a single centred line sits in the same place either way.
 
-Three Figma items recorded, all from the same editing pass: three superseded worked frames are
-still on the page under the same layer names as their replacements (#38), the `Segment` set's
-type bindings came off and are now raw numbers (#39), and `SegmentedTrack` has no XL cell yet
-(#40).
+**Pushed back to Figma in the same session**, so the two sides agree for the first time since
+0.41.0. Twenty-one geometry variables created and six repointed, each carrying its `--ui-*`
+name as Dev Mode code syntax; all sixteen `Segment` variants bind padding, gap, icon size and
+type; `Segmented/Track Gap` and `Segmented/Icon Gap` were deleted, having become one number
+where the component needs four; `SegmentedTrack` gained its XL cells and two stale poses were
+corrected. A `Control/*/Height` and `/Icon Size` tier mirrors the code's ladder. Closes
+divergences #33, #39, #40 and #41.
+
+Still open and needing a decision: three superseded worked frames remain on the page under the
+same layer names as their replacements (#38 - deleting nodes you may be working in is yours to
+confirm), the icon stroke still binds the `Color/White` primitive in Active and Dark (#34), and
+no icon-only segment is posed (#36). **Both sets read `CHANGED` and need publishing.**
 
 **0.45.0 -> 0.46.0** - Checkbox, Tabs and InputText read the type scale instead of repeating it.
 

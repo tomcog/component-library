@@ -366,3 +366,42 @@ Nothing here needs action.
    already set on the icon span rather than on the SVG's paths, so the two
    sides agree in structure as well as value.
 
+33. ~~The `Segment` set's geometry went raw again, and the `Segmented Size/*`
+   variables are stale.~~ **Resolved, and the variables now say more than they
+   did before it broke.** Twenty-one floats created and six repointed, all with
+   `--ui-*` Dev Mode code syntax and the same value in both modes: `Padding X`,
+   `Icon Size`, `Icon Gap` and `Track Gap` per size, `Height` per size, and an
+   XL row throughout. Every one of the sixteen `Segment` variants binds its
+   padding (all four sides), item spacing, icon width and height; nothing moved
+   when they were bound, which is the check that the values were right.
+
+   `Segmented/Track Gap` and `Segmented/Icon Gap` were **deleted**. Both had
+   become one number where the component now needs four, and divergence #8's
+   lesson is that a stale geometry variable is how the next reader gets a wrong
+   number confidently. Everything that referenced them was rebound first.
+
+   The track's padding is 0 and bound to the four worked frames, which is where
+   the layout actually lives. The set itself still cannot spend it - see the
+   note under #33's successor below.
+
+39. ~~The `Segment` set's type bindings were lost.~~ **Resolved.** All sixteen
+   variants bind `Type/Label */Font Size` and `/Line Height` again. XL's line
+   height was 20 against Label XL's 24 and is now 24 on both sides - the code
+   aliases the scale rather than holding an `OFF-SCALE` literal, which is the
+   answer to "is this deliberate" being no.
+
+40. ~~`SegmentedTrack` has no XL.~~ **Resolved.** `Size=XL, Color=Gray` and
+   `Color=White` added by cloning LG, so the set is 4x2 and every cell exists.
+   Two stale poses were corrected while there: MD stood 30 and SM 26, from
+   before the ladder, where their segments are 32 and 24. All eight now stand
+   exactly as tall as the segment they hold, which is what zero track padding
+   means.
+
+41. ~~Five `Segment` icon instances bound only one of width/height.~~
+   **Resolved, and worth the note.** They carried `constrainProportions: true`,
+   so Figma keeps ONE of the two bindings and lets the lock drive the other -
+   it does not error, and the rendered size is correct either way, so a check
+   that only measured would have passed. The five are unlocked and bind both,
+   matching the other eleven. **Verify a binding by reading `boundVariables`,
+   not by measuring the node.**
+
