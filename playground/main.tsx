@@ -588,7 +588,9 @@ function App() {
           + "segment has none, and hovering one changes the LABEL alone, because a second ground "
           + "inside the track would read as two things chosen. The selected pill is flush with the "
           + "track's ends, so that ground is seen in the 8px gaps between segments rather than as a "
-          + "ring around the chosen one. The second column is variant=\"dark\". "
+          + "ring around the chosen one. A glyph shown beside a label sits at 0.65 so the label "
+          + "leads; hideLabel draws it alone and at full strength, keeping the text as the "
+          + "accessible name. The second column is variant=\"dark\". "
           + "tone picks the track's own ground \u2014 gray is the pale surface, white the raised one, "
           + "which is what a control sitting on a pale page wants."
         }
@@ -635,6 +637,22 @@ function App() {
             <Segment selected={segSort === "az"} onClick={() => setSegSort("az")}>A–Z</Segment>
           </SegmentedControl>
           </div>
+        </Row>
+        {/* hideLabel keeps the text as the accessible name and draws the glyph
+            alone - and at FULL strength, where a glyph beside a label sits at
+            0.65 so the label leads. The two rows above and below each other
+            are the whole rule. */}
+        <Row label="hideLabel">
+          {SEGMENTED_SIZES.map((s) => (
+            <SegmentedControl key={s} size={s} aria-label={`${s} icon-only view`}>
+              <Segment icon={<House />} hideLabel selected={segMode === "all"} onClick={() => setSegMode("all")}>Home</Segment>
+              <Segment icon={<Save />} hideLabel selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Saved</Segment>
+            </SegmentedControl>
+          ))}
+          <SegmentedControl variant="dark" aria-label="Icon-only dark">
+            <Segment icon={<House />} hideLabel selected={segSort === "newest"} onClick={() => setSegSort("newest")}>Newest</Segment>
+            <Segment icon={<Save />} hideLabel selected={segSort === "az"} onClick={() => setSegSort("az")}>A–Z</Segment>
+          </SegmentedControl>
         </Row>
         <Row label="disabled">
           <SegmentedControl aria-label="Disabled example">

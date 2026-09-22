@@ -189,3 +189,23 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    component reaching for a primitive. Direction: **Figma** — bind the two to
    `Text/OnPrimary` and `Text/OnInverse`. Code is unaffected: the icon takes
    `currentColor` and cannot diverge from its label.
+
+35. **The `Segment`'s icon is full-opacity in `Size=LG, State=Active` and
+   `Size=LG, State=Dark`.** Every other cell that shows a glyph beside a label
+   draws it at 0.65 — the other two LG cells, and all four of MD and SM. These
+   two are the oldest cells in the set and predate the rule. Direction:
+   **Figma** — set both icon instances to 0.65. Code implements the rule
+   (`--ui-segmented-icon-opacity`), so LG Active and LG Dark render a muted
+   glyph where Figma renders a solid one; it is the most prominent cell of the
+   most prominent size, so this one is visible rather than theoretical.
+
+36. **Figma poses no icon-only `Segment`.** `Label?` exists as a boolean on the
+   set and is `true` in every instance in the file, so what a segment looks
+   like with its label off has never been drawn. Code ships it as `hideLabel`
+   and lets the frame hug — padding-x + icon, giving 44x36 / 34x30 / 26x26 —
+   which is the mechanical result of Figma's own property rather than a
+   decision. Direction: **Figma**, and it is worth drawing precisely because
+   the mechanical answer is not square and a designer may not want it that way.
+   Until then the code's sizes are the only statement, and they are derived
+   rather than authored.
+

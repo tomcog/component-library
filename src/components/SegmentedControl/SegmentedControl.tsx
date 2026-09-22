@@ -1,6 +1,7 @@
 import { forwardRef, useRef } from "react";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./SegmentedControl.module.css";
+import hidden from "../../internal/visuallyHidden.module.css";
 
 declare const process: { env: { NODE_ENV?: string } };
 
@@ -49,7 +50,7 @@ export interface SegmentedControlProps
   /** The `<Segment>` children. */
   children: ReactNode;
   /**
-   * `lg` is a 40px segment on 14/20, `md` is 30 on 12/16, `sm` is 26 on
+   * `lg` is a 36px segment on 14/20, `md` is 30 on 12/16, `sm` is 22 on
    * 10/12 - and the track stands the same, the inset being zero. Height,
    * padding-x, icon and icon gap all step; the radius and the track's 8px
    * gap are shared.
@@ -172,8 +173,31 @@ export interface SegmentProps
    * Drawn LARGER than the label's line box - 24 / 18 / 14 against 20 / 16 /
    * 12 - which is why the segment's height is a token rather than something
    * the type derives.
+   *
+   * Its OPACITY depends on whether a label shows beside it: 0.65 when one
+   * does, so the label leads, and full strength when the glyph is alone. See
+   * `hideLabel`.
    */
   icon?: ReactNode;
+  /**
+   * Draw the icon alone, keeping the label in the accessibility tree.
+   * Figma: `Label?` on the `Segment` set.
+   *
+   * Pass the label as `children` as usual and set this - the text is
+   * visually hidden, never `display: none`, so it is still the name a screen
+   * reader announces and still what the segment is called in the radio group.
+   * That is the whole reason this is a prop rather than "just leave the
+   * children out": a row of unnamed glyphs is a control nobody can use, and
+   * `aria-label` on each one is the same string in a worse place.
+   *
+   * Leaving `children` out entirely also works and warns in dev unless you
+   * pass `aria-label`, `aria-labelledby` or `title`.
+   *
+   * The segment stays as tall as it was and hugs to padding + icon, so an
+   * icon-only LG segment is 44x36 and an SM one 26x22. Figma has not posed one - this is the
+   * mechanical result of its own `Label?` boolean, not a drawn size.
+   */
+  hideLabel?: boolean;
 }
 
 /**
@@ -188,9 +212,31 @@ export interface SegmentProps
  * things chosen.
  */
 export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segment(
-  { selected = false, icon, children, className, ...props },
+  { selected = false, icon, hideLabel = false, children, className, ...props },
   ref,
 ) {
+  /* `null`, `undefined` and `false` are all "no label" - the shapes a
+     conditional child comes out as. An empty string is not treated specially:
+     it is a label the caller passed, and guessing otherwise would hide a bug
+     rather than the label. */
+  const hasLabel = children != null && children !== false;
+  const labelShown = hasLabel && !hideLabel;
+
+  if (process.env.NODE_ENV !== "production") {
+    if (
+      !hasLabel &&
+      props["aria-label"] == null &&
+      props["aria-labelledby"] == null &&
+      props.title == null
+    ) {
+      console.warn(
+        "[@tomcoggia/ui] Segment: an icon-only segment needs an accessible name. " +
+          "Pass the label as children with `hideLabel`, which keeps it as the name, " +
+          "or pass aria-label, aria-labelledby or title.",
+      );
+    }
+  }
+
   return (
     <button
       ref={ref}
@@ -200,7 +246,15 @@ export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segm
       // Roving tabindex: Tab enters the group at the current choice rather
       // than walking through every option.
       tabIndex={selected ? 0 : -1}
-      className={[styles.segment, selected ? styles.selected : null, className]
+      className={[
+        styles.segment,
+        selected ? styles.selected : null,
+        // Drives the icon's opacity, and keyed off the label being SHOWN: a
+        // hidden-but-named label leaves the glyph alone on screen, which is
+        // what the rule is about.
+        labelShown ? null : styles.iconOnly,
+        className,
+      ]
         .filter(Boolean)
         .join(" ")}
       {...props}
@@ -210,7 +264,9 @@ export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segm
           {icon}
         </span>
       ) : null}
-      {children}
+      {hasLabel ? (
+        hideLabel ? <span className={hidden.visuallyHidden}>{children}</span> : children
+      ) : null}
     </button>
   );
 });

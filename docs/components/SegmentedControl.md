@@ -18,10 +18,11 @@ Gray | White as well.
 
     track    radius 99, NO inset, 8 between segments
              tone="gray" Surface/Pale (default) | tone="white" Surface/Raised
-    segment  radius 99
-    LG       segment 40 on 14/20, padding-x 10, icon 24, icon gap 6 -> track 40
+    segment  radius 99; padding-y is derived, not declared - 6 / 6 / 4
+    LG       segment 36 on 14/20, padding-x 10, icon 24, icon gap 6 -> track 36
     MD       segment 30 on 12/16, padding-x 8,  icon 18, icon gap 6 -> track 30
-    SM       segment 26 on 10/12, padding-x 6,  icon 14, icon gap 4 -> track 26
+    SM       segment 22 on 10/12, padding-x 6,  icon 14, icon gap 4 -> track 22
+    icon     0.65 beside a label, 1 alone
 
 Every number above is a token: `--ui-segmented-{lg,md,sm}-{height,padding-x,
 icon-size,icon-gap,font-size,line-height}`, plus the shared
@@ -72,11 +73,44 @@ thing to know before touching this file. The icon has `--ui-segmented-*-icon-siz
 of its own now.
 
 It is also why the segment keeps an explicit height. Figma hugs, so its segment
-is `padding-y + the tallest child`, and the tallest child is the glyph: an
-icon-less LG segment there comes out 36 where one with a glyph is 40. Holding
-the height instead means a track can mix segments with and without icons
-without its row stepping, and the vertical padding simply falls out of it - 8
-around the glyph, 10 around the label, at LG.
+is `padding-y + the tallest child`, and the tallest child is the glyph - every
+height in the table is **padding-y + the icon + padding-y**: 6+24+6, 6+18+6,
+4+14+4. Holding the height in code instead means a track can mix segments with
+and without icons without its row stepping, and the vertical padding falls out
+of it: 6 around the glyph, 8 around the label at LG.
+
+## The icon's opacity is conditional, and that is a rule, not a value
+
+A glyph shown **beside a label** draws at `--ui-segmented-icon-opacity` (0.65),
+so the label leads and the icon supports it. A glyph shown **alone** draws at
+full strength: it is the whole message then, and a faded one beside a solid
+neighbour reads as disabled rather than as secondary.
+
+Opacity rather than a muted colour, deliberately. The glyph is `currentColor`
+and has to sit back from its label across four grounds - the pale track, brand
+red, near-black and the hover red - and no single muted colour does that on all
+four. Figma carries it the same way, as a layer opacity on the icon instance.
+
+The switch is keyed off whether the label is **shown**, not off whether one
+exists, so `hideLabel` - which keeps the text as the accessible name - counts as
+alone. That is the right key: the rule is about what the eye sees.
+
+## `hideLabel` is the icon-only segment
+
+Figma's `Label?` boolean. Pass the label as `children` as usual and set
+`hideLabel`; the text goes into `visuallyHidden`, never `display: none`, so it
+is still the name a screen reader announces and still what the option is called
+inside the radio group.
+
+That is why this is a prop rather than "just leave the children out". A row of
+unnamed glyphs is a control nobody can use, and an `aria-label` on each one is
+the same string in a worse place - further from the thing it names and easy to
+leave behind when the label changes. Leaving `children` out does work, and warns
+in dev unless `aria-label`, `aria-labelledby` or `title` is passed.
+
+The segment keeps its height and hugs to padding + icon, so an icon-only LG
+segment is **44x36**. Figma has not posed one - that is the mechanical result of
+its own `Label?` boolean, not a drawn size.
 
 ## The selected pill is flush with the track
 
@@ -89,7 +123,7 @@ reads, and at 4 it was a seam.
 
 ## The track is not given a height
 
-40, 30 and 26 are derived - padding + the segment, which with no padding is
+36, 30 and 22 are derived - padding + the segment, which with no padding is
 just the segment. Declaring a track height as well would be two numbers for one
 measurement, and they would disagree the moment the segment moved. The segment
 itself takes `height` plus `padding-inline`, never `padding-block`: the same
@@ -192,6 +226,14 @@ the `Segment` icon property all went out in the same snapshot.
   together through every state.
 - ~~**The example frames are not modelled**, so the SET is the spec.~~
   **Withdrawn in 0.43.0, and it is the mistake to learn from.** See below.
+- **The glyph is 0.65 in every cell that shows a label, including LG
+  Active and LG Dark.** Figma draws those two at full opacity where its other
+  ten are 0.65 - the two oldest cells in the set, drawn before the rule
+  existed. The rule is what is implemented; the two cells are divergence #35.
+- **An icon-only segment is not square.** 44x36 at LG, 34x30 at MD, 26x22 at
+  SM - padding-x + the icon, which is what hiding the label leaves behind.
+  Figma poses no icon-only segment, so squaring it would be inventing a
+  decision rather than reading one.
 - **No `xl`.** A step exists when something uses one, the rule that cut
   the type scale from six to four. `sm` met that rule when NextJob's
   section-header sort toggle wanted a short track.
@@ -224,14 +266,16 @@ was there and was explained away: **the set's own poses stand 40 / 30 / 26,
 which is the segment height, not segment + 8.** When a set's geometry and its
 poses disagree, the poses are measuring something and the inert values are not.
 
-## What 0.42.0 and 0.43.0 changed, and what is still owed in Figma
+## What 0.42.0 - 0.44.0 changed, and what is still owed in Figma
 
 The respec was drawn in Figma first and fetched, so this was a fetch rather
 than an independent edit. Padding, icon size and icon gap all moved, MD and SM
 stand 30 and 26 where they stood 32 and 24, and the track grew its `Color`
 axis (0.42.0); the track's inset went to zero and its gap to 8 (0.43.0, the
-half that was missed first time round). What did NOT move: the type scale,
-both radii, the two selected grounds, and every keyboard and ARIA behaviour.
+half that was missed first time round); and the padding-y came down - LG 8 -> 6
+and SM 6 -> 4, taking them to 36 and 22 - alongside the conditional icon
+opacity and `hideLabel` (0.44.0). What did NOT move across any of it: the type scale, both radii, the
+two selected grounds, and every keyboard and ARIA behaviour.
 
 Three defects came back with it, all Figma-side. The White variants had kept
 Figma's placeholder `Size4/5/6` names; those are renamed `LG/MD/SM` in the file

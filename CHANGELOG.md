@@ -9,6 +9,42 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: `hideLabel` draws the icon alone, the glyph sits back from its label, and LG comes down to 36.
+
+Three changes from the same Figma pass.
+
+**`hideLabel` on `Segment`** - Figma's `Label?` boolean, the icon-only segment. Pass the
+label as `children` as usual and set the flag: the text goes into `visuallyHidden`, so it
+is still the name a screen reader announces and still what the option is called inside the
+radio group. Leaving `children` out entirely also works and warns in dev unless you pass
+`aria-label`, `aria-labelledby` or `title` - a row of unnamed glyphs is a control nobody
+can use. The segment keeps its height and hugs to padding + icon: 44x36 at LG, 34x30 at
+MD, 26x22 at SM.
+
+**The icon's opacity is now conditional.** Beside a label it draws at
+`--ui-segmented-icon-opacity` (**0.65**) so the label leads; alone it draws at
+`--ui-segmented-icon-only-opacity` (**1**), because then the glyph is the whole message and
+a faded one reads as disabled. Keyed off whether the label is SHOWN, so `hideLabel` counts
+as alone. **Existing icon+label segments change appearance** - the glyph is muted where it
+was solid. Opacity rather than a muted colour, since the glyph is `currentColor` and has to
+sit back across four grounds.
+
+**The padding-y comes down at both ends**: LG 8 -> 6 and SM 6 -> 4, so those segments and
+their tracks stand **36** and **22**. Every height is padding-y + the icon + padding-y -
+6+24+6, 6+18+6, 4+14+4. That is the third height this component has had in three releases
+(LG 48 -> 40 -> 36, SM 32 -> 26 -> 22); measure against this ref rather than diffing from
+the last one.
+
+    --ui-segmented-lg-height          40px -> 36px
+    --ui-segmented-sm-height          26px -> 22px
+    --ui-segmented-icon-opacity       new, 0.65
+    --ui-segmented-icon-only-opacity  new, 1
+
+Nothing renamed or removed. Two Figma defects recorded: LG's `Active` and `Dark` cells still
+draw the glyph at full opacity where the other ten are 0.65 (#35, and it is visible), and no
+icon-only segment is posed anywhere in the file, so the code's 44x36 is derived rather than
+drawn (#36).
+
 **0.42.0 -> 0.43.0** - SegmentedControl: the track's inset is gone and its gap is 8.
 
 The other half of the 0.42.0 respec, missed first time round. Figma draws the selected

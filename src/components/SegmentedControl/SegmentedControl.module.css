@@ -19,7 +19,7 @@
   padding: var(--ui-segmented-track-padding);
   gap: var(--ui-segmented-track-gap);
   /* Height is DERIVED - padding + the segment - and since the inset went to
-     zero that is just the segment: 40 at LG, 30 at MD, 26 at SM. Giving the
+     zero that is just the segment: 36 at LG, 30 at MD, 22 at SM. Giving the
      track a height as well would be two numbers for one measurement, and they
      would disagree the moment the segment moved. */
 }
@@ -50,6 +50,11 @@
   /* The icon gap is set per size with the height and padding below, not here:
      LG and MD agree at 6 today and SM is 4, which one shared token could not
      say. */
+  /* Anchors the visually-hidden label of an icon-only segment. That label is
+     `position: absolute` and 1px square; without a positioned ancestor it
+     resolves against whatever is further up the tree, which is how a clipped
+     label ends up extending a page's scroll area. */
+  position: relative;
   /* Zeroed explicitly: a <button> carries UA padding (1px 6px in Chrome), and
      the library cannot assume the consuming app has reset it. */
   padding-block: 0;
@@ -73,12 +78,12 @@
 
    Height and padding-inline, not padding-block - the same decomposition
    Button uses. Stating a padding Y as well would be two numbers for one
-   measurement, and since the icon now stands TALLER than the line box the two
-   would not even agree with each other: at LG the glyph clears 8 above and
-   below where the label clears 10.
+   measurement, and since the icon stands TALLER than the line box the two
+   would not even agree with each other: at LG the glyph clears 6 above and
+   below where the label clears 8.
 
    Height is what keeps the row straight. Figma hugs, so an icon-less segment
-   there would come out 36 / 28 / 24 against the 40 / 30 / 26 of one with a
+   there would come out 32 / 28 / 20 against the 36 / 30 / 22 of one with a
    glyph; holding the height means a track can mix the two without its
    segments stepping. */
 .lg .segment {
@@ -164,6 +169,11 @@
   flex: none;
   align-items: center;
   justify-content: center;
+  /* Set back from the label, so the label leads. See .iconOnly below for the
+     other half of the rule - this value is only right while there IS a label
+     to lead. */
+  opacity: var(--ui-segmented-icon-opacity);
+  transition: opacity var(--ui-motion-fast) ease;
   /* Its colour is currentColor by inheritance, deliberately: unlike Tabs,
      where an idle tab is a dark label beside a muted glyph, a segment's icon
      and label are one object and move together through every state. */
@@ -187,6 +197,16 @@
   display: block;
 }
 
+/* A segment with no VISIBLE label - `hideLabel`, or no children at all. The
+   glyph goes back to full strength: it is the whole message now, and a faded
+   one next to a solid neighbour reads as disabled rather than as secondary.
+   Keyed off the label being shown rather than off `icon` being alone, so a
+   hidden-but-named label (the accessible one) still counts as absent. */
+.iconOnly .icon {
+  opacity: var(--ui-segmented-icon-only-opacity);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .segment { transition: none; }
+  .segment,
+  .icon { transition: none; }
 }
