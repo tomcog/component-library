@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: `actions`, for a row that is not a choice.
+**0.53.0 -> 0.54.0** - SegmentedControl: `actions`, for a row that is not a choice.
 
 ```tsx
 <SegmentedControl size="sm" actions aria-label="History">
