@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Toolbar: the gray bar holds WHITE tracks.
+**0.51.0 -> 0.52.0** - Toolbar: the gray bar holds WHITE tracks.
 
     tone="gray"    bar --ui-surface-sunken, tracks --ui-surface-raised   (tracks were pale)
     tone="white"   bar --ui-surface-raised, tracks --ui-surface-pale     (unchanged)
