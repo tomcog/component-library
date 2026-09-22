@@ -68,8 +68,8 @@ const SEMANTIC_TOKENS = [
 ];
 // Fill + the text meant to sit on it. A recolour that breaks contrast shows here.
 const TOKEN_PAIRS: [string, string, string][] = [
-  ["--ui-action", "--ui-text-on-action", "On primary"],
-  ["--ui-brand", "--ui-text-on-brand", "On accent"],
+  ["--ui-action", "--ui-text-on-action", "On action"],
+  ["--ui-brand", "--ui-text-on-brand", "On brand"],
   ["--ui-danger", "--ui-text-on-danger", "On danger"],
   ["--ui-safety", "--ui-text-on-safety", "On safety"],
   ["--ui-danger-darker", "--ui-text-on-danger", "On danger darker"],
@@ -360,17 +360,21 @@ function App() {
     );
   }, []);
   const [shell, setShell] = useState("/settings");
-  const [primary, setPrimary] = useState("#e51a38");
+  /* The two colour ROLES, settable apart - which is the whole point of their
+     names. Both default to TC Red because this library's brand is red and its
+     buttons are too; drag them apart and the split becomes visible. */
+  const [action, setAction] = useState("#e51a38");
+  const [brand, setBrand] = useState("#e51a38");
   const [face, setFace] = useState(FACES[0].value);
   const [bottomTab, setBottomTab] = useState("JOBS");
   const [size, setSize] = useState<ButtonSize>("lg");
   const [loading, setLoading] = useState(false);
   const [lead, setLead] = useState(true);
   const [page, setPage] = useState("/");
-  const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, primary]);
-  const typeface = useTokenValues(TYPEFACE_TOKENS, [theme, primary, face]);
-  const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, primary]);
-  const type = useTokenValues(TYPE_TOKENS, [theme, primary]);
+  const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, action, brand]);
+  const typeface = useTokenValues(TYPEFACE_TOKENS, [theme, action, brand, face]);
+  const primitive = useTokenValues(PRIMITIVE_TOKENS, [theme, action, brand]);
+  const type = useTokenValues(TYPE_TOKENS, [theme, action, brand]);
   const [subPage, setSubPage] = useState("/work/b");
   const [where, setWhere] = useState("Home");
   const [mode, setMode] = useState("Remote");
@@ -389,7 +393,11 @@ function App() {
     <div
       className="page ui-font-primary"
       data-theme={theme}
-      style={{ ["--ui-action" as string]: primary, ["--ui-font-primary" as string]: face }}
+      style={{
+        ["--ui-action" as string]: action,
+        ["--ui-brand" as string]: brand,
+        ["--ui-font-primary" as string]: face,
+      }}
     >
       <header>
         <h1>@tomcoggia/ui</h1>
@@ -419,9 +427,17 @@ function App() {
               <option value="dark">dark</option>
             </select>
           </label>
-          <label>
-            primary
-            <input type="color" value={primary} onChange={(e) => setPrimary(e.target.value)} />
+          {/* Two roles, not one. `action` moves every control in the page;
+              `brand` moves the app's own chrome, which today is LayerController's
+              layer number and its struck-through eye and nothing else - so if
+              only that row changes, that is correct rather than broken. */}
+          <label title="Controls: buttons, active nav, the selected segment, every focus ring">
+            action
+            <input type="color" value={action} onChange={(e) => setAction(e.target.value)} />
+          </label>
+          <label title="The app's own aesthetic: chrome, rules, labels. Today only LayerController reads it.">
+            brand
+            <input type="color" value={brand} onChange={(e) => setBrand(e.target.value)} />
           </label>
           <label>
             font
@@ -431,7 +447,7 @@ function App() {
           </label>
           <button
             className="reset"
-            onClick={() => { setPrimary("#e51a38"); setFace(FACES[0].value); }}
+            onClick={() => { setAction("#e51a38"); setBrand("#e51a38"); setFace(FACES[0].value); }}
           >
             reset
           </button>
