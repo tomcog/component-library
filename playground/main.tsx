@@ -809,10 +809,23 @@ function App() {
             </div>
           ))}
         </Row>
+        {/* Figma draws the Disabled cell at all four sizes: no ground, label and
+            glyph in Text/Disabled. The glyph needs no rule - currentColor greys
+            it with the label. The third control is the case Figma cannot say,
+            because State is one axis: a SELECTED segment that is disabled keeps
+            its ground, so a locked group still answers "which one is chosen". */}
         <Row label="disabled">
           <SegmentedControl aria-label="Disabled example">
             <Segment selected>Available</Segment>
             <Segment disabled>Unavailable</Segment>
+          </SegmentedControl>
+          <SegmentedControl aria-label="Disabled with icons">
+            <Segment icon={<House />} selected>Home</Segment>
+            <Segment icon={<Save />} disabled>Saved</Segment>
+          </SegmentedControl>
+          <SegmentedControl variant="dark" aria-label="Whole group disabled">
+            <Segment icon={<House />} selected disabled>Home</Segment>
+            <Segment icon={<Save />} disabled>Saved</Segment>
           </SegmentedControl>
         </Row>
       </Section>

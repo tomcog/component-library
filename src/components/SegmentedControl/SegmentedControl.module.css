@@ -142,10 +142,30 @@
    the two states would otherwise compound. The same rule NavItem, NavSlat and
    NavDropdownItem all follow. */
 
+/* Disabled. No ground, label and glyph in Text/Disabled - which is what Figma
+   draws in the `Disabled` cell at all four sizes, added 2026-09-22. It was
+   code-only before that, derived from the nearest existing component the way
+   CLAUDE.md prescribes, and the drawing came out the same: #b8b8b8 on nothing.
+   A derived state that survives contact with the drawing is the point of that
+   rule working.
+
+   The glyph needs no rule of its own: it is currentColor, so it greys with the
+   label, and .icon's 0.65 applies here as everywhere else - which is also what
+   Figma draws.
+
+   `cursor` and the tab order stay code-only; Figma models neither. A disabled
+   segment keeps tabIndex -1 and is skipped by the arrow keys, which query
+   `[role="radio"]:not(:disabled)`. */
 .segment:disabled {
   color: var(--ui-segmented-text-disabled, var(--ui-text-disabled));
   cursor: not-allowed;
 }
+
+/* A SELECTED segment that is disabled keeps its ground. Figma cannot say this
+   - State is one axis, so Disabled and Active are alternatives there - but the
+   control still has to answer "which one is chosen" when the whole group is
+   locked, and a selected segment drawn as unselected would answer it wrongly.
+   So the ground stays and only the label greys. Code-only. */
 
 .segment:focus-visible {
   outline: 2px solid var(--ui-segmented-focus-ring, var(--ui-action));

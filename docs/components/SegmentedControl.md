@@ -66,12 +66,15 @@ own `click()`, the same contract Tabs has.
 
 ## Only the selected segment has a ground
 
-    Off      no fill - the track shows through
-    Hover    no fill - the label and glyph turn to --ui-action
-    Active   --ui-action at full strength
-    Dark     --ui-surface-inverse at full strength
+Five states now, and a ground is what says *chosen*:
 
-Two of the four states draw nothing. What you see behind an `Off` or `Hover`
+    Off       no fill - the track shows through
+    Hover     no fill - the label and glyph turn to --ui-action
+    Disabled  no fill - the label and glyph go to --ui-text-disabled
+    Active    --ui-action at full strength
+    Dark      --ui-surface-inverse at full strength
+
+Three of the five states draw nothing. What you see behind an `Off` or `Hover`
 label is the track, whichever `tone` that is in, and a ground is what says
 *chosen* - so only the selected segment gets one.
 
@@ -97,6 +100,30 @@ paths within it**, at all sixteen cells. CSS composes the same way, and the code
 puts its `opacity` on the icon span for the same reason, so the two sides agree
 in structure and not only in value. **Read both the container and its contents
 before believing an opacity.**
+
+## Disabled was derived, then drawn, and they agreed
+
+The disabled state was code-only until 2026-09-22 - derived from the nearest
+existing component, which is what CLAUDE.md prescribes for a state Figma
+lacks. Figma then drew it, and the two came out the same: no ground, label and
+glyph in `Text/Disabled` (`#b8b8b8`), at all four sizes. Nothing in the code
+had to move. A derived state surviving contact with the drawing is that rule
+working rather than luck, and it is worth recording as evidence for the next
+one.
+
+The glyph needs no rule of its own - `currentColor` greys it with the label,
+and `.icon`'s 0.65 applies here as everywhere, which is also what Figma draws.
+
+**A selected segment that is disabled keeps its ground.** Figma cannot say
+this, because `State` is a single axis and `Disabled` and `Active` are
+alternatives on it. But a locked group still has to answer "which one is
+chosen", and a selected segment drawn as unselected answers it wrongly - so
+the ground stays and only the label greys. Code-only, and the playground poses
+it.
+
+`cursor: not-allowed` and the tab order are code-only too: a disabled segment
+keeps `tabIndex` -1 and the arrow keys skip it, since they query
+`[role="radio"]:not(:disabled)`.
 
 ## It is on the control ladder, and the icon-only segment is a ButtonRound
 
