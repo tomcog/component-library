@@ -9,6 +9,8 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**0.57.0 -> 0.58.0** - LayerController: an icon for the kind of layer, shown picked or not.
+
 **0.56.0 -> 0.57.0** - Tabs: the selected rule slides.
 
 Changing tabs now slides the 3px rule to the new tab, over `--ui-motion-base`,
