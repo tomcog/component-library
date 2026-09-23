@@ -8,7 +8,7 @@ Places where the code and the Figma file still disagree, each a defect with a fi
 pending. Numbers are stable IDs, not an order. When one is closed, move it to
 `docs/divergences-resolved.md` rather than deleting it.
 
-3. **In Figma, absent from code:** `Neutral/50`, `Neutral/200`, `Neutral/900`,
+3. **In Figma, absent from code:** `Neutral/50`, `Neutral/900`,
    `True Black`, `Action/Dark`, `Action/Darker`. No
    component uses any of them, and some may belong to the other projects
    sharing this file — so this is the one gap worth leaving open until a

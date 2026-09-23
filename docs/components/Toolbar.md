@@ -17,21 +17,23 @@ Gray | White.
 </Toolbar>
 ```
 
-    bar      radius 99, padding 4, gap 16 between controls
+    bar      radius 99, padding 4, gap 20 between controls
              tone="gray"   bar Surface/Sunken, tracks Surface/Raised  (default)
-             tone="white"  bar Surface/Raised, tracks Surface/Pale
+             tone="white"  bar Surface/Raised, tracks Surface/Sunken
     height   DERIVED: padding + the tallest control, so 32 with SM, 48 with LG
 
 ## It owns the grounds, a 4px inset, and the gap
 
 Grounds plural, because the bar decides its own **and** the one its tracks
 take: they sit *against* it rather than with it. A gray bar holds white
-tracks; a white bar holds pale ones. It is a relationship, not two colours —
-the track is always the step that lifts off the bar.
+tracks; a white bar holds sunken ones, the gray bar's own ground. It is a
+relationship, not two colours — the track is always the step that stands
+apart from the bar.
 
 That is set by the bar, not asked of the consumer. Nesting a `SegmentedControl`
 in a `Toolbar` should not require remembering to flip its tone, so the bar
-declares `--ui-segmented-track-bg` on itself and the tracks inherit it. A
+declares `--ui-segmented-track-bg` on itself (hooks `--ui-toolbar-track-bg`
+on gray, `--ui-toolbar-white-track-bg` on white) and the tracks inherit it. A
 control given an explicit `tone="white"` is unaffected — that one reads
 `--ui-segmented-track-white-bg` instead.
 
@@ -67,7 +69,7 @@ is what Figma draws, with `History` on the brand and `View` and `Zoom` dark.
 
 ## The gap is the argument
 
-16 between controls against 4 between segments. Segments crowd together
+20 between controls against 4 between segments (16 until 0.59.0). Segments crowd together
 because they answer one question; controls stand apart because they answer
 several. That ratio is the only thing stopping a toolbar from reading as one
 long row of options, and it is why `--ui-toolbar-gap` is its own token rather

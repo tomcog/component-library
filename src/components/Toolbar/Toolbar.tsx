@@ -50,7 +50,7 @@ export interface ToolbarProps extends HTMLAttributes<HTMLDivElement> {
  * so a bar of icon-only controls and a bar of labelled ones are the same
  * Toolbar with different children.
  *
- * **The gap is the argument.** 16 between controls against 4 between segments:
+ * **The gap is the argument.** 20 between controls against 4 between segments:
  * segments crowd because they answer one question, controls stand apart
  * because they answer several. That ratio is what stops a toolbar reading as
  * one long row of options.

@@ -82,10 +82,11 @@
      something else by - the code's old 600 was #686868 against Figma's
      #525252, one name for two colours.
 
-     Figma additionally has Neutral/50, /200 and /900, which no component
-     uses; they are not mirrored here. */
+     Figma additionally has Neutral/50 and /900, which no component uses;
+     they are not mirrored here. */
   --ui-neutral-100: #f5f5f5;
   --ui-neutral-150: #ededed;
+  --ui-neutral-200: #e5e5e5;   /* Figma: Neutral/200 - carries surface-sunken */
   --ui-neutral-300: #d4d4d4;
   --ui-neutral-350: #b8b8b8;
   --ui-neutral-400: #8c8c8c;
@@ -287,15 +288,15 @@
   --ui-surface-pale: var(--ui-neutral-100);
 
   --ui-surface-disabled: var(--ui-neutral-150);
-  /* A ground a step BELOW the page, for a bar that things sit down inside -
-     Toolbar's, holding pale segmented tracks that read lighter than it. The
-     value is --ui-neutral-150, which is what Figma's toolbar is drawn in once
-     its eyedropped #e1e3e2 is matched to the palette.
+  /* A ground a step BELOW the page, for things that sit down inside - the
+     gray Toolbar bar, and the tracks sunk into a white one. Moved from
+     neutral-150 to neutral-200 in 0.59.0, redrawn in Figma: at 150 the gray
+     bar sat too close to the white tracks it holds.
 
      A semantic rather than reading the neutral directly, because the ramp
      cannot invert: in dark the relationship flips and the bar LIFTS off the
      page instead of sinking into it, which a primitive could not express. */
-  --ui-surface-sunken: var(--ui-neutral-150);
+  --ui-surface-sunken: var(--ui-neutral-200);
   /* Figma: Text/Disabled, moved to Neutral/350. #d4d4d4 on the #ededed
      disabled fill is 1.2:1 - a label you cannot read at all rather than one
      that reads as inert. This is the value ButtonRound's comment records it
@@ -988,7 +989,7 @@
      Figma: the `Toolbars` frame (772:1200). A rounded bar holding N
      SegmentedControls, each of which is one independent choice - undo/redo,
      the view, the zoom target. The bar groups them; the gap is what says
-     they are separate questions, which is why it is four times the gap
+     they are separate questions, which is why it is five times the gap
      INSIDE a track.
 
      Height is derived, as everywhere else: padding + the tallest control.
@@ -996,14 +997,14 @@
      controls stands 48 without anything here changing. */
   --ui-toolbar-radius: 99px;
   --ui-toolbar-padding: 4px;
-  /* Between two segmented controls, NOT between two segments: 16 against the
+  /* Between two segmented controls, NOT between two segments: 20 against the
      4 inside a track. The one number that says "these are separate
-     controls" rather than one long row of options. */
-  --ui-toolbar-gap: 16px;
+     controls" rather than one long row of options. 16 until 0.59.0. */
+  --ui-toolbar-gap: 20px;
   /* The ground of the TRACKS the bar holds, which is a relationship rather
      than a colour: they sit against the bar, not with it. A gray bar holds
-     white tracks; a white bar holds pale ones, which is SegmentedControl's
-     own default and so needs nothing here.
+     white tracks; a white bar holds sunken ones - the same gray as the gray
+     bar, read at the element (see .white in Toolbar.module.css).
 
      Set by the bar rather than asked of the consumer - nesting a segmented
      control in a toolbar should not require remembering to flip its tone.
@@ -1096,7 +1097,7 @@
   --ui-surface-disabled: var(--ui-neutral-800);
   /* Lighter than the page, not darker: on a dark ground a bar cannot sink out
      of sight, so it rises instead. One step above --ui-surface-raised, which
-     keeps the pale tracks inside it legible against it. */
+     keeps the white-bar tracks it carries legible against that bar. */
   --ui-surface-sunken: var(--ui-neutral-700);
   --ui-text-disabled: var(--ui-neutral-550);
 

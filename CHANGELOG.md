@@ -9,6 +9,18 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Toolbar: a deeper gray, sunken tracks on white, a wider gap.
+
+Redrawn in Figma. Visible, no renames.
+
+- `--ui-surface-sunken` moves from `--ui-neutral-150` (#ededed) to the new
+  `--ui-neutral-200` (#e5e5e5), so the gray bar is a step darker. Toolbar is its
+  only reader. Dark is unchanged (`--ui-neutral-700`).
+- The tracks inside a `tone="white"` bar are now `--ui-surface-sunken` rather than
+  `--ui-surface-pale`. New hook: `--ui-toolbar-white-track-bg`. In dark they now
+  lift above the bar (neutral-700 on 800) instead of dropping below it (ink).
+- `--ui-toolbar-gap` 16 -> 20.
+
 **0.57.0 -> 0.58.0** - LayerController: an icon for the kind of layer, shown picked or not.
 
 **0.56.0 -> 0.57.0** - Tabs: the selected rule slides.

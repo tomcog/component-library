@@ -12,7 +12,7 @@
   align-items: center;
   border-radius: var(--ui-toolbar-radius);
   padding: var(--ui-toolbar-padding);
-  /* Four times the gap inside a track. That ratio is the whole visual
+  /* Five times the gap inside a track. That ratio is the whole visual
      argument: segments crowd together because they are one question, and the
      controls stand apart because they are several. */
   gap: var(--ui-toolbar-gap);
@@ -41,6 +41,8 @@
 }
 .white {
   background: var(--ui-toolbar-white-bg, var(--ui-surface-raised));
-  /* No track declaration: against a white bar the tracks are pale, which is
-     already SegmentedControl's default. */
+  /* Against a white bar the tracks sink into it, taking the gray bar's own
+     ground. Read here with a fallback rather than composed on :root, so a
+     scoped or dark --ui-surface-sunken still reaches it. */
+  --ui-segmented-track-bg: var(--ui-toolbar-white-track-bg, var(--ui-surface-sunken));
 }
