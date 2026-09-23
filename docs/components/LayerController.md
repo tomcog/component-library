@@ -27,6 +27,9 @@ the number, a colour swatch, the name and a grip. Figma: `LayerController`
               with Figma's 3px rule, overhanging it at both ends (741:386)
     icons     16px lucide/printer (Confirm stroke) and lucide/printed;
               lucide/pen-tool at 24px/1.5 stroke for purpose="draw" - same weight
+              `icon`: the caller's glyph at 16px, stroke 1.5 on lucide's 24 box
+              (the same weight); Text/Muted at rest, Confirm when picked,
+              Text/Disabled when hidden - not in Figma
               (Text/Muted with a Confirm tick); 12px eye (Text/Muted) and
               grip (Surface Muted), both at 65%, gap 4
     hidden    (719:567) no rules on box or row; number and name
@@ -76,6 +79,17 @@ eye, same radio-group behaviour - because it is the same layer either way. The
 two apps that use it sit side by side, and a row that changed shape between them
 would read as a different kind of thing rather than the same one doing a
 different job.
+
+## `icon` is what kind of layer it is
+
+Some layers aren't drawn the way the rest are - a photo turned into hatching
+among layers of drawn shapes. `icon` puts that kind in the box, and unlike the
+printer or nib it stays there whether or not the layer is picked: muted at
+rest, in the picked colour when picked, because a kind that only showed on the
+chosen layer wouldn't mark anything. When picked it takes the place of the
+printer or nib; the box's colour is still what says "picked". `printed` shows
+nothing on a row with an icon - the kind is the more lasting fact. Pass an icon
+that draws in `currentColor`; the row sizes it and sets its stroke.
 
 ## Hidden layers can't be picked
 

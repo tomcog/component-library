@@ -43,6 +43,15 @@ export interface LayerControllerProps
    */
   purpose?: "print" | "draw";
   /**
+   * What kind of layer this is, as a glyph in the box: a photo, say, among
+   * drawn layers. It stays in the box whether or not the layer is picked -
+   * muted at rest, in the picked colour in place of the printer or nib when
+   * picked - so the kind always shows. Pass an icon that draws in
+   * `currentColor` (a lucide icon does); it is sized to the box's 16px glyph
+   * and given the same stroke weight. Leave it out for an ordinary layer.
+   */
+  icon?: ReactNode;
+  /**
    * Whether the layer is shown. A hidden layer drops both rules, greys its
    * number and name, shows the red eye-off, and can't be picked to print.
    * Defaults to `true`.
@@ -84,6 +93,8 @@ export interface LayerControllerProps
  *
  * `purpose="draw"` turns the box into a pen nib for an editor, where the picked
  * layer is the one being drawn on rather than the one that will be printed.
+ * `icon` puts a kind of layer in the box instead - a photo among drawn layers -
+ * muted at rest and in the picked colour when picked.
  *
  * **The box is a radio, drawn like a checkbox.** Only one layer prints at a
  * time, so rows sharing a `name` are one radio group: picking a layer moves the
@@ -97,7 +108,7 @@ export interface LayerControllerProps
  * pass `aria-label` when the label is a control.
  */
 export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps>(function LayerController(
-  { number, color, swatchProps, swatchCut = false, label, printed = false, purpose = "print", visible = true, onVisibleChange, hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
+  { number, color, swatchProps, swatchCut = false, label, printed = false, purpose = "print", icon, visible = true, onVisibleChange, hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
   ref,
 ) {
   const verb = purpose === "draw" ? "Draw on" : "Print";
@@ -118,8 +129,15 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
           {...props}
           aria-label={ariaLabel}
         />
-        {state === "target" && (purpose === "draw" ? <PenToolIcon className={styles.icon} /> : <PrinterIcon className={styles.icon} />)}
-        {state === "printed" && <PrintedIcon className={styles.icon} />}
+        {icon ? (
+          // A kind of layer shows whatever the state; picking it only changes its colour.
+          <span className={styles.kind} aria-hidden>{icon}</span>
+        ) : (
+          <>
+            {state === "target" && (purpose === "draw" ? <PenToolIcon className={styles.icon} /> : <PrinterIcon className={styles.icon} />)}
+            {state === "printed" && <PrintedIcon className={styles.icon} />}
+          </>
+        )}
       </label>
       <div className={styles.layer}>
         <span className={styles.lead}>

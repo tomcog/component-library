@@ -54,6 +54,26 @@
   width: var(--ui-layer-controller-icon-size);
   height: var(--ui-layer-controller-icon-size);
 }
+/* A kind of layer: the caller's glyph, at the box's glyph size and the same
+   weight as the others (1 in 16 - lucide draws 2 in 24, so 1.5 there). Muted
+   at rest, the picked colour when picked, disabled with a hidden layer. */
+.kind {
+  display: flex;
+  color: var(--ui-layer-controller-printed-color, var(--ui-text-muted));
+}
+.kind svg {
+  display: block;
+  width: var(--ui-layer-controller-icon-size);
+  height: var(--ui-layer-controller-icon-size);
+  stroke-width: 1.5;
+}
+.root[data-state="target"] .kind {
+  color: var(--ui-layer-controller-target-color, var(--ui-safety));
+}
+.root[data-visible="false"] .kind {
+  color: var(--ui-layer-controller-hidden-text, var(--ui-text-disabled));
+}
+
 .strokeConfirm,
 .strokeMuted {
   stroke-linecap: round;
