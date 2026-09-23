@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Tag: Medium text, and no letter-spacing.
+**0.54.0 -> 0.55.0** - Tag: Medium text, and no letter-spacing.
 
     --ui-tag-font-weight       600 -> var(--ui-type-label-font-weight)   (500)
     --ui-tag-letter-spacing    0.01em -> 0
