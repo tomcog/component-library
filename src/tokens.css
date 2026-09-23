@@ -658,6 +658,21 @@
      say not to set at all. Kept as a token rather than dropped: the rule still
      reads it, so an app can still tune it, and 0 is the honest default. */
   --ui-tag-letter-spacing: 0;
+  /* The count prefix - a number before the label, first used for "how many
+     times does this tag appear". ONE STEP LIGHTER than the label, which is
+     Medium, so this is Regular: the number is context and the label is the
+     point. Stated rather than computed from --ui-tag-font-weight, because
+     calc() on a font weight would work right up until the weight became a
+     keyword.
+
+     Its colour is --ui-brand, read at the element like every component
+     colour. That makes Tag the second thing in the library to consume the
+     brand role at all - it is chrome on a label rather than a control, which
+     is exactly the distinction the role names were rewritten for. */
+  --ui-tag-count-font-weight: 400;
+  /* Count to label. The tag's own gap is 0 - Figma draws the label flush -
+     so this is the only thing separating them. */
+  --ui-tag-count-gap: 4px;
 
   /* InputText. Figma: `Input-Text` (553:5455) - a 32 box, 4 padding, 8 gap,
      16 icons, a 1px rule and 2px top corners, with the label 2 below it and

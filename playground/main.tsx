@@ -1339,14 +1339,29 @@ function App() {
           + "which is the whole state: no fill change and no border. NOT Pill, though they look alike: "
           + "Pill is a filter TOGGLE carrying aria-pressed, and a Tag states a fact, so it renders a "
           + "span and has nothing to toggle. The two share Figma's Pill/Radius, so the corner cannot "
-          + "drift between them. Type is Label MD at weight 600, the library's only SemiBold string, "
-          + "with the design's 1% letter-spacing."
+          + "drift between them. Type is Label MD at Medium with no letter-spacing \u2014 it carried the "
+          + "library's only SemiBold string and its only letter-spacing until 0.55.0, and both were "
+          + "faithful transcriptions of the Figma cells that had quietly made it the odd one out. "
+          + "`count` puts a number before the label in the brand colour, one weight lighter: it is "
+          + "context, so it is quieter than the thing it qualifies."
         }
       >
         <Row label="labels">
           <Tag>Applied</Tag>
           <Tag>Remote</Tag>
           <Tag>Full-time</Tag>
+        </Row>
+        {/* The count is the second thing in the library to consume --ui-brand
+            at all: it is chrome on a label rather than a control, which is the
+            distinction the role names were rewritten for. Drag `brand` in the
+            header and only these numbers move. */}
+        <Row label="count">
+          <Tag count={3}>Applied</Tag>
+          <Tag count={12}>Remote</Tag>
+          <Tag count={0}>Rejected</Tag>
+          <Tag count={7} asChild>
+            <button type="button" onClick={() => {}}>Figma Mastery</button>
+          </Tag>
         </Row>
         <Row label="asChild \u2014 the whole pill is the control">
           <Tag asChild>

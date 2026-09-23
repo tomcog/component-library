@@ -30,6 +30,24 @@
   transition: color var(--ui-motion-fast) ease;
 }
 
+/* The count prefix. Lighter than the label and in the brand colour, so it
+   reads as context rather than as part of the string: "3 Applied" is one tag
+   saying a thing appears three times, not a tag called "3 Applied".
+
+   Its own margin rather than the tag's `gap`, which is 0 because Figma draws
+   the label flush to the pill. */
+.count {
+  color: var(--ui-tag-count-color, var(--ui-brand));
+  font-weight: var(--ui-tag-count-font-weight);
+  margin-inline-end: var(--ui-tag-count-gap);
+}
+
+/* The hover state is the LABEL's, so the count keeps its brand colour under
+   the pointer - it is not part of the string that reddens. */
+.tag:hover .count {
+  color: var(--ui-tag-count-color, var(--ui-brand));
+}
+
 /* Figma's second cell. The whole label reddens - there is no fill change and
    no border, so the colour IS the state.
 

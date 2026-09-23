@@ -9,6 +9,30 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Tag: a `count` prefix.
+
+```tsx
+<Tag count={3}>Applied</Tag>
+```
+
+A number before the label - how many times the tag appears, to begin with. It is context, so
+it is quieter than what it qualifies: the same size, one weight lighter than the label
+(Regular against Medium), and in `--ui-brand` rather than the label's muted grey.
+
+`0` renders; only `undefined` leaves the prefix off. A tag counting zero of something is
+saying something, and a `count` that vanished at zero is the sort of falsy-check bug nobody
+sees. Under `asChild` the number goes INSIDE the supplied control, so the pill stays one
+element. It keeps its brand colour on hover, since hover is the label's state.
+
+New tokens: `--ui-tag-count-font-weight` (400), `--ui-tag-count-gap` (4px), and the colour
+hook `--ui-tag-count-color`, defaulting to `--ui-brand` at the element.
+
+**Second consumer of `--ui-brand` in the library**, after `LayerController`'s layer number -
+a count is chrome on a label rather than a control, which is the distinction the role rename
+in 0.50.0 was for. Verified by moving brand and action apart: the count follows brand.
+
+Purely additive; a `Tag` without `count` is unchanged.
+
 **0.54.0 -> 0.55.0** - Tag: Medium text, and no letter-spacing.
 
     --ui-tag-font-weight       600 -> var(--ui-type-label-font-weight)   (500)

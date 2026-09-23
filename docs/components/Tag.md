@@ -14,7 +14,8 @@ A small label pill. Figma: the `Tag` set (`685:584`), one axis
 
     radius    Pill/Radius (999) - the SAME variable Pill binds
     padding   4 / 8
-    type      Type/Label MD, 12/16, Medium, +1% letter-spacing
+    type      Type/Label MD, 12/16, Medium, no letter-spacing
+    count     the same size, one weight lighter, in --ui-brand
     fill      Surface/Raised
     label     Text/Muted, going Action/Base on hover
     height    none - 24 is padding plus the line box, as Pill's is
@@ -42,6 +43,32 @@ second `999px` here would be a copy that only looks like an alias, and the two
 corners would drift the first time either moved. Same reasoning as
 `--ui-nav-rail-chip-size` aliasing ButtonRound's, and the same trap
 `--ui-left-rail-bg` documents from the other direction.
+
+## `count` is a number before the label
+
+```tsx
+<Tag count={3}>Applied</Tag>       // "3 Applied" - the tag appears three times
+```
+
+It is **context**, so it is quieter than the thing it qualifies: the same
+size, one weight lighter (Regular against the label's Medium), and in
+`--ui-brand` rather than the label's muted grey. "3 Applied" reads as one tag
+saying a thing appears three times, not as a tag called "3 Applied".
+
+`0` renders. Only `undefined` leaves the prefix off - a tag that genuinely
+counts zero of something is saying something, and a `count` that silently
+vanished at zero is the sort of falsy-check bug nobody sees.
+
+Under `asChild` the number goes INSIDE the supplied button or link, not in
+front of it, so the whole pill stays one control.
+
+It keeps its brand colour on hover, because hover is the LABEL's state - the
+number is not part of the string that reddens.
+
+**This is the second thing in the library to consume `--ui-brand` at all**,
+after `LayerController`'s layer number. That is the role working as intended:
+a count is chrome on a label, not a control, which is exactly the distinction
+the role names were rewritten for in 0.50.0.
 
 ## Tag stopped being the exception in 0.55.0
 

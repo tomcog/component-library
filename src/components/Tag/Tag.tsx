@@ -12,6 +12,22 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
    * control, so there is one element rather than a span holding a button.
    */
   asChild?: boolean;
+  /**
+   * A number shown before the label, in the brand colour and one weight
+   * lighter than it - "3 Applied" is one tag saying the thing appears three
+   * times, not a tag called "3 Applied".
+   *
+   * It is context, so it is quieter than what it qualifies: the label is
+   * Medium and this is Regular, and the colour is `--ui-brand` rather than the
+   * label's muted grey. It keeps that colour on hover too, since hover is the
+   * LABEL's state.
+   *
+   * `0` renders. Only `undefined` leaves the prefix off, because a tag that
+   * genuinely counts zero of something is saying something, and a `count`
+   * prop that silently vanished at zero would be the kind of falsy-check bug
+   * that is very hard to see.
+   */
+  count?: number;
 }
 
 /**
@@ -38,7 +54,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
  * `--ui-tag-text-hover` the resting colour to opt out.
  */
 export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
-  { children, className, asChild = false, ...props },
+  { children, className, asChild = false, count, ...props },
   ref,
 ) {
   const child =
@@ -50,22 +66,40 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
     .filter(Boolean)
     .join(" ");
 
+  /* Checked against undefined, not truthiness: see `count`. Built from the
+     CHILD's children under asChild, so the prefix lands inside the button or
+     link the caller supplied rather than replacing it. */
+  const label = child ? child.props.children : children;
+  const content =
+    count === undefined ? (
+      label
+    ) : (
+      <>
+        <span className={styles.count}>{count}</span>
+        {label}
+      </>
+    );
+
   if (child) {
     const childRef = (child as any).ref ?? child.props.ref;
-    return cloneElement(child, {
-      ...props,
-      ...child.props,
-      className: classes,
-      ref: (node: HTMLSpanElement | null) => {
-        assignRef(ref, node);
-        assignRef(childRef, node);
+    return cloneElement(
+      child,
+      {
+        ...props,
+        ...child.props,
+        className: classes,
+        ref: (node: HTMLSpanElement | null) => {
+          assignRef(ref, node);
+          assignRef(childRef, node);
+        },
       },
-    });
+      content,
+    );
   }
 
   return (
     <span ref={ref} className={classes} {...props}>
-      {children}
+      {content}
     </span>
   );
 });
