@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from "react";
+import { forwardRef, useEffect, useLayoutEffect, useRef } from "react";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./Tabs.module.css";
 
@@ -79,6 +79,68 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   ref,
 ) {
   const list = useRef<HTMLDivElement | null>(null);
+  const indicator = useRef<HTMLSpanElement | null>(null);
+
+  // The selected tab's rule is ONE element that travels, not a border on each
+  // tab, so a change of view slides it across rather than fading one out and
+  // another in. \`Tabs\` cannot see which child is active from its props -
+  // \`active\` lives on each \`Tab\` - so it reads the DOM, as the arrow keys do.
+  function place() {
+    const bar = indicator.current;
+    const strip = list.current;
+    const selected = strip?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+    if (!bar || !strip) return;
+    if (!selected) {
+      bar.style.width = "0px";
+      return;
+    }
+    // Rects, not offsetLeft/offsetWidth: those round to whole pixels, and a
+    // label's width rarely is one, so the rule would overhang by a fraction.
+    const from = strip.getBoundingClientRect();
+    const to = selected.getBoundingClientRect();
+    bar.style.width = `${to.width}px`;
+    bar.style.transform = `translateX(${to.left - from.left}px)`;
+  }
+
+  // First placement is before paint and without a transition, so the rule is
+  // simply there on arrival instead of sliding in from the left edge. Only
+  // after that does the list switch its own border off and hand over.
+  useLayoutEffect(() => {
+    place();
+    const frame = requestAnimationFrame(() => {
+      list.current?.setAttribute("data-indicator", "");
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  // Everything after that. A selection change flips \`aria-selected\`; a tab's
+  // width moves when the web font lands, when an app steps the size with the
+  // pointer, or when a badge's count changes - none of which re-render this.
+  useEffect(() => {
+    const node = list.current;
+    if (!node) return;
+    const sizes = new ResizeObserver(() => place());
+    const watch = () => {
+      sizes.disconnect();
+      sizes.observe(node);
+      node.querySelectorAll('[role="tab"]').forEach((tab) => sizes.observe(tab));
+    };
+    const changes = new MutationObserver((records) => {
+      if (records.some((r) => r.type === "childList")) watch();
+      place();
+    });
+    watch();
+    changes.observe(node, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["aria-selected"],
+    });
+    return () => {
+      sizes.disconnect();
+      changes.disconnect();
+    };
+  }, []);
 
   if (process.env.NODE_ENV !== "production") {
     if (props["aria-label"] == null && props["aria-labelledby"] == null) {
@@ -128,6 +190,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
         onKeyDown={onKeyDown}
       >
         {children}
+        <span ref={indicator} className={styles.indicator} aria-hidden="true" />
       </div>
       {trailing != null ? <div className={styles.trailing}>{trailing}</div> : null}
     </div>
@@ -153,8 +216,9 @@ export interface TabProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
 /**
  * One tab in a `Tabs`. Figma: the `Tabs/Item` set (646:2357).
  *
- * The rule under a tab is drawn at every state and only changes colour, so
- * selecting one moves nothing.
+ * Every tab reserves the space of its rule at every state, so selecting one
+ * moves nothing. The rule itself is drawn once, by \`Tabs\`, and slides to the
+ * selected tab.
  *
  * It carries no `size` of its own - the strip sets that for every tab in it.
  */

@@ -96,9 +96,36 @@ a two-tab strip into two 50% slabs.
 
 ## The rule is transparent, never absent
 
-Every tab draws its 3px rule at every state and only the colour changes.
-Toggling `border-bottom` on and off would move the row by 3px each time you
-picked a view.
+Every tab reserves its 3px rule, as a transparent `border-bottom`, at every
+state. Toggling `border-bottom` on and off would move the row by 3px each time
+you picked a view.
+
+## The selected rule travels
+
+Since 0.57.0 the selected tab no longer colours its own border. `Tabs` renders
+one `.indicator` span inside the tablist and moves it with `transform` and
+`width` over `--ui-motion-base` (travelling motion), so a change of view slides
+the rule across. It lies over the transparent rule each tab reserves, so it
+lands on the same line at the same weight.
+
+- **It reads the DOM.** `active` lives on each `Tab`, not on `Tabs`, so the
+  strip finds `[aria-selected="true"]`, the same way the arrow keys find tabs.
+  A `MutationObserver` watches `aria-selected` and added/removed tabs, and a
+  `ResizeObserver` on the list and every tab re-places it when a width moves:
+  the web font landing, an app stepping `lg`/`xl` on `pointer: coarse`, a badge
+  count changing. None of those re-render `Tabs`.
+- **Bounding rects, not `offsetLeft`/`offsetWidth`.** Those round to whole
+  pixels, and a label's width rarely is one.
+- **No slide on arrival.** The first placement is in a layout effect with no
+  transition; the list gets `data-indicator` a frame later, which is what
+  turns the transition on.
+- **Until then, the old rule stands.** `.list:not([data-indicator]) .current`
+  still colours the tab's own border, so a server-rendered page, or one with
+  scripts off, shows the selected rule before hydration.
+- **It sits inside the tablist**, `aria-hidden`, so it scrolls with the tabs
+  when a long strip overflows. Hidden from the accessibility tree, it does not
+  break the rule that a tablist's children are tabs.
+- Reduced motion drops the transition; the rule jumps.
 
 ## The keyboard is the reason this is a component
 

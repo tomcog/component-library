@@ -965,8 +965,8 @@ function App() {
           + "on, so it is a real tablist of buttons. Click one, then use the arrow keys: they move "
           + "between tabs and select as they go, and Home/End jump to the ends. Only the selected tab "
           + "is in the tab order, so Tab enters and leaves the strip rather than walking through every "
-          + "view. The rule under each tab is drawn at every state and only changes colour, so "
-          + "selecting one moves nothing."
+          + "view. Every tab reserves the space of its rule, so selecting one moves nothing, and "
+          + "the selected rule slides to the new tab rather than jumping."
         }
       >
         {(["lg", "xl"] as const).map((size) => (

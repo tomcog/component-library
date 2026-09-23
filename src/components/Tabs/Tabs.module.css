@@ -25,6 +25,8 @@
 /* Still takes the row, so `trailing` is pushed to the far end - but its own
    children hug, so the tabs gather at the start rather than spreading. */
 .list {
+  /* The travelling rule is positioned against this, and scrolls with it. */
+  position: relative;
   display: flex;
   flex: 1 1 0%;
   min-width: 0;
@@ -108,7 +110,35 @@
 /* The selected view. Label, icon and rule are one colour. */
 .current {
   color: var(--ui-tabs-text-current, var(--ui-action));
+}
+
+/* Until the strip has measured itself - before hydration in a server-rendered
+   app, or with scripts off - the selected tab draws its own rule, exactly as
+   it always did. Once the travelling rule is placed it takes over. */
+.list:not([data-indicator]) .current {
   border-bottom-color: var(--ui-tabs-rule, var(--ui-action));
+}
+
+/* The selected tab's rule, drawn once and moved rather than drawn per tab.
+   It lies over the transparent rule every tab reserves, so it lands on the
+   same line at the same weight. Positioned by Tabs.tsx from the selected
+   tab's offsetLeft and offsetWidth. */
+.indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: var(--ui-tabs-rule-width);
+  background: var(--ui-tabs-rule, var(--ui-action));
+  pointer-events: none;
+  visibility: hidden;
+}
+.list[data-indicator] .indicator {
+  visibility: visible;
+  /* Transform rather than left, so the slide stays off layout. Width animates
+     as a length because the tabs differ in width. */
+  transition: transform var(--ui-motion-base) ease,
+              width var(--ui-motion-base) ease;
 }
 
 .tab:focus-visible {
@@ -154,5 +184,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tab { transition: none; }
+  .tab,
+  .list[data-indicator] .indicator { transition: none; }
 }
