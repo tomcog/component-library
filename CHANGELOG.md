@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Toolbar: a deeper gray, sunken tracks on white, a wider gap.
+**0.58.0 -> 0.59.0** - Toolbar: a deeper gray, sunken tracks on white, a wider gap.
 
 Redrawn in Figma. Visible, no renames.
 
