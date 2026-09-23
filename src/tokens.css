@@ -648,8 +648,16 @@
   --ui-tag-padding-y: 4px;
   --ui-tag-font-size: var(--ui-type-label-md-font-size);
   --ui-tag-line-height: var(--ui-type-label-md-line-height);
-  --ui-tag-font-weight: 600;
-  --ui-tag-letter-spacing: 0.01em;
+  /* Medium, like every other string in the library. It was SemiBold 600 until
+     0.55.0 - read off both Figma cells, and the only raw weight left in this
+     file once Checkbox and Tabs stopped repeating the scale. Aliased rather
+     than set to 500, so a Tag follows if the label scale is ever retuned. */
+  --ui-tag-font-weight: var(--ui-type-label-font-weight);
+  /* ZERO since 0.55.0. It was 0.01em, transcribed from the Figma cells, and
+     it was the only letter-spacing in the library - which the app guidelines
+     say not to set at all. Kept as a token rather than dropped: the rule still
+     reads it, so an app can still tune it, and 0 is the honest default. */
+  --ui-tag-letter-spacing: 0;
 
   /* InputText. Figma: `Input-Text` (553:5455) - a 32 box, 4 padding, 8 gap,
      16 icons, a 1px rule and 2px top corners, with the label 2 below it and

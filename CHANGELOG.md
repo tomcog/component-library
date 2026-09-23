@@ -9,6 +9,29 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Tag: Medium text, and no letter-spacing.
+
+    --ui-tag-font-weight       600 -> var(--ui-type-label-font-weight)   (500)
+    --ui-tag-letter-spacing    0.01em -> 0
+
+**Visible on every Tag**, so check anywhere one sits in a tight row - the string is slightly
+lighter and about 2px narrower at the default size.
+
+Tag carried the library's only two typographic departures. The weight made it the one
+component shouting: every other string here is Medium, bar `InputText`'s value and
+`Checkbox`'s label, which are Regular. The letter-spacing was the only one anywhere, and the
+consuming apps' own `guidelines/Guidelines.md` says not to adjust letter-spacing at all.
+
+The weight now **aliases** the scale rather than holding 500, so a Tag follows if the label
+scale is ever retuned - the last raw weight in `tokens.css` is gone.
+`--ui-tag-letter-spacing` is kept rather than dropped: the rule still reads it, so an app can
+tune it, and `0` is an honest default rather than a value nothing asked for.
+
+Both values were faithful transcriptions of the Figma cells, which is the right instinct and
+shows its limit: a value read off a cell is only as considered as the cell, and two of them
+had quietly made this component the odd one out. Pushed to Figma in the same pass - both
+cells are Medium at 0% now.
+
 **0.53.0 -> 0.54.0** - SegmentedControl: `actions`, for a row that is not a choice.
 
 ```tsx

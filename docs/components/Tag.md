@@ -14,7 +14,7 @@ A small label pill. Figma: the `Tag` set (`685:584`), one axis
 
     radius    Pill/Radius (999) - the SAME variable Pill binds
     padding   4 / 8
-    type      Type/Label MD, 12/16, weight 600, +1% letter-spacing
+    type      Type/Label MD, 12/16, Medium, +1% letter-spacing
     fill      Surface/Raised
     label     Text/Muted, going Action/Base on hover
     height    none - 24 is padding plus the line box, as Pill's is
@@ -43,15 +43,27 @@ corners would drift the first time either moved. Same reasoning as
 `--ui-nav-rail-chip-size` aliasing ButtonRound's, and the same trap
 `--ui-left-rail-bg` documents from the other direction.
 
-## Two firsts, both the design's rather than inventions
+## Tag stopped being the exception in 0.55.0
 
-- **Weight 600.** Every other string in this library is Medium, bar
-  `InputText`'s value and `Checkbox`'s label, which are Regular. SemiBold is
-  read off both Figma cells.
-- **Letter-spacing 1%.** Nothing else here sets it, and `guidelines/Guidelines.md`
-  says never to adjust letter-spacing. Transcribing a drawn value is not
-  adjusting it - but it is the one number worth querying if a tag ever looks
-  wrong. It is `0.01em` rather than a px value, so it follows the font size.
+It carried the library's only two typographic departures, both transcribed
+faithfully from the Figma cells, and both are now gone:
+
+- **Weight was SemiBold 600.** Every other string in the library is Medium
+  (bar `InputText`'s value and `Checkbox`'s label, which are Regular), so a
+  tag was the one thing shouting. It aliases `--ui-type-label-font-weight`
+  now, which also means it follows the scale rather than repeating a number
+  from it.
+- **Letter-spacing was 0.01em.** The only letter-spacing anywhere in the
+  library, and the consuming apps' own `guidelines/Guidelines.md` says not to
+  adjust letter-spacing at all. It is `0`.
+
+`--ui-tag-letter-spacing` is kept rather than dropped: the rule still reads it,
+so an app can tune it, and `0` is the honest default rather than a value
+nothing asked for.
+
+Both were faithful transcriptions of the drawing, which is the right instinct -
+and they show its limit. A value read off a cell is only as considered as the
+cell, and two of them had quietly made this component the odd one out.
 
 ## Divergences - do not "fix" these
 
