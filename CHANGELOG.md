@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Tabs: the selected rule slides.
+**0.56.0 -> 0.57.0** - Tabs: the selected rule slides.
 
 Changing tabs now slides the 3px rule to the new tab, over `--ui-motion-base`,
 instead of fading one tab's border out and the next one's in. There are no new
