@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Toolbar: groups can carry a caption.
+**0.59.0 -> 0.60.0** - Toolbar: groups can carry a caption.
 
 New `ToolbarGroup` (and `ToolbarGroupProps`), with an optional `label` drawn in Label MD,
 `--ui-toolbar-label-gap` (4) before the control it leads - NextDraw's `VIEW:` / `ZOOM:`.
