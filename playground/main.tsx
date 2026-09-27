@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Toolbar, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Toolbar, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -178,6 +178,22 @@ const Eye = () => (
 const Frame = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
     <path d="M4 8h16M4 16h16M8 4v16M16 4v16" />
+  </svg>
+);
+// lucide `grid-3x3` / `sticky-note` / `image`, the NextDraw toolbar's zoom glyphs.
+const Grid = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
+  </svg>
+);
+const StickyNote = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z" /><path d="M15 3v4a2 2 0 0 0 2 2h4" />
+  </svg>
+);
+const Picture = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <rect width="18" height="18" x="3" y="3" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
   </svg>
 );
 const Info = () => (
@@ -636,13 +652,14 @@ function App() {
           + "the zoom target. It owns a ground, a 4px inset and the gap between its controls, and "
           + "nothing else: what a segment shows is Segment's business, so a bar of icon-only "
           + "controls and a bar of labelled ones are the same Toolbar with different children. The "
-          + "gap is the argument \u2014 16 between controls against 4 between segments, so segments "
+          + "gap is the argument \u2014 20 between controls against 4 between segments, so segments "
           + "crowd because they answer one question and controls stand apart because they answer "
           + "several. Each control picks its own selected ground with variant, which is why Preview "
           + "and Zoom below read dark while History stays brand \u2014 and History is actions, so it is a "
           + "group of buttons rather than a choice. role=\"group\", not "
           + "role=\"toolbar\": the ARIA toolbar pattern claims the arrow keys, and every "
-          + "SegmentedControl inside has already bound them."
+          + "SegmentedControl inside has already bound them. A ToolbarGroup captions a control "
+          + "(\"VIEW:\"), and the caption becomes that control's accessible name."
         }
       >
         <Row label="tone=&quot;gray&quot;">
@@ -679,6 +696,50 @@ function App() {
               </SegmentedControl>
             </Toolbar>
           </div>
+        </Row>
+        {/* NextDraw's toolbar (87:1230): each group captioned. The caption names
+            the control, so neither SegmentedControl carries an aria-label. */}
+        <Row label="labelled groups">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
+            <Toolbar tone="white" aria-label="Drawing tools, labelled">
+              <ToolbarGroup label="VIEW:">
+                <SegmentedControl size="sm" variant="dark">
+                  <Segment icon={<Outline />} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Hairline</Segment>
+                  <Segment icon={<Eye />} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Simulated</Segment>
+                </SegmentedControl>
+              </ToolbarGroup>
+              <ToolbarGroup label="ZOOM:">
+                <SegmentedControl size="sm" variant="dark">
+                  <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                  <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                  <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+                </SegmentedControl>
+              </ToolbarGroup>
+            </Toolbar>
+          </div>
+        </Row>
+        {/* Labelled and bare groups mix, and a labelled group's segments can
+            still drop their own labels - the two are independent. */}
+        <Row label="mixed">
+          <Toolbar aria-label="Drawing tools, mixed">
+            <SegmentedControl size="sm" actions aria-label="History mixed">
+              <Segment icon={<Undo />} hideLabel>Undo</Segment>
+              <Segment icon={<Redo />} hideLabel>Redo</Segment>
+            </SegmentedControl>
+            <ToolbarGroup label="VIEW:">
+              <SegmentedControl size="sm" variant="dark">
+                <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Hairline</Segment>
+                <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Simulated</Segment>
+              </SegmentedControl>
+            </ToolbarGroup>
+            <ToolbarGroup label="ZOOM:">
+              <SegmentedControl size="sm" variant="dark">
+                <Segment selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                <Segment selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                <Segment selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+              </SegmentedControl>
+            </ToolbarGroup>
+          </Toolbar>
         </Row>
         {/* The same bar, with every segment switched to hideLabel. Nothing about
             the Toolbar changes - this is the point of it owning so little. */}

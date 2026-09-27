@@ -9,6 +9,14 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Toolbar: groups can carry a caption.
+
+New `ToolbarGroup` (and `ToolbarGroupProps`), with an optional `label` drawn in Label MD,
+`--ui-toolbar-label-gap` (4) before the control it leads - NextDraw's `VIEW:` / `ZOOM:`.
+The caption becomes the `SegmentedControl`'s `aria-labelledby`, so that control needs no
+`aria-label`. Additive: bare `SegmentedControl` children render exactly as before. New
+tokens: `--ui-toolbar-label-gap`; hook `--ui-toolbar-label-color`.
+
 **0.58.0 -> 0.59.0** - Toolbar: a deeper gray, sunken tracks on white, a wider gap.
 
 Redrawn in Figma. Visible, no renames.

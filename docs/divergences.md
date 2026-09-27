@@ -152,3 +152,18 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
+
+43. **`ToolbarGroup` has no counterpart in the library's `Toolbar` set (`777:1325`).**
+    DEFECT (a component with no Figma side), low cost - nothing renders wrong. The
+    labelled group was drawn in the NextDraw file (`4J89OfljrqKZ4HVsJjD9Zq`, node
+    `87:1230`), not in the component-library file, and the code took it from there.
+    Direction: **Figma** - the set needs a way to caption a track (a `Label?`
+    boolean and text property on a group, 4 before the track, `Type/Label MD`,
+    `Text/Default`). The NextDraw frame also carries three things the code did NOT
+    take, and the library set should not either:
+    - its caption fill is raw `black`, not `Text/Default` (#262626);
+    - its group gap is 16, where the library set drew 20 in 0.59.0. The later,
+      library-side number stands;
+    - its first caption opens with a typed space (`" VIEW:"`) as a stand-in for
+      inset. Code renders the caption flush at the bar's 4px padding.
+

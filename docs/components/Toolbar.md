@@ -67,6 +67,38 @@ Likewise **each control picks its own selected ground** with `variant`:
 control, not on the segment or the bar, so one toolbar can mix them — which
 is what Figma draws, with `History` on the brand and `View` and `Zoom` dark.
 
+## A group may carry a caption: `ToolbarGroup`
+
+A toolbar is a row of groups, and any group can be captioned or not - NextDraw's bar
+reads `VIEW:` before one track and `ZOOM:` before the next (NextDraw file, `87:1230`).
+Each *item* can independently show its label or not; that is still `Segment`'s
+`hideLabel`, and the two axes don't interact.
+
+```tsx
+<Toolbar tone="white" aria-label="Drawing tools">
+  <ToolbarGroup label="VIEW:">
+    <SegmentedControl size="sm" variant="dark">
+      <Segment icon={<Hairline />} selected>Hairline</Segment>
+      <Segment icon={<Eye />}>Simulated</Segment>
+    </SegmentedControl>
+  </ToolbarGroup>
+  <SegmentedControl size="sm" actions aria-label="History">...</SegmentedControl>
+</Toolbar>
+```
+
+    caption  Label MD (12/16, Medium), --ui-text-default, 4 before the track
+             (--ui-toolbar-label-gap); hook --ui-toolbar-label-color
+
+- **The caption is the control's name.** `ToolbarGroup` passes its label's id down by
+  context and `SegmentedControl` uses it as `aria-labelledby` when it has no name of its
+  own, so the visible and announced names can't drift. An explicit `aria-label` wins.
+- **The wrapper has no role.** The control inside is already the `radiogroup`/`group`;
+  a second group around it would be announced twice.
+- **The text is rendered as given.** Figma types `VIEW:` - the capitals and colon are
+  the consumer's string, not a `text-transform`.
+- Unlabelled, a `ToolbarGroup` is a plain flex wrapper; bare `SegmentedControl`
+  children still work and the two mix.
+
 ## The gap is the argument
 
 20 between controls against 4 between segments (16 until 0.59.0). Segments crowd together
@@ -118,6 +150,12 @@ The loose frames it was built from are still on the canvas and still carry the
 eyedropped `#e1e3e2` the bar was drawn in; they are sketches, not the library,
 and are not tracked. The set binds `Surface/Sunken`.
 
+- **The caption sits flush at the bar's 4px inset.** NextDraw's frame opens its first
+  caption with a typed space (`" VIEW:"`) to push it off the curve; code does not
+  reproduce a space as spacing. If it needs air, that is a padding decision for Figma.
+- **The group gap stays 20**, although the NextDraw frame spaces its groups 16. The
+  library set moved to 20 in 0.59.0, after that frame was drawn.
+- **The caption is `--ui-text-default`**, not the NextDraw frame's raw `black`.
 - **Nothing forces `size="sm"` on the children.** Figma draws SM only, and the
   bar derives its height from whatever it holds, so an LG bar is supported and
   undrawn rather than forbidden.

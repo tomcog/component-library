@@ -2,6 +2,7 @@ import { createContext, forwardRef, useContext, useEffect, useRef } from "react"
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./SegmentedControl.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
+import { GroupLabelContext } from "../../internal/groupLabel";
 
 declare const process: { env: { NODE_ENV?: string } };
 
@@ -128,9 +129,14 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
     ref,
   ) {
     const track = useRef<HTMLDivElement | null>(null);
+    // Inside a labelled ToolbarGroup the visible caption is the name. An
+    // explicit aria-label or aria-labelledby still wins.
+    const groupLabel = useContext(GroupLabelContext);
+    const labelledBy =
+      props["aria-labelledby"] ?? (props["aria-label"] == null ? groupLabel : undefined);
 
     if (process.env.NODE_ENV !== "production") {
-      if (props["aria-label"] == null && props["aria-labelledby"] == null) {
+      if (props["aria-label"] == null && labelledBy == null) {
         console.warn(
           "[@tomcoggia/ui] SegmentedControl: no accessible name. Pass `aria-label` - " +
             "a page can hold more than one, and the role alone does not say which.",
@@ -193,12 +199,12 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
         }}
         role={actions ? "group" : "radiogroup"}
         aria-label={props["aria-label"]}
-        aria-labelledby={props["aria-labelledby"]}
         className={[styles.track, styles[size], styles[variant], styles[tone], className]
           .filter(Boolean)
           .join(" ")}
         onKeyDown={actions ? undefined : onKeyDown}
         {...props}
+        aria-labelledby={labelledBy}
       >
         <ActionsContext.Provider value={actions}>{children}</ActionsContext.Provider>
       </div>

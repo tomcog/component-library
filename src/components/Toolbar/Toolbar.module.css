@@ -46,3 +46,24 @@
      scoped or dark --ui-surface-sunken still reaches it. */
   --ui-segmented-track-bg: var(--ui-toolbar-white-track-bg, var(--ui-surface-sunken));
 }
+
+/* -- a group, and its caption --------------------------------- */
+/* A ToolbarGroup is a caption and the control it names. Figma (NextDraw,
+   87:1230) sets the caption 4 before its track - a quarter of the gap between
+   groups, so the caption reads as belonging to the track it leads rather than
+   to the one before it. Unlabelled, this is just a flex wrapper and changes
+   nothing. */
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-toolbar-label-gap);
+}
+
+.label {
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  font-size: var(--ui-type-label-md-font-size);
+  line-height: var(--ui-type-label-md-line-height);
+  font-weight: var(--ui-type-label-font-weight);
+  color: var(--ui-toolbar-label-color, var(--ui-text-default));
+  white-space: nowrap;
+}
