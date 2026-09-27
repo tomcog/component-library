@@ -49,7 +49,7 @@
 
 /* -- a group, and its caption --------------------------------- */
 /* A ToolbarGroup is a caption and the control it names. Figma (NextDraw,
-   87:1230) sets the caption 4 before its track - a quarter of the gap between
+   87:1230) sets the caption 4 before its track - a fifth of the gap between
    groups, so the caption reads as belonging to the track it leads rather than
    to the one before it. Unlabelled, this is just a flex wrapper and changes
    nothing. */

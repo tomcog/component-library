@@ -71,6 +71,9 @@ is what Figma draws, with `History` on the brand and `View` and `Zoom` dark.
 
 A toolbar is a row of groups, and any group can be captioned or not - NextDraw's bar
 reads `VIEW:` before one track and `ZOOM:` before the next (NextDraw file, `87:1230`).
+In the library set each group is a `<Group> Group` frame with a `Label` text, switched by
+`History Label?` / `View Label?` / `Zoom Label?` and set by the matching `Label` TEXT
+property; the gap binds `Toolbar/Label Gap`.
 Each *item* can independently show its label or not; that is still `Segment`'s
 `hideLabel`, and the two axes don't interact.
 

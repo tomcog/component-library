@@ -462,3 +462,18 @@ Nothing here needs action.
    empty cells, loose frames, an unexercised property, an untidy structure - is
    not a defect on its own. Recorded in CLAUDE.md under Figma sync.
 
+43. ~~`ToolbarGroup` has no counterpart in the library's `Toolbar` set.~~
+    **Resolved 2026-09-27, the same day it opened.** The captioned group was drawn in
+    the NextDraw file (`4J89OfljrqKZ4HVsJjD9Zq`, `87:1230`) and taken into code
+    (0.60.0) before the library set could say it. The set (`777:1325`) now wraps each
+    track in a `<Group> Group` frame holding a `Label` text: `History Label?` /
+    `View Label?` / `Zoom Label?` booleans (off by default) and matching `Label`
+    TEXT properties, Type/Label MD, `Text/Default`, gap bound to the new
+    `Toolbar/Label Gap` (4, `var(--ui-toolbar-label-gap)`). With the captions off the
+    variants measure 232 as before, so the one instance on the canvas was
+    unaffected. Written through the official MCP's `use_figma`, with no Desktop Bridge.
+
+    What the NextDraw frame drew and neither side took: a raw `black` caption fill,
+    a 16 group gap (the library's 20 stands), and a typed leading space standing in
+    for inset.
+

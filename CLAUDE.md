@@ -225,8 +225,9 @@ carries it; any disagreement is a defect recorded in `docs/divergences.md` with 
 direction it still has to travel.
 
 - **Reading**: use the official Figma MCP (`get_design_context`, `get_variable_defs`,
-  `get_screenshot`). **Writing**: needs the Figma Console Desktop Bridge plugin running
-  (`figma_execute`); its REST-backed tools fail because the token is expired.
+  `get_screenshot`). **Writing**: the official MCP's `use_figma` works with no plugin
+  running (load the `figma-use` skill first); the Figma Console Desktop Bridge
+  (`figma_execute`) is the fallback. Figma Console's REST-backed tools fail — expired token.
 - **Direction.** Token-shaped changes (values, spacing, radius, colour) go code-first, then
   push. Design-shaped changes (new variants, layout, new components) go Figma-first, then
   fetch. Never change both sides independently in one session; fetching what the user just
