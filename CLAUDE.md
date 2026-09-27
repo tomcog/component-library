@@ -61,7 +61,8 @@ default; `-- patch` / `-- major`), stamps `CHANGELOG.md`, commits, tags, pushes,
 `npm run sync-consumers`: every app under `~/Sites` depending on `@tomcoggia/ui` gets the
 new tag installed, checked for a built `dist/`, and a local commit touching only
 `package.json` + lockfile. It never pushes an app (pushing can deploy) unless given
-`-- --push`. `-- --dry-run` shows the plan. When the user asks for a library change to be
+`-- --push`, and even then only when everything unpushed on that branch is one of its
+"Move to" commits — other app work is reported, not shipped. `-- --dry-run` shows the plan. When the user asks for a library change to be
 usable in their apps, finish by running this — don't hand-edit refs.
 
 Write an `**Unreleased**` changelog entry by hand when a change renames or removes a token

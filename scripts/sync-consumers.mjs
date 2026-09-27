@@ -14,6 +14,12 @@
 // An app is committed only when the ONLY change in its package.json is the
 // @tomcoggia/ui line, so dependency edits in progress are never swept into the
 // commit; those apps are updated and left for you to commit.
+//
+// --push applies the same rule to what leaves the machine: an app is pushed
+// only when every unpushed commit on its branch is one of these "Move to"
+// commits - including ones from an earlier run - so app work nobody asked to
+// ship never rides out with a version bump. Anything else is reported, not
+// pushed.
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -67,6 +73,24 @@ function gitRoot(dir) {
   try { return git(dir, "rev-parse", "--show-toplevel"); } catch { return null; }
 }
 
+const MOVE = `Move to ${PKG} v`;
+
+/** Push the branch if it is ahead and everything ahead is ours; returns a status suffix. */
+function pushIfOurs(root, branch) {
+  let upstream;
+  try { upstream = git(root, "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"); }
+  catch { return ", NOT pushed - branch has no upstream"; }
+  const ahead = git(root, "log", "--format=%s", `${upstream}..HEAD`).split("\n").filter(Boolean);
+  if (ahead.length === 0) return ", already pushed";
+  const other = ahead.filter((subject) => !subject.startsWith(MOVE));
+  if (other.length) {
+    return `, NOT pushed - ${other.length} other unpushed commit(s): "${other[0]}"` +
+      (other.length > 1 ? ", ..." : "");
+  }
+  git(root, "push", "origin", branch);
+  return `, pushed (${ahead.length} commit${ahead.length > 1 ? "s" : ""})`;
+}
+
 const results = [];
 const consumers = findConsumers();
 if (consumers.length === 0) {
@@ -103,27 +127,28 @@ for (const { dir, ref } of consumers) {
     const rel = (f) => relative(root, join(dir, f));
     const files = ["package.json", "package-lock.json"].filter((f) => existsSync(join(dir, f))).map(rel);
 
-    const changed = git(root, "status", "--porcelain", "--", ...files);
-    if (!changed) { row.status = `already on ${tag}, committed`; continue; }
-
-    // Only commit when the package.json change is this dependency and nothing else.
-    const diff = git(root, "diff", "-U0", "--", rel("package.json"));
-    const edits = diff.split("\n").filter((l) => /^[+-](?![+-])/.test(l));
-    const onlyOurs = edits.every((l) => l.includes(`"${PKG}"`));
-    if (!onlyOurs) {
-      row.status = `updated, NOT committed - package.json has other uncommitted changes`;
-      continue;
-    }
-
-    git(root, "add", "--", ...files);
-    git(root, "commit", "-m", `Move to ${PKG} ${tag}`, "--", ...files);
     const branch = git(root, "rev-parse", "--abbrev-ref", "HEAD");
-    row.status = `committed on ${branch}`;
+    const changed = git(root, "status", "--porcelain", "--", ...files);
+    if (!changed) {
+      // Committed by an earlier run - but maybe not pushed, which is exactly
+      // the case a later `--push` exists for.
+      row.status = `already on ${tag}, committed`;
+    } else {
+      // Only commit when the package.json change is this dependency and nothing else.
+      const diff = git(root, "diff", "-U0", "--", rel("package.json"));
+      const edits = diff.split("\n").filter((l) => /^[+-](?![+-])/.test(l));
+      const onlyOurs = edits.every((l) => l.includes(`"${PKG}"`));
+      if (!onlyOurs) {
+        row.status = `updated, NOT committed - package.json has other uncommitted changes`;
+        continue;
+      }
 
-    if (push) {
-      git(root, "push", "origin", branch);
-      row.status += ", pushed";
+      git(root, "add", "--", ...files);
+      git(root, "commit", "-m", `${MOVE}${version}`, "--", ...files);
+      row.status = `committed on ${branch}`;
     }
+
+    if (push) row.status += pushIfOurs(root, branch);
   } catch (err) {
     row.status = `FAILED: ${String(err.stderr || err.message).trim().split("\n").slice(-3).join(" | ")}`;
     console.log("");
