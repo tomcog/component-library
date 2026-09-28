@@ -9,6 +9,13 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ButtonRound `outline-light`: ring and glyph at 80% white.
+
+**ButtonRound** `variant="outline-light"`: the ring and glyph now rest at 80% white
+(were solid white), per Figma 890:1688; hover and press lift them to full white along
+with the button. New token `--ui-button-round-outline-light-content-strength` (80%);
+new hooks `--ui-button-round-outline-light-icon-hover` / `-ring-hover`. Additive.
+
 **0.68.0 -> 0.69.0** - ButtonRound `outline-light` restyled to the current Figma frame.
 
 **ButtonRound** `variant="outline-light"`: the ground is now 55% black (was 35%) and

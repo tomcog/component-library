@@ -523,6 +523,11 @@
   /* The whole button - ground, ring and glyph together - at rest (Figma:
      layer opacity 75%). Hover and press lift it to full strength. */
   --ui-button-round-outline-light-opacity: 0.75;
+  /* How much of the white the ring and glyph carry at rest (Figma: ring
+     rgba(255,255,255,0.8), glyph layer 80%). A percentage, not a colour:
+     the tint is mixed from --ui-text-on-media at the element, so it follows
+     that token rather than freezing a copy of it here. */
+  --ui-button-round-outline-light-content-strength: 80%;
 
   /* ConfirmButton. The SAME round icon button as ButtonRound, wearing the
      safety/danger pair instead of the brand - so the geometry is aliased
