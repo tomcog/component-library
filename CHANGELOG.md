@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Toolbar: `ToolbarExpander`, and `orientation="vertical"`.
+**0.60.0 -> 0.61.0** - Toolbar: `ToolbarExpander`, and `orientation="vertical"`.
 
 New `ToolbarExpander` (and `ToolbarExpanderProps`): an icon-only segment that reveals
 further action segments when clicked, from the Figma sketch 814:963. Open, the trigger
