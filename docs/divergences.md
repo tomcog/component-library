@@ -119,11 +119,20 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    the drawing, as a design-shaped change arriving Figma-first) or it is
    marked deprecated; which is the user's call.
 
-46. **Button's danger ghost press is lighter in Figma than in code.** Code
-   presses a ghost `tone="danger"` button to 48% `--ui-danger` on the raised
-   surface; Figma binds `Button/Danger/Ghost Pressed` to `Danger/Lighter`, the
-   only pale danger shade there is, so the drawn press reads as the hover. The
-   other danger presses are the usual mix-versus-named-shade trade (`Danger/Darker`
-   against a 22.3% mix) and close enough to leave. Direction: undecided - either
-   a hand-picked `Color/TC Red Light` primitive with a `Danger/Light` semantic
-   (both sides), or the code's ghost press moves to `--ui-danger-lighter`. Ask.
+47. **Button/Round, LayerController-Plot and Layer bind Button's variables.**
+   DEFECT: a binding that breaks. `Button/Round` binds `Button/Tertiary/Label`,
+   and `LayerController-Plot` and `Layer` bind `Button/Tertiary/Default` - another
+   component's tokens, which CLAUDE.md forbids. Found 2026-09-27 when Tertiary was
+   restyled: repointing those variables would have silently restyled all three, so
+   Button's Tertiary cells were moved to `Button/Ghost/*` instead and
+   `Button/Tertiary/*` left in place, now used only by these three. Fix: bind each
+   to its own tier (`Button/Round/*`, a `Layer Controller/*` token, or the
+   semantic underneath), then retire `Button/Tertiary/*`. Figma-side only.
+
+48. **Secondary's resting label fails AA contrast.** Not a code/Figma
+   disagreement - both sides match - but a design defect recorded here so it is
+   not lost: the action red on the 15% action tint is 3.64:1 in light and 2.71:1
+   in dark, against 4.5:1 for text. Options: a darker label at rest
+   (`--ui-action` mixed toward `--ui-text-default`, as the ghost press does), a
+   stronger tint, or accept it for this variant. Design call; ask.
+

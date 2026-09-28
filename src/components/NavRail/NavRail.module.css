@@ -198,7 +198,7 @@
 
 /* Current beats the hover colour above, as it does on a primary slat. */
 .secondary.current {
-  color: var(--ui-nav-rail-text-current, var(--ui-action));
+  color: var(--ui-nav-rail-text-current, var(--ui-brand));
 }
 
 /* -- a parent and its sub items ------------------------------- */
@@ -222,12 +222,17 @@
   margin-inline-start: calc(var(--ui-nav-rail-chip-size) + var(--ui-nav-rail-slat-gap));
 }
 
-/* Figma: State=Active. The current page - red label, and nothing else. No
+/* Figma: State=Active. The current page - a brand label, and nothing else. No
    pipe and no indent, and hovering it adds neither, so the two states never
    compound. Mirrors NavItem and NavDropdownItem, which likewise drop their
-   rule when current. */
+   rule when current.
+
+   BRAND, not action, since 0.63.0 - label, chip icon and chip tint. The
+   current slat marks where you are rather than doing something, so it is
+   chrome; the hover (filled chip, pipe) previews going somewhere, so it stays
+   --ui-action. The same split Tabs makes. The two share a colour by default. */
 .current {
-  color: var(--ui-nav-rail-text-current, var(--ui-action));
+  color: var(--ui-nav-rail-text-current, var(--ui-brand));
 }
 .current .pipe {
   display: none;
@@ -236,8 +241,13 @@
    whatever the source order. Figma's current chip is ButtonRound's *default*
    pair, not its hover pair. */
 .slat.current .chip {
-  background: var(--ui-nav-rail-chip-bg-current, var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
-  color: var(--ui-nav-rail-chip-icon-current, var(--ui-action));
+  /* The tint is mixed from the brand too, so it always matches the icon on
+     it - an action tint under a brand icon would clash the moment an app
+     split the roles. --ui-brand-lighter is read first and, like
+     --ui-action-lighter, deliberately not declared on :root (it would freeze
+     against :root's brand); an app can still pin it. Figma: Brand/Lighter. */
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-brand-lighter, color-mix(in srgb, var(--ui-brand) 15%, var(--ui-white))));
+  color: var(--ui-nav-rail-chip-icon-current, var(--ui-brand));
 }
 .current:hover .label,
 .current:focus-visible .label {
@@ -256,8 +266,11 @@
    stay, because unlike the current page this slat is still somewhere you can
    go. */
 .slat.sectionCurrent .chip {
-  background: var(--ui-nav-rail-chip-bg-current, var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
-  color: var(--ui-nav-rail-chip-icon-current, var(--ui-action));
+  /* The tint is mixed from the brand too, so it always matches the icon on
+     it - an action tint under a brand icon would clash the moment an app
+     split the roles. */
+  background: var(--ui-nav-rail-chip-bg-current, var(--ui-brand-lighter, color-mix(in srgb, var(--ui-brand) 15%, var(--ui-white))));
+  color: var(--ui-nav-rail-chip-icon-current, var(--ui-brand));
 }
 
 /* Focus is code-only, matching Nav and Button: Figma models no focus state. */

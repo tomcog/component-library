@@ -44,6 +44,18 @@ slat's height: the line box and the chip are both 32.
 | Hover | `:hover`, `:focus-visible` | unchanged | drawn | 14px |
 | Active | `active` | `--ui-action` | - | - |
 
+
+## Current is brand, hover is action (0.63.0)
+
+The current slat - its label, chip icon and chip tint - reads `--ui-brand`; the
+hover (filled chip, pipe) and the focus ring stay `--ui-action`. The current slat
+marks where you are, so it is chrome; the hover previews going somewhere, so it is
+action - the split Tabs makes too. The chip tint is mixed from the brand as well,
+so it always matches its icon: it reads `--ui-brand-lighter` first (undeclared on
+`:root`, like `--ui-action-lighter`), then 15% `--ui-brand` on white. A current sub
+item's label and a section parent's chip take the same brand pair. Figma:
+`State=Active` binds `Brand/Base` and the new `Brand/Lighter`; Hover keeps
+`Action/Base`. No visible change while the two roles share a colour.
 ## The geometry moved when the set was redrawn
 
 The numbers above are not the ones this component was first built to. The

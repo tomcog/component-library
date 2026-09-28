@@ -44,6 +44,14 @@ change with the theme, so the rule stayed `#ededed` on the dark bar. It now read
 `--ui-surface-raised`). `--ui-border-default` was not used: in light it is
 `Neutral/350`, which would have darkened a rule nobody asked to change.
 
+## Current is brand, hover is action (0.63.0)
+
+The current tab - label, chip icon and chip tint - reads `--ui-brand`; the hover
+chip and the focus ring stay `--ui-action`. The same split NavRail, Nav and Tabs
+make: the current item marks where you are, the hover previews going somewhere.
+The tint reads `--ui-brand-lighter` first, then 15% brand on white. Figma:
+`State=Current` binds `Brand/Base` and `Brand/Lighter`; Hover keeps `Action/Base`.
+
 ## Divergences - do not "fix" these
 
 - **Nothing is transitioned**, where `NavRail` eases its chip. A tab bar is touched,

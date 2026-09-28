@@ -13,10 +13,12 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  /* The line runs the full width in primary; the selected tab thickens it to
-     3px. One line, two weights - not two lines. */
+  /* The line runs the full width in the brand colour; the selected tab
+     thickens it to 3px. One line, two weights - not two lines - so it takes
+     the current tab's colour, and a divider is chrome anyway. --ui-action
+     until 0.63.0. */
   border-bottom: var(--ui-tabs-border-width) solid
-                 var(--ui-tabs-border, var(--ui-action));
+                 var(--ui-tabs-border, var(--ui-brand));
   /* A long set on a narrow screen scrolls rather than squashing; nothing is
      ever clipped to unreadability. */
   overflow-x: auto;
@@ -107,16 +109,20 @@
   cursor: not-allowed;
 }
 
-/* The selected view. Label, icon and rule are one colour. */
+/* The selected view. Label, icon and rule are one colour: --ui-brand, since
+   0.63.0. The current tab MARKS where you are - it is not a control you press
+   - so it is chrome, and only the hover (a preview of pressing) stays
+   --ui-action. The two are the same red today; an app that splits them gets
+   a brand-coloured "you are here" and an action-coloured "go here". */
 .current {
-  color: var(--ui-tabs-text-current, var(--ui-action));
+  color: var(--ui-tabs-text-current, var(--ui-brand));
 }
 
 /* Until the strip has measured itself - before hydration in a server-rendered
    app, or with scripts off - the selected tab draws its own rule, exactly as
    it always did. Once the travelling rule is placed it takes over. */
 .list:not([data-indicator]) .current {
-  border-bottom-color: var(--ui-tabs-rule, var(--ui-action));
+  border-bottom-color: var(--ui-tabs-rule, var(--ui-brand));
 }
 
 /* The selected tab's rule, drawn once and moved rather than drawn per tab.
@@ -129,7 +135,7 @@
   bottom: 0;
   width: 0;
   height: var(--ui-tabs-rule-width);
-  background: var(--ui-tabs-rule, var(--ui-action));
+  background: var(--ui-tabs-rule, var(--ui-brand));
   pointer-events: none;
   visibility: hidden;
 }
@@ -162,7 +168,7 @@
   color: var(--ui-tabs-icon-hover, var(--ui-action));
 }
 .current .icon {
-  color: var(--ui-tabs-icon-current, var(--ui-action));
+  color: var(--ui-tabs-icon-current, var(--ui-brand));
 }
 .tab:disabled .icon {
   color: var(--ui-tabs-icon-disabled, var(--ui-text-disabled));

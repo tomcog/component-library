@@ -135,7 +135,9 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   token via fallback (`InputSelect` reads InputText's; `Tag` reads `--ui-pill-radius`), or
   alias it when a name of its own is needed (`--ui-nav-rail-chip-size`).
 - **Type aliases the label scale** — `--ui-type-label-{sm,md,lg,xl}-*` (10/12, 12/16, 14/20,
-  18/24), weight `--ui-type-label-font-weight` (Medium). A step exists only where something
+  18/24), weight `--ui-type-label-font-weight` (Medium). The one step off it is
+  `--ui-type-heading-*` (Bold 24/32, Modal's title); prose is set in Label MD, not a new
+  body step. A step exists only where something
   uses it; don't add a step to size a container. Component `font-family` is always
   `var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback))`.
   **Never write the scale's number out by hand** — a raw `14px` that happens to equal

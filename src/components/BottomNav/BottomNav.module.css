@@ -108,13 +108,19 @@
   color: var(--ui-bottom-nav-chip-icon-hover, var(--ui-text-on-action));
 }
 
-/* Current: the tinted chip and the primary label. Figma's current chip is
-   ButtonRound's *default* pair, as it is in the rail. */
+/* Current: the tinted chip and the brand label. Figma's current chip is
+   ButtonRound's *default* pair, as it is in the rail.
+
+   BRAND, not action, since 0.63.0 - label, chip icon and chip tint, the split
+   NavRail and Tabs make: the current tab marks where you are, so it is chrome;
+   the hover (filled chip) previews going somewhere, so it stays --ui-action.
+   The tint reads --ui-brand-lighter first (undeclared on :root, like
+   --ui-action-lighter), then 15% brand on white, so it matches its icon. */
 .item.current {
-  color: var(--ui-bottom-nav-text-current, var(--ui-action));
+  color: var(--ui-bottom-nav-text-current, var(--ui-brand));
 }
 .item.current .chip {
   background: var(--ui-bottom-nav-chip-bg-current,
-              var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
-  color: var(--ui-bottom-nav-chip-icon-current, var(--ui-action));
+              var(--ui-brand-lighter, color-mix(in srgb, var(--ui-brand) 15%, var(--ui-white))));
+  color: var(--ui-bottom-nav-chip-icon-current, var(--ui-brand));
 }

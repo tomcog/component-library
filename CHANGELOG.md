@@ -9,6 +9,53 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - New `Modal`. Tabs, NavRail, BottomNav and Nav: the current item reads the brand role. Button: Secondary becomes tonal, Tertiary becomes Ghost without its rule; the ghost danger press uses the named tints.
+
+New **`Modal`** (and `ModalProps`): a native `<dialog>` opened with `showModal()` -
+icon, title, body and actions, controlled by `open` / `onClose`. Escape closes it, a
+click outside does not; focus starts on the first action; the page is inert and
+does not scroll behind it. From Figma's `Modal` (853:583). New tokens: the heading
+step `--ui-type-heading-font-size` / `-line-height` / `-font-weight` (Bold 24/32),
+and `--ui-modal-width`, `-padding`, `-gap`, `-actions-gap`, `-icon-size`,
+`-icon-stroke`, `-viewport-gutter`, `-backdrop`. Additive.
+
+**BottomNav** and **Nav**: the current item reads `--ui-brand` too - BottomNav's label,
+chip icon and chip tint; Nav's current item and current sub item labels. Hover
+(chip, underline, pipe) and focus stay `--ui-action`.
+
+**NavRail**: the current slat's label, chip icon and chip tint read `--ui-brand`
+(the tint via an optional `--ui-brand-lighter`, else 15% brand on white); hover and
+focus stay `--ui-action`. No visible change while the roles share a colour.
+
+**Tabs**: the current tab (label, icon, rule) and the strip's line read `--ui-brand`
+instead of `--ui-action`; hover and focus stay `--ui-action`. No visible change while
+the two roles share a colour (the default); an app that sets `--ui-brand` apart from
+`--ui-action` will see its current tab and strip line in the brand colour.
+
+**Button `variant="secondary"` is restyled** - visible wherever it is used. It now
+rests on the pale action tint with an action-coloured label (was near-black with a
+light label); hover, press, disabled and the danger tone are unchanged. Override
+hooks `--ui-button-secondary-bg` / `-text` still win.
+
+**Button `variant="tertiary"` is restyled** - visible wherever it is used. It is now
+text-only in `--ui-action` at rest (was a grey `--ui-surface-muted` fill with a
+dark label) and behaves exactly like `ghost` from there: the same hover fill, press,
+disabled, loading and danger tone. The only difference from `ghost` is ghost's 1px
+rule at rest. Tertiary's `--ui-button-tertiary-*` hooks still win, and fall back to
+the ghost hooks, then the defaults. Check dialog footers and secondary actions in
+apps: NextJob uses tertiary 7 times (both delete dialogs' Cancel among them),
+NextDraw twice.
+
+**Button**: the ghost danger press uses the named tints.
+
+A ghost `tone="danger"` Button now presses to `--ui-danger-lighter` with a
+`--ui-danger-darker` label, instead of a 48% `--ui-danger` mix with a label mixed
+toward `--ui-text-default`. Matches Figma. Visible on press only; in light the ground
+is paler than before and the press reads mainly as the label darkening. The label
+moved too because the pale tint does not change in dark mode, where the old label
+would have been light on light. Override hooks unchanged: `--ui-button-ghost-bg-active`
+and `--ui-button-ghost-text-active` still win.
+
 **0.61.0 -> 0.62.0** - ConfirmButton: a labelled shape. BottomNav: the top rule follows the theme.
 
 **ConfirmButton** takes a label: pass `children` and it draws Button's rectangular box

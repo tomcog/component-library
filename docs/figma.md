@@ -408,6 +408,17 @@ each property. Cloning a variant that holds an exposed instance kept
 `isExposedInstance` in the same session, but set it again anyway - it costs
 nothing.
 
+**Audit the links on every variant, not just the ones you touched.** On
+2026-09-27 `Button` turned out to have 58 of its 112 cells missing
+`Icon Start?`, `Icon End?` and/or `ButtonLabel` links - every XL cell, Ghost at
+every size, every Loading cell - so on those cells the toggles and the label
+field silently did nothing on an instance. It predated the session; the danger
+clones had faithfully copied it. The check is one loop: for each variant, collect
+the values of every layer's `componentPropertyReferences` and confirm each
+non-variant property of the set appears. Then prove it on a throwaway instance.
+A script that throws is rolled back whole, so keep the proof in a separate call
+from the fix - a verification step that errored took the fix down with it.
+
 ## Editing the Figma file safely
 
 Plugin edits are undoable from the canvas, and the user may be working in the file at the same time — node state can change between calls. Never bulk-delete by name pattern or assume an unfamiliar variant is leftover scaffolding (doing so destroyed a `Level=Ghost` variant the user was creating). Remove only ids created in the same call, and re-read state rather than trusting a previous call's snapshot.

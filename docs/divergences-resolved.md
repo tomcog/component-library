@@ -559,3 +559,19 @@ Nothing here needs action.
    `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
    throughout. Not done in the session that made the code change: writes need
    the Desktop Bridge plugin, which wasn't connected.
+
+46. ~~Button's danger ghost press is lighter in Figma than in code.~~ **Resolved
+   2026-09-27, code-side (0.63.0).** The code's ghost press moved to the named pair
+   Figma already bound: ground `--ui-danger-lighter`, label `--ui-danger-darker`.
+   The label had to move with the ground: the tint stays pale in dark, and the old
+   label - mixed toward near-white Text/Default - would have been light on light
+   there. 5.88:1 in both themes.
+
+   Original entry: **Button's danger ghost press is lighter in Figma than in code.** Code
+   presses a ghost `tone="danger"` button to 48% `--ui-danger` on the raised
+   surface; Figma binds `Button/Danger/Ghost Pressed` to `Danger/Lighter`, the
+   only pale danger shade there is, so the drawn press reads as the hover. The
+   other danger presses are the usual mix-versus-named-shade trade (`Danger/Darker`
+   against a 22.3% mix) and close enough to leave. Direction: undecided - either
+   a hand-picked `Color/TC Red Light` primitive with a `Danger/Light` semantic
+   (both sides), or the code's ghost press moves to `--ui-danger-lighter`. Ask.

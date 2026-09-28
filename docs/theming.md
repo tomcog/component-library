@@ -154,11 +154,11 @@ Declare them unlayered on `:root` (the library's defaults live inside
 }
 ```
 
-`--ui-action-lighter` is **not** in the list: it is deliberately not declared
-on `:root`, because a tint composed there would freeze against `:root`'s
-primary. Components derive it at the element
-(`color-mix(in srgb, var(--ui-action) 15%, ...)`) and read the name first, so
-an app can still pin it.
+`--ui-action-lighter` and `--ui-brand-lighter` are **not** in the list: they are
+deliberately not declared on `:root`, because a tint composed there would freeze
+against `:root`'s colour. Components derive each at the element
+(`color-mix(in srgb, var(--ui-action) 15%, ...)`, the same with `--ui-brand`) and
+read the name first, so an app can still pin it.
 
 **Leave one out and it does not fail — it silently keeps the library's own
 placeholder neutral.** That looks plausible in isolation, which is exactly why

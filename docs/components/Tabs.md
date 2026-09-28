@@ -24,7 +24,7 @@ shown inside the page you are already on, so it is a real `tablist` of
 **buttons** — and gets the ARIA tab pattern rather than `aria-current`.
 
     tab      icon 18 · label 14/500/21 · icon-gap 8 · padding-bottom 8 · rule 3
-    strip    gap between tabs 32 · rule 1 · both rules --ui-action
+    strip    gap between tabs 32 · rule 1 · both rules --ui-brand (--ui-action until 0.63.0)
 
 **There are two sizes.** The numbers above are `lg`, the default. `xl` is
 18/24 with a 20 icon and stands 35 tall; only font size, line height and icon
@@ -76,6 +76,19 @@ Not `currentColor`. An idle tab is a **dark label beside a muted glyph** — the
 label holds the weight, the icon stays quiet — so the two cannot inherit
 together the way they do in `NavSlat` and `Button`. `--ui-tabs-icon` is muted,
 and goes primary on hover and when selected.
+
+## Current is brand, hover is action (0.63.0)
+
+The current tab - label, icon and 3px rule - and the strip's full-width 1px line
+read `--ui-brand`; hover stays `--ui-action` (as does the focus ring). The current
+tab marks where you are rather than doing something, so it is chrome; hover
+previews a press, so it is action - the role rule in CLAUDE.md. The strip line
+moves with the current rule because they are one line at two weights. Both roles
+are TC Red today, so nothing looks different until an app splits them: then it
+gets a brand "you are here" and an action "go here". Figma: the Selected cells and
+the strip's stroke bind `Brand/Base`; Hover keeps `Action/Base`. Hooks unchanged
+(`--ui-tabs-text-current`, `--ui-tabs-icon-current`, `--ui-tabs-rule`,
+`--ui-tabs-border`).
 
 ## The line box is 21, and stays there
 

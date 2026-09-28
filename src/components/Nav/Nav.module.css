@@ -50,10 +50,15 @@
   transform: scaleX(1);
 }
 
-/* Figma: State=On. The current page - red label, and no rule. Suppressed
-   rather than overridden so hovering the current item does not draw one. */
+/* Figma: State=On. The current page - a brand label, and no rule. Suppressed
+   rather than overridden so hovering the current item does not draw one.
+
+   BRAND, not action, since 0.63.0: the current page marks where you are, so it
+   is chrome; the hover underline and the dropdown pipe preview going
+   somewhere, so they stay --ui-action (through --ui-nav-accent-color). The
+   split NavRail, BottomNav and Tabs make. */
 .current {
-  color: var(--ui-nav-item-text-current, var(--ui-action));
+  color: var(--ui-nav-item-text-current, var(--ui-brand));
 }
 .current::after {
   content: none;
@@ -185,12 +190,12 @@
   scale: 1 1;
 }
 
-/* Current page: red label and nothing else - no pipe, no indent. Mirrors
+/* Current page: a brand label and nothing else - no pipe, no indent. Mirrors
    NavItem's State=On, which likewise drops its rule. Hovering the current
    item adds nothing, so the two states never compound. */
 .subItemCurrent,
 .subItemCurrent:hover {
-  color: var(--ui-nav-sub-item-text-current, var(--ui-action));
+  color: var(--ui-nav-sub-item-text-current, var(--ui-brand));
 }
 .subItemCurrent:hover .subLabel {
   margin-right: 0;

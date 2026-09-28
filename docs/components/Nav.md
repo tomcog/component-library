@@ -17,6 +17,15 @@ component sets `Nav`, `Nav/Item`, `Nav/Dropdown`, `Nav/Dropdown/Item`.
 </Nav>
 ```
 
+
+## Current is brand, hover is action (0.63.0)
+
+The current item's label and a current sub item's label read `--ui-brand`. The
+hover underline, the dropdown's hover pipe, the persistent underline marking an
+open section (all `--ui-nav-accent-color`) and the focus ring stay `--ui-action`.
+The current item marks where you are; the rest preview or show interaction - the
+split NavRail, BottomNav and Tabs make. Figma: `Nav/Item` and `Nav/Dropdown/Item`
+`State=Current` bind `Brand/Base`; Hover keeps `Action/Base`.
 ## NavDropdown is a hover/focus disclosure
 
 Figma shows only a static column, so the behaviour was taken from the working
