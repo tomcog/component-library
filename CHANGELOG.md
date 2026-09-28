@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - ButtonRound `outline-light` restyled to the current Figma frame.
+**0.68.0 -> 0.69.0** - ButtonRound `outline-light` restyled to the current Figma frame.
 
 **ButtonRound** `variant="outline-light"`: the ground is now 55% black (was 35%) and
 the whole button rests at 75% opacity (new `--ui-button-round-outline-light-opacity`),
