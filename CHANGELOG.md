@@ -9,6 +9,15 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ButtonRound `outline-light`: hover and press stay neutral.
+
+**ButtonRound** `variant="outline-light"` no longer takes the primary fill on hover and
+the inverse surface on press. Both now only deepen the scrim - 50% black on hover, 65%
+pressed - with the white ring and glyph unchanged, so the button stays neutral over a
+photo. New tokens `--ui-surface-scrim-hover` and `--ui-surface-scrim-active`; hooks
+`--ui-button-round-outline-light-bg-hover` / `-bg-active`. Visible change to 0.67.0's
+variant; ParkPal is its only user.
+
 **0.66.0 -> 0.67.0** - ButtonRound `variant="outline-light"`, for a button over a photo.
 
 **ButtonRound** gains `variant="outline-light"`: a 35% black ground, a 1.5px white ring

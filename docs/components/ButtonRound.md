@@ -85,7 +85,13 @@ first. A 35% black ground, a white ring and a white glyph:
     ring    --ui-text-on-media   1.5px inset (--ui-button-round-outline-light-stroke)
     glyph   --ui-text-on-media   white
 
-Hooks: `--ui-button-round-outline-light-bg`, `-icon`, `-ring`.
+Hooks: `--ui-button-round-outline-light-bg`, `-bg-hover`, `-bg-active`, `-icon`, `-ring`.
+
+**Hover and press stay neutral** (0.68.0): they only deepen the scrim -
+`--ui-surface-scrim-hover` (50% black), `--ui-surface-scrim-active` (65%) - and
+the ring and glyph stay white. They do **not** fall through to the primary fill
+the way ghost's do: over a photo a coloured disc reads as a different control.
+Decided with the user. 0.67.0 shipped the fall-through; don't restore it.
 
 **Both colours are theme-independent, on purpose.** They are new semantics rather
 than `--ui-text-on-inverse` (white in light, ink in dark): a photo is the same
@@ -101,8 +107,7 @@ and the primitive binding, are divergence #48.
 
 ### Code-only, derived rather than drawn
 
-- **Hover and press** fall through to the base rules - primary fill, then the
-  inverse surface - with the ring kept on, exactly as `ghost` falls through.
+- **Hover and press** deepen the scrim (50%, 65% black); no colour is added.
 - **Disabled** keeps its own ground, ring and glyph at 50% opacity. The base
   disabled pair (a pale grey disc) would be the loudest thing on a dark photo.
 - **XL, MD and SM** share LG's 1.5px ring.

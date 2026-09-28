@@ -97,15 +97,27 @@
    box - the button stays the size of its neighbours, as Button's ghost does
    for the same reason.
 
-   Only the resting look is declared, as with ghost: hover and press fall
-   through to the base rules (primary fill, then the inverse surface), and the
-   ring stays on through both. Figma draws neither state, so that is code-only,
-   derived from ghost. */
+   Hover and press stay NEUTRAL: they only deepen the scrim (35% -> 50% ->
+   65% black) and keep the white ring and glyph. Unlike ghost, they do not
+   fall through to the primary fill - a coloured disc over a photo reads as a
+   different control, not the same one under the pointer. Decided with the
+   user; Figma draws neither state, so both are code-only. Written as
+   `.button.outlineLight` so they outrank the base hover/active rules
+   whatever the source order. */
 .outlineLight {
   background: var(--ui-button-round-outline-light-bg, var(--ui-surface-scrim));
   color: var(--ui-button-round-outline-light-icon, var(--ui-text-on-media));
   box-shadow: inset 0 0 0 var(--ui-button-round-outline-light-stroke)
     var(--ui-button-round-outline-light-ring, var(--ui-text-on-media));
+}
+
+.button.outlineLight:hover:not(:disabled) {
+  background: var(--ui-button-round-outline-light-bg-hover, var(--ui-surface-scrim-hover));
+  color: var(--ui-button-round-outline-light-icon, var(--ui-text-on-media));
+}
+.button.outlineLight:active:not(:disabled) {
+  background: var(--ui-button-round-outline-light-bg-active, var(--ui-surface-scrim-active));
+  color: var(--ui-button-round-outline-light-icon, var(--ui-text-on-media));
 }
 
 /* Disabled keeps its own ground, ring and glyph and drops to half strength.

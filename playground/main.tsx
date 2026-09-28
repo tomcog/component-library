@@ -639,8 +639,8 @@ function App() {
           "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
           "makes it louder than leaving it on. " +
           "variant=\"outline-light\" is for a button over a photo: a 35% black ground, a white ring " +
-          "and a white glyph, identical in both themes. Hover and press fall through to the base, " +
-          "ring kept; disabled is the same look at half strength."
+          "and a white glyph, identical in both themes. Hover and press stay neutral - the scrim " +
+          "deepens to 50% then 65% black, no colour is added; disabled is the same look at half strength."
         }
       >
         {ROUND_SIZES.map((s) => (

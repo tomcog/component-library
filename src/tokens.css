@@ -258,6 +258,11 @@
      variant="outline-light". Figma draws the scrim as a raw rgba(0,0,0,0.35)
      and binds the white straight to Color/White - see divergences #48. */
   --ui-surface-scrim: rgb(0 0 0 / 0.35);
+  /* Hover and press deepen the scrim and add no colour: over a photo the
+     control stays neutral in every state. Same shape as the muted
+     hover/active pair. */
+  --ui-surface-scrim-hover: rgb(0 0 0 / 0.5);
+  --ui-surface-scrim-active: rgb(0 0 0 / 0.65);
   --ui-text-on-media: var(--ui-white);
 
   --ui-surface-muted: var(--ui-neutral-300);

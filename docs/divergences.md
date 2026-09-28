@@ -140,5 +140,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     `rgba(0,0,0,0.35)`. Code reads two new semantics, `--ui-text-on-media` and
     `--ui-surface-scrim`, identical in Light and Dark; Figma wants matching
     `Text/OnMedia` and `Surface/Scrim` variables with the same value in both
-    modes. (`888:1673`, an earlier draft - 40% white ground, 1px ring - was
+    modes. Hover (50% black) and press (65%) are code-only - draw them as
+    `Hover`/`Active` cells of the new State when it is added. (`888:1673`, an earlier draft - 40% white ground, 1px ring - was
     superseded by these two.)
