@@ -396,6 +396,18 @@ why it looked right.
   render showed it. Clearing `fills` to `[]` and `opacity` to 1 on that vector fixed
   it. **Render after any swap**; reading bindings is not enough.
 
+## Cloning a variant drops its property references (2026-09-27)
+
+Adding `State=Disabled` to `Input-Text` by cloning each `Size` variant produced
+cells that looked right and rendered right, and whose `UserInput`, `InputLabel`
+and `Icon End?` links were all gone: `componentPropertyReferences` came back
+empty on every layer of the clone. An instance of the new cell would have ignored
+its own properties. Copy the references across by layer path after cloning (the
+originals still hold them), then prove it with a throwaway instance that sets
+each property. Cloning a variant that holds an exposed instance kept
+`isExposedInstance` in the same session, but set it again anyway - it costs
+nothing.
+
 ## Editing the Figma file safely
 
 Plugin edits are undoable from the canvas, and the user may be working in the file at the same time — node state can change between calls. Never bulk-delete by name pattern or assume an unfamiliar variant is leftover scaffolding (doing so destroyed a `Level=Ghost` variant the user was creating). Remove only ids created in the same call, and re-read state rather than trusting a previous call's snapshot.

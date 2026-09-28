@@ -5,8 +5,12 @@
 > or `CHANGELOG.md` under the same heading.
 
 A single-line text field: an underlined box with its label beneath it. Figma:
-set `725:702` (named `Button` - see open divergence #25), `Size` = LG
+the `Input-Text` set (`725:702`, named `Button` until 2026-09-27), `Size` = LG
 (`553:5455`) | MD (`725:703`), each drawn as one state.
+`State` = Default | Disabled (added 2026-09-27). `Icon End?` (a boolean, off by
+default, added the same day) shows the trailing
+glyph - `iconEnd` here. It used to be always on, drawing a chevron, which made
+the text field indistinguishable from `Input-Select`.
 
 ```tsx
 <InputText label="Input label" icon={<Layers />} value={v} onChange={…} />
@@ -213,8 +217,11 @@ content the user typed, not a label naming a control, so
   line without reintroducing the ring, thicken the focused rule to 2px and drop
   the field's padding-bottom by 1 so nothing shifts — that satisfies the
   criterion and is still only the underline. **Don't just re-add the ring.**
-- **Disabled is not in Figma.** It reuses Button's and Pill's muted fill and
-  inert text.
+- **Disabled was derived in code, then drawn.** It reuses Button's and Pill's
+  muted fill and inert text: `Surface/Disabled` fill, `Text/Disabled` underline,
+  value, glyphs and label. Figma gained `State=Disabled` on `Input-Text` (and
+  `Input-Select`) on 2026-09-27, drawn to exactly that, matching the
+  `InputTextarea` set's existing Disabled cell.
 - **No hover, no error state.** Neither is designed, and inventing one would
   be inventing a decision the file has not made — the same reason Card has no
   padding. When one is drawn, colour it with `--ui-danger` (which exists now,

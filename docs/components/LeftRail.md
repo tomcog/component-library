@@ -4,8 +4,10 @@
 > another section, it means the old single CLAUDE.md; that section now lives in `docs/`
 > or `CHANGELOG.md` under the same heading.
 
-The app shell's left column - a brand slot over a `NavRail`. Figma:
-`LeftRail-NoIcons` (`482:2517`) and `LeftRail-Icons` (`458:2612`).
+The app shell's left column - a brand slot over a `NavRail`. Figma: the `LeftRail`
+component (`837:407`), drawn from this code on 2026-09-27. The earlier
+`LeftRail-NoIcons` (`482:2517`) and `LeftRail-Icons` (`458:2612`) frames it was
+built from are gone from the file.
 
 ```tsx
 <LeftRail brand={<Logo weight="medium" size={50} label="Acme" />}>

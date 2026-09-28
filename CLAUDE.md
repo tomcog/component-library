@@ -24,7 +24,7 @@ Read these when the task touches them; they are not needed to start work.
 | `docs/figma.md` | any Figma write — API gotchas, publishing, the icon-flattening repair |
 | `docs/divergences.md` | Figma work — the open code/Figma drift; closed ones are in `divergences-resolved.md` |
 
-`BottomNav` has no doc yet; its module CSS comments carry its notes. Code comments in
+Code comments in
 `src/tokens.css` and the module CSS are often the most detailed record of a decision.
 
 **Keep this file short.** A decision about one component goes in that component's doc, a
@@ -219,7 +219,7 @@ section, a `docs/components/<Name>.md` (usage, geometry, token and Figma mapping
 
 ## Figma sync
 
-The **component-library** Figma file (key `l0022oDH82HhLclD3s3q9z`, page `Components`) and
+The **component-library** Figma file (key `l0022oDH82HhLclD3s3q9z`, page `Basic Components`) and
 this code are meant to be **identical**, to the extent the two media allow. That is a
 standing instruction. A change to a token or component is half done until the other side
 carries it; any disagreement is a defect recorded in `docs/divergences.md` with the
@@ -264,4 +264,6 @@ direction it still has to travel.
   re-read state rather than trusting an earlier snapshot. The file is shared with other
   projects; only the design-system subset (`Color/*`, `Neutral/*`, `Primary/*`, `Text/*`,
   `Surface/*`, `Button*`, `Nav/*`, `NavSlat`, `Motion/*`, `Card*`, and the library's
-  component sets) is ours. `Button/Round-Deprecated` is not part of the library.
+  component sets) is ours. `Button/Round-Deprecated`, `Input-Deprecated` (`66:7944`, the old
+  label-above field) and `Button-Deprecated` (Button's parked Confirm/Danger cells) are
+  not part of the library.

@@ -489,3 +489,73 @@ Nothing here needs action.
     one. The description now says so, and its opening no longer defines the bar by the
     example groups it happens to draw. Light/Dark invariants re-checked: clean.
 
+10. ~~`LeftRail` exists only in code as a component.~~ **Resolved 2026-09-27.**
+   Figma now has a `LeftRail` component (`837:407`): a Brand slot (min `Left
+   Rail/Brand Size`, 50) over a `NavRail` instance, `Left Rail/Padding` 24, `Left
+   Rail/Brand Gap` 32, on `Surface/Pale`. Drawn from the code, not from the old
+   frames, which had been removed from the canvas by then. `NavRail` (`837:378`) was
+   added with it - the rail had no component of its own either.
+
+   Original entry: **`LeftRail` exists only in code as a component.** Figma has two frames,
+   `LeftRail-NoIcons` and `LeftRail-Icons`, neither of which is a component
+   set - so there is nothing to instance, and the "two sides must match" rule
+   has nothing to compare against beyond the drawn pixels (which do match,
+   measured). Promoting them to a set with an `Icon?` boolean would close it;
+   that is a design-shaped change, so it happens in Figma first.
+
+18. ~~`Spinner` has no Figma counterpart.~~ **Resolved 2026-09-27.** Figma now has a
+   static `Spinner` component (`837:440`): `logo-tc` Medium at 64, with the
+   rotation, both durations, the reduced-motion slow-down and the status role in its
+   description - the most a component can carry, as the entry predicted.
+
+   Original entry: **`Spinner` has no Figma counterpart.** It was pulled from tomcoggia.com,
+   not from the file, so there is nothing to reconcile against beyond the
+   `logo-tc` artwork it shares — which does match, being literally the same
+   paths. Figma cannot express a continuous rotation as a component, so the
+   most it could carry is a static frame plus a description; that is probably
+   worth adding when someone next has the Bridge open, so a designer reaching
+   for a loader finds one. Not drift in the usual sense — there is no value
+   disagreeing — but recorded so it is not mistaken for an oversight.
+
+27. ~~`ConfirmButton` has no `Size` axis in Figma.~~ **Resolved 2026-09-27.** The
+   set now has `Size` = XL | LG | MD | SM on both shapes: Round on `Button/Round`'s
+   geometry (48/40/32/24, icons 28/24/20/16), Label on Button's. The original XL
+   cells were 48x47 and were squared at the same time.
+
+   Original entry: **`ConfirmButton` has no `Size` axis in Figma.** The set (`735:398`) is
+   drawn at 48 only; code ships `xl | lg | md | sm`, aliasing `ButtonRound`'s
+   geometry tokens, because the two get used side by side and have to sit
+   level. Direction: **Figma**, which needs a `Size` axis taking 48/40/32/24
+   with 28/24/20/16 icon boxes — the same ramp `Button/Round` already draws.
+   Design-shaped, so it happens in Figma as its own session.
+
+30. ~~`Button` still draws a `State=Confirm` cell.~~ **Resolved 2026-09-27.** Both
+   `State=Confirm` and `State=Danger` were parked in a `Button-Deprecated` set (not
+   deleted, so instances elsewhere resolve). Danger became Button's `Tone` axis,
+   drawn on Hover and Pressed at every Level and Size; the rectangular confirmation
+   became `ConfirmButton` `Shape=Label`, and code grew the labelled shape to match.
+   The question the entry asked - a rectangular safety tone or a documented
+   Figma-only - was answered by neither: the confirmation belongs to ConfirmButton.
+
+   Original entry: **`Button` (`135:9598`) still draws a `State=Confirm` cell.** It was left
+   alone when `Button/Round`'s Confirm and Danger moved into `ConfirmButton`,
+   and it has no counterpart in code — `Button`'s `tone` is
+   `"primary" | "danger"` only. This is the pre-existing Figma-only cell
+   `docs/components/Button.md` already names; it is listed here now because it
+   is the last one left, and because "confirm" no longer names anything in the
+   code. Direction: undecided — either code grows a rectangular safety tone or
+   the cell is renamed `Safety` and left as a documented Figma-only. Ask.
+
+31. ~~`ConfirmButton`'s safety rest glyph is `Safety/Darker` in code, `Safety/Base`
+   in Figma.~~ **Resolved 2026-09-27.** Found already fixed when the set was
+   rebuilt: every Safety Default cell binds its glyph to `Safety/Darker`, and the
+   new sizes and the Label shape were drawn the same way.
+
+   Original entry: **`ConfirmButton`'s safety rest glyph is `Safety/Darker` in code,
+   `Safety/Base` in Figma.** Changed in code on 2026-09-20 (see CHANGELOG):
+   `--ui-safety` on `--ui-safety-lighter` was two light greens, and the icon
+   read as a shape rather than a glyph. Direction: **Figma** — the Default cell
+   of `tone=Safety` (node `606:15107` and its siblings) binds its icon stroke to
+   `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
+   throughout. Not done in the session that made the code change: writes need
+   the Desktop Bridge plugin, which wasn't connected.

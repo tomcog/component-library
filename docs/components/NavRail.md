@@ -4,8 +4,9 @@
 > another section, it means the old single CLAUDE.md; that section now lives in `docs/`
 > or `CHANGELOG.md` under the same heading.
 
-Left rail navigation - a vertical column of links. Figma: the `NavSlat` set
-(`444:791`) at `Level=Primary`, assembled text-only at `458:2467`.
+Left rail navigation - a vertical column of links. Figma: the `NavRail` component
+(`837:378`, gap `Nav Rail/Gap` 12) holding the `NavSlat` set (`444:791`) at
+`Level=Primary`. The older assembled frame (`458:2467`) is gone from the file.
 
 ```tsx
 <NavRail aria-label="Sections">

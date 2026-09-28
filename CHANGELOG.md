@@ -9,6 +9,26 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ConfirmButton: a labelled shape. BottomNav: the top rule follows the theme.
+
+**ConfirmButton** takes a label: pass `children` and it draws Button's rectangular box
+(height, padding, radius, type, a type-sized icon at 0.65) in the confirmation colours,
+coloured at rest - the confirm in a dialog footer. `icon` is now optional when there is
+a label. Round, icon-only use is unchanged. Additive; no new tokens (geometry reads
+Button's behind `--ui-confirm-button-label-*` hooks). Figma: `ConfirmButton` gained
+`Shape` (Round | Label), all four sizes and a Disabled state; Button's danger tone is
+now a `Tone` axis there and its old `Confirm` / `Danger` cells are parked. Apps
+retinting a primary Button to danger for a dialog confirm (NextJob's `.dialogConfirm`)
+can use `<ConfirmButton tone="danger">Delete</ConfirmButton>` instead - note it rests
+on the pale tint rather than solid red.
+
+**BottomNav**: the top rule follows the theme.
+
+The bar's top rule read the `--ui-neutral-150` primitive, so in dark mode it stayed
+`#ededed` on the dark bar. It now reads a new semantic, `--ui-border-subtle`
+(`Neutral/150` in light - unchanged - and `Neutral/700` in dark). Visible in dark only.
+New token: `--ui-border-subtle`. The `--ui-bottom-nav-rule` hook still wins.
+
 **0.60.0 -> 0.61.0** - Toolbar: `ToolbarExpander`, and `orientation="vertical"`.
 
 New `ToolbarExpander` (and `ToolbarExpanderProps`): an icon-only segment that reveals

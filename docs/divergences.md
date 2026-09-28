@@ -51,22 +51,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    description against the artwork rather than against this file - the two
    disagreed here and the artwork was right.
 
-10. **`LeftRail` exists only in code as a component.** Figma has two frames,
-   `LeftRail-NoIcons` and `LeftRail-Icons`, neither of which is a component
-   set - so there is nothing to instance, and the "two sides must match" rule
-   has nothing to compare against beyond the drawn pixels (which do match,
-   measured). Promoting them to a set with an `Icon?` boolean would close it;
-   that is a design-shaped change, so it happens in Figma first.
-
-18. **`Spinner` has no Figma counterpart.** It was pulled from tomcoggia.com,
-   not from the file, so there is nothing to reconcile against beyond the
-   `logo-tc` artwork it shares — which does match, being literally the same
-   paths. Figma cannot express a continuous rotation as a component, so the
-   most it could carry is a static frame plus a description; that is probably
-   worth adding when someone next has the Bridge open, so a designer reaching
-   for a loader finds one. Not drift in the usual sense — there is no value
-   disagreeing — but recorded so it is not mistaken for an oversight.
-
 7. ~~`Button` has no Figma description.~~ **Half resolved.** `Button`'s is
    written - and the useful part was naming what its `State` axis actually
    holds, which is three different kinds of thing at once: the element's own
@@ -103,9 +87,8 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    reading `Size=MD` (`725:703`); code followed the rendered canvas, and
    these are the Figma-side fixes still pending:
 
-   - the set `725:702` is named **`Button`**. It holds `Size=LG`
-     (`553:5455`, the old `Input-Text`) and `Size=MD`. Rename it
-     `Input-Text` - a rename keeps every instance.
+   - ~~the set `725:702` is named **`Button`**~~ - renamed `Input-Text`
+     on 2026-09-27. It holds `Size=LG` (`553:5455`) and `Size=MD` (`725:703`).
    - **`Size=LG` is 30 tall; the code is 32.** Its field frame is fixed at 30
      with padding 8/4 around a 20 line box, so it too centres the text in
      less room than the padding asks for. `Input/Padding Bottom` is 3 and LG
@@ -121,34 +104,26 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
      font size. Code has `--ui-input-text-md-*` tokens for all of them; Figma
      has no variables to bind.
 
-26. **`InputTextarea` and InputSelect have no MD in Figma.** Code gives all
-   three inputs `size="md"` because they share one field. Figma's
-   `InputTextarea` set (`638:2383`) has only a `State` axis, and there is
-   no Input-Select set at all - the select is `Input-Text` with a chevron in
-   its trailing slot. The textarea wants a `Size` axis drawn from the code's
-   MD; that is design-shaped, so it happens in Figma as its own session.
+26. **`InputTextarea` has no MD in Figma.** Code gives all three inputs
+   `size="md"` because they share one field. Figma's `InputTextarea` set
+   (`638:2383`) has only a `State` axis. It wants a `Size` axis drawn from the
+   code's MD; that is design-shaped, so it happens in Figma as its own
+   session. (The select half closed on 2026-09-27: `Input-Select`, `837:463`,
+   wraps `Input-Text` at LG and MD.)
 
-27. **`ConfirmButton` has no `Size` axis in Figma.** The set (`735:398`) is
-   drawn at 48 only; code ships `xl | lg | md | sm`, aliasing `ButtonRound`'s
-   geometry tokens, because the two get used side by side and have to sit
-   level. Direction: **Figma**, which needs a `Size` axis taking 48/40/32/24
-   with 28/24/20/16 icon boxes — the same ramp `Button/Round` already draws.
-   Design-shaped, so it happens in Figma as its own session.
+45. **`FAB` is in Figma and absent from code.** A component (`703:513`) of a
+   `Button/Round` beside a text label, with no description and no instances
+   in the file. No `FAB` exists in `src/`, and no doc mentions it. It sits in
+   its own "Figma only - not in code" section on the canvas so its placement
+   does not suggest it is in the library. Either it is built in code (from
+   the drawing, as a design-shaped change arriving Figma-first) or it is
+   marked deprecated; which is the user's call.
 
-30. **`Button` (`135:9598`) still draws a `State=Confirm` cell.** It was left
-   alone when `Button/Round`'s Confirm and Danger moved into `ConfirmButton`,
-   and it has no counterpart in code — `Button`'s `tone` is
-   `"primary" | "danger"` only. This is the pre-existing Figma-only cell
-   `docs/components/Button.md` already names; it is listed here now because it
-   is the last one left, and because "confirm" no longer names anything in the
-   code. Direction: undecided — either code grows a rectangular safety tone or
-   the cell is renamed `Safety` and left as a documented Figma-only. Ask.
-
-31. **`ConfirmButton`'s safety rest glyph is `Safety/Darker` in code,
-   `Safety/Base` in Figma.** Changed in code on 2026-09-20 (see CHANGELOG):
-   `--ui-safety` on `--ui-safety-lighter` was two light greens, and the icon
-   read as a shape rather than a glyph. Direction: **Figma** — the Default cell
-   of `tone=Safety` (node `606:15107` and its siblings) binds its icon stroke to
-   `Safety/Darker`. Hover, press and ghost are unchanged, as is Danger
-   throughout. Not done in the session that made the code change: writes need
-   the Desktop Bridge plugin, which wasn't connected.
+46. **Button's danger ghost press is lighter in Figma than in code.** Code
+   presses a ghost `tone="danger"` button to 48% `--ui-danger` on the raised
+   surface; Figma binds `Button/Danger/Ghost Pressed` to `Danger/Lighter`, the
+   only pale danger shade there is, so the drawn press reads as the hover. The
+   other danger presses are the usual mix-versus-named-shade trade (`Danger/Darker`
+   against a 22.3% mix) and close enough to leave. Direction: undecided - either
+   a hand-picked `Color/TC Red Light` primitive with a `Danger/Light` semantic
+   (both sides), or the code's ghost press moves to `--ui-danger-lighter`. Ask.

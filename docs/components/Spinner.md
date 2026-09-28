@@ -85,8 +85,9 @@ without it the spinner is `aria-hidden`. A spinner standing alone should pass
 one — the opt-in exists for when something beside it already announces the
 wait, not as a default to leave.
 
-## Divergence — no Figma counterpart
+## Figma carries it static
 
-`Spinner` exists only in code. Figma has the `logo-tc` set but nothing
-modelling the animation, and Figma cannot express a continuous rotation as a
-component anyway. See Open divergences.
+Figma: the `Spinner` component (`837:440`), `logo-tc` Medium at 64, added
+2026-09-27. A component cannot express continuous rotation, so the drawing is
+still and the motion (800ms a turn, slowed to 2400ms under reduced motion, never
+stopped), the colour hook and the status role live in its description.

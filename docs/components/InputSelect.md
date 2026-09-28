@@ -5,6 +5,13 @@
 > or `CHANGELOG.md` under the same heading.
 
 A dropdown: InputText's field with a chevron and a real `<select>` inside it.
+Figma: the `Input-Select` set (`837:463`), `Size` = LG | MD by `State` =
+Default | Disabled, each variant an
+`Input-Text` instance of the same size with `Icon End?` switched on for the
+chevron - the same field, as it is here. That instance is exposed, so a placed
+Input-Select sets its label and value text from the properties panel under
+**Field**. Field's `Icon End?` must stay on, and its `Size` and `State` must be
+left to the set's own; the description says so, since Figma cannot lock either.
 
 ```tsx
 <InputSelect label="Work mode" value={mode} onChange={…}>
