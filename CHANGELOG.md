@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - New `Radio` and `RadioGroup`.
+**0.65.0 -> 0.66.0** - New `Radio` and `RadioGroup`.
 
 New **`Radio`** (and `RadioProps`, `RadioSize`): one option of a one-of-N choice, a
 real `<input type="radio">` drawn as a ring and a dot, modelled on `Checkbox` - the
