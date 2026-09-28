@@ -82,14 +82,20 @@ like its Level, so drawing those cells again would say nothing. The grounds bind
 | `Button/Danger/Pressed` | `Danger/Darker` | `--ui-danger` mixed 22.3% toward black |
 | `Button/Danger/Label` | `Text/OnDanger` | `--ui-text-on-danger` |
 | `Button/Danger/Ghost Hover` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
-| `Button/Danger/Ghost Pressed` | `Danger/Lighter` | 48% `--ui-danger` on the raised surface |
+| `Button/Danger/Ghost Pressed` | `Danger/Lighter` | `--ui-danger-lighter` (a 48% mix until 0.63.0) |
 | `Button/Danger/Ghost Label` | `Danger/Base` | `--ui-danger` |
-| `Button/Danger/Ghost Label Pressed` | `Danger/Darker` | `--ui-danger` mixed 25% toward Text/Default |
+| `Button/Danger/Ghost Label Pressed` | `Danger/Darker` | `--ui-danger-darker` (a mix toward Text/Default until 0.63.0) |
 
 Code derives the pressed shades with `color-mix()` so an app's own danger colour
 gets a coherent press; Figma cannot mix, so it takes the nearest role shade -
 the same trade `Button/Primary/Pressed` -> `Action/Darker` already makes. The
-ghost press is the visible gap (open divergence #46). The variables carry no
+ghost press used to be the visible gap; since 0.63.0 code uses the named pair
+there too, so it matches exactly. **Its label moved with its ground on
+purpose**: the pale tint is a role colour and stays pale in dark, where the
+default ghost's label (mixed toward near-white Text/Default) would have been
+light on light. Darker on Lighter is 5.88:1 in both themes. In light the press
+ground is barely distinct from the hover's 15% mix, so the press reads mainly as
+the label darkening - which is what Figma draws. The variables carry no
 code syntax, because code has no such tokens: the `.danger` class sets the
 existing `--ui-button-*-hover` / `-active` hooks.
 
@@ -100,6 +106,39 @@ Primary/XL cells. Both were parked in a `Button-Deprecated` set in the
 Deprecated section rather than deleted, so any instance in another file still
 resolves: `Danger` is this axis now, and a confirmation coloured at rest - the
 job `Confirm` gestured at - is `ConfirmButton` with a label.
+
+## Secondary is tonal (0.63.0)
+
+`variant="secondary"` rests on the pale action tint with an action-coloured label
+- exactly the ghost button's hover, so it shares that expression and cannot drift
+from it - and fills solid when reached for: hover and press are unchanged (the
+darker action shades with a white label), as are disabled and the danger tone.
+Before 0.63.0 it rested near-black (`--ui-surface-inverse`) with a light label.
+Figma: `Button/Secondary/Default` -> `Action/Lighter`, `Button/Secondary/Label` ->
+`Action/Base`, and a new `Button/Secondary/Label Active` -> `Text/OnAction` for
+Hover and Pressed (no other component bound these, so they were repointed).
+
+**Contrast at rest is below AA for text**: the action red on its own 15% tint is
+3.64:1 in light and 2.71:1 in dark (the tint mixes toward the dark raised surface
+there). Ghost's hover has the same pair, but only transiently; Secondary wears it
+at rest. Flagged, not changed - see open divergence #48.
+
+## Tertiary is Ghost without its rule (0.63.0)
+
+`variant="tertiary"` is text-only in `--ui-action` at rest, and from there on it
+is the ghost button: the same fill on hover, the same press, the same disabled,
+loading and danger tone. The one difference between the two is Ghost's 1px rule
+at rest. Before 0.63.0 it was a grey `--ui-surface-muted` fill with a dark label.
+
+Every interactive value reads Tertiary's own hook first, then **Ghost's** hook,
+then the shared fallback - so retuning the ghost button retunes this one, the
+danger tone (which sets the ghost hooks) reaches it without a rule of its own,
+and an app can still move Tertiary alone through `--ui-button-tertiary-*`.
+
+Figma: the Tertiary cells bind `Button/Ghost/*` and `Button/Danger/Ghost *`
+directly. The `Button/Tertiary/*` variables were NOT repointed, because
+Button/Round and LayerController also bind them (open divergence #47); Button no
+longer reads them.
 
 ## Ghost fills on interaction; it does not darken
 

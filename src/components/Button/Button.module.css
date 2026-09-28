@@ -87,9 +87,19 @@
               color-mix(in srgb, var(--ui-action), black 40.7%));
 }
 
+/* Secondary is TONAL: at rest it wears the pale action tint with an action
+   label - exactly the ghost button's hover, so the expression is the ghost's
+   and the two cannot drift - and it fills solid when reached for, like
+   ConfirmButton's ladder. Changed in 0.63.0 from a near-black
+   (--ui-surface-inverse) ground with a light label; hover, press, disabled
+   and the danger tone are unchanged. Mixed toward the raised surface, so in
+   dark mode the tint is a dark ground with the brand in it, as the ghost
+   hover is. */
 .secondary {
-  background: var(--ui-button-secondary-bg, var(--ui-surface-inverse));
-  color: var(--ui-button-secondary-text, var(--ui-text-on-inverse));
+  background: var(--ui-button-secondary-bg,
+              var(--ui-action-lighter,
+              color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
+  color: var(--ui-button-secondary-text, var(--ui-action));
 }
 .secondary:hover:not(:disabled) {
   background: var(--ui-button-secondary-bg-hover,
@@ -102,15 +112,34 @@
   color: var(--ui-text-on-action);
 }
 
+/* Tertiary is Ghost without its rule: text-only in --ui-action at rest, and
+   from there on it IS the ghost button - the same fill on hover, the same
+   press, the same danger tone. Changed in 0.63.0 from a grey fill
+   (Surface/Muted) with a dark label.
+
+   Every interactive value reads Tertiary's own hook first and then GHOST's
+   hook, before the shared fallback. So retuning the ghost button retunes this
+   one (and the danger tone, which sets the ghost hooks, reaches it for free),
+   while an app can still move Tertiary alone. The ghost rules below carry the
+   reasoning for the tints themselves. */
 .tertiary {
-  background: var(--ui-button-tertiary-bg, var(--ui-surface-muted));
-  color: var(--ui-button-tertiary-text, var(--ui-text-default));
+  background: var(--ui-button-tertiary-bg, transparent);
+  color: var(--ui-button-tertiary-text, var(--ui-button-ghost-text, var(--ui-action)));
 }
 .tertiary:hover:not(:disabled) {
-  background: var(--ui-button-tertiary-bg-hover, var(--ui-surface-muted-hover));
+  background: var(--ui-button-tertiary-bg-hover,
+              var(--ui-button-ghost-bg-hover,
+              var(--ui-action-lighter,
+              color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised)))));
+  color: var(--ui-button-tertiary-text-hover, var(--ui-button-ghost-text-hover, var(--ui-action)));
 }
 .tertiary:active:not(:disabled) {
-  background: var(--ui-button-tertiary-bg-active, var(--ui-surface-muted-active));
+  background: var(--ui-button-tertiary-bg-active,
+              var(--ui-button-ghost-bg-active,
+              color-mix(in srgb, var(--ui-action) 48%, var(--ui-surface-raised))));
+  color: var(--ui-button-tertiary-text-active,
+         var(--ui-button-ghost-text-active,
+         color-mix(in srgb, var(--ui-action), var(--ui-text-default) 25%)));
 }
 
 
@@ -175,6 +204,12 @@
   background: var(--ui-button-disabled-bg, var(--ui-surface-disabled));
   color: var(--ui-button-disabled-text, var(--ui-text-disabled));
   cursor: not-allowed;
+}
+
+/* Tertiary disables as Ghost does, less the rule: no ground, inert text. */
+.tertiary:disabled {
+  background: transparent;
+  color: var(--ui-button-tertiary-text-disabled, var(--ui-text-disabled));
 }
 
 .ghost:disabled {
@@ -309,22 +344,27 @@
   --ui-button-secondary-bg-hover: var(--ui-danger);
   --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
 
-  --ui-button-tertiary-bg-hover: var(--ui-danger);
-  --ui-button-tertiary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  /* Tertiary sets nothing of its own: it reads the ghost hooks below, so its
+     danger tone is the ghost's - a pale danger ground, a danger label. */
 
   --ui-button-ghost-bg-hover: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
   --ui-button-ghost-text-hover: var(--ui-danger);
-  --ui-button-ghost-bg-active: color-mix(in srgb, var(--ui-danger) 48%, var(--ui-surface-raised));
-  --ui-button-ghost-text-active: color-mix(in srgb, var(--ui-danger), var(--ui-text-default) 25%);
+  /* The ghost PRESS takes the named pale tint and its darker partner rather
+     than mixing, which is what Figma draws (Button/Danger/Ghost Pressed ->
+     Danger/Lighter, Ghost Label Pressed -> Danger/Darker). Both halves move
+     together deliberately: the tint is a role colour and stays pale in dark,
+     so the default ghost's label - mixed toward Text/Default, near-white in
+     dark - would sit light-on-light there. Darker on Lighter holds in both
+     themes. The 48% mix it replaced (to 0.63.0) had no Figma counterpart. */
+  --ui-button-ghost-bg-active: var(--ui-danger-lighter);
+  --ui-button-ghost-text-active: var(--ui-danger-darker);
 }
 
-/* Secondary and tertiary fill danger on interaction, so their labels have to
-   move to the colour that sits on it. Secondary hard-codes --ui-text-on-action
-   in its own state rules and tertiary keeps its resting label, so neither can
-   be reached by a hook alone. */
+/* Secondary fills danger on interaction, so its label has to move to the
+   colour that sits on it - and it hard-codes --ui-text-on-action in its own
+   state rules, so a hook alone cannot reach it. (Tertiary no longer fills: it
+   takes the ghost's danger, through the ghost hooks.) */
 .danger.secondary:hover:not(:disabled),
-.danger.secondary:active:not(:disabled),
-.danger.tertiary:hover:not(:disabled),
-.danger.tertiary:active:not(:disabled) {
+.danger.secondary:active:not(:disabled) {
   color: var(--ui-button-danger-text-on-fill, var(--ui-text-on-danger));
 }
