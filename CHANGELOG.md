@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Segment: a grey press state. Toolbar: tracks follow a scoped dark theme. ToolbarExpander: a drawer that stays open is a choice. Button: Secondary's resting label is darker, for contrast.
+**0.63.0 -> 0.64.0** - Segment: a grey press state. Toolbar: tracks follow a scoped dark theme. ToolbarExpander: a drawer that stays open is a choice. Button: Secondary's resting label is darker, for contrast.
 
 **Toolbar**: a gray toolbar's tracks follow a scoped dark theme. `--ui-toolbar-track-bg`
 was declared on `:root` as `var(--ui-surface-raised)`, freezing it at the light value,
