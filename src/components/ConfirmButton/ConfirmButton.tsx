@@ -38,8 +38,12 @@ export type ConfirmButtonTone = "safety" | "danger";
 export type ConfirmButtonVariant = "filled" | "ghost";
 
 export interface ConfirmButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */
-  icon: ReactNode;
+  /**
+   * Decorative icon, e.g. any Lucide React icon. Always `aria-hidden`.
+   * Required for the round shape, where it is the whole face; optional when
+   * the button has a label, where it leads the label at 0.65.
+   */
+  icon?: ReactNode;
   /**
    * Figma: `Style`. Required - see {@link ConfirmButtonTone} for why this one
    * prop has no default.
@@ -56,12 +60,21 @@ export interface ConfirmButtonProps extends ButtonHTMLAttributes<HTMLButtonEleme
   variant?: ConfirmButtonVariant;
   /** Render the single child element, such as an anchor, as the control. */
   asChild?: boolean;
+  /**
+   * The label. Figma: `Shape=Label`. Pass one and the button takes Button's
+   * rectangular geometry - the confirm in a dialog footer, standing level
+   * with a Cancel beside it; leave it out and it is the round, icon-only
+   * button. With `asChild`, the child element's own children are the label.
+   */
+  children?: ReactNode;
 }
 
 /**
- * The round button at the end of a decision: the two halves of "are you sure?".
+ * The button at the end of a decision: the two halves of "are you sure?".
+ * Round and icon-only, or - given a label - Button's rectangular box in the same
+ * colours, for a dialog footer.
  *
- * Figma: `ConfirmButton` (735:398), which was lifted out of `Button/Round`'s
+ * Figma: `ConfirmButton` (735:398), `Shape` = Round | Label, which was lifted out of `Button/Round`'s
  * `State=Confirm` and `State=Danger` cells. The split is the design: those
  * cells recoloured HOVER only and rested in the brand, so a Delete and a Save
  * looked identical to a user who had not yet moved the pointer. That is the
@@ -79,21 +92,35 @@ export const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
       asChild && isValidElement(children)
         ? (Children.only(children) as ReactElement<any>)
         : null;
+    // The label decides the shape: a labelled confirmation is Button's box,
+    // an unlabelled one is the round button. `null`, `undefined` and `false`
+    // are "no label" - the shapes a conditional child comes out as.
+    const label = child ? child.props.children : children;
+    const labelled = label != null && label !== false;
 
-    if (
-      process.env.NODE_ENV !== "production" &&
-      props["aria-label"] == null &&
-      props["aria-labelledby"] == null &&
-      props.title == null
-    ) {
-      console.warn(
-        "[@tomcoggia/ui] ConfirmButton: icon-only buttons need an accessible name. " +
-          'Pass aria-label, aria-labelledby, or title.',
-      );
+    if (process.env.NODE_ENV !== "production") {
+      if (
+        !labelled &&
+        props["aria-label"] == null &&
+        props["aria-labelledby"] == null &&
+        props.title == null
+      ) {
+        console.warn(
+          "[@tomcoggia/ui] ConfirmButton: icon-only buttons need an accessible name. " +
+            'Pass aria-label, aria-labelledby, or title - or give it a label as children.',
+        );
+      }
+      if (!labelled && icon == null) {
+        console.warn(
+          "[@tomcoggia/ui] ConfirmButton: with no label and no icon the round button draws " +
+            "nothing. Pass `icon`, or a label as children.",
+        );
+      }
     }
 
     const classes = [
       styles.button,
+      labelled ? styles.labelled : styles.round,
       styles[size],
       styles[tone],
       variant === "ghost" ? styles.ghost : null,
@@ -104,9 +131,14 @@ export const ConfirmButton = forwardRef<HTMLButtonElement, ConfirmButtonProps>(
       .join(" ");
 
     const body = (
-      <span className={styles.icon} aria-hidden="true">
-        {icon}
-      </span>
+      <>
+        {icon != null ? (
+          <span className={styles.icon} aria-hidden="true">
+            {icon}
+          </span>
+        ) : null}
+        {labelled ? label : null}
+      </>
     );
 
     if (child) {

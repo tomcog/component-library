@@ -1,15 +1,42 @@
 # ConfirmButton
 
-The round button at the end of a decision: the two halves of "are you sure?".
+The button at the end of a decision: the two halves of "are you sure?". Round and
+icon-only, or labelled for a dialog footer.
 
-Figma: the `ConfirmButton` set (`735:398`), axes `Style` = Safety | Danger and
-`State` = Default | Hover | Active | Ghost, plus an `Icon` instance swap.
-Added in 0.36.0.
+Figma: the `ConfirmButton` set (`735:398`), axes `Shape` = Round | Label, `Size` =
+XL | LG | MD | SM, `Style` = Safety | Danger and `State` = Default | Hover | Active |
+Ghost | Disabled (80 cells), plus an `Icon` instance swap and, for Label, a `Label`
+text and an `Icon Start?` boolean. Added in 0.36.0; the labelled shape, the sizes
+and Disabled were drawn on 2026-09-27.
 
 ```tsx
 <ConfirmButton tone="safety" icon={<Check />} aria-label="Save changes" />
 <ConfirmButton tone="danger" icon={<Trash2 />} aria-label="Delete job" />
+
+{/* labelled: the dialog's confirm, beside a Cancel */}
+<Button variant="tertiary">Cancel</Button>
+<ConfirmButton tone="danger" icon={<Trash2 />}>Delete</ConfirmButton>
 ```
+
+## A label makes it rectangular
+
+Pass `children` and it takes **Button's** box - height, padding, radius, type and
+a type-sized icon at 0.65 - with this component's colours. The label decides the
+shape; there is no `shape` prop, the same way a Segment's `hideLabel` decides its
+own. With `asChild`, the child element's own text is the label.
+
+This is the confirmation coloured **at rest**, which Button cannot be. It replaces
+the hand-rolled version NextJob built by retinting a primary Button's hooks to
+danger (`.dialogConfirm` in `OpportunityDetail.module.css`). Its hover and press
+there were solid red at rest; here a labelled confirmation rests on the pale tint
+like the round one, and fills on hover - one family, one ladder.
+
+Geometry is read from `--ui-button-*` behind `--ui-confirm-button-label-*` hooks,
+and nothing is declared in `tokens.css`: it is Button's box, so a Cancel and a
+Delete in one footer stand level without anyone checking.
+
+**Button `tone="danger"` is still the right thing for a Delete among ordinary
+actions** - quiet until reached for. Use this at the end of a decision.
 
     size   box    icon   stroke
     xl     48     28     2.5
@@ -164,14 +191,12 @@ definition.
 
 ## Divergences — do not fix these
 
-1. **Only XL is drawn in Figma.** The set has no `Size` axis; `lg`, `md` and
-   `sm` are the code's, and they are `ButtonRound`'s sizes by construction. This
-   is the one place the component is ahead of the file. If the set gains a
-   `Size` axis, it should take these values.
+1. ~~Only XL is drawn in Figma.~~ All four sizes are drawn since 2026-09-27, on
+   Button/Round's ramp for Round and Button's for Label.
 2. **`State=Hover` and `State=Active` are CSS states, not props.** Figma has to
    spend variants on them; code gets them from `:hover` and `:active`. The real
    axis Figma's `State` carries is `Default` vs `Ghost`, which is `variant`.
-3. **No `Disabled` cell exists in Figma.** Derived from `ButtonRound`'s —
+3. **`Disabled` was derived in code, then drawn** (2026-09-27, both shapes). From `ButtonRound`'s —
    `--ui-surface-disabled` / `--ui-text-disabled` — and applied to **both**
    variants, so a disabled ghost takes the disc. That is the opposite of
    `ButtonRound`, where a disabled ghost stays unfilled so that switching a
@@ -192,6 +217,11 @@ definition.
    is louder than it is in light; that is the design, checked in the playground
    in both themes.
 7. **`Icon` is an instance-swap property in Figma, a `ReactNode` slot here.**
+8. **The labelled ghost has no outline**, where Button's ghost has a 1px rule.
+   It follows this component's own ghost - the ground goes, the colour stays -
+   because it is a confirmation first and a rectangle second.
+9. **The labelled shape has no trailing icon.** A confirmation states its action;
+   Button's `iconEnd` has no counterpart here.
 
 ## When a component is added
 

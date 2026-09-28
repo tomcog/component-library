@@ -68,37 +68,38 @@ In Figma this is `State=Loading` (60 variants), **not** a boolean. A Figma boole
 - **Focus is code-only.** `.button:focus-visible` has a 2px primary outline with 2px offset. Figma models no Focus state, and the buttons carry **no strokes in any variant** — that is the design's intent. Figma also has no equivalent of `outline-offset`, so an `OUTSIDE` stroke misrepresents the ring (it reads as invisible on Primary, primary-on-primary). Don't add focus variants or strokes to the Figma file.
 - ~~Dark mode is code-only.~~ No longer true: the Figma collection has Light and Dark modes, carrying the same mapping as `tokens.css`. See "Light and dark are a semantic-tier concern" below.
 
-## `tone="danger"` is a `State` cell in Figma, one cell for the whole tone
+## `tone="danger"` is the `Tone` axis in Figma, on Hover and Pressed only
 
-Figma: `Button` `State=Danger` at `Level=Primary, Size=XL` - a `Danger/Base`
-ground with a `Text/OnDanger` label, drawn as the HOVER appearance because that
-is what the tone changes.
+Figma: `Button`'s `Tone` = Default | Danger (since 2026-09-27). Danger is drawn on
+**Hover and Pressed, at every Level and Size** - 32 cells - because those are the
+only states the tone changes. A Default, Disabled or Loading danger button looks
+like its Level, so drawing those cells again would say nothing. The grounds bind
+`Button/Danger/*`, which alias the danger semantics:
 
-**One cell, following `Confirm`'s precedent**, which is also a single
-`Primary/XL` cell. The tone reaches all four Levels in code; drawing it
-sixteen times would say nothing the description does not, and the set is
-already 82 variants. The cell says the tone exists and what colour it is; the
-description says how far it reaches.
+| Figma | aliases | code |
+|---|---|---|
+| `Button/Danger/Hover` | `Danger/Base` | `--ui-danger` |
+| `Button/Danger/Pressed` | `Danger/Darker` | `--ui-danger` mixed 22.3% toward black |
+| `Button/Danger/Label` | `Text/OnDanger` | `--ui-text-on-danger` |
+| `Button/Danger/Ghost Hover` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
+| `Button/Danger/Ghost Pressed` | `Danger/Lighter` | 48% `--ui-danger` on the raised surface |
+| `Button/Danger/Ghost Label` | `Danger/Base` | `--ui-danger` |
+| `Button/Danger/Ghost Label Pressed` | `Danger/Darker` | `--ui-danger` mixed 25% toward Text/Default |
 
-**`State` now holds three different kinds of thing**, and reading it as one
-axis is how someone ends up adding a fifth `Level` called Danger:
+Code derives the pressed shades with `color-mix()` so an app's own danger colour
+gets a coherent press; Figma cannot mix, so it takes the nearest role shade -
+the same trade `Button/Primary/Pressed` -> `Action/Darker` already makes. The
+ghost press is the visible gap (open divergence #46). The variables carry no
+code syntax, because code has no such tokens: the `.danger` class sets the
+existing `--ui-button-*-hover` / `-active` hooks.
 
-| cells | what they are |
-|---|---|
-| Default, Hover, Pressed, Disabled | the element's own states - not props |
-| Loading | the `loading` prop, a State because a Figma boolean can only drive `visible` |
-| Confirm, Danger | the `tone` prop, cutting across the four Levels |
-
-**`Confirm` remains Figma-only**, and is now the last of its kind. No
-rectangular confirm has been needed, so that cell has no counterpart in code;
-it is named as such in the description rather than left for someone to
-discover. The round equivalents it used to sit beside - `Button/Round`'s
-`State=Confirm` and `State=Danger` - moved out into `ConfirmButton` in 0.36.0.
-This `Button` set keeps its `Danger` cell and its `tone="danger"` prop; only
-the round button was split.
-
-This went code-first and was pushed at the user's explicit instruction, the
-same documented exception the Tabs size axis used.
+**`State` now holds only states**: Default, Hover, Pressed, Disabled (the
+element's own) and Loading (the `loading` prop, a State because a Figma boolean
+can only drive `visible`). It used to hold `Confirm` and `Danger` as single
+Primary/XL cells. Both were parked in a `Button-Deprecated` set in the
+Deprecated section rather than deleted, so any instance in another file still
+resolves: `Danger` is this axis now, and a confirmation coloured at rest - the
+job `Confirm` gestured at - is `ConfirmButton` with a label.
 
 ## Ghost fills on interaction; it does not darken
 

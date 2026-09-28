@@ -24,7 +24,6 @@
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 50%;
   cursor: pointer;
   transition:
     background-color var(--ui-motion-fast) ease,
@@ -132,10 +131,58 @@
   cursor: not-allowed;
 }
 
-.xl { width: var(--ui-confirm-button-xl-size); height: var(--ui-confirm-button-xl-size); }
-.lg { width: var(--ui-confirm-button-lg-size); height: var(--ui-confirm-button-lg-size); }
-.md { width: var(--ui-confirm-button-md-size); height: var(--ui-confirm-button-md-size); }
-.sm { width: var(--ui-confirm-button-sm-size); height: var(--ui-confirm-button-sm-size); }
+/* -- shape="round": icon-only, ButtonRound's geometry ---------- */
+.round { border-radius: 50%; }
+.round.xl { width: var(--ui-confirm-button-xl-size); height: var(--ui-confirm-button-xl-size); }
+.round.lg { width: var(--ui-confirm-button-lg-size); height: var(--ui-confirm-button-lg-size); }
+.round.md { width: var(--ui-confirm-button-md-size); height: var(--ui-confirm-button-md-size); }
+.round.sm { width: var(--ui-confirm-button-sm-size); height: var(--ui-confirm-button-sm-size); }
+
+/* -- labelled: Button's geometry, this component's colours ------
+   Figma: `Shape=Label`. The confirm in a dialog footer. Every measurement
+   reads Button's token behind a --ui-confirm-button-label-* hook: it IS
+   Button's box, so sharing the tokens is what keeps a Cancel and a Delete
+   standing level in one footer, and no geometry is declared in tokens.css
+   because none of it is new - the rule InputSelect follows with InputText. */
+.labelled {
+  gap: var(--ui-confirm-button-label-gap, var(--ui-button-lg-gap));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  font-weight: var(--ui-confirm-button-label-font-weight, var(--ui-button-font-weight));
+  white-space: nowrap;
+  text-decoration: none;
+}
+.labelled.xl {
+  height: var(--ui-confirm-button-label-xl-height, var(--ui-button-xl-height));
+  padding-inline: var(--ui-confirm-button-label-xl-padding-x, var(--ui-button-xl-padding-x));
+  gap: var(--ui-confirm-button-label-xl-gap, var(--ui-button-xl-gap));
+  border-radius: var(--ui-confirm-button-label-xl-radius, var(--ui-button-xl-radius));
+  font-size: var(--ui-confirm-button-label-xl-font-size, var(--ui-button-xl-font-size));
+  line-height: var(--ui-confirm-button-label-xl-line-height, var(--ui-button-xl-line-height));
+}
+.labelled.lg {
+  height: var(--ui-confirm-button-label-lg-height, var(--ui-button-lg-height));
+  padding-inline: var(--ui-confirm-button-label-lg-padding-x, var(--ui-button-lg-padding-x));
+  gap: var(--ui-confirm-button-label-lg-gap, var(--ui-button-lg-gap));
+  border-radius: var(--ui-confirm-button-label-lg-radius, var(--ui-button-lg-radius));
+  font-size: var(--ui-confirm-button-label-lg-font-size, var(--ui-button-lg-font-size));
+  line-height: var(--ui-confirm-button-label-lg-line-height, var(--ui-button-lg-line-height));
+}
+.labelled.md {
+  height: var(--ui-confirm-button-label-md-height, var(--ui-button-md-height));
+  padding-inline: var(--ui-confirm-button-label-md-padding-x, var(--ui-button-md-padding-x));
+  gap: var(--ui-confirm-button-label-md-gap, var(--ui-button-md-gap));
+  border-radius: var(--ui-confirm-button-label-md-radius, var(--ui-button-md-radius));
+  font-size: var(--ui-confirm-button-label-md-font-size, var(--ui-button-md-font-size));
+  line-height: var(--ui-confirm-button-label-md-line-height, var(--ui-button-md-line-height));
+}
+.labelled.sm {
+  height: var(--ui-confirm-button-label-sm-height, var(--ui-button-sm-height));
+  padding-inline: var(--ui-confirm-button-label-sm-padding-x, var(--ui-button-sm-padding-x));
+  gap: var(--ui-confirm-button-label-sm-gap, var(--ui-button-sm-gap));
+  border-radius: var(--ui-confirm-button-label-sm-radius, var(--ui-button-sm-radius));
+  font-size: var(--ui-confirm-button-label-sm-font-size, var(--ui-button-sm-font-size));
+  line-height: var(--ui-confirm-button-label-sm-line-height, var(--ui-button-sm-line-height));
+}
 
 .icon {
   display: inline-flex;
@@ -144,10 +191,18 @@
   justify-content: center;
   overflow: hidden;
 }
-.xl .icon { width: var(--ui-confirm-button-xl-icon-size); height: var(--ui-confirm-button-xl-icon-size); }
-.lg .icon { width: var(--ui-confirm-button-lg-icon-size); height: var(--ui-confirm-button-lg-icon-size); }
-.md .icon { width: var(--ui-confirm-button-md-icon-size); height: var(--ui-confirm-button-md-icon-size); }
-.sm .icon { width: var(--ui-confirm-button-sm-icon-size); height: var(--ui-confirm-button-sm-icon-size); }
+.round.xl .icon { width: var(--ui-confirm-button-xl-icon-size); height: var(--ui-confirm-button-xl-icon-size); }
+.round.lg .icon { width: var(--ui-confirm-button-lg-icon-size); height: var(--ui-confirm-button-lg-icon-size); }
+.round.md .icon { width: var(--ui-confirm-button-md-icon-size); height: var(--ui-confirm-button-md-icon-size); }
+.round.sm .icon { width: var(--ui-confirm-button-sm-icon-size); height: var(--ui-confirm-button-sm-icon-size); }
+/* Beside a label the glyph is Button's: sized off the type, and set back to
+   0.65 so the label leads - the icon rule. Read through Button's own hook so
+   the two cannot disagree. */
+.labelled .icon { opacity: var(--ui-button-icon-opacity, 0.65); }
+.labelled.xl .icon { width: var(--ui-button-xl-icon-size); height: var(--ui-button-xl-icon-size); }
+.labelled.lg .icon { width: var(--ui-button-lg-icon-size); height: var(--ui-button-lg-icon-size); }
+.labelled.md .icon { width: var(--ui-button-md-icon-size); height: var(--ui-button-md-icon-size); }
+.labelled.sm .icon { width: var(--ui-button-sm-icon-size); height: var(--ui-button-sm-icon-size); }
 
 /* Icon stroke. Same mechanism ButtonRound documents: without
    non-scaling-stroke, stroke-width is in the icon's own user units, so the
@@ -156,10 +211,14 @@
 /* Set on the shapes as well as the <svg>: a presentation attribute on an
    element beats a value inherited from its parent, so an svg-only rule loses
    to icons that put stroke-width on each <path>. */
-.xl .icon svg, .xl .icon svg * { stroke-width: var(--ui-confirm-button-xl-icon-stroke); }
-.lg .icon svg, .lg .icon svg * { stroke-width: var(--ui-confirm-button-lg-icon-stroke); }
-.md .icon svg, .md .icon svg * { stroke-width: var(--ui-confirm-button-md-icon-stroke); }
-.sm .icon svg, .sm .icon svg * { stroke-width: var(--ui-confirm-button-sm-icon-stroke); }
+.round.xl .icon svg, .round.xl .icon svg * { stroke-width: var(--ui-confirm-button-xl-icon-stroke); }
+.round.lg .icon svg, .round.lg .icon svg * { stroke-width: var(--ui-confirm-button-lg-icon-stroke); }
+.round.md .icon svg, .round.md .icon svg * { stroke-width: var(--ui-confirm-button-md-icon-stroke); }
+.round.sm .icon svg, .round.sm .icon svg * { stroke-width: var(--ui-confirm-button-sm-icon-stroke); }
+.labelled.xl .icon svg, .labelled.xl .icon svg * { stroke-width: var(--ui-button-xl-icon-stroke); }
+.labelled.lg .icon svg, .labelled.lg .icon svg * { stroke-width: var(--ui-button-lg-icon-stroke); }
+.labelled.md .icon svg, .labelled.md .icon svg * { stroke-width: var(--ui-button-md-icon-stroke); }
+.labelled.sm .icon svg, .labelled.sm .icon svg * { stroke-width: var(--ui-button-sm-icon-stroke); }
 
 /* Keep both a direct Lucide SVG and an optional consumer wrapper inside the
    component's icon box. The extra specificity prevents wrapper classes from

@@ -655,8 +655,9 @@ function App() {
           + "decision already made. The third and fourth in each row are variant=\"ghost\": the disc "
           + "goes and the glyph keeps its colour, where a ghost ButtonRound rests muted. Disabled "
           + "(last two) takes the disc in both variants \u2014 this control is never the quiet one, so "
-          + "an unavailable confirmation should still be visible. Figma draws XL only; the other "
-          + "three sizes alias ButtonRound's, so the two sit level in a row."
+          + "an unavailable confirmation should still be visible. All four sizes alias ButtonRound's, "
+          + "so the two sit level in a row. Give it a label and it takes Button's box instead "
+          + "(Figma Shape=Label) \u2014 the confirm in a dialog footer, standing level with a Cancel."
         }
       >
         {CONFIRM_SIZES.map((s) => (
@@ -671,6 +672,19 @@ function App() {
             ))}
             <ConfirmButton size={s} tone="safety" icon={<Save />} aria-label={`${s} save unavailable`} disabled />
             <ConfirmButton size={s} tone="danger" variant="ghost" icon={<Trash2 />} aria-label={`${s} ghost delete unavailable`} disabled />
+          </Row>
+        ))}
+        {/* The labelled shape: Button's geometry with the confirmation colours.
+            Posed beside a secondary Button, the Cancel it usually stands with. */}
+        {CONFIRM_SIZES.map((s) => (
+          <Row key={`label-${s}`} label={`label ${s}`}>
+            <Button size={s} variant="tertiary">Cancel</Button>
+            <ConfirmButton size={s} tone="safety" icon={<Save />}>Save</ConfirmButton>
+            <ConfirmButton size={s} tone="danger" icon={<Trash2 />}>Delete</ConfirmButton>
+            <ConfirmButton size={s} tone="danger">Discard</ConfirmButton>
+            <ConfirmButton size={s} tone="safety" variant="ghost">Keep</ConfirmButton>
+            <ConfirmButton size={s} tone="danger" variant="ghost">Remove</ConfirmButton>
+            <ConfirmButton size={s} tone="danger" disabled>Delete</ConfirmButton>
           </Row>
         ))}
       </Section>
