@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - ConfirmButton: a labelled shape. BottomNav: the top rule follows the theme.
+**0.61.0 -> 0.62.0** - ConfirmButton: a labelled shape. BottomNav: the top rule follows the theme.
 
 **ConfirmButton** takes a label: pass `children` and it draws Button's rectangular box
 (height, padding, radius, type, a type-sized icon at 0.65) in the confirmation colours,
