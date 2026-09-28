@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - New `Modal`. Tabs, NavRail, BottomNav and Nav: the current item reads the brand role. Button: Secondary becomes tonal, Tertiary becomes Ghost without its rule; the ghost danger press uses the named tints.
+**0.62.0 -> 0.63.0** - New `Modal`. Tabs, NavRail, BottomNav and Nav: the current item reads the brand role. Button: Secondary becomes tonal, Tertiary becomes Ghost without its rule; the ghost danger press uses the named tints.
 
 New **`Modal`** (and `ModalProps`): a native `<dialog>` opened with `showModal()` -
 icon, title, body and actions, controlled by `open` / `onClose`. Escape closes it, a
