@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - ButtonRound `variant="outline-light"`, for a button over a photo.
+**0.66.0 -> 0.67.0** - ButtonRound `variant="outline-light"`, for a button over a photo.
 
 **ButtonRound** gains `variant="outline-light"`: a 35% black ground, a 1.5px white ring
 and a white glyph, the same in both themes - for a round button laid over a photo or
