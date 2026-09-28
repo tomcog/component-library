@@ -1,4 +1,4 @@
-import { Children, forwardRef, useContext, useId, useRef, useState } from "react";
+import { Children, forwardRef, useContext, useEffect, useId, useRef, useState } from "react";
 import type { CSSProperties, HTMLAttributes, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import styles from "./Toolbar.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
@@ -6,6 +6,7 @@ import { GroupLabelContext } from "../../internal/groupLabel";
 import { ToolbarOrientationContext } from "../../internal/toolbarOrientation";
 import type { ToolbarOrientation } from "../../internal/toolbarOrientation";
 import { SegmentedControl, Segment } from "../SegmentedControl";
+import { ActionsContext } from "../../internal/segmentActions";
 import type { SegmentedControlProps } from "../SegmentedControl";
 
 export type { ToolbarOrientation };
@@ -187,7 +188,12 @@ export interface ToolbarExpanderProps
    * `aria-label` or `ToolbarGroup` caption does.
    */
   label: ReactNode;
-  /** The `<Segment>`s revealed when open. They are actions, never a choice. */
+  /**
+   * The `<Segment>`s revealed when open. A CHOICE by default - one of them is
+   * on at a time, a radio group; with `closeOnAction`, a row of ACTIONS.
+   * Selection is the consumer's, as in `SegmentedControl`: give the chosen one
+   * `selected` and each an `onClick`.
+   */
   children: ReactNode;
   /** Controlled open state. Pair with `onOpenChange`. */
   open?: boolean;
@@ -196,13 +202,19 @@ export interface ToolbarExpanderProps
   /** Called with the next state when the trigger is clicked or Escape closes it. */
   onOpenChange?: (open: boolean) => void;
   /**
-   * Clicking any revealed segment closes the panel after its command runs,
-   * and focus returns to the trigger. Defaults to `false`: the panel stays
-   * open until the trigger is clicked again.
+   * The revealed segments are one-shot ACTIONS: clicking any of them runs it,
+   * closes the panel and returns focus to the trigger. They are plain
+   * buttons, and none stays on.
+   *
+   * Off (the default), the panel stays open and its segments are a CHOICE -
+   * something that stays on, one at a time: a `radiogroup` named by the
+   * trigger, each segment a radio that takes the dark (near-black) selected
+   * ground when chosen, with the arrow keys moving and selecting and one tab
+   * stop.
    *
    * A property of the EXPANDER, deliberately not of each segment: every
    * segment in one panel behaves the same, so there is no panel where some
-   * actions fold it and others leave it standing.
+   * actions fold it and others stay on.
    */
   closeOnAction?: boolean;
 }
@@ -226,14 +238,20 @@ export interface ToolbarExpanderProps
  * revealed, and the track runs on around them.
  *
  * **A disclosure, not a menu.** The trigger carries `aria-expanded` and
- * `aria-controls`; the revealed segments are ordinary buttons in the tab order
- * straight after it. A menu would claim arrow keys and focus trapping for what
- * is visually just more of the toolbar. Escape inside the panel closes it and
- * returns focus to the trigger. While closed the panel is `visibility:
- * hidden`, so its buttons are out of the tab order and the accessibility tree.
+ * `aria-controls`. Escape inside the panel closes it and returns focus to the
+ * trigger. While closed the panel is `visibility: hidden`, so what it holds is
+ * out of the tab order and the accessibility tree.
  *
- * **Whether an action closes it is `closeOnAction`**, set once for the whole
- * panel: either every revealed segment folds it after running, or none does.
+ * **What the revealed segments are is `closeOnAction`**, set once for the
+ * whole panel:
+ *
+ * - **Off (default): a choice.** The panel stays open and is a `radiogroup`
+ *   named by the trigger - one segment on at a time, on the dark (near-black)
+ *   selected ground, apart from the red open trigger. The arrow keys move and select,
+ *   Home/End jump, both wrap; one tab stop, on the chosen segment. Give the
+ *   chosen one `selected` and each an `onClick`.
+ * - **On: actions.** Each segment is a plain button in the tab order; clicking
+ *   one runs it and folds the panel. None stays on.
  *
  * **Motion**: the panel grows from the trigger at `--ui-motion-base` while the
  * segments pop in one after another, `--ui-motion-stagger` apart; closing
@@ -261,7 +279,27 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
     const [openState, setOpenState] = useState(defaultOpen);
     const open = openProp ?? openState;
     const panelId = useId();
+    const triggerId = useId();
     const trigger = useRef<HTMLButtonElement>(null);
+    const panel = useRef<HTMLDivElement>(null);
+    // A choice unless the segments are one-shot actions.
+    const choice = !closeOnAction;
+    const vertical = useContext(ToolbarOrientationContext) === "vertical";
+
+    // Roving tab stop over the radios, as SegmentedControl keeps for its own:
+    // the chosen one, or the first enabled one when nothing is chosen yet.
+    // Re-applied after every render, since each Segment writes its tabIndex
+    // from its own `selected` and knows nothing of the group.
+    useEffect(() => {
+      if (!choice) return;
+      const radios = Array.from(
+        panel.current?.querySelectorAll<HTMLButtonElement>('[role="radio"]') ?? [],
+      );
+      const stop =
+        radios.find((r) => r.getAttribute("aria-checked") === "true") ??
+        radios.find((r) => !r.disabled);
+      for (const r of radios) r.tabIndex = r === stop ? 0 : -1;
+    });
     const groupLabel = useContext(GroupLabelContext);
 
     function setOpen(next: boolean) {
@@ -281,10 +319,32 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
     }
 
     function onPanelKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-      if (event.key !== "Escape" || !open) return;
-      event.stopPropagation();
-      setOpen(false);
-      trigger.current?.focus();
+      if (event.key === "Escape" && open) {
+        event.stopPropagation();
+        setOpen(false);
+        trigger.current?.focus();
+        return;
+      }
+      if (!choice) return;
+      // The radio-group keys: arrows move and select, Home/End jump, both
+      // ends wrap - SegmentedControl's pattern, and its reason for click():
+      // selection runs whatever handler the segment already carries.
+      const keys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
+      if (!keys.includes(event.key)) return;
+      const radios = Array.from(
+        panel.current?.querySelectorAll<HTMLButtonElement>('[role="radio"]:not(:disabled)') ?? [],
+      );
+      const from = radios.indexOf(document.activeElement as HTMLButtonElement);
+      if (from === -1) return;
+      event.preventDefault();
+      const back = event.key === "ArrowLeft" || event.key === "ArrowUp";
+      const to =
+        event.key === "Home" ? 0
+        : event.key === "End" ? radios.length - 1
+        : back ? (from - 1 + radios.length) % radios.length
+        : (from + 1) % radios.length;
+      radios[to].focus();
+      radios[to].click();
     }
 
     const items = Children.toArray(children);
@@ -293,6 +353,10 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
       <SegmentedControl
         ref={ref}
         size={size}
+        // The chosen segment's ground is always the DARK one - near-black,
+        // Surface/Inverse - so a segment that stays on reads apart from the
+        // trigger, whose open state is the action red. Not a prop.
+        variant="dark"
         actions
         // The label is the group's fallback name, so a lone expander needs
         // no aria-label of its own. A ToolbarGroup caption still wins.
@@ -320,6 +384,7 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
       >
         <Segment
           ref={trigger}
+          id={triggerId}
           icon={icon}
           hideLabel
           aria-expanded={open}
@@ -329,7 +394,19 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
         >
           {label}
         </Segment>
-        <div id={panelId} className={styles.panel} onKeyDown={onPanelKeyDown} onClick={onPanelClick}>
+        <div
+          ref={panel}
+          id={panelId}
+          className={styles.panel}
+          onKeyDown={onPanelKeyDown}
+          onClick={onPanelClick}
+          // A choice is a radio group, named by the trigger ("File"). As
+          // actions the panel is just more of the track's group.
+          role={choice ? "radiogroup" : undefined}
+          aria-labelledby={choice ? triggerId : undefined}
+          aria-orientation={choice && vertical ? "vertical" : undefined}
+        >
+          <ActionsContext.Provider value={!choice}>
           <div className={styles.panelInner}>
             {items.map((item, i) => (
               // `display: contents`, so the wrapper changes no layout: it only
@@ -344,6 +421,7 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
               </span>
             ))}
           </div>
+          </ActionsContext.Provider>
         </div>
       </SegmentedControl>
     );

@@ -137,8 +137,9 @@ already answered Up/Down.
 
 One icon-only segment that reveals more segments beside it when clicked, and folds
 them back when clicked again - a File button hiding Save, Open, Export. Figma: the
-`ToolbarExpander` set (`820:866`), a `State` axis of Closed | Open, drawn at SM from
-the sketch at `814:963`.
+`ToolbarExpander` set (`820:866`), axes `State` = Closed | Open and `Panel` =
+Choice | Actions (Choice first, the default, as in code), drawn at SM from the sketch
+at `814:963`. The open Choice cell shows one segment on, on Segment's `Dark` state.
 
     Closed   Trigger: Segment SM Off, icon-only, in its own track (Surface/Raised);
              Panel present but hidden, so the track hugs to 24
@@ -171,11 +172,17 @@ the set's description. `Motion/Stagger` (30, both modes) carries
   revealed segments are plain buttons in the tab order after it. Escape inside the
   panel closes it and returns focus to the trigger. Closed, the panel is
   `visibility: hidden` (after the collapse), so its buttons leave the tab order.
-- **`closeOnAction`**: clicking any revealed segment runs its command, then folds the
-  panel and returns focus to the trigger. Off by default (the panel stays open until
-  the trigger is clicked). It is on the expander, **not** per segment, by rule: every
-  segment in one panel behaves the same - never two that close it and three that
-  don't.
+- **What the revealed segments are is `closeOnAction`**, set on the expander, never
+  per segment:
+  - **Off (the default) - a choice**, something that stays on, one at a time. The
+    panel stays open and is a `radiogroup` named by the trigger; each segment is a
+    radio, and the chosen one takes the DARK selected ground (near-black,
+    `--ui-surface-inverse`) - always, not a prop - so it reads apart from the red
+    open trigger. Arrow keys move and select, Home/End jump, both wrap; one
+    tab stop, on the chosen segment. Selection is the consumer's (`selected` +
+    `onClick`). Since 0.64.0; before, these were plain buttons that never stayed on.
+  - **On - actions.** Clicking any revealed segment runs its command, then folds
+    the panel and returns focus to the trigger. Plain buttons; none stays on.
 - `open` / `defaultOpen` / `onOpenChange`, controlled or not. `label` is the trigger's
   (hidden) name and the group's fallback name.
 - In a vertical bar it opens downward and the flat side is the foot.

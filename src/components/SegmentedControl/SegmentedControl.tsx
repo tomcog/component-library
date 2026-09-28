@@ -1,9 +1,10 @@
-import { createContext, forwardRef, useContext, useEffect, useRef } from "react";
+import { forwardRef, useContext, useEffect, useRef } from "react";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./SegmentedControl.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
 import { GroupLabelContext } from "../../internal/groupLabel";
 import { ToolbarOrientationContext } from "../../internal/toolbarOrientation";
+import { ActionsContext } from "../../internal/segmentActions";
 
 declare const process: { env: { NODE_ENV?: string } };
 
@@ -47,11 +48,9 @@ export type SegmentedControlVariant = "primary" | "dark";
  */
 export type SegmentedControlTone = "gray" | "white";
 
-/* Whether the group is a CHOICE or a row of ACTIONS. The only thing a Segment
-   needs from its track, and the first context in this library - a Segment has
-   to know because the answer changes what it renders, and `cloneElement` would
-   reach only direct children and break the moment anything wraps one. */
-const ActionsContext = createContext(false);
+/* Whether the group is a CHOICE or a row of ACTIONS - see
+   internal/segmentActions, where it lives so ToolbarExpander can set it for
+   its panel too. */
 
 export interface SegmentedControlProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
