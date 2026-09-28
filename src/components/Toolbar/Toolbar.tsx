@@ -209,8 +209,8 @@ export interface ToolbarExpanderProps
 
 /**
  * One segment that opens to reveal more - a File button hiding Save, Open,
- * Export. Clicking the trigger again folds them back. Figma: the sketch at
- * 814:963 (start and end state); no component set yet.
+ * Export. Clicking the trigger again folds them back. Figma: the
+ * `ToolbarExpander` set (820:866), State = Closed | Open.
  *
  *     <Toolbar aria-label="Drawing tools">
  *       <ToolbarExpander size="sm" icon={<File />} label="File">

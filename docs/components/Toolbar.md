@@ -137,8 +137,20 @@ already answered Up/Down.
 
 One icon-only segment that reveals more segments beside it when clicked, and folds
 them back when clicked again - a File button hiding Save, Open, Export. Figma: the
-sketch at `814:963` (start and end state only; **no component set yet**, so by the
-Figma rules it is not yet spec on that side).
+`ToolbarExpander` set (`820:866`), a `State` axis of Closed | Open, drawn at SM from
+the sketch at `814:963`.
+
+    Closed   Trigger: Segment SM Off, icon-only, in its own track (Surface/Raised);
+             Panel present but hidden, so the track hugs to 24
+    Open     Trigger: Segment SM Active, top-right and bottom-right radii 0;
+             Panel shown - five Segment SM Off, icon-only - at SM Track Gap (4); 164
+    track    Segmented/Track Radius, Segmented/Track Padding, SM Track Gap
+
+The Trigger is an exposed instance, so its icon and label are set on the expander
+instance; panel segments an instance does not need are hidden there. Motion,
+`closeOnAction`, the ARIA, Escape and the vertical bar are code-only and say so in
+the set's description. `Motion/Stagger` (30, both modes) carries
+`var(--ui-motion-stagger)`.
 
 ```tsx
 <ToolbarExpander size="sm" icon={<File />} label="File">
@@ -175,8 +187,15 @@ Figma rules it is not yet spec on that side).
   side in the playground on 2026-09-27.
 - Hooks: `--ui-toolbar-expander-open-bg` (-> `--ui-action`),
   `--ui-toolbar-expander-open-text` (-> `--ui-text-on-action`).
-- **Code reads `--ui-action` where the Figma sketch binds `Brand`**: an open trigger is
-  a control's state, so the role rule says action. Same red today.
+- **The open trigger is `Action`, not `Brand`, on both sides**: it is a control's
+  state. The sketch bound `Brand/Base`; the set uses the `Active` segment instead.
+- **Only SM is drawn.** The code takes whatever size its track is given; the other
+  sizes are the Segment ladder, not something the set needs to restate.
+- **Glyph colour is bound per instance.** The file's `lucide/*` glyphs stroke in
+  `IconDefault`, which the Segment does not recolour, so each glyph's stroke is bound
+  to its segment's label variable (`Text/Default`, `Text/OnAction` when open) and its
+  opacity set to 1 (icon-only) - the repair rule in `docs/figma.md`. Swapping a
+  panel icon on an instance needs the same, or it comes out grey.
 
 ## The gap is the argument
 

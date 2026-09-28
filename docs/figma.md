@@ -248,6 +248,15 @@ file and are not. NavSlat's hidden pipe rectangles, Card's unmodelled 350x200
 frame, Pill's absent height token. Those are exactly what someone would
 otherwise "fix".
 
+**`node.description` reads back HTML-escaped; decode before writing it back.**
+The getter returns `&lt;`, `&gt;`, `&#39;`, `&quot;`, `&amp;`, while Figma's panel
+and `get_design_context` show the decoded text. A read-modify-write that prepends
+or appends to the string as read escapes it a second time, and every later edit
+adds another layer. That is how the Toolbar set's description came to contain
+`&amp;amp;#39;` where an apostrophe belongs. Decode (`&amp;` last), edit, assign,
+then check the stored form contains `&lt;` and not `&amp;lt;`. Found 2026-09-27
+while prepending the icon rule to `Segment`.
+
 ## There is a third copy: the published library
 
 Editing the Figma file is only half of a Figma-side change. **A consuming file
@@ -366,6 +375,26 @@ its glyph grows faster than its container so Small stays legible with no label
 beside it. Don't reconcile the two.
 
 Both icons are `aria-hidden`, so a Button with icons and no children has no accessible name. A dev-only `console.warn` catches this; it relies on the exact expression `process.env.NODE_ENV` (bundlers substitute that literal — an optional chain does **not** match their define and silently disables the warning), and on `define: { "process.env.NODE_ENV": "process.env.NODE_ENV" }` in `vite.config.ts` keeping Vite from inlining it at our build time.
+
+## Swapping a Segment's icon: two traps (2026-09-27, ToolbarExpander)
+
+Building `ToolbarExpander` (`820:866`) from `Segment` instances with `SegmentIcon`
+swapped hit both of these; the sketch it came from had been fixed by hand, which is
+why it looked right.
+
+- **The swapped glyph comes out grey and faded.** The `lucide/*` glyphs paint with
+  a STROKE bound to `IconDefault`, and the Segment only recolours its default glyph's
+  fill - so after a swap nothing ties the glyph to the state. Bind each glyph's
+  stroke to the variable its segment's LABEL uses (the repair rule above) and set the
+  icon's opacity to 1 when `Label?` is off. With `Label?` off the instance has **no
+  text node to read**; take the label colour from `getMainComponentAsync()`.
+- **A swap carries overrides across by layer name.** The Segment's default glyph's
+  vector is named `icon`, and so is `lucide/images`' - so its fill override landed on
+  the images vector's second region and drew a solid square. Every other glyph's
+  vector is named `Vector` and was unaffected. The layer dump looked identical to
+  the good copy; only `instance.overrides` (`fills`, `opacity` on the vector) and a
+  render showed it. Clearing `fills` to `[]` and `opacity` to 1 on that vector fixed
+  it. **Render after any swap**; reading bindings is not enough.
 
 ## Editing the Figma file safely
 

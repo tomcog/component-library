@@ -212,16 +212,34 @@ lets the height carry the vertical half. That is Button's decomposition and the
 reason the token is still called `-padding-x`: a token named `-padding` that
 reached one axis would be the misleading half of the trade.
 
-## The icon's opacity is conditional, and that is a rule, not a value
+## The icon follows the label: same colour always, 0.65 only beside it
 
-A glyph shown **beside a label** draws at `--ui-segmented-icon-opacity` (0.65),
-so the label leads and the icon supports it. A glyph shown **alone** draws at
-full strength: it is the whole message then, and a faded one beside a solid
-neighbour reads as disabled rather than as secondary.
+One rule, two halves. It is **system-wide**, not this component's:
 
-The rule is **system-wide, not this component's**, and `ButtonRound` is the
-other half of the proof: it never carries a label, so its glyph is 1.0 in every
-state including rest. Both sides of that were settled in Figma on 2026-09-22 -
+1. **Colour: the icon is always the label's colour, in every state.** Off
+   `Text/Default`, Hover `Action`, selected `Text/OnAction` (or `Text/OnInverse` on
+   the dark variant), Disabled `Text/Disabled`. The glyph and the label are one
+   object and move together; the icon never has a colour of its own.
+2. **Opacity: 0.65 beside a visible label, 1 when shown alone.** A glyph shown
+   **beside a label** draws at `--ui-segmented-icon-opacity` (0.65), so the label
+   leads and the icon supports it. A glyph shown **alone** draws at full strength
+   (`--ui-segmented-icon-only-opacity`): it is the whole message then, and a faded
+   one beside a solid neighbour reads as disabled rather than as secondary.
+
+**In code both halves are automatic.** The glyph is `currentColor`, so it cannot
+drift from the label, and `.iconOnly` switches the opacity.
+
+**In Figma both have to be set by hand, and nothing warns when they are missed.**
+- Opacity: a boolean cannot drive opacity, so every Segment variant keeps its icon
+  container at 0.65 whatever `Label?` says. An icon-only instance must have its
+  icon container set to 1.
+- Colour: only the Segment's default glyph binds the label's variable. The file's
+  `lucide/*` glyphs stroke in `IconDefault`, so a swapped icon comes out grey until
+  its stroke is bound to the label's variable for that state - the repair rule in
+  `docs/figma.md`. With `Label?` off, read that variable from the main component.
+
+`ButtonRound` is the other half of the proof for opacity: it never carries a
+label, so its glyph is 1.0 in every state including rest. Both sides of that were settled in Figma on 2026-09-22 -
 Segment's `Hover` came down to 0.65 to join its siblings, and ButtonRound's
 `Off` went up to 1.0. All four of Segment's states mute the glyph; the label's
 presence is the only thing that decides it.

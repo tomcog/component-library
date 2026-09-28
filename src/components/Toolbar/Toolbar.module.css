@@ -81,7 +81,8 @@
 }
 
 /* -- ToolbarExpander ------------------------------------------ */
-/* One segment that opens to reveal more (Figma sketch 814:963). The track is
+/* One segment that opens to reveal more (Figma: the ToolbarExpander set,
+   820:866). The track is
    a SegmentedControl in actions mode; everything below is the disclosure on
    top of it - the trigger's open face, and the panel that grows out of it.
 
