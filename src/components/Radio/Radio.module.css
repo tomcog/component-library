@@ -1,0 +1,142 @@
+/* Radio - one option of a one-of-N choice. Figma: `Radio`. Modelled on
+   Checkbox: the same real input 1px behind the glyph, the same sizes, gap and
+   label, and the same state logic - a ring and a dot where Checkbox has a
+   square and a tick. Every measurement reads Checkbox's token behind a
+   --ui-radio-* hook: it is the same object at the same size, so a Radio beside
+   a Checkbox lines up without anyone checking, and no geometry is declared in
+   tokens.css because none of it is new. */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ui-radio-gap, var(--ui-checkbox-gap));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  cursor: pointer;
+}
+.root:has(.input:disabled) {
+  cursor: not-allowed;
+}
+
+/* Zero-size rather than hidden: display:none and visibility:hidden both take
+   the control out of the focus order - and out of the arrow-key group. */
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--ui-radio-slot-size);
+  height: var(--ui-radio-slot-size);
+}
+
+.glyph {
+  display: block;
+  width: var(--ui-radio-glyph-size);
+  height: var(--ui-radio-glyph-size);
+  color: var(--ui-radio-circle, var(--ui-text-muted));
+  transition: color var(--ui-motion-fast) ease;
+}
+.ring,
+.dot,
+.solid {
+  fill: currentColor;
+  transition: opacity var(--ui-motion-fast) ease;
+}
+.dot,
+.solid {
+  opacity: 0;
+}
+
+/* Hover PREVIEWS the dot, as Checkbox's hover previews its tick: an unchecked
+   option shows what clicking it will do. The label previews too - the whole
+   row is the hit target. Only while unchecked and enabled: a chosen option is
+   already the answer, so hover and selected never compound. */
+.root:hover:not(:has(.input:disabled)) .glyph {
+  color: var(--ui-radio-circle-hover, var(--ui-action));
+}
+.root:hover:not(:has(.input:disabled)):not(:has(.input:checked)) .dot {
+  opacity: 1;
+}
+.root:hover:not(:has(.input:disabled)):not(:has(.input:checked)) .label {
+  color: var(--ui-radio-label-hover, var(--ui-action));
+}
+
+/* Checked: the ring and the dot, in the action colour. */
+.root:has(.input:checked) .glyph {
+  color: var(--ui-radio-circle-checked, var(--ui-action));
+}
+.root:has(.input:checked) .dot {
+  opacity: 1;
+}
+
+/* Disabled: greyed. Unchecked becomes a solid disc - Checkbox's disabled box
+   is solid for the same reason, an outline alone reads as available.
+   Checked keeps its ring and dot, in grey. */
+.root:has(.input:disabled) .glyph {
+  color: var(--ui-radio-circle-disabled, var(--ui-text-disabled));
+}
+.root:has(.input:disabled):not(:has(.input:checked)) .ring {
+  opacity: 0;
+}
+.root:has(.input:disabled):not(:has(.input:checked)) .solid {
+  opacity: 1;
+}
+.root:has(.input:disabled) .label {
+  color: var(--ui-radio-label-disabled, var(--ui-text-disabled));
+}
+
+/* Focus is code-only, on the slot: a round ring for a round control. */
+.input:focus-visible + .slot {
+  outline: 2px solid var(--ui-radio-focus-ring, var(--ui-action));
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+.label {
+  color: var(--ui-radio-label, var(--ui-text-default));
+  font-size: var(--ui-radio-font-size);
+  line-height: var(--ui-radio-line-height);
+  font-weight: var(--ui-radio-font-weight, var(--ui-checkbox-font-weight));
+  transition: color var(--ui-motion-fast) ease;
+}
+
+/* Sizes - Checkbox's, read through Radio's hooks. */
+.xl {
+  --ui-radio-slot-size: var(--ui-radio-xl-slot-size, var(--ui-checkbox-xl-slot-size));
+  --ui-radio-glyph-size: var(--ui-radio-xl-glyph-size, var(--ui-checkbox-xl-glyph-size));
+  --ui-radio-font-size: var(--ui-radio-xl-font-size, var(--ui-checkbox-xl-font-size));
+  --ui-radio-line-height: var(--ui-radio-xl-line-height, var(--ui-checkbox-xl-line-height));
+}
+.lg {
+  --ui-radio-slot-size: var(--ui-radio-lg-slot-size, var(--ui-checkbox-lg-slot-size));
+  --ui-radio-glyph-size: var(--ui-radio-lg-glyph-size, var(--ui-checkbox-lg-glyph-size));
+  --ui-radio-font-size: var(--ui-radio-lg-font-size, var(--ui-checkbox-lg-font-size));
+  --ui-radio-line-height: var(--ui-radio-lg-line-height, var(--ui-checkbox-lg-line-height));
+}
+.md {
+  --ui-radio-slot-size: var(--ui-radio-md-slot-size, var(--ui-checkbox-md-slot-size));
+  --ui-radio-glyph-size: var(--ui-radio-md-glyph-size, var(--ui-checkbox-md-glyph-size));
+  --ui-radio-font-size: var(--ui-radio-md-font-size, var(--ui-checkbox-md-font-size));
+  --ui-radio-line-height: var(--ui-radio-md-line-height, var(--ui-checkbox-md-line-height));
+}
+
+/* A group stacks its options. Code-only: Figma draws the Radio, not a group. */
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ui-radio-group-gap);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glyph, .ring, .dot, .solid, .label { transition: none; }
+}

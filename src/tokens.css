@@ -853,6 +853,13 @@
 
   --ui-checkbox-font-weight: 400;
 
+  /* -- RADIO ---------------------------------------------------
+     Radio reads every Checkbox measurement through its own hooks (see
+     Radio.module.css) - it is the same object - so the only number of its own
+     is the gap between options in a RadioGroup. Code-only: Figma draws the
+     Radio, not a group. 8 is the Tabs icon gap's step, not a new rhythm. */
+  --ui-radio-group-gap: 8px;
+
   /* -- LayerController -----------------------------------------
      Figma: `LayerController` (719:555). A 24px print box butted against a
      layer row, both ruled with Button/Tertiary/Default - which is

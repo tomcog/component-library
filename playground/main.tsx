@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Modal, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -409,6 +409,7 @@ function App() {
   const [tbView, setTbView] = useState("preview");
   const [tbZoom, setTbZoom] = useState("plot");
   const [modal, setModal] = useState<null | "drawn" | "danger" | "plain">(null);
+  const [radios, setRadios] = useState<Record<string, string>>({ xl: "in", lg: "in", md: "in" });
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
      A hand-maintained list is one someone adds a Section without updating,
      and a jump menu missing the newest entry is worse than none. Runs once:
@@ -1175,6 +1176,30 @@ function App() {
             <Checkbox size={s} label="Disabled" disabled />
             <Checkbox size={s} label="Disabled checked" disabled defaultChecked />
             <Checkbox size={s} label="Hidden label" hideLabel defaultChecked />
+          </Row>
+        ))}
+      </Section>
+
+      <Section
+        title="Radio"
+        note={
+          "One option of a one-of-N choice, modelled on Checkbox: the same real input drawn 1px behind "
+          + "the glyph, the same XL / LG / MD sizes and label, a ring and a dot where Checkbox has a square "
+          + "and a tick. Hover an unchosen option \u2014 the dot is previewed in the action colour, and the "
+          + "label with it. Disabled unchosen is a solid grey disc. RadioGroup is a radiogroup that hands its "
+          + "radios one name, the chosen value and onValueChange; the arrow keys move and choose, because a "
+          + "shared name is the browser's own radio group. Not SegmentedControl, which asks the same "
+          + "question as a track of segments."
+        }
+      >
+        {(["xl", "lg", "md"] as const).map((s) => (
+          <Row key={s} label={s}>
+            <RadioGroup aria-label={`Units ${s}`} size={s} value={radios[s]} onValueChange={(v) => setRadios((p) => ({ ...p, [s]: v }))}>
+              <Radio value="in" label="Inches" />
+              <Radio value="mm" label="Millimetres" />
+              <Radio value="pt" label="Points (disabled)" disabled />
+            </RadioGroup>
+            <Radio size={s} label="Disabled chosen" disabled defaultChecked name={`demo-${s}`} />
           </Row>
         ))}
       </Section>
