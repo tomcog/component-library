@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - ButtonRound `outline-light`: Figma's resting and hover cells.
+**0.70.0 -> 0.71.0** - ButtonRound `outline-light`: Figma's resting and hover cells.
 
 **ButtonRound** `variant="outline-light"` now follows Figma's two cells - 890:1688 at
 rest, 892:1700 hovered:
