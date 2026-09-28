@@ -9,6 +9,44 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Button: `tone="danger"` is red in every state, at rest included. Modal: the icon is grey or brand. Segment: never narrower than tall. Safety owns its green; the TC Green primitives are removed. Body type steps.
+
+**Type**: Body steps - `--ui-type-body-{sm,md,lg,xl}-font-size` / `-line-height` and
+`--ui-type-body-font-weight` (400): the Regular twin of each label step, same size and
+leading (aliased to the label tokens). Figma: `Type/Body SM`-`XL` text styles. Additive.
+**Modal**'s body now uses Body MD (Regular 12/16) - it was Label MD (Medium).
+
+**BREAKING - removed tokens:** `--ui-tc-green`, `--ui-tc-green-lighter` and
+`--ui-tc-green-darker` are gone. Use the Safety semantics instead:
+
+    --ui-tc-green          -> --ui-safety          (#2aca25, was #59cf55)
+    --ui-tc-green-lighter  -> --ui-safety-lighter  (#cafac8, unchanged)
+    --ui-tc-green-darker   -> --ui-safety-darker   (#378f34, unchanged)
+
+Safety now owns its three values outright; there is no green identity colour, so a
+green primitive was a name for this role alone. **The safety green itself changed**
+to `#2aca25` - visible on ConfirmButton `tone="safety"` (hover) and LayerController's
+printer glyph. No app references the removed names. Figma: `Color/TC Green` and its
+tints are deleted; `Safety/*` hold the values; the printer glyphs bind `Safety/Base`.
+
+**Segment**: each size's `min-width` is its height, so a very short label ("All") is
+at least a circle rather than a squashed oval. Longer labels are unchanged.
+
+**Modal** gains `iconColor` (`"default"` | `"brand"`, type `ModalIconColor`). The
+default is now the muted grey (`--ui-text-muted`); pass `iconColor="brand"` for the
+brand colour, which was the only option before - so an existing Modal's icon turns
+grey unless it sets it. No app uses Modal yet.
+
+Visible wherever `tone="danger"` is used. The tone now recolours the variant from
+the action role to the danger role at rest as well as on hover and press, so a
+destructive button always reads red, whatever `--ui-action` is: primary rests solid
+`--ui-danger` and darkens through hover (22.3%) and press (40.7%); secondary rests on
+the pale danger tint with a darker label; tertiary is danger text; ghost a danger
+rule and text. Disabled and the focus ring are unchanged. Before, the tone touched
+hover and press only, so a Delete rested in the action colour. Apps: NextDraw uses
+`tone="danger"` on Stop, Discard, Delete and New; NextJob on its ghost delete button
+and both delete dialogs.
+
 **0.63.0 -> 0.64.0** - Segment: a grey press state. Toolbar: tracks follow a scoped dark theme. ToolbarExpander: a drawer that stays open is a choice. Button: Secondary's resting label is darker, for contrast.
 
 **Toolbar**: a gray toolbar's tracks follow a scoped dark theme. `--ui-toolbar-track-bg`

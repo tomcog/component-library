@@ -33,15 +33,10 @@
      app's identity and defaults to this. The primitive is whose red it is;
      the semantic is the role an app repoints to its own colour. */
   --ui-tc-red: #e51a38;           /* Figma: Color/TC Red */
-  /* The safety green. A primitive rather than a raw hex on the semantic
-     name below, so it sits beside TC Red in the palette where a designer
-     looks for it. Figma: `Color/TC Green`, which `Safety/Base` (606:15110)
-     aliases. It arrived with Button/Round's `State=Confirm` cell, which is
-     where the old name came from; that cell has since moved out into
-     `ConfirmButton` and the role is now called safety on both sides. */
-  --ui-tc-green: #59cf55;         /* Figma: Color/TC Green */
-  /* The tints either side of the two role colours, used by ConfirmButton for
-     its resting ground (lighter) and its pressed ground (darker).
+  /* The tints either side of TC Red, used by ConfirmButton's danger tone for
+     its resting ground (lighter) and its pressed ground (darker). Safety's
+     tints are not here: since 0.65.0 Safety owns its values outright (see
+     --ui-safety), and there is no green primitive.
 
      PRIMITIVES rather than semantics composed with color-mix(), which is what
      --ui-action-lighter does further down. Two reasons, and the second is the
@@ -50,11 +45,8 @@
        - They are hand-picked in Figma, not derived. Only TC Red Lighter falls
          out of a mix: `color-mix(in srgb, var(--ui-tc-red) 15%, white)` gives
          #fbdde1 against the drawn #f7dce0, close enough that the note below
-         calls it a match. The green does not play along - 30% with white is
-         #cdf0cc against the drawn #cafac8, and no percentage reaches it,
-         because the drawn tint is more saturated than any mix of the base
-         with white can be. TC Green Darker and TC Red Darker are likewise
-         their own colours rather than a percentage towards black.
+         calls it a match. TC Red Darker is its own colour rather than a
+         percentage towards black.
        - The freeze that rules out composing a tint on :root does not apply to
          a literal. `--ui-action-lighter` cannot be declared here because a
          var() inside a custom property resolves where it is DECLARED, so a
@@ -63,12 +55,10 @@
          the semantic names below can alias them exactly as --ui-danger
          aliases --ui-tc-red.
 
-     Figma holds the same four as `Color/TC Red Lighter|Darker` and
-     `Color/TC Green Lighter|Darker`, aliased by Danger/* and Safety/*. */
+     Figma holds the same two as `Color/TC Red Lighter|Darker`, aliased by
+     Danger/*. */
   --ui-tc-red-lighter: #f7dce0;   /* Figma: Color/TC Red Lighter   */
   --ui-tc-red-darker: #a31c30;    /* Figma: Color/TC Red Darker    */
-  --ui-tc-green-lighter: #cafac8; /* Figma: Color/TC Green Lighter */
-  --ui-tc-green-darker: #378f34;  /* Figma: Color/TC Green Darker  */
   --ui-white: #ffffff;            /* Figma: Color/White */
   /* Neutralised: was #282523, a warm near-black. #262626 is the same
      perceptual lightness (L* 14.9) with no hue. Pushed to Figma, where
@@ -220,12 +210,17 @@
      the lighter/darker pair below, its resting and pressed grounds too - and
      by ButtonRound's deprecated `tone="safety"`, which recolours hover alone.
      LayerController's target glyph also reads it. */
-  --ui-safety: var(--ui-tc-green);
+  /* OWNS its value (0.65.0), where the other roles alias a primitive. There
+     is no green identity the way there is a TC red, so a green primitive was
+     a name for nothing but this role; Figma's Color/TC Green and its tints
+     are gone and Safety/* hold the literals. #2aca25 since 0.65.0 (was
+     #59cf55). Same in both themes - role colours do not move in dark. */
+  --ui-safety: #2aca25;
   /* What sits ON a safety fill. Same reasoning as --ui-text-on-brand and
      --ui-text-on-danger: independent roles need independent pairings.
 
      Figma draws the icon white, and this keeps that. Be aware of what it
-     costs: white on #59cf55 is 2.0:1, and a glyph is a graphical object, for
+     costs: white on #2aca25 is 2.2:1, and a glyph is a graphical object, for
      which WCAG asks 3:1. On ButtonRound the fill is a hover state - transient,
      never the only signal that a control is there - but `ConfirmButton` rests
      on --ui-safety-lighter and takes the green on hover, so the white glyph is
@@ -236,10 +231,11 @@
   /* The two grounds either side of --ui-safety, drawn by `ConfirmButton`:
      LIGHTER is its resting disc, DARKER the pressed one. Figma:
      `Safety/Lighter` and `Safety/Darker`. Everything the --ui-danger-lighter
-     note says about repointing the trio applies here, and more sharply - no
-     mix of #59cf55 with white reaches #cafac8 at all. */
-  --ui-safety-lighter: var(--ui-tc-green-lighter);
-  --ui-safety-darker: var(--ui-tc-green-darker);
+     note says about repointing the trio applies here: both are hand-picked
+     literals, owned by the role like --ui-safety itself, and no mix of the
+     base with white reaches the lighter one. */
+  --ui-safety-lighter: #cafac8;
+  --ui-safety-darker: #378f34;
   /* Figma: Action/Lighter. Deliberately NOT declared here. Composed at
      :root it would freeze against :root's --ui-action, so recolouring the
      brand on a subtree would leave the tint behind - the same trap the
@@ -369,6 +365,24 @@
 
   --ui-type-label-xl-font-size: 18px;
   --ui-type-label-xl-line-height: 24px;
+
+  /* BODY - reading text, the Regular twin of each label step (0.65.0). The
+     same size AND leading as the label of that step, aliased rather than
+     restated, so a Body line and a Label line of one size stand the same
+     height and retuning a label step moves its body twin; only the weight
+     differs - Regular for reading, Medium for UI labels. Figma: Type/Body
+     SM-XL, bound to Type/Body/* variables that alias the label ones. Added
+     before a component used it, at the user's request - the exception to "a
+     step exists only where something uses it". */
+  --ui-type-body-font-weight: 400;
+  --ui-type-body-sm-font-size: var(--ui-type-label-sm-font-size);
+  --ui-type-body-sm-line-height: var(--ui-type-label-sm-line-height);
+  --ui-type-body-md-font-size: var(--ui-type-label-md-font-size);
+  --ui-type-body-md-line-height: var(--ui-type-label-md-line-height);
+  --ui-type-body-lg-font-size: var(--ui-type-label-lg-font-size);
+  --ui-type-body-lg-line-height: var(--ui-type-label-lg-line-height);
+  --ui-type-body-xl-font-size: var(--ui-type-label-xl-font-size);
+  --ui-type-body-xl-line-height: var(--ui-type-label-xl-line-height);
 
   /* The one HEADING step - outside the label scale, which is for UI labels
      only. Figma: Type/Heading. Exists because Modal's title uses it; a step

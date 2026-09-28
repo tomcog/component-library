@@ -22,7 +22,7 @@ Four roles, settable apart:
 | `--ui-action` | the **CTA** colour | `--ui-tc-red` | nearly every component - every interactive control |
 | `--ui-brand` | the **brand/chrome** colour — headers, rules, borders, dividers | `--ui-tc-red` | LayerController's layer number |
 | `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | `Button tone="danger"`, `ConfirmButton tone="danger"` |
-| `--ui-safety` | the **affirmative** action — Save, Apply, Accept, Done | `--ui-tc-green` | `ConfirmButton tone="safety"`, LayerController's printer icon |
+| `--ui-safety` | the **affirmative** action — Save, Apply, Accept, Done | `#2aca25`, its own value (no primitive) | `ConfirmButton tone="safety"`, LayerController's printer icon |
 
 `--ui-safety` was `--ui-confirm` until 0.36.0. `confirm` is also the name of the
 *act* of pressing either button in a yes/no dialog, so the old pair read as "the

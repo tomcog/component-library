@@ -124,8 +124,10 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   block. A tint **composed from a semantic** is derived at the element with `color-mix()`,
   never declared on `:root` — that is what freezes. A tint that is its own hand-picked value
   holds no `var()`, so it goes on the primitive tier like any other literal and the semantic
-  aliases it: `--ui-safety-lighter: var(--ui-tc-green-lighter)`. The cost is that repointing
-  a role no longer moves its tints, so such a role is repointed as a trio.
+  aliases it: `--ui-danger-lighter: var(--ui-tc-red-lighter)`. The exception is a role with
+  no identity colour behind it - Safety owns its three literals outright (`--ui-safety`,
+  `-lighter`, `-darker`), and there is no green primitive. The cost either way is that
+  repointing a role no longer moves its tints, so such a role is repointed as a trio.
   The build is green and light mode looks right either way; check a scoped theme.
 - **Only semantics change in dark mode.** Primitives are identical in both themes; the dark
   block re-points semantics. Role colours (primary, accent, danger, safety) do not move.
@@ -135,9 +137,10 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   token via fallback (`InputSelect` reads InputText's; `Tag` reads `--ui-pill-radius`), or
   alias it when a name of its own is needed (`--ui-nav-rail-chip-size`).
 - **Type aliases the label scale** — `--ui-type-label-{sm,md,lg,xl}-*` (10/12, 12/16, 14/20,
-  18/24), weight `--ui-type-label-font-weight` (Medium). The one step off it is
-  `--ui-type-heading-*` (Bold 24/32, Modal's title); prose is set in Label MD, not a new
-  body step. A step exists only where something
+  18/24), weight `--ui-type-label-font-weight` (Medium). Each label step has a
+  Regular body twin, `--ui-type-body-{sm,md,lg,xl}-*` (same size and leading, aliased), with
+  `--ui-type-body-font-weight` (400) - use it for reading text. The one step off the ladder
+  is `--ui-type-heading-*` (Bold 24/32, Modal's title). A step exists only where something
   uses it; don't add a step to size a container. Component `font-family` is always
   `var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback))`.
   **Never write the scale's number out by hand** — a raw `14px` that happens to equal

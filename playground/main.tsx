@@ -34,24 +34,30 @@ const PRIMITIVE_TOKENS = [
   "--ui-neutral-400", "--ui-neutral-500", "--ui-neutral-550", "--ui-neutral-600",
   "--ui-neutral-650", "--ui-neutral-700", "--ui-neutral-800",
 ];
-// The label scale. Every string this library renders is a UI label - DM Sans
-// Medium, no body copy - so it is one ramp of six, and each component's type
-// tokens alias into it. Figma carries the same six as bound text styles.
-const TYPE_SCALE = [
-  { key: "sm", figma: "Type/Label SM", used: "Button Small \u00b7 BottomNav caption \u00b7 InputText label" },
-  { key: "md", figma: "Type/Label MD", used: "Button Medium" },
-  { key: "lg", figma: "Type/Label LG", used: "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill \u00b7 InputText value" },
-  { key: "xl", figma: "Type/Label XL", used: "Button XL" },
-];
+// The type scale: four LABEL steps - DM Sans Medium, which is nearly every
+// string the library renders - their four BODY twins in Regular (same size and
+// leading), and the one HEADING step, Bold, for Modal's title. Figma carries
+// the same nine as bound text styles (Type/Label, Type/Body, Type/Heading).
 const TYPE_WEIGHT = "--ui-type-label-font-weight";
+type TypeStep = { key: string; figma: string; used: string; prefix: string; weight: string; sample: string };
+const label = (key: string, figma: string, used: string): TypeStep =>
+  ({ key, figma, used, prefix: `--ui-type-label-${key}`, weight: TYPE_WEIGHT, sample: "Navigation label" });
+const TYPE_SCALE: TypeStep[] = [
+  label("sm", "Type/Label SM", "Button Small \u00b7 BottomNav caption \u00b7 InputText label"),
+  label("md", "Type/Label MD", "Button Medium"),
+  label("lg", "Type/Label LG", "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill \u00b7 InputText value"),
+  label("xl", "Type/Label XL", "Button XL"),
+  ...(["sm", "md", "lg", "xl"] as const).map((k): TypeStep => ({
+    key: `body-${k}`, figma: `Type/Body ${k.toUpperCase()}`, used: k === "md" ? "Modal body \u00b7 the Regular twin of Label MD" : "Reading text - the Regular twin of the label step",
+    prefix: `--ui-type-body-${k}`, weight: "--ui-type-body-font-weight", sample: "Body text reads at this size",
+  })),
+  { key: "heading", figma: "Type/Heading", used: "Modal title", prefix: "--ui-type-heading", weight: "--ui-type-heading-font-weight", sample: "Delete this job?" },
+];
 // The typeface tier: one identity, one role, one safety net. --ui-font-family
 // is absent on purpose - it is an override hook read at the element, never
 // declared, so there is no :root value to read back here.
 const TYPEFACE_TOKENS = ["--ui-dm-sans", "--ui-font-primary", "--ui-font-fallback"];
-const TYPE_TOKENS = [
-  ...TYPE_SCALE.flatMap((t) => [`--ui-type-label-${t.key}-font-size`, `--ui-type-label-${t.key}-line-height`]),
-  TYPE_WEIGHT,
-];
+const TYPE_TOKENS = [...new Set(TYPE_SCALE.flatMap((t) => [`${t.prefix}-font-size`, `${t.prefix}-line-height`, t.weight]))];
 
 // Tier 2: the theming contract. Map all semantic tokens or none.
 const SEMANTIC_TOKENS = [
@@ -327,18 +333,18 @@ function useTokenValues(names: string[], deps: unknown[]) {
   return values;
 }
 
-function Specimen({ step, values }: { step: (typeof TYPE_SCALE)[number]; values: Record<string, string> }) {
-  const fs = `--ui-type-label-${step.key}-font-size`;
-  const lh = `--ui-type-label-${step.key}-line-height`;
+function Specimen({ step, values }: { step: TypeStep; values: Record<string, string> }) {
+  const fs = `${step.prefix}-font-size`;
+  const lh = `${step.prefix}-line-height`;
   const num = (v?: string) => (v ? v.replace("px", "") : "?");
   return (
     <div className="specimen">
       <span className="specimenMeta">
         <span className="specimenName">{step.figma}</span>
-        <span className="specimenToken">type-label-{step.key}-*</span>
+        <span className="specimenToken">{step.prefix.replace("--ui-", "")}-*</span>
       </span>
       <span className="specimenValue">
-        {num(values[fs])} / {num(values[lh])} / {values[TYPE_WEIGHT] || "?"}
+        {num(values[fs])} / {num(values[lh])} / {values[step.weight] || "?"}
       </span>
       <span
         className="specimenSample"
@@ -346,10 +352,10 @@ function Specimen({ step, values }: { step: (typeof TYPE_SCALE)[number]; values:
           fontFamily: "var(--ui-font-family)",
           fontSize: `var(${fs})`,
           lineHeight: `var(${lh})`,
-          fontWeight: `var(${TYPE_WEIGHT})` as React.CSSProperties["fontWeight"],
+          fontWeight: `var(${step.weight})` as React.CSSProperties["fontWeight"],
         }}
       >
-        Navigation label
+        {step.sample}
       </span>
       <span className="specimenUsed">{step.used}</span>
     </div>
@@ -570,13 +576,13 @@ function App() {
 
       <Section
         title="Type scale"
-        note="Live values, read off the themed element. Every step is DM Sans Medium - the library renders labels only, no body copy. The samples below are rendered at the tokens themselves, so a change to the scale moves them."
+        note="Live values, read off the themed element. Four label steps in DM Sans Medium - nearly every string the library renders - their four Regular body twins at the same size and leading, and one heading step in Bold, for Modal's title. The samples below are rendered at the tokens themselves, so a change to the scale moves them."
       >
         <div className="specimens">
           {TYPE_SCALE.map((t) => <Specimen key={t.key} step={t} values={type} />)}
         </div>
         <p className="note specimenFoot">
-          Four steps, no duplicates - a step exists only where the type differs, and only where something uses it. NavSlat sits on LG like the horizontal
+          Four label steps, their body twins and one heading, no duplicates - a step exists only where the type differs, and only where something uses it. NavSlat sits on LG like the horizontal
           nav; its 32px box is --ui-nav-rail-slat-height, geometry rather than a seventh scale step. Type is never
           themed, so none of these move between light and dark.
         </p>
@@ -697,7 +703,7 @@ function App() {
           + "<dialog> opened with showModal() \u2014 the page behind goes inert under a 40% scrim, focus "
           + "stays inside and starts on the first action, and returns to the opener on close. Escape "
           + "closes it; a click outside does not. The title is the library's one heading step (Bold "
-          + "24/32); the body is Label MD. 350 wide at most, shrinking to the viewport less 16 a side."
+          + "24/32); the body is Body MD (Regular). 350 wide at most, shrinking to the viewport less 16 a side."
         }
       >
         <Row label="open">
@@ -709,6 +715,7 @@ function App() {
           open={modal === "drawn"}
           onClose={() => setModal(null)}
           icon={<Save />}
+          iconColor="brand"
           title="Are you sure you want to do this thing?"
           actions={<>
             <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Secondary action</Button>

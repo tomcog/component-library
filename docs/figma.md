@@ -158,7 +158,7 @@ It arrived as `Button/Confirm` holding a **raw `#59cf55`** — a component-tier
 name carrying a literal value, which is both tiers wrong at once and exactly
 the mistake the paragraph above warns about. It is now:
 
-    Safety/Base    -> Color/TC Green  var(--ui-safety)
+    Safety/Base    -> its own value (#2aca25; Color/TC Green removed 2026-09-28)  var(--ui-safety)
     Text/OnConfirm -> Color/White     var(--ui-text-on-safety)
 
 sitting beside `Action/Base`, `Brand/Base` and `Danger/Base` as the fourth

@@ -35,8 +35,9 @@ Geometry is read from `--ui-button-*` behind `--ui-confirm-button-label-*` hooks
 and nothing is declared in `tokens.css`: it is Button's box, so a Cancel and a
 Delete in one footer stand level without anyone checking.
 
-**Button `tone="danger"` is still the right thing for a Delete among ordinary
-actions** - quiet until reached for. Use this at the end of a decision.
+**Button `tone="danger"` is the loud one** - red at rest since 0.65.0, solid on
+primary, and what a Modal's destructive answer uses. This is the quieter
+confirmation: a pale tint at rest that fills on hover.
 
     size   box    icon   stroke
     xl     48     28     2.5
@@ -124,17 +125,17 @@ says nothing about what the button does — right for it. Here the press is the
 last frame of a decision the user has already made, and dropping the role colour
 at exactly that moment would read as the button changing its mind.
 
-**The lighter and darker tints alias primitives** (`--ui-tc-green-lighter`,
-`--ui-tc-red-darker`, …) rather than being composed from the base with
-`color-mix()`, which is what `--ui-action-lighter` does. They are hand-drawn in
-Figma and no mix reproduces them: 30% of `#59cf55` on white gives `#cdf0cc`
-against the drawn `#cafac8`, and no percentage reaches it, because the drawn
-tint is *more saturated* than any mix of the base with white can be. Only
+**The lighter and darker tints are literals, not mixes** - Danger's alias the TC
+Red primitives (`--ui-tc-red-lighter`, `-darker`); Safety owns its three values
+outright since 0.65.0 (`--ui-safety` `#2aca25`, `-lighter` `#cafac8`, `-darker`
+`#378f34`), with no green primitive behind them. They are hand-drawn in Figma and
+no `color-mix()` reproduces them: the drawn safety tint is *more saturated* than
+any mix of the base with white can be. Only
 `--ui-tc-red-lighter` falls out of a formula, and mixing one of four would be
 worse than mixing none.
 
 The consequence, and it is deliberate: **an app that repoints `--ui-safety` or
-`--ui-danger` alone keeps TC Red's and TC Green's tints.** Repoint the trio:
+`--ui-danger` alone keeps its old tints.** Repoint the trio:
 
 ```css
 :root {

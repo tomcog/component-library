@@ -43,12 +43,17 @@
 }
 
 /* -- icon ------------------------------------------------------ */
-/* Brand, not action: it names the kind of moment and acts on nothing. */
+/* Decorative chrome, never the action colour: it names the kind of moment and
+   acts on nothing. `iconColor` picks the muted grey (default) or the brand;
+   --ui-modal-icon-color overrides either. Figma: Icon Color. */
 .icon {
   display: inline-flex;
   align-self: flex-start;
   width: var(--ui-modal-icon-size);
   height: var(--ui-modal-icon-size);
+  color: var(--ui-modal-icon-color, var(--ui-text-muted));
+}
+.iconBrand {
   color: var(--ui-modal-icon-color, var(--ui-brand));
 }
 .icon > svg,
@@ -73,11 +78,12 @@
   font-weight: var(--ui-type-heading-font-weight);
   color: var(--ui-modal-title-color, var(--ui-text-default));
 }
-/* Label MD. Figma drew 12 at 130%; 12/16 is the scale's step, 0.4px apart. */
+/* Body MD - reading text, Regular (since 0.65.0; it was Label MD, Medium).
+   Figma: Type/Body MD. Same 12/16 box as Label MD. */
 .body {
-  font-size: var(--ui-type-label-md-font-size);
-  line-height: var(--ui-type-label-md-line-height);
-  font-weight: var(--ui-type-label-font-weight);
+  font-size: var(--ui-type-body-md-font-size);
+  line-height: var(--ui-type-body-md-line-height);
+  font-weight: var(--ui-type-body-font-weight);
   color: var(--ui-modal-body-color, var(--ui-text-default));
 }
 .body > :first-child { margin-top: 0; }

@@ -1,8 +1,9 @@
 # Modal
 
 A dialog that interrupts: an icon, a title, a body and the actions that answer it.
-Figma: the `Modal` component (`853:583`), in the Overlays section, with `Title` and
-`Body` text properties, `Icon?` and an `Icon` swap, and its two Buttons exposed.
+Figma: the `Modal` set (`877:641`, `Icon Color` = Default | Brand; the Default
+variant is the original component `853:583`), in the Overlays section, with `Title`
+and `Body` text properties, `Icon?` and an `Icon` swap, and its two Buttons exposed.
 Added in 0.63.0, drawn Figma-first.
 
 ```tsx
@@ -24,9 +25,10 @@ Added in 0.63.0, drawn Figma-first.
     padding   24 all round (--ui-modal-padding)
     gap       24 between icon, title, body, actions (--ui-modal-gap)
     actions   right-aligned, 16 apart (--ui-modal-actions-gap), in the order given
-    icon      48 (--ui-modal-icon-size), stroke 3 (--ui-modal-icon-stroke), --ui-brand
+    icon      48 (--ui-modal-icon-size), stroke 3 (--ui-modal-icon-stroke);
+              iconColor "default" --ui-text-muted | "brand" --ui-brand
     title     Type/Heading - Bold 24/32, the library's one heading step
-    body      Label MD 12/16, --ui-text-default
+    body      Body MD 12/16, Regular, --ui-text-default
     surface   --ui-surface-raised, --ui-card-radius (8), --ui-shadow-float-2
     backdrop  --ui-modal-backdrop, black at 40%, both themes
 
@@ -40,6 +42,15 @@ Added in 0.63.0, drawn Figma-first.
 Hooks: `--ui-modal-bg`, `--ui-modal-text`, `--ui-modal-title-color`,
 `--ui-modal-body-color`, `--ui-modal-icon-color`, `--ui-modal-radius`,
 `--ui-modal-shadow`.
+
+## The icon is grey or brand, never action
+
+`iconColor="default"` (the default) draws the icon in `--ui-text-muted`, for a Modal
+that informs; `iconColor="brand"` takes `--ui-brand`, for one that should carry the
+identity. It is decorative chrome either way - it names the kind of moment and acts
+on nothing - so it is never the action colour. `--ui-modal-icon-color` overrides
+both. Figma: `Icon Color` = Default (`Text/Muted`) | Brand (`Brand/Base`). Brand was
+the only colour until 0.65.0.
 
 ## A native `<dialog>`
 
@@ -76,9 +87,10 @@ For a confirmation, pass `role="alertdialog"`.
 1. **The title is 24/32, drawn at 24/130% (31.2).** 32 puts it on the label
    ladder's own 4:3 rhythm, and px leading is what Figma can bind to a variable;
    the Figma text now uses `Type/Heading`, so the two agree. Decided with the user.
-2. **The body is Label MD (12/16), drawn at 12/130% (15.6).** 0.4px a line; the
-   scale's step was taken rather than a second 12px size. Figma now binds
-   `Type/Label MD`.
+2. **The body is Body MD - Regular 12/16 - drawn Medium at 12/130% (15.6).** 12/16
+   is the scale's step, 0.4px a line off the drawing, and the body is reading text,
+   so it takes the Regular body twin (since 0.65.0; Label MD, Medium, before). Figma
+   binds `Type/Body MD`.
 3. **The drawing's text was raw black.** Both sides now use `Text/Default`, so
    the Modal follows the theme.
 4. **The width is a maximum, not a size.** Figma poses 350; code caps at 350 and

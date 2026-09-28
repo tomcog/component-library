@@ -3,6 +3,14 @@ import type { DialogHTMLAttributes, ReactNode, SyntheticEvent } from "react";
 import styles from "./Modal.module.css";
 import { assignRef } from "../../internal/assignRef";
 
+/**
+ * The icon's colour. Figma: `Icon Color`. `default` is the muted grey
+ * (`--ui-text-muted`), for a Modal that informs; `brand` takes `--ui-brand`,
+ * for one that should carry the identity. Either way it is decorative chrome,
+ * never the action colour - the icon acts on nothing.
+ */
+export type ModalIconColor = "default" | "brand";
+
 export interface ModalProps
   extends Omit<DialogHTMLAttributes<HTMLDialogElement>, "title" | "open" | "onClose"> {
   /** Whether the Modal is showing. It is controlled: the consumer owns this. */
@@ -17,10 +25,12 @@ export interface ModalProps
   /** Figma: `Title`. Drawn in the heading step, and the dialog's accessible name. */
   title: ReactNode;
   /**
-   * Figma: `Icon?` / `Icon`. Decorative, `aria-hidden`, drawn at 48 in
-   * `--ui-brand` - it names the kind of moment, it acts on nothing.
+   * Figma: `Icon?` / `Icon`. Decorative, `aria-hidden`, drawn at 48 - it names
+   * the kind of moment, it acts on nothing. Its colour is `iconColor`.
    */
   icon?: ReactNode;
+  /** Figma: `Icon Color`. The muted grey by default, or `brand`. */
+  iconColor?: ModalIconColor;
   /**
    * The buttons that answer it, right-aligned in the order given - dismiss
    * first, answer last, as Figma draws Tertiary then Primary. Focus starts on the
@@ -29,7 +39,7 @@ export interface ModalProps
    * white label, and the danger colour on hover and press.
    */
   actions?: ReactNode;
-  /** Figma: `Body`. Label MD, and the dialog's accessible description. */
+  /** Figma: `Body`. Body MD (Regular), and the dialog's accessible description. */
   children?: ReactNode;
 }
 
@@ -61,7 +71,7 @@ export interface ModalProps
  * while it is open. All of that is code-only; Figma draws the one pose.
  */
 export const Modal = forwardRef<HTMLDialogElement, ModalProps>(function Modal(
-  { open, onClose, title, icon, actions, children, className, onCancel, ...props },
+  { open, onClose, title, icon, iconColor = "default", actions, children, className, onCancel, ...props },
   ref,
 ) {
   const dialog = useRef<HTMLDialogElement | null>(null);
@@ -108,7 +118,12 @@ export const Modal = forwardRef<HTMLDialogElement, ModalProps>(function Modal(
       {...props}
     >
       {icon != null ? (
-        <span className={styles.icon} aria-hidden="true">
+        <span
+          className={[styles.icon, iconColor === "brand" ? styles.iconBrand : null]
+            .filter(Boolean)
+            .join(" ")}
+          aria-hidden="true"
+        >
           {icon}
         </span>
       ) : null}

@@ -117,6 +117,16 @@ resolving to `--ui-type-label-md-font-size` needs no lookup table. That is why
 Button's fourth size was renamed from `Jumbo` to `XL`: one vocabulary rather
 than two that have to be mentally mapped.
 
+**The body steps (0.65.0).** `Type/Body SM`-`XL` are the Regular (400) twin of
+each label step: the same size and the same leading, so a Body line and a Label line
+of one size stand the same height - only the weight differs, Regular for reading and
+Medium for UI labels. Tokens `--ui-type-body-{sm,md,lg,xl}-font-size` / `-line-height`
+ALIAS the label tokens, so retuning a label step moves its body twin, and
+`--ui-type-body-font-weight` is the one weight for all four. In Figma the styles bind
+`Type/Body */*` variables that alias the label variables, and `Type/Body/Font Weight`
+("Regular"). Added at the user's request before any component used them - the one
+exception to "a step exists only where something uses it".
+
 **The heading step (0.63.0).** `Modal`'s title is the first string that is not a
 label: `Type/Heading`, DM Sans **Bold** 24/32, tokens `--ui-type-heading-font-size`,
 `-line-height` and `-font-weight` (700). It sits beside the ladder rather than on
