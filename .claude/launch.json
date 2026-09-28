@@ -13,6 +13,21 @@
         "--strictPort"
       ],
       "port": 5199
+    },
+    {
+      "name": "nextjob",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/tom/Sites/NextJob",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5201",
+        "--strictPort"
+      ],
+      "port": 5201
     }
   ]
 }
