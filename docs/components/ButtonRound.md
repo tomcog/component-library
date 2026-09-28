@@ -72,6 +72,41 @@ recovering a name nothing needs.
 axes without multiplying the set. That modelling difference is the one thing
 this component still diverges on.
 
+## `variant="outline-light"` sits on a photo
+
+For a round button laid over a photo or video - ParkPal's park hero image is the
+first. A 35% black ground, a white ring and a white glyph:
+
+```tsx
+<ButtonRound variant="outline-light" icon={<X />} aria-label="Close" />
+```
+
+    ground  --ui-surface-scrim   rgb(0 0 0 / 0.35)
+    ring    --ui-text-on-media   1.5px inset (--ui-button-round-outline-light-stroke)
+    glyph   --ui-text-on-media   white
+
+Hooks: `--ui-button-round-outline-light-bg`, `-icon`, `-ring`.
+
+**Both colours are theme-independent, on purpose.** They are new semantics rather
+than `--ui-text-on-inverse` (white in light, ink in dark): a photo is the same
+photo in either mode, and a glyph that turned dark in dark mode would vanish
+against a shadowed rock. Neither is redeclared in the dark block.
+
+**The ring is an inset box-shadow**, so the button is exactly the size of a
+filled or ghost one beside it.
+
+Figma: drawn as `Button/Round` **instances** over the ParkPal hero (`890:1695`
+close, `890:1688` image-plus), at LG only - not yet a `State` in the set. That,
+and the primitive binding, are divergence #48.
+
+### Code-only, derived rather than drawn
+
+- **Hover and press** fall through to the base rules - primary fill, then the
+  inverse surface - with the ring kept on, exactly as `ghost` falls through.
+- **Disabled** keeps its own ground, ring and glyph at 50% opacity. The base
+  disabled pair (a pale grey disc) would be the loudest thing on a dark photo.
+- **XL, MD and SM** share LG's 1.5px ring.
+
 ## The tones moved out into ConfirmButton
 
 **This component has no `tone` prop.** It had `tone="primary" | "confirm" |

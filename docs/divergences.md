@@ -128,3 +128,17 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    `Button/Tertiary/*` left in place, now used only by these three. Fix: bind each
    to its own tier (`Button/Round/*`, a `Layer Controller/*` token, or the
    semantic underneath), then retire `Button/Tertiary/*`. Figma-side only.
+
+48. **Button/Round's `outline-light` exists only as instance overrides in
+    Figma.** DEFECT, small: the look is drawn on placed `Button/Round`
+    instances over the ParkPal hero (`890:1695`, `890:1688`), not as a `State`
+    in the set (`220:11857`), so the set cannot say it and a designer cannot
+    pick it. Code has `variant="outline-light"`. Direction: Figma - add
+    `State=Outline Light` at the four sizes (LG drawn; XL/MD/SM take the same
+    1.5px ring). While doing so, rebind: the ring and glyph are bound straight to
+    `Color/White` (a primitive - the tier rule) and the ground is a raw
+    `rgba(0,0,0,0.35)`. Code reads two new semantics, `--ui-text-on-media` and
+    `--ui-surface-scrim`, identical in Light and Dark; Figma wants matching
+    `Text/OnMedia` and `Surface/Scrim` variables with the same value in both
+    modes. (`888:1673`, an earlier draft - 40% white ground, 1px ring - was
+    superseded by these two.)

@@ -85,6 +85,38 @@
   color: var(--ui-button-round-ghost-icon-disabled, var(--ui-text-disabled));
 }
 
+/* -- variant="outline-light" --------------------------------- */
+/* For a button laid over a photo or video. Figma: Button/Round instances over
+   the ParkPal hero image (890:1695, 890:1688) - a 35% black ground, a 1.5px
+   white ring and a white glyph. Not yet a State in the set (divergences #48).
+
+   Every value reads the media pair, which does not flip with the theme: the
+   photo underneath is the same in either mode.
+
+   The ring is an inset box-shadow, not a border, so it adds nothing to the
+   box - the button stays the size of its neighbours, as Button's ghost does
+   for the same reason.
+
+   Only the resting look is declared, as with ghost: hover and press fall
+   through to the base rules (primary fill, then the inverse surface), and the
+   ring stays on through both. Figma draws neither state, so that is code-only,
+   derived from ghost. */
+.outlineLight {
+  background: var(--ui-button-round-outline-light-bg, var(--ui-surface-scrim));
+  color: var(--ui-button-round-outline-light-icon, var(--ui-text-on-media));
+  box-shadow: inset 0 0 0 var(--ui-button-round-outline-light-stroke)
+    var(--ui-button-round-outline-light-ring, var(--ui-text-on-media));
+}
+
+/* Disabled keeps its own ground, ring and glyph and drops to half strength.
+   The base disabled pair (a pale grey disc) would be the loudest thing on a
+   dark photo. Code-only: Figma draws no disabled cell for this. */
+.outlineLight:disabled {
+  background: var(--ui-button-round-outline-light-bg, var(--ui-surface-scrim));
+  color: var(--ui-button-round-outline-light-icon, var(--ui-text-on-media));
+  opacity: 0.5;
+}
+
 .xl { width: var(--ui-button-round-xl-size); height: var(--ui-button-round-xl-size); }
 .lg { width: var(--ui-button-round-lg-size); height: var(--ui-button-round-lg-size); }
 .md { width: var(--ui-button-round-md-size); height: var(--ui-button-round-md-size); }

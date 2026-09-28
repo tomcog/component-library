@@ -104,7 +104,7 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
 
 ### Tokens: the rules that bite
 
-- **The semantic tier is the public API.** 26 colour names (`--ui-action`, `--ui-brand`,
+- **The semantic tier is the public API.** 28 colour names (`--ui-action`, `--ui-brand`,
   `--ui-surface-*`,
   `--ui-text-*`, `--ui-border-default`, …) are what an app overrides. Primitives
   (`--ui-tc-red`, `--ui-neutral-*`) are internal — components read semantics, not primitives.

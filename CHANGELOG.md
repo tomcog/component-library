@@ -9,6 +9,16 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ButtonRound `variant="outline-light"`, for a button over a photo.
+
+**ButtonRound** gains `variant="outline-light"`: a 35% black ground, a 1.5px white ring
+and a white glyph, the same in both themes - for a round button laid over a photo or
+video. Hover and press fall through to the base (ring kept); disabled is the same look
+at half strength. New semantic tokens `--ui-surface-scrim` and `--ui-text-on-media`
+(neither changes in dark mode) and `--ui-button-round-outline-light-stroke`; hooks
+`--ui-button-round-outline-light-bg` / `-icon` / `-ring`. Figma: instances over the
+ParkPal hero (890:1695, 890:1688); not yet a State in the set (divergences #48). Additive.
+
 **0.65.0 -> 0.66.0** - New `Radio` and `RadioGroup`.
 
 New **`Radio`** (and `RadioProps`, `RadioSize`): one option of a one-of-N choice, a

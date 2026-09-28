@@ -18,7 +18,7 @@ export type ButtonRoundSize = "xl" | "lg" | "md" | "sm";
  * `variant` for the same axis, so the two round buttons read alike. Not a
  * boolean either, so a third weight can join without changing the API shape.
  */
-export type ButtonRoundVariant = "filled" | "ghost";
+export type ButtonRoundVariant = "filled" | "ghost" | "outline-light";
 export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */
   icon: ReactNode;
@@ -34,6 +34,11 @@ export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement
    * transparent resting, primary on hover - which is what `NavRail` and
    * `BottomNav` already hand-roll for their chips, because until now this
    * library had no round button with a transparent resting state.
+   *
+   * `outline-light` is for a button laid over a photo or video: a
+   * translucent dark ground, a white ring and a white glyph, the same in
+   * either theme. Figma: `Button/Round` instances over the ParkPal hero image
+   * (890:1695, 890:1688) - not yet a State in the set.
    */
   variant?: ButtonRoundVariant;
   /** Render the single child element, such as an anchor, as the control. */
@@ -66,6 +71,7 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
       styles.button,
       styles[size],
       variant === "ghost" ? styles.ghost : null,
+      variant === "outline-light" ? styles.outlineLight : null,
       className,
       child?.props.className,
     ]

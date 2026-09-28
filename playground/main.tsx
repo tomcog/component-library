@@ -637,7 +637,10 @@ function App() {
           "The last two are variant=\"ghost\": no fill and a muted glyph at rest, then the same " +
           "primary fill as the first on hover \u2014 weight arriving with the pointer rather than a " +
           "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
-          "makes it louder than leaving it on."
+          "makes it louder than leaving it on. " +
+          "variant=\"outline-light\" is for a button over a photo: a 35% black ground, a white ring " +
+          "and a white glyph, identical in both themes. Hover and press fall through to the base, " +
+          "ring kept; disabled is the same look at half strength."
         }
       >
         {ROUND_SIZES.map((s) => (
@@ -648,6 +651,16 @@ function App() {
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
           </Row>
         ))}
+        <Row label="outline-light, over a photo">
+          {/* A stand-in photo: a sky-to-rock gradient, bright at the top so the
+              scrim has to earn its keep. */}
+          <div style={{ display: "flex", gap: 16, padding: 16, borderRadius: 8, background: "linear-gradient(160deg, #cfe8ff 0%, #9cc7e8 35%, #b98a5e 70%, #6b4a2e 100%)" }}>
+            {ROUND_SIZES.map((s) => (
+              <ButtonRound key={s} size={s} variant="outline-light" icon={<House />} aria-label={`${s} outline-light action`} />
+            ))}
+            <ButtonRound size="lg" variant="outline-light" icon={<House />} aria-label="lg outline-light disabled action" disabled />
+          </div>
+        </Row>
       </Section>
 
       <Section

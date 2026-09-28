@@ -249,6 +249,17 @@
   --ui-surface-inverse: var(--ui-ink);
   --ui-text-on-inverse: var(--ui-white);
 
+  /* The pair for a control drawn ON a photo or video, whatever the theme:
+     a translucent dark ground so it reads over any picture, and white on it.
+     Neither is redeclared in the dark block, deliberately - a photo is the
+     same photo in either theme, so the control over it must not flip.
+     (--ui-text-on-inverse is white here but ink in dark, which is exactly the
+     wrong answer over a bright sky.) Added for ButtonRound
+     variant="outline-light". Figma draws the scrim as a raw rgba(0,0,0,0.35)
+     and binds the white straight to Color/White - see divergences #48. */
+  --ui-surface-scrim: rgb(0 0 0 / 0.35);
+  --ui-text-on-media: var(--ui-white);
+
   --ui-surface-muted: var(--ui-neutral-300);
   --ui-surface-muted-hover: var(--ui-neutral-350);
   --ui-surface-muted-active: var(--ui-neutral-400);
@@ -503,6 +514,9 @@
   --ui-button-round-lg-icon-stroke: 2;
   --ui-button-round-md-icon-stroke: 1.5;
   --ui-button-round-sm-icon-stroke: 1;
+  /* variant="outline-light": the ring. Figma draws it at LG only
+     (1.5px, inside); the other three sizes share it - code-only. */
+  --ui-button-round-outline-light-stroke: 1.5px;
 
   /* ConfirmButton. The SAME round icon button as ButtonRound, wearing the
      safety/danger pair instead of the brand - so the geometry is aliased

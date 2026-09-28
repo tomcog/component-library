@@ -147,6 +147,9 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-surface-raised:       /* floating panel fill (nav dropdown)    */;
   --ui-surface-pale:         /* the page under a rail or panel        */;
 
+  --ui-surface-scrim:        /* ground for a control over a photo     */;
+  --ui-text-on-media:        /* text/glyph on that ground             */;
+
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
   --ui-border-default:       /* a hairline rule on a surface          */;
