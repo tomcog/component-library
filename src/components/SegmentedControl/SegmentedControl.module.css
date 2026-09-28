@@ -146,6 +146,24 @@
   color: var(--ui-segmented-text-hover, var(--ui-action));
 }
 
+/* PRESSED: a grey layer under the label while the pointer is down - every
+   segment, choice or action, including the toolbar's (0.64.0). It is
+   --ui-text-default at 12% over whatever is beneath rather than a named grey:
+   the track under a segment is pale, white or sunken, and flips in dark, and a
+   fixed grey vanishes on at least one of them (--ui-surface-muted IS the white
+   toolbar's sunken track in dark). A translucent layer of the text colour
+   darkens a light track and lightens a dark one, so it reads on all of them.
+   The label keeps whatever hover gave it; the press only adds the ground.
+
+   Not on the selected segment - it is already the answer, the same reason it
+   takes no hover - and not when disabled. --ui-segmented-bg-active is the
+   hook, which ToolbarExpander's open trigger sets to its own red so pressing
+   it to close does not flash grey. Figma: State=Pressed. */
+.segment:active:not(.selected):not(:disabled) {
+  background: var(--ui-segmented-bg-active,
+              color-mix(in srgb, var(--ui-text-default) 12%, transparent));
+}
+
 /* Hovering the SELECTED segment adds nothing - it is already the answer, and
    the two states would otherwise compound. The same rule NavItem, NavSlat and
    NavDropdownItem all follow. */

@@ -106,6 +106,9 @@
      on this ground would be red on red. Its rule outweighs anything here, so
      it is answered through the hook it already reads. */
   --ui-segmented-text-hover: var(--ui-toolbar-expander-open-text, var(--ui-text-on-action));
+  /* ...and its grey press would flash over the red while it is pressed to
+     close. The press hook takes the open ground instead. */
+  --ui-segmented-bg-active: var(--ui-toolbar-expander-open-bg, var(--ui-action));
   border-start-end-radius: 0;
   border-end-end-radius: 0;
 }

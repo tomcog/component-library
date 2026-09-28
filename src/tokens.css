@@ -1046,8 +1046,14 @@
      control in a toolbar should not require remembering to flip its tone.
      It lands on --ui-segmented-track-bg, the hook that already exists for
      exactly this, so an explicit tone="white" track is untouched: that one
-     reads --ui-segmented-track-white-bg instead. */
-  --ui-toolbar-track-bg: var(--ui-surface-raised);
+     reads --ui-segmented-track-white-bg instead.
+
+     --ui-toolbar-track-bg is deliberately NOT declared here - it is a hook,
+     read at the bar as var(--ui-toolbar-track-bg, var(--ui-surface-raised)).
+     Until 0.64.0 it was declared on :root as var(--ui-surface-raised), which
+     froze it against :root's LIGHT raised surface: a gray toolbar inside a
+     [data-theme="dark"] subtree kept white tracks. The var()-resolves-where-
+     declared trap in CLAUDE.md. */
 
   /* -- TYPEFACE ----------------------------------------------
      The same identity/role split the colours have, for the same reason.

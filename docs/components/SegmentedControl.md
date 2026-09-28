@@ -253,6 +253,18 @@ The switch is keyed off whether the label is **shown**, not off whether one
 exists, so `hideLabel` - which keeps the text as the accessible name - counts as
 alone. That is the right key: the rule is about what the eye sees.
 
+## Pressed fills a grey layer (0.64.0)
+
+While the pointer is down, an unselected segment gets a grey ground:
+`--ui-text-default` at 12% over whatever is beneath, not a named grey. The track
+under a segment can be pale, white or sunken and flips in dark, and a fixed grey
+disappears on at least one (`--ui-surface-muted` IS the white toolbar's sunken
+track in dark); a translucent layer of the text colour darkens a light track and
+lightens a dark one. The label keeps its hover colour. Not on the selected segment
+(already the answer) or a disabled one. Hook: `--ui-segmented-bg-active` -
+`ToolbarExpander`'s open trigger sets it to its red so pressing it to close does
+not flash grey. Figma: `State=Pressed`, a `Text/Default` fill at 12% paint opacity.
+
 ## `hideLabel` is the icon-only segment
 
 Figma's `Label?` boolean. Pass the label as `children` as usual and set

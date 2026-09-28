@@ -128,11 +128,3 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    `Button/Tertiary/*` left in place, now used only by these three. Fix: bind each
    to its own tier (`Button/Round/*`, a `Layer Controller/*` token, or the
    semantic underneath), then retire `Button/Tertiary/*`. Figma-side only.
-
-48. **Secondary's resting label fails AA contrast.** Not a code/Figma
-   disagreement - both sides match - but a design defect recorded here so it is
-   not lost: the action red on the 15% action tint is 3.64:1 in light and 2.71:1
-   in dark, against 4.5:1 for text. Options: a darker label at rest
-   (`--ui-action` mixed toward `--ui-text-default`, as the ghost press does), a
-   stronger tint, or accept it for this variant. Design call; ask.
-

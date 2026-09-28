@@ -9,6 +9,36 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Segment: a grey press state. Toolbar: tracks follow a scoped dark theme. ToolbarExpander: a drawer that stays open is a choice. Button: Secondary's resting label is darker, for contrast.
+
+**Toolbar**: a gray toolbar's tracks follow a scoped dark theme. `--ui-toolbar-track-bg`
+was declared on `:root` as `var(--ui-surface-raised)`, freezing it at the light value,
+so inside a `[data-theme="dark"]` subtree the tracks stayed white. The declaration is
+gone; the name remains an override hook, read with that fallback at the bar. (Themes
+set on `<html>` were unaffected.)
+
+**Segment** (every SegmentedControl, the Toolbar and ToolbarExpander) has a pressed
+state: while the pointer is down an unselected segment gets a grey layer,
+`--ui-text-default` at 12% over its track, readable on every track in both themes.
+Not on the selected or a disabled segment; the open expander trigger keeps its red.
+New hook `--ui-segmented-bg-active`.
+
+**ToolbarExpander** without `closeOnAction` - the default - now treats its revealed
+segments as a CHOICE: a `radiogroup` named by the trigger, one segment on at a time,
+on the dark (near-black) selected ground, with arrow keys, Home/End and a single
+tab stop. Pass `selected` and `onClick` to each, as in `SegmentedControl`. With
+`closeOnAction` the segments stay
+one-shot action buttons, as before. Behaviour change for a drawer without
+`closeOnAction`; no app uses ToolbarExpander yet.
+
+**Button**: Secondary's resting label is darker, for contrast.
+
+A `variant="secondary"` Button's resting label is now `--ui-action` mixed 50% toward
+`--ui-text-default` rather than `--ui-action` itself: 7.32:1 on its tint in light
+(was 3.64:1) and 4.87:1 in dark (was 2.71:1), clearing AA in both. A dark red label
+in light, a light rose one in dark. Hover, press and the ground are unchanged. The
+`--ui-button-secondary-text` hook still wins.
+
 **0.62.0 -> 0.63.0** - New `Modal`. Tabs, NavRail, BottomNav and Nav: the current item reads the brand role. Button: Secondary becomes tonal, Tertiary becomes Ghost without its rule; the ghost danger press uses the named tints.
 
 New **`Modal`** (and `ModalProps`): a native `<dialog>` opened with `showModal()` -

@@ -898,9 +898,10 @@ function App() {
             </SegmentedControl>
           </Toolbar>
         </Row>
-        {/* The expander (Figma sketch 814:963): File opens to reveal its
-            actions, and clicking it again folds them back. The segments
-            pop in one after another as the panel grows. */}
+        {/* The expander as a CHOICE (the default - closeOnAction off): the
+            drawer stays open and its segments are a radio group, one on at a
+            time, taking the selected ground (variant). Arrow keys move and
+            select. Shares its state with the Zoom control above. */}
         <Row label="expander">
           <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "flex-start" }}>
             <Toolbar aria-label="Drawing tools, expander">
@@ -912,20 +913,18 @@ function App() {
                 <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
                 <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
               </SegmentedControl>
-              <ToolbarExpander size="sm" icon={<FileGlyph />} label="File">
-                <Segment icon={<Save />} hideLabel>Save</Segment>
-                <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
-                <Segment icon={<Images />} hideLabel>Export image</Segment>
-                <Segment icon={<FileX />} hideLabel>Close</Segment>
-                <Segment icon={<Send />} hideLabel>Send</Segment>
-              </ToolbarExpander>
+              <ToolbarExpander size="sm" icon={<Frame />} label="Zoom">
+                  <Segment icon={<Grid />} hideLabel selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                  <Segment icon={<StickyNote />} hideLabel selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                  <Segment icon={<Picture />} hideLabel selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+                </ToolbarExpander>
             </Toolbar>
             <div style={{ display: "flex", gap: 24, alignItems: "flex-start", padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
               <Toolbar tone="white" aria-label="Drawing tools, expander labelled">
-                <ToolbarExpander size="sm" icon={<FileGlyph />} label="File">
-                  <Segment icon={<Save />}>Save</Segment>
-                  <Segment icon={<FolderOpen />}>Open</Segment>
-                  <Segment icon={<Send />}>Send</Segment>
+                <ToolbarExpander size="sm" icon={<Frame />} label="Zoom">
+                  <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                  <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                  <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
                 </ToolbarExpander>
               </Toolbar>
               <Toolbar orientation="vertical" tone="white" aria-label="Drawing tools, expander vertical">
@@ -933,10 +932,10 @@ function App() {
                   <Segment icon={<Undo />}>Undo</Segment>
                   <Segment icon={<Redo />}>Redo</Segment>
                 </SegmentedControl>
-                <ToolbarExpander size="sm" icon={<FileGlyph />} label="File">
-                  <Segment icon={<Save />}>Save</Segment>
-                  <Segment icon={<FolderOpen />}>Open</Segment>
-                  <Segment icon={<Send />}>Send</Segment>
+                <ToolbarExpander size="sm" icon={<Frame />} label="Zoom">
+                  <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                  <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                  <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
                 </ToolbarExpander>
               </Toolbar>
             </div>

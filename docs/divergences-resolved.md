@@ -575,3 +575,15 @@ Nothing here needs action.
    against a 22.3% mix) and close enough to leave. Direction: undecided - either
    a hand-picked `Color/TC Red Light` primitive with a `Danger/Light` semantic
    (both sides), or the code's ghost press moves to `--ui-danger-lighter`. Ask.
+
+48. ~~Secondary's resting label fails AA contrast.~~ **Resolved 2026-09-28
+   (0.64.0).** The label is now `--ui-action` mixed 50% toward `--ui-text-default`:
+   7.32:1 in light, 4.87:1 in dark. Figma binds `Action/Darker`, which the mix
+   matches in light.
+
+   Original entry: **Secondary's resting label fails AA contrast.** Not a code/Figma
+   disagreement - both sides match - but a design defect recorded here so it is
+   not lost: the action red on the 15% action tint is 3.64:1 in light and 2.71:1
+   in dark, against 4.5:1 for text. Options: a darker label at rest
+   (`--ui-action` mixed toward `--ui-text-default`, as the ghost press does), a
+   stronger tint, or accept it for this variant. Design call; ask.

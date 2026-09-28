@@ -419,6 +419,13 @@ non-variant property of the set appears. Then prove it on a throwaway instance.
 A script that throws is rolled back whole, so keep the proof in a separate call
 from the fix - a verification step that errored took the fix down with it.
 
+## Binding a variable to a paint resets its opacity (2026-09-28)
+
+`figma.variables.setBoundVariableForPaint(paint, 'color', v)` returned a paint at
+opacity 1 even when the paint passed in had 0.12 - Segment's new Pressed fill
+(Text/Default at 12%) rendered solid near-black. Set the opacity on the RESULT:
+`node.fills = [{ ...bound, opacity: 0.12 }]`, then read it back.
+
 ## Editing the Figma file safely
 
 Plugin edits are undoable from the canvas, and the user may be working in the file at the same time — node state can change between calls. Never bulk-delete by name pattern or assume an unfamiliar variant is leftover scaffolding (doing so destroyed a `Level=Ghost` variant the user was creating). Remove only ids created in the same call, and re-read state rather than trusting a previous call's snapshot.
