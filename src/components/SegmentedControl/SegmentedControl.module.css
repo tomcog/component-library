@@ -104,6 +104,7 @@
 
 .xl .segment {
   height: var(--ui-segmented-xl-height);
+  min-width: var(--ui-segmented-xl-height);
   padding-inline: var(--ui-segmented-xl-padding-x);
   gap: var(--ui-segmented-xl-icon-gap);
   font-size: var(--ui-segmented-xl-font-size);
@@ -111,6 +112,7 @@
 }
 .lg .segment {
   height: var(--ui-segmented-lg-height);
+  min-width: var(--ui-segmented-lg-height);
   padding-inline: var(--ui-segmented-lg-padding-x);
   gap: var(--ui-segmented-lg-icon-gap);
   font-size: var(--ui-segmented-lg-font-size);
@@ -118,6 +120,7 @@
 }
 .md .segment {
   height: var(--ui-segmented-md-height);
+  min-width: var(--ui-segmented-md-height);
   padding-inline: var(--ui-segmented-md-padding-x);
   gap: var(--ui-segmented-md-icon-gap);
   font-size: var(--ui-segmented-md-font-size);
@@ -125,11 +128,20 @@
 }
 .sm .segment {
   height: var(--ui-segmented-sm-height);
+  min-width: var(--ui-segmented-sm-height);
   padding-inline: var(--ui-segmented-sm-padding-x);
   gap: var(--ui-segmented-sm-icon-gap);
   font-size: var(--ui-segmented-sm-font-size);
   line-height: var(--ui-segmented-sm-line-height);
 }
+
+/* MIN-WIDTH = HEIGHT (0.65.0), so a segment is never narrower than it is
+   tall. A short label ("All") used to hug to its padding and come out a
+   squashed oval; now it is at least the circle an icon-only segment already
+   is, with the label centred, and a longer label still grows into a pill.
+   It reads the height token rather than restating it. A <button> is
+   border-box, so the min-width includes the padding. Figma: each Segment
+   cell's min width is bound to its Segmented Size/<size>/Height. */
 
 /* Hovering an idle segment changes the LABEL and its glyph, and nothing else.
    Figma draws the Hover cell with its fill switched OFF at all four sizes, so

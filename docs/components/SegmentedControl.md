@@ -253,6 +253,14 @@ The switch is keyed off whether the label is **shown**, not off whether one
 exists, so `hideLabel` - which keeps the text as the accessible name - counts as
 alone. That is the right key: the rule is about what the eye sees.
 
+## A segment is never narrower than it is tall (0.65.0)
+
+Each size sets `min-width` to its own height token, so a short label - "All",
+"On" - comes out at least a circle (48 / 40 / 32 / 24) with the label centred,
+instead of hugging its padding into a squashed oval. A longer label still grows
+into a pill, and icon-only segments were already that circle. Figma: every Segment
+cell's min width is bound to `Segmented Size/<size>/Height`, content centred.
+
 ## Pressed fills a grey layer (0.64.0)
 
 While the pointer is down, an unselected segment gets a grey ground:
