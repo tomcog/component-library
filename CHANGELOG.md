@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Button: `tone="danger"` is red in every state, at rest included. Modal: the icon is grey or brand. Segment: never narrower than tall. Safety owns its green; the TC Green primitives are removed. Body type steps.
+**0.64.0 -> 0.65.0** - Button: `tone="danger"` is red in every state, at rest included. Modal: the icon is grey or brand. Segment: never narrower than tall. Safety owns its green; the TC Green primitives are removed. Body type steps.
 
 **Type**: Body steps - `--ui-type-body-{sm,md,lg,xl}-font-size` / `-line-height` and
 `--ui-type-body-font-weight` (400): the Regular twin of each label step, same size and
