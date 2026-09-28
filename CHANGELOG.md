@@ -9,6 +9,17 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ButtonRound `outline-light` restyled to the current Figma frame.
+
+**ButtonRound** `variant="outline-light"`: the ground is now 55% black (was 35%) and
+the whole button rests at 75% opacity (new `--ui-button-round-outline-light-opacity`),
+per Figma 890:1688. Hover lifts it to full opacity rather than deepening the ground;
+press is full opacity on a 70% ground (was 65%); disabled is 40% opacity (was 50%).
+
+**BREAKING - removed token:** `--ui-surface-scrim-hover` (added in 0.68.0) is gone -
+hover no longer changes the ground. No app references it. Changed values:
+`--ui-surface-scrim` 0.35 -> 0.55, `--ui-surface-scrim-active` 0.65 -> 0.7.
+
 **0.67.0 -> 0.68.0** - ButtonRound `outline-light`: hover and press stay neutral.
 
 **ButtonRound** `variant="outline-light"` no longer takes the primary fill on hover and

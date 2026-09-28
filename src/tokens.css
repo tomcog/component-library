@@ -255,14 +255,12 @@
      same photo in either theme, so the control over it must not flip.
      (--ui-text-on-inverse is white here but ink in dark, which is exactly the
      wrong answer over a bright sky.) Added for ButtonRound
-     variant="outline-light". Figma draws the scrim as a raw rgba(0,0,0,0.35)
+     variant="outline-light". Figma draws the scrim as a raw rgba(0,0,0,0.55)
      and binds the white straight to Color/White - see divergences #48. */
-  --ui-surface-scrim: rgb(0 0 0 / 0.35);
-  /* Hover and press deepen the scrim and add no colour: over a photo the
-     control stays neutral in every state. Same shape as the muted
-     hover/active pair. */
-  --ui-surface-scrim-hover: rgb(0 0 0 / 0.5);
-  --ui-surface-scrim-active: rgb(0 0 0 / 0.65);
+  --ui-surface-scrim: rgb(0 0 0 / 0.55);
+  /* Pressed deepens the scrim and adds no colour: over a photo the control
+     stays neutral in every state. */
+  --ui-surface-scrim-active: rgb(0 0 0 / 0.7);
   --ui-text-on-media: var(--ui-white);
 
   --ui-surface-muted: var(--ui-neutral-300);
@@ -522,6 +520,9 @@
   /* variant="outline-light": the ring. Figma draws it at LG only
      (1.5px, inside); the other three sizes share it - code-only. */
   --ui-button-round-outline-light-stroke: 1.5px;
+  /* The whole button - ground, ring and glyph together - at rest (Figma:
+     layer opacity 75%). Hover and press lift it to full strength. */
+  --ui-button-round-outline-light-opacity: 0.75;
 
   /* ConfirmButton. The SAME round icon button as ButtonRound, wearing the
      safety/danger pair instead of the brand - so the geometry is aliased

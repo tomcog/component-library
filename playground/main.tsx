@@ -638,9 +638,9 @@ function App() {
           "primary fill as the first on hover \u2014 weight arriving with the pointer rather than a " +
           "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
           "makes it louder than leaving it on. " +
-          "variant=\"outline-light\" is for a button over a photo: a 35% black ground, a white ring " +
-          "and a white glyph, identical in both themes. Hover and press stay neutral - the scrim " +
-          "deepens to 50% then 65% black, no colour is added; disabled is the same look at half strength."
+          "variant=\"outline-light\" is for a button over a photo: a 55% black ground, a white ring " +
+          "and a white glyph at 75% opacity, identical in both themes. Hover and press stay neutral - " +
+          "hover lifts it to full opacity, press also deepens the ground to 70%; disabled drops to 40%."
         }
       >
         {ROUND_SIZES.map((s) => (
