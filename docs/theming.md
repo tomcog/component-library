@@ -150,6 +150,7 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-surface-disabled:     /* disabled fill                         */;
   --ui-text-disabled:        /* disabled text, and ghost's border     */;
   --ui-border-default:       /* a hairline rule on a surface          */;
+  --ui-border-subtle:        /* a quieter rule (BottomNav's top edge) */;
 }
 ```
 

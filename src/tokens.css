@@ -313,6 +313,12 @@
      Card had a --ui-border-subtle briefly and it went with the flat variant's
      hairline, on the grounds that nothing used it. Something does now. */
   --ui-border-default: var(--ui-neutral-350);
+  /* The quieter rule: a hairline that separates two surfaces of the same
+     standing rather than marking an edge to act on - BottomNav's top rule,
+     1.17:1 against white. It read the Neutral/150 primitive directly until
+     0.62.0, so it stayed #ededed on the dark bar; this is that value in light
+     and follows the theme. */
+  --ui-border-subtle: var(--ui-neutral-150);
 
   /* Sizing — not themed, safe to resolve here. */
 
@@ -1110,6 +1116,9 @@
   --ui-text-disabled: var(--ui-neutral-550);
 
   --ui-border-default: var(--ui-neutral-550);
+  /* One step above --ui-surface-raised (#2e2e2e): 1.25:1, keeping the light
+     rule's near-invisible separation rather than brightening into a line. */
+  --ui-border-subtle: var(--ui-neutral-700);
 
   /* Untouched in dark, exactly as --ui-action is: a role colour that carries
      a MEANING rather than a contrast relationship does not get to change when

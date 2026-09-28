@@ -12,8 +12,10 @@
 .bar {
   width: 100%;
   background: var(--ui-bottom-nav-bg, var(--ui-surface-raised));
-  /* A rule, not a shadow: the bar sits ON the content rather than above it. */
-  border-top: 1px solid var(--ui-bottom-nav-rule, var(--ui-neutral-150));
+  /* A rule, not a shadow: the bar sits ON the content rather than above it.
+     A semantic, so it follows the theme - it read the Neutral/150 primitive
+     until 0.62.0 and stayed light-grey on the dark bar. */
+  border-top: 1px solid var(--ui-bottom-nav-rule, var(--ui-border-subtle));
   padding-top: var(--ui-bottom-nav-padding-y);
   padding-inline: var(--ui-bottom-nav-padding-x);
   font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
