@@ -1,0 +1,93 @@
+/* Modal - a native <dialog> in the top layer. Figma: Modal (853:583).
+
+   A Card's surface, radius and float-2 shadow, with an icon, a title, a body
+   and the actions laid out inside at one gap. Every value is a token; the
+   colours read an override hook first, resolving at the element. */
+
+.modal {
+  box-sizing: border-box;
+  /* Modal/Width at most; on a narrow screen, the viewport less a gutter each
+     side (code-only - Figma draws one pose). The UA's own max-width is
+     replaced rather than stacked on. */
+  width: min(var(--ui-modal-width), 100vw - 2 * var(--ui-modal-viewport-gutter));
+  max-width: none;
+  max-height: calc(100dvh - 2 * var(--ui-modal-viewport-gutter));
+  overflow: auto;
+  padding: var(--ui-modal-padding);
+  border: none;
+  border-radius: var(--ui-modal-radius, var(--ui-card-radius));
+  background: var(--ui-modal-bg, var(--ui-surface-raised));
+  color: var(--ui-modal-text, var(--ui-text-default));
+  box-shadow: var(--ui-modal-shadow, var(--ui-shadow-float-2));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+}
+/* Layout only while open: `display` on a closed dialog would override the
+   UA's display:none and draw it inline in the page. */
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ui-modal-gap);
+}
+
+/* The scrim. The literal fallback is for browsers whose ::backdrop does not
+   inherit custom properties from its dialog; it restates the token, and moves
+   with it. */
+.modal::backdrop {
+  background: var(--ui-modal-backdrop, rgb(0 0 0 / 0.4));
+}
+
+/* The page does not scroll under an open Modal. Code-only. */
+:global(html):has(.modal[open]) {
+  overflow: hidden;
+}
+
+/* -- icon ------------------------------------------------------ */
+/* Brand, not action: it names the kind of moment and acts on nothing. */
+.icon {
+  display: inline-flex;
+  align-self: flex-start;
+  width: var(--ui-modal-icon-size);
+  height: var(--ui-modal-icon-size);
+  color: var(--ui-modal-icon-color, var(--ui-brand));
+}
+.icon > svg,
+.icon > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Stroke in rendered px whatever the icon's viewBox - the mechanism Button and
+   ButtonRound use - and on the shapes as well as the <svg>, since a
+   presentation attribute on a <path> beats an inherited value. */
+.icon svg * { vector-effect: non-scaling-stroke; }
+.icon svg,
+.icon svg * { stroke-width: var(--ui-modal-icon-stroke); }
+
+/* -- text ------------------------------------------------------ */
+/* The library's one heading step. */
+.title {
+  margin: 0;
+  font-size: var(--ui-type-heading-font-size);
+  line-height: var(--ui-type-heading-line-height);
+  font-weight: var(--ui-type-heading-font-weight);
+  color: var(--ui-modal-title-color, var(--ui-text-default));
+}
+/* Label MD. Figma drew 12 at 130%; 12/16 is the scale's step, 0.4px apart. */
+.body {
+  font-size: var(--ui-type-label-md-font-size);
+  line-height: var(--ui-type-label-md-line-height);
+  font-weight: var(--ui-type-label-font-weight);
+  color: var(--ui-modal-body-color, var(--ui-text-default));
+}
+.body > :first-child { margin-top: 0; }
+.body > :last-child { margin-bottom: 0; }
+
+/* -- actions --------------------------------------------------- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--ui-modal-actions-gap);
+}

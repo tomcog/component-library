@@ -10,6 +10,7 @@ export * from "./components/InputTextarea";
 export * from "./components/LayerController";
 export * from "./components/LeftRail";
 export * from "./components/Logo";
+export * from "./components/Modal";
 export * from "./components/Nav";
 export * from "./components/NavRail";
 export * from "./components/Pill";

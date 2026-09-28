@@ -37,7 +37,8 @@ header {
    under it. */
 section { scroll-margin-top: 72px; }
 h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
-h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #8c8c8c; margin: 0 0 4px; }
+/* Section titles only: a bare h2 rule leaked its tracking into Modal's title. */
+section > h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #8c8c8c; margin: 0 0 4px; }
 .note { color: #8c8c8c; font-size: 12.5px; margin: 0 0 18px; }
 
 section {

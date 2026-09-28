@@ -370,6 +370,15 @@
   --ui-type-label-xl-font-size: 18px;
   --ui-type-label-xl-line-height: 24px;
 
+  /* The one HEADING step - outside the label scale, which is for UI labels
+     only. Figma: Type/Heading. Exists because Modal's title uses it; a step
+     exists only where something uses it. Bold, where every label is Medium.
+     The drawing set 24 at 130% (31.2); 32 puts it on the ladder's own 4:3
+     rhythm (12/16, 18/24), and px leading is what Figma can bind. */
+  --ui-type-heading-font-size: 24px;
+  --ui-type-heading-line-height: 32px;
+  --ui-type-heading-font-weight: 700;
+
   /* -- THE CONTROL LADDER ------------------------------------
      One height per size step, and every control that can sit in a row with
      another takes it: xl 48, lg 40, md 32, sm 24. That is what makes a UI
@@ -990,6 +999,23 @@
   --ui-segmented-font-weight: var(--ui-type-label-font-weight);
 
   --ui-card-radius: 8px;
+
+  /* -- MODAL ---------------------------------------------------
+     Figma: Modal (853:583). A Card's surface, radius and float-2 shadow with
+     an icon, a title, a body and actions laid out inside. */
+  --ui-modal-width: 350px;          /* the widest it gets - Modal/Width */
+  --ui-modal-padding: 24px;
+  --ui-modal-gap: 24px;             /* icon / title / body / actions */
+  --ui-modal-actions-gap: 16px;
+  --ui-modal-icon-size: 48px;
+  --ui-modal-icon-stroke: 3;        /* rendered px, non-scaling */
+  /* Code-only: how close the Modal may come to the viewport edge once the
+     screen is narrower than --ui-modal-width. Figma draws one pose. */
+  --ui-modal-viewport-gutter: 16px;
+  /* The scrim behind an open Modal. A literal, like --ui-shadow-color: black
+     at 40% dims either theme's page, so it does not move in dark. Figma:
+     Modal/Backdrop. */
+  --ui-modal-backdrop: rgb(0 0 0 / 0.4);
 
   /* -- TOOLBAR -----------------------------------------------
      Figma: the `Toolbars` frame (772:1200). A rounded bar holding N

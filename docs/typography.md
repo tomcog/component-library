@@ -99,9 +99,10 @@ Verified: a `<p style="font-family: Impact">` holds Impact through a face swap.
 
 ## Typography: the label scale
 
-Every string this library renders is a UI label — DM Sans Medium, no body
-copy and no headings — so the scale is one ramp of four label sizes, and each
-component's type tokens alias into it rather than restating a size. The same
+Every string this library renders is a UI label — DM Sans Medium — with **one
+exception, the heading step below** — so the scale is one ramp of four label
+sizes, and each component's type tokens alias into it rather than restating a
+size. The same
 thing `--ui-bottom-nav-chip-size` already does with ButtonRound's geometry.
 
 | Figma text style | size / leading | used by |
@@ -115,6 +116,13 @@ thing `--ui-bottom-nav-chip-size` already does with ButtonRound's geometry.
 resolving to `--ui-type-label-md-font-size` needs no lookup table. That is why
 Button's fourth size was renamed from `Jumbo` to `XL`: one vocabulary rather
 than two that have to be mentally mapped.
+
+**The heading step (0.63.0).** `Modal`'s title is the first string that is not a
+label: `Type/Heading`, DM Sans **Bold** 24/32, tokens `--ui-type-heading-font-size`,
+`-line-height` and `-font-weight` (700). It sits beside the ladder rather than on
+it - one step, because one thing uses it. Drawn at 24/130%; 32 puts it on the
+ladder's 4:3 rhythm and is bindable in Figma. Modal's body is prose but is set
+in Label MD, 0.4px a line off the drawn 130%, rather than growing a body step.
 
 Weight is **one token for the whole scale**, `--ui-type-label-font-weight`,
 not one per step. Every component in the library is Medium, and a scale that

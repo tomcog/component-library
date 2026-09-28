@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Modal, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -402,6 +402,7 @@ function App() {
   const [segSort, setSegSort] = useState("newest");
   const [tbView, setTbView] = useState("preview");
   const [tbZoom, setTbZoom] = useState("plot");
+  const [modal, setModal] = useState<null | "drawn" | "danger" | "plain">(null);
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
      A hand-maintained list is one someone adds a Section without updating,
      and a jump menu missing the newest entry is worse than none. Runs once:
@@ -687,6 +688,59 @@ function App() {
             <ConfirmButton size={s} tone="danger" disabled>Delete</ConfirmButton>
           </Row>
         ))}
+      </Section>
+
+      <Section
+        title="Modal"
+        note={
+          "A dialog that interrupts: icon, title, body, actions. Figma: Modal (853:583). A native "
+          + "<dialog> opened with showModal() \u2014 the page behind goes inert under a 40% scrim, focus "
+          + "stays inside and starts on the first action, and returns to the opener on close. Escape "
+          + "closes it; a click outside does not. The title is the library's one heading step (Bold "
+          + "24/32); the body is Label MD. 350 wide at most, shrinking to the viewport less 16 a side."
+        }
+      >
+        <Row label="open">
+          <Button size="md" onClick={() => setModal("drawn")}>As drawn</Button>
+          <Button size="md" variant="secondary" onClick={() => setModal("danger")}>Destructive</Button>
+          <Button size="md" variant="tertiary" onClick={() => setModal("plain")}>No icon</Button>
+        </Row>
+        <Modal
+          open={modal === "drawn"}
+          onClose={() => setModal(null)}
+          icon={<Save />}
+          title="Are you sure you want to do this thing?"
+          actions={<>
+            <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Secondary action</Button>
+            <Button size="md" onClick={() => setModal(null)}>Primary action</Button>
+          </>}
+        >
+          Because if you do this thing, this is what will happen and you&rsquo;ll be stuck with the
+          consequences of taking this action I&rsquo;m warning you about.
+        </Modal>
+        <Modal
+          open={modal === "danger"}
+          onClose={() => setModal(null)}
+          icon={<Trash2 />}
+          title="Delete this job?"
+          actions={<>
+            <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Cancel</Button>
+            <Button variant="primary" tone="danger" size="md" icon={<Trash2 />} onClick={() => setModal(null)}>Delete</Button>
+          </>}
+        >
+          Senior Product Designer at Acme will be removed. This cannot be undone.
+        </Modal>
+        <Modal
+          open={modal === "plain"}
+          onClose={() => setModal(null)}
+          title="Unsaved changes"
+          actions={<>
+            <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Keep editing</Button>
+            <ConfirmButton tone="safety" size="md" onClick={() => setModal(null)}>Save</ConfirmButton>
+          </>}
+        >
+          You have edits that have not been saved yet.
+        </Modal>
       </Section>
 
       <Section
