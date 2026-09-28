@@ -252,6 +252,10 @@ The segment keeps its height and hugs to padding + icon, so an icon-only LG
 segment is **44x36**. Figma has not posed one - that is the mechanical result of
 its own `Label?` boolean, not a drawn size.
 
+Inside a vertical `Toolbar` every segment is icon-only whatever it is given, and the
+track stacks - see `Toolbar.md`. That comes from the bar by context; the control has no
+orientation prop of its own.
+
 ## The selected pill is flush with the track
 
 The track carried a 4px inset until 0.43.0, so the ground showed as a ring all

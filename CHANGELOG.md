@@ -9,6 +9,22 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Toolbar: `ToolbarExpander`, and `orientation="vertical"`.
+
+New `ToolbarExpander` (and `ToolbarExpanderProps`): an icon-only segment that reveals
+further action segments when clicked, from the Figma sketch 814:963. Open, the trigger
+takes the action ground and goes flat on the side facing the panel, and the revealed
+segments pop in one after another as the panel grows. `closeOnAction` makes every
+revealed segment fold the panel after it runs (all or none, by design - not settable
+per segment). Additive. New tokens: `--ui-motion-stagger` (30ms); hooks
+`--ui-toolbar-expander-open-bg`, `--ui-toolbar-expander-open-text`.
+
+New optional `orientation` prop (`"horizontal" | "vertical"`, type `ToolbarOrientation`),
+from NextDraw's vertical bar. Vertical stacks the groups and the segments in each track,
+and is glyphs only: segments draw as `hideLabel` and `ToolbarGroup` captions are visually
+hidden, both kept as accessible names. A vertical radiogroup sets
+`aria-orientation="vertical"`. Additive; horizontal bars are unchanged. No new tokens.
+
 **0.59.0 -> 0.60.0** - Toolbar: groups can carry a caption.
 
 New `ToolbarGroup` (and `ToolbarGroupProps`), with an optional `label` drawn in Label MD,

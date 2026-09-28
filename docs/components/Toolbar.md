@@ -1,8 +1,8 @@
 # Toolbar
 
-A rounded bar holding several `SegmentedControl`s — undo/redo beside the view
-beside the zoom target. Figma: the `Toolbar` set (777:1325), a `Color` axis of
-Gray | White.
+A rounded bar holding a set of `SegmentedControl`s, whatever they happen to be.
+It is a container: what the groups are, and how many, is the consumer's. Figma: the `Toolbar` set (777:1325), a `Color` axis of
+Gray | White and an `Orientation` axis of Horizontal | Vertical.
 
 ```tsx
 <Toolbar aria-label="Drawing tools">
@@ -56,11 +56,10 @@ The third keeps the text as the accessible name rather than dropping it, so
 switching a bar to icons costs nothing in screen-reader terms. See
 `hideLabel` in `SegmentedControl.md`.
 
-**A group that is not a choice takes `actions`.** An undo/redo pair is two
-things you do, not one-of-N, so the track becomes a `group` of plain buttons
-rather than a `radiogroup` of radios that can never be chosen. It looks
-identical - Figma draws such a pair exactly like the other groups - and it is
-the common case in a toolbar. See `actions` in `SegmentedControl.md`.
+**A group that is not a choice takes `actions`.** A set of things you do
+(undo and redo, say) is not one-of-N, so the track becomes a `group` of plain
+buttons rather than a `radiogroup` of radios that can never be chosen. It
+looks identical - Figma draws such a group exactly like the others. See `actions` in `SegmentedControl.md`.
 
 Likewise **each control picks its own selected ground** with `variant`:
 `primary` for the brand fill, `dark` for the near-black one. It sits on the
@@ -101,6 +100,83 @@ Each *item* can independently show its label or not; that is still `Segment`'s
   the consumer's string, not a `text-transform`.
 - Unlabelled, a `ToolbarGroup` is a plain flex wrapper; bare `SegmentedControl`
   children still work and the two mix.
+
+## `orientation="vertical"`: glyphs only
+
+A bar can stand on end (Figma: `Orientation=Vertical` in the set; first drawn in the NextDraw file, `76:401`). Same inset,
+same grounds, same gap between groups; the groups stack, and so do the segments inside
+each track.
+
+```tsx
+<Toolbar orientation="vertical" tone="white" aria-label="Drawing tools">
+  <ToolbarGroup label="VIEW:">
+    <SegmentedControl size="sm">
+      <Segment icon={<Hairline />} selected>Hairline</Segment>
+      <Segment icon={<Eye />}>Simulated</Segment>
+    </SegmentedControl>
+  </ToolbarGroup>
+</Toolbar>
+```
+
+    width    DERIVED: padding + the widest control, so 32 with SM
+    track    a column, same 4 gap and zero inset; each segment the 24 circle
+
+**A vertical bar shows icons and nothing else - for now.** Every `Segment` in it draws as
+if given `hideLabel`, and a `ToolbarGroup` caption is hidden the same way; Figma keeps
+both text layers and switches them off. Hidden, not dropped: the label is still the
+segment's accessible name and the caption still names its control, so the children are
+written exactly as for a horizontal bar and a bar can switch orientation without touching
+them. A segment with no `icon` has nothing left to draw and warns in dev.
+
+The orientation reaches the tracks and segments by context from the bar, the way the
+caption id does. It is not a `SegmentedControl` prop: Figma draws a column track only
+inside this bar. A vertical radiogroup sets `aria-orientation="vertical"`; the arrow keys
+already answered Up/Down.
+
+## A segment that opens: `ToolbarExpander`
+
+One icon-only segment that reveals more segments beside it when clicked, and folds
+them back when clicked again - a File button hiding Save, Open, Export. Figma: the
+sketch at `814:963` (start and end state only; **no component set yet**, so by the
+Figma rules it is not yet spec on that side).
+
+```tsx
+<ToolbarExpander size="sm" icon={<File />} label="File">
+  <Segment icon={<Save />} hideLabel>Save</Segment>
+  <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
+</ToolbarExpander>
+```
+
+    closed   one segment in its own track - 24 wide at SM
+    open     trigger takes the action ground, flat on the side facing the panel;
+             the track runs on around the revealed segments at the track gap
+             (Figma: bar 176 -> 316, expander 24 -> 164 - the playground matches)
+
+- **It is a `SegmentedControl` in `actions` mode** with a disclosure button at its
+  head, so track, sizes, grounds and segments are the ones beside it. `size`, `tone`
+  and the rest pass through; `variant` does not (nothing is ever selected).
+- **A disclosure, not a menu**: `aria-expanded` + `aria-controls` on the trigger;
+  revealed segments are plain buttons in the tab order after it. Escape inside the
+  panel closes it and returns focus to the trigger. Closed, the panel is
+  `visibility: hidden` (after the collapse), so its buttons leave the tab order.
+- **`closeOnAction`**: clicking any revealed segment runs its command, then folds the
+  panel and returns focus to the trigger. Off by default (the panel stays open until
+  the trigger is clicked). It is on the expander, **not** per segment, by rule: every
+  segment in one panel behaves the same - never two that close it and three that
+  don't.
+- `open` / `defaultOpen` / `onOpenChange`, controlled or not. `label` is the trigger's
+  (hidden) name and the group's fallback name.
+- In a vertical bar it opens downward and the flat side is the foot.
+- **Motion: a staggered entrance.** The panel grows from the trigger at
+  `--ui-motion-base` while the segments pop in (scale 0.6 -> 1 and fade, each at
+  `--ui-motion-fast`) `--ui-motion-stagger` (30ms) apart; closing fades them all at
+  once as the panel folds. Instant under reduced motion. Chosen over a plain wipe
+  and a drawer (segments sliding out from behind the trigger), compared side by
+  side in the playground on 2026-09-27.
+- Hooks: `--ui-toolbar-expander-open-bg` (-> `--ui-action`),
+  `--ui-toolbar-expander-open-text` (-> `--ui-text-on-action`).
+- **Code reads `--ui-action` where the Figma sketch binds `Brand`**: an open trigger is
+  a control's state, so the role rule says action. Same red today.
 
 ## The gap is the argument
 
@@ -159,6 +235,8 @@ and are not tracked. The set binds `Surface/Sunken`.
 - **The group gap stays 20**, although the NextDraw frame spaces its groups 16. The
   library set moved to 20 in 0.59.0, after that frame was drawn.
 - **The caption is `--ui-text-default`**, not the NextDraw frame's raw `black`.
+- **The vertical bar's group gap is 20**, as the horizontal one's. The NextDraw frame
+  spaces its groups 16, for the same reason as above.
 - **Nothing forces `size="sm"` on the children.** Figma draws SM only, and the
   bar derives its height from whatever it holds, so an LG bar is supported and
   undrawn rather than forbidden.

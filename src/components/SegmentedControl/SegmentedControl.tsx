@@ -3,6 +3,7 @@ import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import styles from "./SegmentedControl.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
 import { GroupLabelContext } from "../../internal/groupLabel";
+import { ToolbarOrientationContext } from "../../internal/toolbarOrientation";
 
 declare const process: { env: { NODE_ENV?: string } };
 
@@ -134,6 +135,9 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
     const groupLabel = useContext(GroupLabelContext);
     const labelledBy =
       props["aria-labelledby"] ?? (props["aria-label"] == null ? groupLabel : undefined);
+    // Inside a vertical Toolbar the segments stack. Not a prop of its own:
+    // Figma draws a column track only inside that bar.
+    const vertical = useContext(ToolbarOrientationContext) === "vertical";
 
     if (process.env.NODE_ENV !== "production") {
       if (props["aria-label"] == null && labelledBy == null) {
@@ -199,7 +203,17 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
         }}
         role={actions ? "group" : "radiogroup"}
         aria-label={props["aria-label"]}
-        className={[styles.track, styles[size], styles[variant], styles[tone], className]
+        // `group` takes no aria-orientation; a radiogroup does, and the arrow
+        // keys already answer both axes.
+        aria-orientation={vertical && !actions ? "vertical" : undefined}
+        className={[
+          styles.track,
+          styles[size],
+          styles[variant],
+          styles[tone],
+          vertical ? styles.vertical : null,
+          className,
+        ]
           .filter(Boolean)
           .join(" ")}
         onKeyDown={actions ? undefined : onKeyDown}
@@ -270,12 +284,16 @@ export interface SegmentProps
  * things chosen.
  */
 export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segment(
-  { selected = false, icon, hideLabel = false, children, className, ...props },
+  { selected = false, icon, hideLabel: hideLabelProp = false, children, className, ...props },
   ref,
 ) {
   /* What the track is. A segment cannot answer this itself: the same element
      is a radio in a choice and a plain button in a row of actions. */
   const actions = useContext(ActionsContext);
+  /* A vertical Toolbar is glyphs only, so the label is hidden as `hideLabel`
+     hides it - still the name, never drawn. */
+  const vertical = useContext(ToolbarOrientationContext) === "vertical";
+  const hideLabel = hideLabelProp || vertical;
   /* `null`, `undefined` and `false` are all "no label" - the shapes a
      conditional child comes out as. An empty string is not treated specially:
      it is a label the caller passed, and guessing otherwise would hide a bug
@@ -289,6 +307,12 @@ export const Segment = forwardRef<HTMLButtonElement, SegmentProps>(function Segm
         "[@tomcoggia/ui] Segment: `selected` means nothing inside an `actions` " +
           "SegmentedControl - an action is not chosen, it is taken. A control that " +
           "is genuinely on or off is a toggle, which is `Pill`.",
+      );
+    }
+    if (vertical && !icon) {
+      console.warn(
+        "[@tomcoggia/ui] Segment: a vertical Toolbar shows glyphs only, so a segment " +
+          "without an `icon` draws empty. Pass one; the label stays as its name.",
       );
     }
     if (

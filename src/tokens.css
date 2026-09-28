@@ -987,8 +987,8 @@
 
   /* -- TOOLBAR -----------------------------------------------
      Figma: the `Toolbars` frame (772:1200). A rounded bar holding N
-     SegmentedControls, each of which is one independent choice - undo/redo,
-     the view, the zoom target. The bar groups them; the gap is what says
+     SegmentedControls, each an independent group - a choice or a set of
+     actions, whatever the consumer puts there. The bar groups them; the gap is what says
      they are separate questions, which is why it is five times the gap
      INSIDE a track.
 
@@ -1072,6 +1072,10 @@
 
   --ui-motion-fast: 150ms;   /* state changes: colour, fills, the nav pipe */
   --ui-motion-base: 200ms;   /* travelling motion: the nav underline wipe */
+  /* The step between items that enter in sequence - ToolbarExpander's
+     segments, 5 of them arriving over 120ms before the last one's own
+     --ui-motion-fast. */
+  --ui-motion-stagger: 30ms;
 
   --ui-font-primary: var(--ui-dm-sans);
   --ui-font-fallback: system-ui, -apple-system, "Segoe UI", sans-serif;

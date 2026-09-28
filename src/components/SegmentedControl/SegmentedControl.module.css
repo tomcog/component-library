@@ -24,6 +24,14 @@
   padding: var(--ui-segmented-track-padding);
 }
 
+/* A track stacked on end, inside a vertical Toolbar only (the orientation
+   comes from the bar by context). The gap, radius and zero inset are the
+   same; the segments are icon-only there, so each is the 24 circle and the
+   track is one circle wide. */
+.vertical {
+  flex-direction: column;
+}
+
 /* -- the track ground ---------------------------------------- */
 /* Figma's `Color` axis on the track: Gray is Surface/Pale, White is
    Surface/Raised. Both are SEMANTIC, so both follow the theme - the names say

@@ -477,3 +477,15 @@ Nothing here needs action.
     a 16 group gap (the library's 20 stands), and a typed leading space standing in
     for inset.
 
+44. ~~The library's `Toolbar` set has no vertical form.~~
+    **Resolved 2026-09-27, the same day it opened.** Code gained `orientation="vertical"`
+    from the NextDraw frame (`76:401`); the set (`777:1325`) now has an `Orientation`
+    axis beside `Color`. The two existing cells were renamed `Orientation=Horizontal`
+    (the one instance on the canvas, `781:1402`, picked that up unchanged at 232 x 32),
+    and two `Orientation=Vertical` cells (`812:730` Gray, `812:747` White) run the bar,
+    each group and each track top-to-bottom - 32 x 232, the horizontal bar on end.
+    Glyphs only: every segment has `Label?` off, and the group captions are kept but
+    switched off with their `Label?` references removed, so a vertical cell cannot show
+    one. The description now says so, and its opening no longer defines the bar by the
+    example groups it happens to draw. Light/Dark invariants re-checked: clean.
+

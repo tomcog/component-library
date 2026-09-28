@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Toolbar, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
@@ -178,6 +178,36 @@ const Eye = () => (
 const Frame = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
     <path d="M4 8h16M4 16h16M8 4v16M16 4v16" />
+  </svg>
+);
+// lucide `file` / `folder-open` / `images` / `file-x` / `send`, the Figma
+// expander sketch's (814:963) - `save` is above.
+const FileGlyph = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
+  </svg>
+);
+const FolderOpen = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+const Images = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" />
+    <circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" />
+  </svg>
+);
+const FileX = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
+    <path d="m14.5 12.5-5 5" /><path d="m9.5 12.5 5 5" />
+  </svg>
+);
+const Send = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+    <path d="m21.854 2.147-10.94 10.939" />
   </svg>
 );
 // lucide `grid-3x3` / `sticky-note` / `image`, the NextDraw toolbar's zoom glyphs.
@@ -648,8 +678,8 @@ function App() {
       <Section
         title="Toolbar"
         note={
-          "A rounded bar holding several SegmentedControls \u2014 undo/redo beside the view beside "
-          + "the zoom target. It owns a ground, a 4px inset and the gap between its controls, and "
+          "A rounded bar holding a set of SegmentedControls, whatever they happen to be \u2014 the "
+          + "groups below are just examples. It owns a ground, a 4px inset and the gap between its controls, and "
           + "nothing else: what a segment shows is Segment's business, so a bar of icon-only "
           + "controls and a bar of labelled ones are the same Toolbar with different children. The "
           + "gap is the argument \u2014 20 between controls against 4 between segments, so segments "
@@ -760,6 +790,32 @@ function App() {
             </SegmentedControl>
           </Toolbar>
         </Row>
+        {/* NextDraw's vertical bar (76:401). The children are written exactly as
+            for a horizontal bar - labels and captions included - and the bar
+            hides both: they stay as the accessible names. */}
+        <Row label="vertical">
+          <div style={{ display: "flex", gap: 24, alignItems: "flex-start", padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
+            <Toolbar orientation="vertical" tone="white" aria-label="Drawing tools, vertical">
+              <ToolbarGroup label="VIEW:">
+                <SegmentedControl size="sm">
+                  <Segment icon={<Outline />} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Hairline</Segment>
+                  <Segment icon={<Eye />} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Simulated</Segment>
+                </SegmentedControl>
+              </ToolbarGroup>
+              <SegmentedControl size="sm" actions aria-label="History vertical">
+                <Segment icon={<Undo />}>Undo</Segment>
+                <Segment icon={<Redo />}>Redo</Segment>
+              </SegmentedControl>
+            </Toolbar>
+            <Toolbar orientation="vertical" aria-label="Drawing tools, vertical gray">
+              <SegmentedControl size="sm" variant="dark" aria-label="Zoom vertical">
+                <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+              </SegmentedControl>
+            </Toolbar>
+          </div>
+        </Row>
         {/* Text-only is simply a Segment with no icon - the third configuration,
             and it needs nothing from Toolbar either. */}
         <Row label="text-only">
@@ -772,6 +828,72 @@ function App() {
               <Segment selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Plot area</Segment>
               <Segment selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
             </SegmentedControl>
+          </Toolbar>
+        </Row>
+        {/* The expander (Figma sketch 814:963): File opens to reveal its
+            actions, and clicking it again folds them back. The segments
+            pop in one after another as the panel grows. */}
+        <Row label="expander">
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "flex-start" }}>
+            <Toolbar aria-label="Drawing tools, expander">
+              <SegmentedControl size="sm" actions aria-label="History expander">
+                <Segment icon={<Undo />} hideLabel>Undo</Segment>
+                <Segment icon={<Redo />} hideLabel>Redo</Segment>
+              </SegmentedControl>
+              <SegmentedControl size="sm" variant="dark" aria-label="View expander">
+                <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+                <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+              </SegmentedControl>
+              <ToolbarExpander size="sm" icon={<FileGlyph />} label="File">
+                <Segment icon={<Save />} hideLabel>Save</Segment>
+                <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
+                <Segment icon={<Images />} hideLabel>Export image</Segment>
+                <Segment icon={<FileX />} hideLabel>Close</Segment>
+                <Segment icon={<Send />} hideLabel>Send</Segment>
+              </ToolbarExpander>
+            </Toolbar>
+            <div style={{ display: "flex", gap: 24, alignItems: "flex-start", padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
+              <Toolbar tone="white" aria-label="Drawing tools, expander labelled">
+                <ToolbarExpander size="sm" icon={<FileGlyph />} label="File">
+                  <Segment icon={<Save />}>Save</Segment>
+                  <Segment icon={<FolderOpen />}>Open</Segment>
+                  <Segment icon={<Send />}>Send</Segment>
+                </ToolbarExpander>
+              </Toolbar>
+              <Toolbar orientation="vertical" tone="white" aria-label="Drawing tools, expander vertical">
+                <SegmentedControl size="sm" actions aria-label="History expander vertical">
+                  <Segment icon={<Undo />}>Undo</Segment>
+                  <Segment icon={<Redo />}>Redo</Segment>
+                </SegmentedControl>
+                <ToolbarExpander size="sm" icon={<FileGlyph />} label="File">
+                  <Segment icon={<Save />}>Save</Segment>
+                  <Segment icon={<FolderOpen />}>Open</Segment>
+                  <Segment icon={<Send />}>Send</Segment>
+                </ToolbarExpander>
+              </Toolbar>
+            </div>
+          </div>
+        </Row>
+        {/* The same bar with closeOnAction: clicking any revealed segment runs
+            it and folds the panel, focus returning to File. Set on the
+            expander, so it is always every segment or none. */}
+        <Row label="expander, closeOnAction">
+          <Toolbar aria-label="Drawing tools, expander closes">
+            <SegmentedControl size="sm" actions aria-label="History expander closes">
+              <Segment icon={<Undo />} hideLabel>Undo</Segment>
+              <Segment icon={<Redo />} hideLabel>Redo</Segment>
+            </SegmentedControl>
+            <SegmentedControl size="sm" variant="dark" aria-label="View expander closes">
+              <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+              <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+            </SegmentedControl>
+            <ToolbarExpander size="sm" icon={<FileGlyph />} label="File" closeOnAction>
+              <Segment icon={<Save />} hideLabel>Save</Segment>
+              <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
+              <Segment icon={<Images />} hideLabel>Export image</Segment>
+              <Segment icon={<FileX />} hideLabel>Close</Segment>
+              <Segment icon={<Send />} hideLabel>Send</Segment>
+            </ToolbarExpander>
           </Toolbar>
         </Row>
         {/* Nothing forces SM. A bar of LG controls derives to 48 tall. */}
