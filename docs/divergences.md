@@ -137,11 +137,12 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     `State=Outline Light` at the four sizes (LG drawn; XL/MD/SM take the same
     1.5px ring). While doing so, rebind: the ring and glyph are bound straight to
     `Color/White` (a primitive - the tier rule) and the ground is a raw
-    `rgba(0,0,0,0.55)` with a 75% layer opacity; the ring is a raw
-    `rgba(255,255,255,0.8)` and the glyph an 80% layer (code: 80% of
-    `--ui-text-on-media`, mixed at the element). Code reads two new semantics, `--ui-text-on-media` and
+    `rgba(0,0,0,0.4)` with a 75% layer opacity; the ring is a raw
+    `rgba(255,255,255,0.8)` and the glyph a 75% layer (code: those percentages
+    of `--ui-text-on-media`, mixed at the element). The hover cell is
+    `892:1700`, also an instance. Code reads two new semantics, `--ui-text-on-media` and
     `--ui-surface-scrim`, identical in Light and Dark; Figma wants matching
     `Text/OnMedia` and `Surface/Scrim` variables with the same value in both
-    modes. Hover (full opacity) and press (full opacity, 70% ground) are code-only - draw them as
+    modes. Press (= hover) and disabled (40%) are code-only - draw them as
     `Hover`/`Active` cells of the new State when it is added. (`888:1673`, an earlier draft - 40% white ground, 1px ring - was
     superseded by these two.)

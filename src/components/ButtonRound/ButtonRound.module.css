@@ -87,31 +87,34 @@
 
 /* -- variant="outline-light" --------------------------------- */
 /* For a button laid over a photo or video. Figma: Button/Round instances over
-   the ParkPal hero image (890:1695, 890:1688) - a 55% black ground, a 1.5px
-   ring and a glyph in 80% white, the whole button at 75% opacity. Not yet a
+   the ParkPal hero image - 890:1688 at rest, 892:1700 on hover. Not yet a
    State in the set (divergences #48).
 
-   Every value reads the media pair, which does not flip with the theme: the
-   photo underneath is the same in either mode.
+              ground        ring         glyph        whole button
+     rest     40% black     80% white    75% white    75% opacity
+     hover    60% black     90% white    90% white    90% opacity
+
+   Every colour reads the media pair, which does not flip with the theme: the
+   photo underneath is the same in either mode. The ring and glyph tints are
+   mixed from --ui-text-on-media here, at the element, by the -strength
+   percentages - never declared as colours on :root, which would freeze them.
 
    The ring is an inset box-shadow, not a border, so it adds nothing to the
    box - the button stays the size of its neighbours, as Button's ghost does
    for the same reason.
 
-   Hover and press stay NEUTRAL - only transparency moves, never colour.
-   Hover lifts the button, ring and glyph to full strength; press also
-   deepens the scrim to 70% black. Unlike ghost they do not fall through to the primary fill: a
-   coloured disc over a photo reads as a different control. Decided with the
-   user; Figma draws neither state, so both are code-only. Written as
-   `.button.outlineLight` so they outrank the base hover/active rules
-   whatever the source order. */
+   Hover and press stay NEUTRAL: only transparency moves, never colour. Unlike
+   ghost they do not fall through to the primary fill - a coloured disc over a
+   photo reads as a different control. Press is the hover look (code-only;
+   Figma draws no pressed cell). Written as `.button.outlineLight` so they
+   outrank the base hover/active rules whatever the source order. */
 .outlineLight {
   background: var(--ui-button-round-outline-light-bg, var(--ui-surface-scrim));
   color: var(--ui-button-round-outline-light-icon,
-    color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-content-strength), transparent));
+    color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-icon-strength), transparent));
   box-shadow: inset 0 0 0 var(--ui-button-round-outline-light-stroke)
     var(--ui-button-round-outline-light-ring,
-      color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-content-strength), transparent));
+      color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-ring-strength), transparent));
   opacity: var(--ui-button-round-outline-light-opacity);
   transition:
     background-color var(--ui-motion-fast) ease,
@@ -120,31 +123,27 @@
     opacity var(--ui-motion-fast) ease;
 }
 
-.button.outlineLight:hover:not(:disabled) {
-  background: var(--ui-button-round-outline-light-bg, var(--ui-surface-scrim));
-  color: var(--ui-button-round-outline-light-icon-hover, var(--ui-text-on-media));
-  box-shadow: inset 0 0 0 var(--ui-button-round-outline-light-stroke)
-    var(--ui-button-round-outline-light-ring-hover, var(--ui-text-on-media));
-  opacity: 1;
-}
+.button.outlineLight:hover:not(:disabled),
 .button.outlineLight:active:not(:disabled) {
-  background: var(--ui-button-round-outline-light-bg-active, var(--ui-surface-scrim-active));
-  color: var(--ui-button-round-outline-light-icon-hover, var(--ui-text-on-media));
+  background: var(--ui-button-round-outline-light-bg-hover, var(--ui-surface-scrim-hover));
+  color: var(--ui-button-round-outline-light-icon-hover,
+    color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-icon-strength-hover), transparent));
   box-shadow: inset 0 0 0 var(--ui-button-round-outline-light-stroke)
-    var(--ui-button-round-outline-light-ring-hover, var(--ui-text-on-media));
-  opacity: 1;
+    var(--ui-button-round-outline-light-ring-hover,
+      color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-ring-strength-hover), transparent));
+  opacity: var(--ui-button-round-outline-light-opacity-hover);
 }
 
-/* Disabled keeps its own ground, ring and glyph and drops below the resting
-   75% - to 40% - so it still reads as switched off beside an enabled one. The
-   base disabled pair (a pale grey disc) would be the loudest thing on a dark
-   photo. Code-only: Figma draws no disabled cell for this. */
+/* Disabled keeps the resting ground, ring and glyph and drops below the
+   resting 75% - to 40% - so it still reads as switched off beside an enabled
+   one. The base disabled pair (a pale grey disc) would be the loudest thing on
+   a dark photo. Code-only: Figma draws no disabled cell for this. The glyph is
+   restated because the base .button:disabled rule has the same specificity
+   and would otherwise paint it --ui-text-disabled grey. */
 .outlineLight:disabled {
   background: var(--ui-button-round-outline-light-bg, var(--ui-surface-scrim));
-  /* Restated: the base .button:disabled rule has the same specificity and
-     would otherwise paint the glyph --ui-text-disabled grey. */
   color: var(--ui-button-round-outline-light-icon,
-    color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-content-strength), transparent));
+    color-mix(in srgb, var(--ui-text-on-media) var(--ui-button-round-outline-light-icon-strength), transparent));
   opacity: 0.4;
 }
 

@@ -75,47 +75,50 @@ this component still diverges on.
 ## `variant="outline-light"` sits on a photo
 
 For a round button laid over a photo or video - ParkPal's park hero image is the
-first. A 55% black ground, a ring and glyph in 80% white, the whole button at 75%
-opacity:
+first. A translucent black ground with a white ring and glyph, the whole button
+translucent too:
 
 ```tsx
 <ButtonRound variant="outline-light" icon={<X />} aria-label="Close" />
 ```
 
-    ground   --ui-surface-scrim   rgb(0 0 0 / 0.55)
-    ring     --ui-text-on-media   at 80%, 1.5px inset (--ui-button-round-outline-light-stroke)
-    glyph    --ui-text-on-media   at 80%
-             (80% = --ui-button-round-outline-light-content-strength, mixed at the element)
-    opacity  0.75 at rest (--ui-button-round-outline-light-opacity)
+              ground        ring         glyph        whole button
+     rest     40% black     80% white    75% white    75% opacity
+     hover    60% black     90% white    90% white    90% opacity
 
-Hooks: `--ui-button-round-outline-light-bg`, `-bg-active`, `-icon`, `-icon-hover`,
+    ground   --ui-surface-scrim / --ui-surface-scrim-hover
+    ring     --ui-text-on-media at --ui-button-round-outline-light-ring-strength[-hover],
+             1.5px inset (--ui-button-round-outline-light-stroke)
+    glyph    --ui-text-on-media at --ui-button-round-outline-light-icon-strength[-hover]
+    opacity  --ui-button-round-outline-light-opacity[-hover]
+
+Hooks: `--ui-button-round-outline-light-bg`, `-bg-hover`, `-icon`, `-icon-hover`,
 `-ring`, `-ring-hover`.
 
-**Both colours are theme-independent, on purpose.** They are new semantics rather
-than `--ui-text-on-inverse` (white in light, ink in dark): a photo is the same
-photo in either mode, and a glyph that turned dark in dark mode would vanish
-against a shadowed rock. Neither is redeclared in the dark block.
+**Both colours are theme-independent, on purpose.** They are semantics of their own
+rather than `--ui-text-on-inverse` (white in light, ink in dark): a photo is the
+same photo in either mode, and a glyph that turned dark in dark mode would vanish
+against a shadowed rock. Neither is redeclared in the dark block. The ring and glyph
+tints are mixed from `--ui-text-on-media` at the element, not declared as colours.
 
 **The ring is an inset box-shadow**, so the button is exactly the size of a
 filled or ghost one beside it.
 
-**Hover and press stay neutral - only transparency moves.** Hover lifts the
-button to full opacity and the ring and glyph to full white; press also deepens the scrim to 70%
-(`--ui-surface-scrim-active`). They do **not** fall through to the primary fill
-the way ghost's do: over a photo a coloured disc reads as a different control.
-Decided with the user; don't restore the fall-through (0.67.0 shipped it).
+**Hover and press stay neutral - only transparency moves.** They do **not** fall
+through to the primary fill the way ghost's do: over a photo a coloured disc reads
+as a different control. Decided with the user; don't restore the fall-through
+(0.67.0 shipped it).
 
-Figma: drawn as `Button/Round` **instances** over the ParkPal hero (`890:1695`
-close, `890:1688` image-plus), at LG only - not yet a `State` in the set. That,
-and the primitive binding, are divergence #48.
+Figma: drawn as `Button/Round` **instances** over the ParkPal hero - `890:1688`
+at rest (also `890:1695`, the close button), `892:1700` hovered - at LG only, not
+yet a `State` in the set. That, and the raw/primitive colours, are divergence #48.
 
 ### Code-only, derived rather than drawn
 
-- **Hover** full opacity, ring and glyph full white; **press** the same on a
-  70% scrim. No colour.
-- **Disabled** keeps its own ground, ring and glyph at 40% opacity - below the
-  resting 75%, so it still reads as off. The base disabled pair (a pale grey
-  disc) would be the loudest thing on a dark photo.
+- **Press** is the hover look.
+- **Disabled** keeps the resting look at 40% opacity - below the resting 75%, so
+  it still reads as off. The base disabled pair (a pale grey disc) would be the
+  loudest thing on a dark photo.
 - **XL, MD and SM** share LG's 1.5px ring.
 
 ## The tones moved out into ConfirmButton
