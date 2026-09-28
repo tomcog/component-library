@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - ButtonRound `outline-light`: hover and press stay neutral.
+**0.67.0 -> 0.68.0** - ButtonRound `outline-light`: hover and press stay neutral.
 
 **ButtonRound** `variant="outline-light"` no longer takes the primary fill on hover and
 the inverse surface on press. Both now only deepen the scrim - 50% black on hover, 65%
