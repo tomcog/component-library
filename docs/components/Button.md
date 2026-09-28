@@ -68,23 +68,39 @@ In Figma this is `State=Loading` (60 variants), **not** a boolean. A Figma boole
 - **Focus is code-only.** `.button:focus-visible` has a 2px primary outline with 2px offset. Figma models no Focus state, and the buttons carry **no strokes in any variant** — that is the design's intent. Figma also has no equivalent of `outline-offset`, so an `OUTSIDE` stroke misrepresents the ring (it reads as invisible on Primary, primary-on-primary). Don't add focus variants or strokes to the Figma file.
 - ~~Dark mode is code-only.~~ No longer true: the Figma collection has Light and Dark modes, carrying the same mapping as `tokens.css`. See "Light and dark are a semantic-tier concern" below.
 
-## `tone="danger"` is the `Tone` axis in Figma, on Hover and Pressed only
+## `tone="danger"` is red in every state (0.65.0)
 
-Figma: `Button`'s `Tone` = Default | Danger (since 2026-09-27). Danger is drawn on
-**Hover and Pressed, at every Level and Size** - 32 cells - because those are the
-only states the tone changes. A Default, Disabled or Loading danger button looks
-like its Level, so drawing those cells again would say nothing. The grounds bind
-`Button/Danger/*`, which alias the danger semantics:
+`tone="danger"` recolours the variant from the action role to the **danger** role
+in every state - at rest as well as on hover and press - so a destructive button
+always reads red, whatever `--ui-action` is. Each variant keeps its shape:
+
+| variant | rest | hover / press |
+|---|---|---|
+| primary | solid `--ui-danger`, `--ui-text-on-danger` | danger darkened 22.3% / 40.7% |
+| secondary | 15% danger tint, label halfway to Text/Default | danger darkened 22.3% / 40.7%, on-danger label |
+| tertiary | `--ui-danger` text | ghost's danger (pale tint / named pair) |
+| ghost | `--ui-danger` rule and text | ghost's danger |
+
+Disabled is untouched (grey) and the focus ring stays `--ui-action`. Before 0.65.0
+the tone touched hover and press only, so a Delete rested in the variant's action
+colour and turned red when reached for; that "quiet until reached for" contract is
+gone. ConfirmButton remains the quieter confirmation (a pale tint at rest).
+
+Figma: `Button`'s `Tone` = Default | Danger, drawn on **Default, Hover, Pressed and
+Loading** at every Level and Size (64 cells). The grounds bind `Button/Danger/*`:
 
 | Figma | aliases | code |
 |---|---|---|
-| `Button/Danger/Hover` | `Danger/Base` | `--ui-danger` |
-| `Button/Danger/Pressed` | `Danger/Darker` | `--ui-danger` mixed 22.3% toward black |
+| `Button/Danger/Default` | `Danger/Base` | `--ui-danger` |
+| `Button/Danger/Hover` | raw shade (danger -22.3%) | `--ui-danger` mixed 22.3% toward black |
+| `Button/Danger/Pressed` | raw shade (danger -40.7%) | `--ui-danger` mixed 40.7% toward black |
 | `Button/Danger/Label` | `Text/OnDanger` | `--ui-text-on-danger` |
+| `Button/Danger/Secondary Default` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
+| `Button/Danger/Secondary Label` | `Danger/Darker` | `--ui-danger` halfway toward Text/Default |
 | `Button/Danger/Ghost Hover` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
-| `Button/Danger/Ghost Pressed` | `Danger/Lighter` | `--ui-danger-lighter` (a 48% mix until 0.63.0) |
+| `Button/Danger/Ghost Pressed` | `Danger/Lighter` | `--ui-danger-lighter` |
 | `Button/Danger/Ghost Label` | `Danger/Base` | `--ui-danger` |
-| `Button/Danger/Ghost Label Pressed` | `Danger/Darker` | `--ui-danger-darker` (a mix toward Text/Default until 0.63.0) |
+| `Button/Danger/Ghost Label Pressed` | `Danger/Darker` | `--ui-danger-darker` |
 
 Code derives the pressed shades with `color-mix()` so an app's own danger colour
 gets a coherent press; Figma cannot mix, so it takes the nearest role shade -

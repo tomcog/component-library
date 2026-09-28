@@ -319,51 +319,55 @@
 /* The destructive action - Delete, Remove, Discard - in whichever variant it
    is drawn as.
 
-   It changes the HOVER and PRESSED pairs ONLY; the resting appearance is the
-   variant's own, untouched. That is the same contract `ButtonRound`'s tones
-   carry, and the reasoning is theirs: the red is a response to the pointer
-   arriving, not a second resting style competing with the variant. A row of
-   buttons keeps one resting rhythm and answers differently under the cursor.
+   It recolours the variant from the action role to the DANGER role in every
+   state: at rest as well as on hover and press (since 0.65.0). A destructive
+   button always reads as destructive, whatever --ui-action is - an app with a
+   blue action colour still gets a red Delete. Each variant keeps its shape:
+   Primary rests solid danger, Secondary on the pale danger tint with a darker
+   label, Tertiary as danger text, Ghost as a danger outline and text; hover
+   and press follow each variant's own ladder in the danger colour.
 
-   The trade, stated because it is real: on a palette that splits `--ui-action`
-   from `--ui-danger`, a Delete button RESTS in the CTA colour and only turns
-   red when reached for. That is the cost of one resting rhythm, and it is the
-   cost ButtonRound already pays.
+   Before 0.65.0 the tone touched hover and press only, so a Delete rested in
+   the variant's action colour and turned red when reached for. That is what
+   ConfirmButton's pale-at-rest confirmation and this tone are now kept apart
+   by: this one is loud about being destructive from the start.
 
-   Backgrounds go through the component's own override hooks, which is what
-   lets one tone reach all four variants. The label colours need explicit rules
-   because three of the variants' hover/press text is not behind a hook -
-   `.danger` plus the variant is two classes, so these outrank the variant's
-   own state rules whatever the source order, and each still reads its hook
-   first so an app override wins.
+   Everything goes through the component's own override hooks, which is what
+   lets one tone reach all four variants, and each mix mirrors the one the
+   variant uses on --ui-action, so an app's own danger colour gets a coherent
+   ladder rather than a pinned red. Disabled is untouched - grey, as every
+   disabled button is.
 
-   Tints derive from `--ui-danger` with the mixes each variant already uses on
-   `--ui-action`, so an app setting its own danger colour gets a coherent
-   press rather than a pinned red.
-
-   The FOCUS RING is deliberately not retinted. It stays `--ui-action`, as
-   ButtonRound's does at every tone: a ring is an interaction affordance, and a
-   red ring around a button still resting in the brand colour would describe a
-   state the button is not in. */
+   The FOCUS RING is deliberately not retinted. It stays --ui-action: a ring
+   marks where the keyboard is, the same fact whatever the button does. */
 .danger {
-  --ui-button-primary-bg-hover: var(--ui-danger);
-  --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  /* Primary: solid danger at rest, darker on hover, darker again on press -
+     Primary's own 22.3% / 40.7% ladder, in the danger colour. */
+  --ui-button-primary-bg: var(--ui-danger);
+  --ui-button-primary-text: var(--ui-text-on-danger);
+  --ui-button-primary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
 
-  --ui-button-secondary-bg-hover: var(--ui-danger);
-  --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  /* Secondary (tonal): the pale danger tint with the label taken halfway to
+     Text/Default for contrast, as the action version does; fills solid on
+     hover and press. */
+  --ui-button-secondary-bg: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
+  --ui-button-secondary-text: color-mix(in srgb, var(--ui-danger), var(--ui-text-default) 50%);
+  --ui-button-secondary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
 
-  /* Tertiary sets nothing of its own: it reads the ghost hooks below, so its
-     danger tone is the ghost's - a pale danger ground, a danger label. */
-
+  /* Ghost - and Tertiary, which reads the ghost hooks after its own: danger
+     text (and, for Ghost, a danger rule) at rest. */
+  --ui-button-ghost-text: var(--ui-danger);
+  --ui-button-ghost-border: var(--ui-danger);
   --ui-button-ghost-bg-hover: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
   --ui-button-ghost-text-hover: var(--ui-danger);
   /* The ghost PRESS takes the named pale tint and its darker partner rather
      than mixing, which is what Figma draws (Button/Danger/Ghost Pressed ->
      Danger/Lighter, Ghost Label Pressed -> Danger/Darker). Both halves move
      together deliberately: the tint is a role colour and stays pale in dark,
-     so the default ghost's label - mixed toward Text/Default, near-white in
-     dark - would sit light-on-light there. Darker on Lighter holds in both
-     themes. The 48% mix it replaced (to 0.63.0) had no Figma counterpart. */
+     so a label mixed toward Text/Default - near-white in dark - would sit
+     light-on-light there. Darker on Lighter holds in both themes. */
   --ui-button-ghost-bg-active: var(--ui-danger-lighter);
   --ui-button-ghost-text-active: var(--ui-danger-darker);
 }
