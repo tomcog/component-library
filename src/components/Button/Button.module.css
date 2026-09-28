@@ -99,7 +99,15 @@
   background: var(--ui-button-secondary-bg,
               var(--ui-action-lighter,
               color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
-  color: var(--ui-button-secondary-text, var(--ui-action));
+  /* The label is the action colour taken HALFWAY toward --ui-text-default,
+     not the action colour itself: plain --ui-action on its own 15% tint was
+     3.64:1 in light and 2.71:1 in dark, under AA. Half toward Text/Default
+     darkens it in light (7.32:1) and lightens it in dark (4.87:1), where the
+     tint is a dark ground - one declaration right in both, the ghost press's
+     trick. 50 is the smallest round step clearing 4.5 in dark with margin
+     (45 gives 4.51). Figma: Action/Darker, which this matches in light. */
+  color: var(--ui-button-secondary-text,
+         color-mix(in srgb, var(--ui-action), var(--ui-text-default) 50%));
 }
 .secondary:hover:not(:disabled) {
   background: var(--ui-button-secondary-bg-hover,

@@ -115,13 +115,15 @@ from it - and fills solid when reached for: hover and press are unchanged (the
 darker action shades with a white label), as are disabled and the danger tone.
 Before 0.63.0 it rested near-black (`--ui-surface-inverse`) with a light label.
 Figma: `Button/Secondary/Default` -> `Action/Lighter`, `Button/Secondary/Label` ->
-`Action/Base`, and a new `Button/Secondary/Label Active` -> `Text/OnAction` for
+`Action/Darker` (see below), and a new `Button/Secondary/Label Active` -> `Text/OnAction` for
 Hover and Pressed (no other component bound these, so they were repointed).
 
-**Contrast at rest is below AA for text**: the action red on its own 15% tint is
-3.64:1 in light and 2.71:1 in dark (the tint mixes toward the dark raised surface
-there). Ghost's hover has the same pair, but only transiently; Secondary wears it
-at rest. Flagged, not changed - see open divergence #48.
+**The resting label is darker than the action colour** (since 0.64.0):
+`--ui-action` taken halfway toward `--ui-text-default` - a dark red in light,
+7.32:1 on the tint, and a light rose in dark, 4.87:1 on the dark tint. The plain
+action colour on its own tint was 3.64:1 and 2.71:1, under AA; 50% is the
+smallest round step clearing 4.5 in dark with margin. Figma binds
+`Button/Secondary/Label` to `Action/Darker`, which the mix matches in light.
 
 ## Tertiary is Ghost without its rule (0.63.0)
 
