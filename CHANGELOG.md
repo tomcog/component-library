@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: `variant` is `action | brand | dark`.
+**0.77.0 -> 0.78.0** - SegmentedControl: `variant` is `action | brand | dark`.
 
 **SegmentedControl** (and so every Toolbar control): `variant` gains `brand` - the
 selected ground in `--ui-brand` with `--ui-text-on-brand` - and `primary` is renamed
