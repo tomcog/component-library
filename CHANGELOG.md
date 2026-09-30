@@ -9,6 +9,15 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: the selected ground slides to the new choice.
+
+**SegmentedControl**: the selected ground is now one element (the thumb) that
+slides and resizes to the newly checked segment over `--ui-motion-base`, as Tabs'
+rule slides; the label colour changes as before. Same colours, same hooks; the
+checked segment's own ground becomes transparent once the thumb is placed. A row of
+`actions` and ToolbarExpander's choice panel are unchanged. Jumps under reduced
+motion. Visible wherever a SegmentedControl is used (NextJob, NextDraw, Flow).
+
 **0.75.0 -> 0.76.0** - BottomNav: tap feedback (press and pop), and at most six items.
 
 **BottomNav** animates a tap: the chip shrinks while pressed and the newly current

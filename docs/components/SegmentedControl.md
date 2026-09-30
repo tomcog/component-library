@@ -101,6 +101,29 @@ puts its `opacity` on the icon span for the same reason, so the two sides agree
 in structure and not only in value. **Read both the container and its contents
 before believing an opacity.**
 
+## The selected ground slides (0.77.0)
+
+Asked for by the user 2026-09-29, after Tabs' sliding rule. The selected ground is
+**one element per track - the thumb** - drawn behind the segments and moved to the
+checked one when the choice changes: transform, width and height over
+`--ui-motion-base`, so it travels and resizes to the new segment in one motion (and
+slides vertically in a vertical toolbar). The label's colour still changes on the
+segment itself, over `--ui-motion-fast`.
+
+- It takes the same colour the selected segment did, through the same hooks
+  (`--ui-segmented-selected-bg`, per `variant`).
+- It is placed before first paint without a transition, then the track gains
+  `[data-thumb]` and its own selected segment hands its ground over - so there is
+  never a frame with no ground.
+- **Only the track's own segments.** A choice panel nested inside a track -
+  ToolbarExpander's - keeps each segment's own ground. A row of `actions` has no
+  selection and no thumb.
+- Placement is `src/internal/useSlidingIndicator.ts`, which re-measures on a
+  selection change, a font load or a resize. Tabs carries its own horizontal-only
+  version of the same idea.
+- Removed under `prefers-reduced-motion` (the thumb jumps). Code-only: Figma draws
+  no motion.
+
 ## `actions`: when the row is not a choice
 
 Undo and Redo are things you **do**. They are never "current", clicking one

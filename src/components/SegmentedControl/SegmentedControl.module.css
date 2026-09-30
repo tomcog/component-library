@@ -238,6 +238,46 @@
   color: var(--ui-segmented-selected-text, var(--ui-text-on-inverse));
 }
 
+/* -- the thumb: the selected ground, sliding (0.77.0) --------------------
+   One element per track, positioned by SegmentedControl.tsx over the checked
+   segment and moved - transform and size, over --ui-motion-base - when the
+   choice changes, the way Tabs slides its rule. It takes the same colour the
+   selected segment would, through the same hooks, and sits BEHIND the segments
+   (z-index -1 inside the track's own stacking context), so the label draws on
+   top of it exactly as it did on the segment's ground.
+   Until it has been placed the segment still paints its own ground, so there
+   is no frame without one; once the track carries [data-thumb], the track's
+   OWN selected segment hands its ground over. Direct children only - a
+   choice panel nested in a track (ToolbarExpander's) keeps its own grounds.
+   The label's colour still changes on the segment, over --ui-motion-fast.
+   Code-only: Figma draws no motion. */
+.track {
+  position: relative;
+  isolation: isolate;
+}
+.thumb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  width: 0;
+  height: 0;
+  border-radius: var(--ui-segmented-radius);
+  pointer-events: none;
+  visibility: hidden;
+}
+.primary > .thumb { background: var(--ui-segmented-selected-bg, var(--ui-action)); }
+.dark > .thumb { background: var(--ui-segmented-selected-bg, var(--ui-surface-inverse)); }
+.track[data-thumb] > .thumb {
+  visibility: visible;
+  transition: transform var(--ui-motion-base) ease,
+              width var(--ui-motion-base) ease,
+              height var(--ui-motion-base) ease;
+}
+.track[data-thumb] > .selected {
+  background: transparent;
+}
+
 /* Icon sets ship intrinsic dimensions, so the SVG would render at its own size
    rather than the slot's - the same note Button, ButtonRound and Tabs carry.
    Sized by a token of its own, NOT off the line box: Figma draws the glyph
@@ -292,5 +332,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .segment,
-  .icon { transition: none; }
+  .icon,
+  .track[data-thumb] > .thumb { transition: none; }
 }

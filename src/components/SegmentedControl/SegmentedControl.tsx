@@ -5,6 +5,7 @@ import hidden from "../../internal/visuallyHidden.module.css";
 import { GroupLabelContext } from "../../internal/groupLabel";
 import { ToolbarOrientationContext } from "../../internal/toolbarOrientation";
 import { ActionsContext } from "../../internal/segmentActions";
+import { useSlidingIndicator } from "../../internal/useSlidingIndicator";
 
 declare const process: { env: { NODE_ENV?: string } };
 
@@ -129,6 +130,13 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
     ref,
   ) {
     const track = useRef<HTMLDivElement | null>(null);
+    // The selected ground is ONE element - the thumb - that slides to the
+    // checked segment (0.77.0), as Tabs slides its rule, rather than each
+    // segment painting its own. A row of actions has nothing selected, so it
+    // has no thumb. Only the track's own segments count (`:scope >`), so a
+    // choice panel nested inside, like ToolbarExpander's, keeps its grounds.
+    const thumb = useRef<HTMLSpanElement | null>(null);
+    useSlidingIndicator(track, thumb, ':scope > [role="radio"][aria-checked="true"]', "data-thumb", !actions);
     // Inside a labelled ToolbarGroup the visible caption is the name. An
     // explicit aria-label or aria-labelledby still wins.
     const groupLabel = useContext(GroupLabelContext);
@@ -219,6 +227,7 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
         {...props}
         aria-labelledby={labelledBy}
       >
+        {actions ? null : <span ref={thumb} className={styles.thumb} aria-hidden="true" />}
         <ActionsContext.Provider value={actions}>{children}</ActionsContext.Provider>
       </div>
     );
