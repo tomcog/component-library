@@ -1067,6 +1067,20 @@
      at 40% dims either theme's page, so it does not move in dark. Figma:
      Modal/Backdrop. */
   --ui-modal-backdrop: rgb(0 0 0 / 0.4);
+  /* Code-only: how far below its resting place the Modal starts on the way
+     in, and ends on the way out, while it fades from and to 0. The duration
+     is --ui-motion-base - this is travelling motion. Figma draws no motion. */
+  --ui-modal-enter-offset: 150px;
+  /* The entry curve: leaves at full speed and spends the rest of the time
+     settling - cubic-bezier(0, 0, 0, 1), a very strong ease-out. Code-only. */
+  --ui-modal-easing: cubic-bezier(0, 0, 0, 1);
+  /* OFF-SYSTEM on purpose: the Modal's entry and exit are timed by hand
+     (decided with the user, 2026-09-29): the entry is 300ms, longer than any
+     system step, because the curve does its work in the first few frames and
+     the rest is the settle. The exit, a fade in place, is 200ms - which is
+     --ui-motion-base, so it aliases it. */
+  --ui-modal-enter-duration: 300ms;
+  --ui-modal-exit-duration: var(--ui-motion-base);
 
   /* -- TOOLBAR -----------------------------------------------
      Figma: the `Toolbars` frame (772:1200). A rounded bar holding N
@@ -1136,28 +1150,41 @@
   --ui-dm-sans: "DM Sans";
   /* Motion. System-level, not per component: two components inventing their
      own timings is how interaction feel drifts apart. */
-  /* Elevation. Two steps, both two-layer: a soft cast below plus a tight
-     contact shadow, so a card reads as lifted rather than blurred. Named for
-     the Figma variants (Style=Float1/Float2) so the two sides stay derivable. */
-  /* The colour is its own token so a consumer can retint elevation without
+  /* Elevation. Two steps, both a five-layer stack: a tight ambient halo at
+     full strength, then casts that fall further and fade (100/90/50/10% of
+     --ui-shadow-color), so a card reads as lifted with a soft long tail
+     rather than as blurred. Figma: the effect styles CardLow (float-1) and
+     CardHigh (float-2), which Card and Modal use since 2026-09-28. Figma's
+     blur radius maps 1:1 to the CSS blur. Figma carries a fifth layer at 0%
+     (float-1 0/60/18, float-2 0/135/38); it paints nothing, so it is not
+     restated here.
+
+     The layer strengths are mixed FROM --ui-shadow-color rather than written
+     as literals, so the stack still deepens in dark. Figma's two styles hold
+     literal alphas, not bound to Shadow/Color - see docs/divergences.md #49.
+
+     The colour is its own token so a consumer can retint elevation without
      restating the geometry. Note the two shadows below must ALSO be
      redeclared in the dark block: a var() inside a custom property resolves
      at the element that DECLARES it, so composing them here freezes them
      against :root's --ui-shadow-color and [data-theme] on a subtree cannot
      move them. Same trap the header of this file describes.
 
-     Float 1 was lowered from `0 6px 18px / 0 0 6px` so the two steps read as
-     two heights: at 6px against 12px they shared a blur and differed by half
-     an offset. At 2px the card sits ON the surface and float2 clearly leaves
-     it. Prompted by a float1-at-rest/float2-on-hover pair in PlantPal that
-     has since gone flat float2, so nothing reads float-1 today - the value
-     stands on its own, but no consumer would flag it moving again.
-
-     Only Card reads float-1, so this moves nothing else. float-2 is NOT
-     touched: InputSelect's menu reads it too, and it already matches Figma. */
+     Readers: float-1 is Card; float-2 is Card, Modal and InputSelect's menu
+     (the menu is not drawn in Figma, and follows the system step). Until
+     0.72.0 both were two-layer (float-1 `0 2px 6px / 0 0 2px`, float-2
+     `0 12px 18px / 0 -1px 10px`). */
   --ui-shadow-color: rgb(0 0 0 / 0.1);
-  --ui-shadow-float-1: 0 2px 6px 0 var(--ui-shadow-color), 0 0 2px 0 var(--ui-shadow-color);
-  --ui-shadow-float-2: 0 12px 18px 0 var(--ui-shadow-color), 0 -1px 10px 0 var(--ui-shadow-color);
+  --ui-shadow-float-1:
+    0 0 17px 0 var(--ui-shadow-color),
+    0 8px 10px 0 color-mix(in srgb, var(--ui-shadow-color) 90%, transparent),
+    0 6px 14px 0 color-mix(in srgb, var(--ui-shadow-color) 50%, transparent),
+    0 36px 16px 0 color-mix(in srgb, var(--ui-shadow-color) 10%, transparent);
+  --ui-shadow-float-2:
+    0 0 26px 0 var(--ui-shadow-color),
+    0 22px 22px 0 color-mix(in srgb, var(--ui-shadow-color) 90%, transparent),
+    0 49px 29px 0 color-mix(in srgb, var(--ui-shadow-color) 50%, transparent),
+    0 87px 35px 0 color-mix(in srgb, var(--ui-shadow-color) 10%, transparent);
 
   --ui-motion-fast: 150ms;   /* state changes: colour, fills, the nav pipe */
   --ui-motion-base: 200ms;   /* travelling motion: the nav underline wipe */
@@ -1212,8 +1239,17 @@
      its shadow are already close in lightness. Deepening the alpha restores
      the separation; the offsets and blurs are identical to light, and are
      repeated here only because the composed tokens resolve where they are
-     declared (see the note beside --ui-shadow-color above). */
+     declared - including the color-mix() steps, which would otherwise mix
+     :root's 10% black (see the note beside --ui-shadow-color above). */
   --ui-shadow-color: rgb(0 0 0 / 0.5);
-  --ui-shadow-float-1: 0 2px 6px 0 var(--ui-shadow-color), 0 0 2px 0 var(--ui-shadow-color);
-  --ui-shadow-float-2: 0 12px 18px 0 var(--ui-shadow-color), 0 -1px 10px 0 var(--ui-shadow-color);
+  --ui-shadow-float-1:
+    0 0 17px 0 var(--ui-shadow-color),
+    0 8px 10px 0 color-mix(in srgb, var(--ui-shadow-color) 90%, transparent),
+    0 6px 14px 0 color-mix(in srgb, var(--ui-shadow-color) 50%, transparent),
+    0 36px 16px 0 color-mix(in srgb, var(--ui-shadow-color) 10%, transparent);
+  --ui-shadow-float-2:
+    0 0 26px 0 var(--ui-shadow-color),
+    0 22px 22px 0 color-mix(in srgb, var(--ui-shadow-color) 90%, transparent),
+    0 49px 29px 0 color-mix(in srgb, var(--ui-shadow-color) 50%, transparent),
+    0 87px 35px 0 color-mix(in srgb, var(--ui-shadow-color) 10%, transparent);
 }

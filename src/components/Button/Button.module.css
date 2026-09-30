@@ -99,15 +99,12 @@
   background: var(--ui-button-secondary-bg,
               var(--ui-action-lighter,
               color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
-  /* The label is the action colour taken HALFWAY toward --ui-text-default,
-     not the action colour itself: plain --ui-action on its own 15% tint was
-     3.64:1 in light and 2.71:1 in dark, under AA. Half toward Text/Default
-     darkens it in light (7.32:1) and lightens it in dark (4.87:1), where the
-     tint is a dark ground - one declaration right in both, the ghost press's
-     trick. 50 is the smallest round step clearing 4.5 in dark with margin
-     (45 gives 4.51). Figma: Action/Darker, which this matches in light. */
-  color: var(--ui-button-secondary-text,
-         color-mix(in srgb, var(--ui-action), var(--ui-text-default) 50%));
+  /* The label (and the icon, via currentColor) is the action colour itself.
+     This is a decision to take the contrast cost: on its own 15% tint it is
+     3.64:1 in light and 2.71:1 in dark, under AA for text. 0.64.0 - 0.71.0
+     mixed it halfway toward --ui-text-default (7.32:1 / 4.87:1); that read as
+     too dark a red beside the other variants and was reverted in 0.72.0. */
+  color: var(--ui-button-secondary-text, var(--ui-action));
 }
 .secondary:hover:not(:disabled) {
   background: var(--ui-button-secondary-bg-hover,
@@ -348,11 +345,10 @@
   --ui-button-primary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
   --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
 
-  /* Secondary (tonal): the pale danger tint with the label taken halfway to
-     Text/Default for contrast, as the action version does; fills solid on
-     hover and press. */
+  /* Secondary (tonal): the pale danger tint with a plain danger label, as the
+     action version does; fills solid on hover and press. */
   --ui-button-secondary-bg: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
-  --ui-button-secondary-text: color-mix(in srgb, var(--ui-danger), var(--ui-text-default) 50%);
+  --ui-button-secondary-text: var(--ui-danger);
   --ui-button-secondary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
   --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
 

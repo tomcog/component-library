@@ -9,6 +9,52 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Elevation: both float steps become Figma's five-layer shadows (Card, Modal, InputSelect's menu). Button: Secondary's resting label is the action colour again. Modal: `iconColor="danger"`, and an intro/exit animation. ToolbarExpander: `actions` split out of `closeOnAction`.
+
+**`--ui-shadow-float-1` / `--ui-shadow-float-2`** change value (names unchanged),
+following Figma's new `CardLow` / `CardHigh` effect styles on Card and Modal. Each is
+now a tight halo plus three falling casts at 100 / 90 / 50 / 10% of
+`--ui-shadow-color`, so they still deepen in dark:
+
+     float-1   0 0 17  /  0 8 10  /  0 6 14   /  0 36 16    (was 0 2 6 / 0 0 2)
+     float-2   0 0 26  /  0 22 22 /  0 49 29  /  0 87 35    (was 0 12 18 / 0 -1 10)
+
+Visible on **Card** (`float1`, `float2`), **Modal**, and **InputSelect**'s open menu,
+which read float-2. Both steps are larger and softer; float-2's tail now reaches
+~120px below the element. **NextJob** reads `--ui-shadow-float-1` directly in
+`OpportunityDetail.module.css` and moves with it.
+
+**Button**: Secondary's resting label and icon are plain `--ui-action` again
+(`--ui-danger` under `tone="danger"`), undoing 0.64.0's mix halfway toward
+`--ui-text-default`, which read as too dark a red. Lighter wherever
+`variant="secondary"` rests. This lowers contrast on the tint to 3.64:1 (light) /
+2.71:1 (dark), under AA for text - a deliberate trade. The
+`--ui-button-secondary-text` hook still wins.
+
+**Modal**: `iconColor` takes `"danger"` (`--ui-danger`). A destructive Modal - one
+answered by a `tone="danger"` button - always uses it, so the icon matches the red
+answer instead of sitting grey or brand beside it. The rule is the consumer's to
+follow; the component can't detect it. Not yet in Figma (divergence 51).
+
+**Modal** animates in and out. Opening, it rises from 150px below its resting place
+while fading 0 -> 1, over 300ms on `cubic-bezier(0, 0, 0, 1)`; closing, it fades
+in place over 200ms, linear, with no travel. The backdrop fades with it both ways.
+New tokens: `--ui-modal-enter-offset` (150px), `--ui-modal-easing`,
+`--ui-modal-enter-duration` (300ms), `--ui-modal-exit-duration` (aliases
+`--ui-motion-base`). Under `prefers-reduced-motion` only the fades remain. Browsers
+without `@starting-style` / discrete transitions show and hide it at once, as
+before.
+
+**ToolbarExpander**: `closeOnAction` is split in two. **API change.**
+`actions` now says what the revealed segments are - a setting (default: radios, one
+on) or actions (plain buttons, none on) - the same prop as `SegmentedControl`'s.
+`closeOnAction` now only says whether running an action folds the panel; it
+defaults to `true` and applies only with `actions`. Migrate
+`<ToolbarExpander closeOnAction>` -> `<ToolbarExpander actions>`; the old spelling
+alone now gives a setting panel and warns in dev. New: `actions closeOnAction={false}`
+keeps the panel open between actions (zoom in, zoom out). No app uses
+ToolbarExpander yet.
+
 **0.70.0 -> 0.71.0** - ButtonRound `outline-light`: Figma's resting and hover cells.
 
 **ButtonRound** `variant="outline-light"` now follows Figma's two cells - 890:1688 at

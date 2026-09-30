@@ -146,3 +146,33 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     modes. Press (= hover) and disabled (40%) are code-only - draw them as
     `Hover`/`Active` cells of the new State when it is added. (`888:1673`, an earlier draft - 40% white ground, 1px ring - was
     superseded by these two.)
+
+49. **Card's new effect styles break the name transform and are not bound to
+    `Shadow/Color`.** DEFECT, visible only in Dark: `CardLow` (Card Float1)
+    and `CardHigh` (Card Float2, both Modal variants) hold literal alphas
+    (0.10 / 0.09 / 0.05 / 0.01 / 0), so Figma's Dark mode keeps a 10% black
+    halo where code deepens it to 50% (code mixes every layer from
+    `--ui-shadow-color`: 100 / 90 / 50 / 10%). TIDYING alongside it: the
+    names don't derive to `--ui-shadow-float-1` / `-2`, and the old
+    `Shadow/Float 1` / `Shadow/Float 2` styles are now used by nothing.
+    Direction: Figma - write the five layers into `Shadow/Float 1` / `2`
+    (spreading each effect, colour bound to `Shadow/Color` at the same
+    opacity as the code's mix - a bound colour carries the variable's alpha,
+    so a 90% layer may need the variable split or the opacity accepted as
+    100%), repoint Card and Modal at them, and retire `CardLow` / `CardHigh`.
+    Card's Figma description still describes the two-layer pair; update it
+    with the fix. Code took the values in 0.72.0.
+
+50. **Button Secondary's resting label is darker in Figma than in code.**
+    DEFECT, visible on every Secondary Default cell: `Button/Secondary/Label`
+    aliases `Action/Darker` and `Button/Danger/Secondary Label` aliases
+    `Danger/Darker`; code went back to plain `--ui-action` / `--ui-danger` in
+    0.72.0. Direction: Figma - repoint them to `Action/Base` and `Danger/Base`.
+    Check first that nothing else binds either variable.
+
+51. **Modal has no `Icon Color` = Danger in Figma.** DEFECT, a missing variant:
+    code added `iconColor="danger"` (`--ui-danger`) in 0.72.0 - a destructive
+    Modal's icon is always Danger - and the `Modal` set (`877:641`) still has
+    only Default | Brand. Direction: Figma - add a Danger variant beside Brand,
+    icon bound to `Danger/Base` (not `Color/TC Red`), and add the rule to the
+    set's description.

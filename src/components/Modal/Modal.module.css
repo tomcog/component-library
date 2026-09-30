@@ -21,13 +21,58 @@
   box-shadow: var(--ui-modal-shadow, var(--ui-shadow-float-2));
   font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
 }
-/* Layout only while open: `display` on a closed dialog would override the
-   UA's display:none and draw it inline in the page. */
-.modal[open] {
-  display: flex;
+/* Only `display` waits for [open]: on a closed dialog it would override the
+   UA's display:none and draw it inline in the page. The rest of the layout is
+   on the base rule, because the exit keeps the closed dialog drawn - layout
+   gated on [open] would drop mid-exit and re-flow the contents into a row. */
+.modal {
   flex-direction: column;
   align-items: stretch;
   gap: var(--ui-modal-gap);
+}
+.modal[open] {
+  display: flex;
+}
+
+/* Intro and exit (code-only), which are different motions.
+   IN: rises from --ui-modal-enter-offset below its resting place while fading
+   in, over --ui-modal-enter-duration on --ui-modal-easing.
+   OUT: fades where it stands over --ui-modal-exit-duration, linear - no travel.
+   A transition runs with the rule being moved TO, so the [open] rule carries
+   the entry and the base rule the exit. The offset exists only in
+   @starting-style, the pose it enters from; the closed rule keeps translate at
+   0, so closing has nothing to travel. The standalone `translate` property,
+   not `transform`.
+   A native dialog goes to display:none and leaves the top layer the moment
+   it closes, so both are transitioned as discrete properties - that keeps it
+   drawn, above the page, until the exit ends. A browser without these simply
+   shows and hides it at once. */
+.modal {
+  opacity: 0;
+  translate: 0 0;
+  transition:
+    opacity var(--ui-modal-exit-duration) linear,
+    display var(--ui-modal-exit-duration) allow-discrete,
+    overlay var(--ui-modal-exit-duration) allow-discrete;
+}
+.modal[open] {
+  opacity: 1;
+  transition:
+    opacity var(--ui-modal-enter-duration) var(--ui-modal-easing),
+    translate var(--ui-modal-enter-duration) var(--ui-modal-easing);
+}
+@starting-style {
+  .modal[open] {
+    opacity: 0;
+    translate: 0 var(--ui-modal-enter-offset);
+  }
+}
+/* The travel is decorative, so it goes; the fade stays, at the same pace, so
+   the Modal still arrives rather than appearing. */
+@media (prefers-reduced-motion: reduce) {
+  @starting-style {
+    .modal[open] { translate: 0 0; }
+  }
 }
 
 /* The scrim. The literal fallback is for browsers whose ::backdrop does not
@@ -36,16 +81,43 @@
 .modal::backdrop {
   background: var(--ui-modal-backdrop, rgb(0 0 0 / 0.4));
 }
+/* The scrim fades with the Modal: in at the entry's duration and curve, out
+   at the exit's. It lives as long as the dialog is in the top layer, which
+   the `overlay` transition above extends through the exit. No fallback on the
+   durations: a browser whose ::backdrop cannot read the tokens has no
+   @starting-style either, and shows the scrim at once. The fade stays under
+   reduced motion, as the Modal's does. */
+.modal::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--ui-modal-exit-duration) linear,
+    display var(--ui-modal-exit-duration) allow-discrete,
+    overlay var(--ui-modal-exit-duration) allow-discrete;
+}
+.modal[open]::backdrop {
+  opacity: 1;
+  transition: opacity var(--ui-modal-enter-duration) var(--ui-modal-easing);
+}
+@starting-style {
+  .modal[open]::backdrop { opacity: 0; }
+}
 
-/* The page does not scroll under an open Modal. Code-only. */
+/* The page does not scroll under an open Modal. Code-only.
+   `scrollbar-gutter: stable` keeps the scrollbar's width reserved while it is
+   hidden, so the viewport does not change width when the lock goes on or
+   off. Without it the lock drops the instant the dialog closes, the
+   scrollbar comes back, and the Modal re-centres sideways mid-exit. The cost:
+   on a page too short to scroll, an empty gutter shows while it is open. */
 :global(html):has(.modal[open]) {
   overflow: hidden;
+  scrollbar-gutter: stable;
 }
 
 /* -- icon ------------------------------------------------------ */
 /* Decorative chrome, never the action colour: it names the kind of moment and
-   acts on nothing. `iconColor` picks the muted grey (default) or the brand;
-   --ui-modal-icon-color overrides either. Figma: Icon Color. */
+   acts on nothing. `iconColor` picks the muted grey (default), the brand, or
+   danger - which a destructive Modal always takes; --ui-modal-icon-color
+   overrides any of them. Figma: Icon Color. */
 .icon {
   display: inline-flex;
   align-self: flex-start;
@@ -55,6 +127,9 @@
 }
 .iconBrand {
   color: var(--ui-modal-icon-color, var(--ui-brand));
+}
+.iconDanger {
+  color: var(--ui-modal-icon-color, var(--ui-danger));
 }
 .icon > svg,
 .icon > img {

@@ -190,7 +190,7 @@ export interface ToolbarExpanderProps
   label: ReactNode;
   /**
    * The `<Segment>`s revealed when open. A CHOICE by default - one of them is
-   * on at a time, a radio group; with `closeOnAction`, a row of ACTIONS.
+   * on at a time, a radio group; with `actions`, a row of ACTIONS.
    * Selection is the consumer's, as in `SegmentedControl`: give the chosen one
    * `selected` and each an `onClick`.
    */
@@ -202,19 +202,29 @@ export interface ToolbarExpanderProps
   /** Called with the next state when the trigger is clicked or Escape closes it. */
   onOpenChange?: (open: boolean) => void;
   /**
-   * The revealed segments are one-shot ACTIONS: clicking any of them runs it,
-   * closes the panel and returns focus to the trigger. They are plain
-   * buttons, and none stays on.
+   * What the revealed segments ARE - the same prop, and the same meaning, as
+   * `SegmentedControl`'s `actions`.
    *
-   * Off (the default), the panel stays open and its segments are a CHOICE -
-   * something that stays on, one at a time: a `radiogroup` named by the
-   * trigger, each segment a radio that takes the dark (near-black) selected
-   * ground when chosen, with the arrow keys moving and selecting and one tab
-   * stop.
+   * Off (the default): a SETTING - something that stays on, one at a time. A
+   * `radiogroup` named by the trigger, each segment a radio that takes the
+   * dark (near-black) selected ground when chosen, with the arrow keys moving
+   * and selecting and one tab stop. Picking one leaves the panel open.
+   *
+   * On: ACTIONS - plain buttons, each its own tab stop, none ever on.
+   * Whether running one folds the panel is `closeOnAction`.
    *
    * A property of the EXPANDER, deliberately not of each segment: every
-   * segment in one panel behaves the same, so there is no panel where some
-   * actions fold it and others stay on.
+   * segment in one panel is the same kind of thing.
+   */
+  actions?: boolean;
+  /**
+   * With `actions`: clicking a revealed segment runs it, then folds the panel
+   * and returns focus to the trigger. Defaults to `true` - a File panel's Save
+   * is done once. Pass `false` for actions pressed in a run, like zoom in and
+   * zoom out, so the panel stays open between them.
+   *
+   * Has no effect on a setting, and warns in dev if passed without `actions`.
+   * Set once for the panel: no panel has some actions fold it and others not.
    */
   closeOnAction?: boolean;
 }
@@ -225,7 +235,7 @@ export interface ToolbarExpanderProps
  * `ToolbarExpander` set (820:866), State = Closed | Open.
  *
  *     <Toolbar aria-label="Drawing tools">
- *       <ToolbarExpander size="sm" icon={<File />} label="File">
+ *       <ToolbarExpander size="sm" icon={<File />} label="File" actions>
  *         <Segment icon={<Save />} hideLabel>Save</Segment>
  *         <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
  *       </ToolbarExpander>
@@ -242,16 +252,17 @@ export interface ToolbarExpanderProps
  * trigger. While closed the panel is `visibility: hidden`, so what it holds is
  * out of the tab order and the accessibility tree.
  *
- * **What the revealed segments are is `closeOnAction`**, set once for the
- * whole panel:
+ * **What the revealed segments are is `actions`**, set once for the whole
+ * panel:
  *
  * - **Off (default): a choice.** The panel stays open and is a `radiogroup`
  *   named by the trigger - one segment on at a time, on the dark (near-black)
  *   selected ground, apart from the red open trigger. The arrow keys move and select,
  *   Home/End jump, both wrap; one tab stop, on the chosen segment. Give the
  *   chosen one `selected` and each an `onClick`.
- * - **On: actions.** Each segment is a plain button in the tab order; clicking
- *   one runs it and folds the panel. None stays on.
+ * - **On: actions.** Each segment is a plain button in the tab order, and
+ *   none stays on. Clicking one runs it and folds the panel, unless
+ *   `closeOnAction={false}` keeps it open for actions pressed in a run.
  *
  * **Motion**: the panel grows from the trigger at `--ui-motion-base` while the
  * segments pop in one after another, `--ui-motion-stagger` apart; closing
@@ -268,7 +279,8 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
       open: openProp,
       defaultOpen = false,
       onOpenChange,
-      closeOnAction = false,
+      actions = false,
+      closeOnAction: closeOnActionProp,
       size = "lg",
       className,
       style,
@@ -282,8 +294,18 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
     const triggerId = useId();
     const trigger = useRef<HTMLButtonElement>(null);
     const panel = useRef<HTMLDivElement>(null);
-    // A choice unless the segments are one-shot actions.
-    const choice = !closeOnAction;
+    // A choice (a setting) unless the segments are actions.
+    const choice = !actions;
+    const closeOnAction = actions && (closeOnActionProp ?? true);
+    if (process.env.NODE_ENV !== "production") {
+      if (!actions && closeOnActionProp !== undefined) {
+        console.warn(
+          "[@tomcoggia/ui] ToolbarExpander: `closeOnAction` does nothing without " +
+            "`actions` - a setting's panel stays open when one is picked. Pass " +
+            "`actions` if the segments are commands.",
+        );
+      }
+    }
     const vertical = useContext(ToolbarOrientationContext) === "vertical";
 
     // Roving tab stop over the radios, as SegmentedControl keeps for its own:

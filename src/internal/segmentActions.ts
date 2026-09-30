@@ -3,7 +3,7 @@ import { createContext } from "react";
 /**
  * Whether the Segments below are ACTIONS (plain buttons) or a CHOICE (radios).
  * `SegmentedControl` provides it from its `actions` prop; `ToolbarExpander`
- * provides it for its panel, which is a choice unless `closeOnAction` is set -
+ * provides it for its panel, which is a choice unless its own `actions` is set -
  * even though the expander's own track, holding its disclosure trigger, is a
  * row of actions. `Segment` reads it, because the same element is a radio in a
  * choice and a plain button in a row of actions.

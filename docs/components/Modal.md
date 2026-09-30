@@ -1,7 +1,7 @@
 # Modal
 
 A dialog that interrupts: an icon, a title, a body and the actions that answer it.
-Figma: the `Modal` set (`877:641`, `Icon Color` = Default | Brand; the Default
+Figma: the `Modal` set (`877:641`, `Icon Color` = Default | Brand, Danger code-only for now; the Default
 variant is the original component `853:583`), in the Overlays section, with `Title`
 and `Body` text properties, `Icon?` and an `Icon` swap, and its two Buttons exposed.
 Added in 0.63.0, drawn Figma-first.
@@ -11,6 +11,7 @@ Added in 0.63.0, drawn Figma-first.
   open={confirming}
   onClose={() => setConfirming(false)}
   icon={<Trash2 />}
+  iconColor="danger"
   title="Delete this job?"
   actions={<>
     <Button variant="tertiary" size="md" onClick={() => setConfirming(false)}>Cancel</Button>
@@ -27,10 +28,15 @@ Added in 0.63.0, drawn Figma-first.
     actions   right-aligned, 16 apart (--ui-modal-actions-gap), in the order given
     icon      48 (--ui-modal-icon-size), stroke 3 (--ui-modal-icon-stroke);
               iconColor "default" --ui-text-muted | "brand" --ui-brand
+                        | "danger" --ui-danger (always, on a destructive Modal)
     title     Type/Heading - Bold 24/32, the library's one heading step
     body      Body MD 12/16, Regular, --ui-text-default
     surface   --ui-surface-raised, --ui-card-radius (8), --ui-shadow-float-2
     backdrop  --ui-modal-backdrop, black at 40%, both themes
+    motion    in: from 150 below (--ui-modal-enter-offset), opacity 0 -> 1,
+              300ms (--ui-modal-enter-duration), cubic-bezier(0, 0, 0, 1)
+              (--ui-modal-easing); out: fades in place, 200ms
+              (--ui-modal-exit-duration), linear. The backdrop fades with it. Code-only
 
 | Figma | Code |
 |---|---|
@@ -43,14 +49,21 @@ Hooks: `--ui-modal-bg`, `--ui-modal-text`, `--ui-modal-title-color`,
 `--ui-modal-body-color`, `--ui-modal-icon-color`, `--ui-modal-radius`,
 `--ui-modal-shadow`.
 
-## The icon is grey or brand, never action
+## The icon is grey, brand or danger, never action
 
 `iconColor="default"` (the default) draws the icon in `--ui-text-muted`, for a Modal
 that informs; `iconColor="brand"` takes `--ui-brand`, for one that should carry the
-identity. It is decorative chrome either way - it names the kind of moment and acts
-on nothing - so it is never the action colour. `--ui-modal-icon-color` overrides
-both. Figma: `Icon Color` = Default (`Text/Muted`) | Brand (`Brand/Base`). Brand was
-the only colour until 0.65.0.
+identity; `iconColor="danger"` takes `--ui-danger`.
+
+**A destructive Modal's icon is always Danger.** If the answer is a `tone="danger"`
+button, the icon is `iconColor="danger"` - never grey or brand beside a red Delete.
+(Decided 2026-09-29.) The component can't tell a destructive Modal from any other,
+so this is the consumer's rule to follow, not something it enforces.
+
+It names the kind of moment and acts on nothing, so it is never the action colour.
+`--ui-modal-icon-color` overrides all three. Figma: `Icon Color` = Default
+(`Text/Muted`) | Brand (`Brand/Base`); Danger is not in Figma yet (`docs/divergences.md`).
+Brand was the only colour until 0.65.0; Danger was added in 0.72.0.
 
 ## A native `<dialog>`
 
@@ -81,6 +94,12 @@ The title is the dialog's `aria-labelledby` and the body its `aria-describedby`.
 For a confirmation, pass `role="alertdialog"`.
 
 **The page does not scroll underneath** (`html:has(.modal[open])`). Code-only.
+The lock also sets `scrollbar-gutter: stable`, so the viewport keeps its width
+as the scrollbar hides and returns - otherwise the Modal re-centres sideways
+mid-exit. On a page too short to scroll, that shows an empty gutter while open.
+
+**It animates in and out** - up 150 from below and fading in, down and out on
+close. Code-only; see divergence 6 below.
 
 ## Divergences - do not fix these
 
@@ -99,8 +118,20 @@ For a confirmation, pass `role="alertdialog"`.
 5. **The backdrop, focus, Escape, scroll lock and the no-click-outside rule are
    code-only.** A component cannot draw the page it covers; `Modal/Backdrop` is
    in Figma as a variable so the colour is shared.
-6. **No open/close motion.** None is drawn, and the system motion tokens were
-   not stretched to cover one.
+6. **The open/close motion is code-only**, and off the system timings on
+   purpose. Figma draws no motion. **Opening**, it rises from 150 below its
+   resting place (`--ui-modal-enter-offset`) while fading 0 -> 1, over 300ms
+   (`--ui-modal-enter-duration`) on `cubic-bezier(0, 0, 0, 1)`
+   (`--ui-modal-easing`) - it leaves at full speed and spends the rest settling.
+   **Closing** is a different motion: a linear fade where it stands, over 200ms
+   (`--ui-modal-exit-duration`, aliasing `--ui-motion-base`), no travel. The
+   scrim fades with it at the same timings each way. 300ms is longer than any
+   system step; the 100ms and 200ms versions tried first read as sluggish,
+   because a softer curve spent them braking. Built on `@starting-style` and
+   `transition-behavior: allow-discrete` on `display` and `overlay`, so a
+   browser without them shows and hides the Modal instantly. Under
+   `prefers-reduced-motion` the rise goes and the fade stays.
+   (Decided with the user 2026-09-29; there was no motion before.)
 7. **The icon's stroke is bound in Figma** (`Modal/Icon Stroke` 3). Swapping the
    icon on an instance brings the new glyph's own stroke and `IconDefault` colour;
    rebind both - the swap traps in `docs/figma.md`.

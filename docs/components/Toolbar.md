@@ -154,7 +154,7 @@ the set's description. `Motion/Stagger` (30, both modes) carries
 `var(--ui-motion-stagger)`.
 
 ```tsx
-<ToolbarExpander size="sm" icon={<File />} label="File">
+<ToolbarExpander size="sm" icon={<File />} label="File" actions>
   <Segment icon={<Save />} hideLabel>Save</Segment>
   <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
 </ToolbarExpander>
@@ -172,17 +172,22 @@ the set's description. `Motion/Stagger` (30, both modes) carries
   revealed segments are plain buttons in the tab order after it. Escape inside the
   panel closes it and returns focus to the trigger. Closed, the panel is
   `visibility: hidden` (after the collapse), so its buttons leave the tab order.
-- **What the revealed segments are is `closeOnAction`**, set on the expander, never
-  per segment:
-  - **Off (the default) - a choice**, something that stays on, one at a time. The
+- **What the revealed segments are is `actions`**, set on the expander, never per
+  segment - the same prop, with the same meaning, as `SegmentedControl`'s:
+  - **Off (the default) - a setting**, something that stays on, one at a time. The
     panel stays open and is a `radiogroup` named by the trigger; each segment is a
     radio, and the chosen one takes the DARK selected ground (near-black,
     `--ui-surface-inverse`) - always, not a prop - so it reads apart from the red
     open trigger. Arrow keys move and select, Home/End jump, both wrap; one
     tab stop, on the chosen segment. Selection is the consumer's (`selected` +
     `onClick`). Since 0.64.0; before, these were plain buttons that never stayed on.
-  - **On - actions.** Clicking any revealed segment runs its command, then folds
-    the panel and returns focus to the trigger. Plain buttons; none stays on.
+  - **On - actions.** Plain buttons, each its own tab stop; none stays on.
+- **Whether an action folds the panel is `closeOnAction`**, a separate prop since
+  0.72.0 (it used to mean both "these are actions" and "close on click").
+  Defaults to `true`: running one folds the panel and returns focus to the trigger,
+  right for a File panel's Save. `closeOnAction={false}` keeps it open, for
+  actions pressed in a run - zoom in, zoom out. It means nothing on a setting,
+  whose panel always stays open, and warns in dev if passed without `actions`.
 - `open` / `defaultOpen` / `onOpenChange`, controlled or not. `label` is the trigger's
   (hidden) name and the group's fallback name.
 - In a vertical bar it opens downward and the flat side is the foot.

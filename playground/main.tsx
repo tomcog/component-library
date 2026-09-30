@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
 import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
-import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize, SegmentedControlVariant, ToolbarOrientation, ToolbarTone } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
 
@@ -188,6 +188,24 @@ const Frame = () => (
 );
 // lucide `file` / `folder-open` / `images` / `file-x` / `send`, the Figma
 // expander sketch's (814:963) - `save` is above.
+const Magnifier = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-4-4" />
+  </svg>
+);
+const ZoomIn = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-4-4M11 8v6M8 11h6" />
+  </svg>
+);
+const ZoomOut = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-4-4M8 11h6" />
+  </svg>
+);
 const FileGlyph = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
     <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
@@ -408,6 +426,18 @@ function App() {
   const [segSort, setSegSort] = useState("newest");
   const [tbView, setTbView] = useState("preview");
   const [tbZoom, setTbZoom] = useState("plot");
+  // The Toolbar section's live instance: one bar, every prop a control.
+  const [tbTone, setTbTone] = useState<ToolbarTone>("gray");
+  const [tbOrientation, setTbOrientation] = useState<ToolbarOrientation>("horizontal");
+  const [tbSize, setTbSize] = useState<SegmentedControlSize>("sm");
+  const [tbVariant, setTbVariant] = useState<SegmentedControlVariant>("dark");
+  const [tbCaptions, setTbCaptions] = useState(false);
+  const [tbIconOnly, setTbIconOnly] = useState(false);
+  const [tbHistory, setTbHistory] = useState(true);
+  const [tbExpander, setTbExpander] = useState(true);
+  const [tbActions, setTbActions] = useState(false);
+  const [tbCloseOnAction, setTbCloseOnAction] = useState(true);
+  const [tbFile, setTbFile] = useState("save");
   const [modal, setModal] = useState<null | "drawn" | "danger" | "plain">(null);
   const [radios, setRadios] = useState<Record<string, string>>({ xl: "in", lg: "in", md: "in" });
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
@@ -432,6 +462,7 @@ function App() {
   const [size, setSize] = useState<ButtonSize>("lg");
   const [loading, setLoading] = useState(false);
   const [lead, setLead] = useState(true);
+  const [buttonLabel, setButtonLabel] = useState("Button label");
   const [page, setPage] = useState("/");
   const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, action, brand]);
   const typeface = useTokenValues(TYPEFACE_TOKENS, [theme, action, brand, face]);
@@ -602,11 +633,17 @@ function App() {
           + "the CTA colour \u2014 the cost of one resting rhythm."
         }
       >
+        <div className="controls">
+          <label>
+            label
+            <input type="text" value={buttonLabel} onChange={(e) => setButtonLabel(e.target.value)} />
+          </label>
+        </div>
         {SIZES.map((s) => (
           <Row key={s} label={s}>
             {VARIANTS.map((v) => (
               <Button key={v} variant={v} size={s} icon={<House />}>
-                Button label
+                {buttonLabel}
               </Button>
             ))}
             <Button variant="primary" size={s} icon={<House />} disabled>
@@ -743,6 +780,7 @@ function App() {
           open={modal === "danger"}
           onClose={() => setModal(null)}
           icon={<Trash2 />}
+          iconColor="danger"
           title="Delete this job?"
           actions={<>
             <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Cancel</Button>
@@ -919,7 +957,7 @@ function App() {
             </SegmentedControl>
           </Toolbar>
         </Row>
-        {/* The expander as a CHOICE (the default - closeOnAction off): the
+        {/* The expander as a SETTING (the default - no `actions`): the
             drawer stays open and its segments are a radio group, one on at a
             time, taking the selected ground (variant). Arrow keys move and
             select. Shares its state with the Zoom control above. */}
@@ -934,7 +972,7 @@ function App() {
                 <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
                 <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
               </SegmentedControl>
-              <ToolbarExpander size="sm" icon={<Frame />} label="Zoom">
+              <ToolbarExpander size="sm" icon={<Magnifier />} label="Zoom">
                   <Segment icon={<Grid />} hideLabel selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
                   <Segment icon={<StickyNote />} hideLabel selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
                   <Segment icon={<Picture />} hideLabel selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
@@ -942,7 +980,7 @@ function App() {
             </Toolbar>
             <div style={{ display: "flex", gap: 24, alignItems: "flex-start", padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
               <Toolbar tone="white" aria-label="Drawing tools, expander labelled">
-                <ToolbarExpander size="sm" icon={<Frame />} label="Zoom">
+                <ToolbarExpander size="sm" icon={<Magnifier />} label="Zoom">
                   <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
                   <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
                   <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
@@ -953,7 +991,7 @@ function App() {
                   <Segment icon={<Undo />}>Undo</Segment>
                   <Segment icon={<Redo />}>Redo</Segment>
                 </SegmentedControl>
-                <ToolbarExpander size="sm" icon={<Frame />} label="Zoom">
+                <ToolbarExpander size="sm" icon={<Magnifier />} label="Zoom">
                   <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
                   <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
                   <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
@@ -962,10 +1000,11 @@ function App() {
             </div>
           </div>
         </Row>
-        {/* The same bar with closeOnAction: clicking any revealed segment runs
-            it and folds the panel, focus returning to File. Set on the
-            expander, so it is always every segment or none. */}
-        <Row label="expander, closeOnAction">
+        {/* The same bar with `actions`: plain buttons, none ever on. Clicking
+            any revealed segment runs it and folds the panel, focus returning
+            to File - closeOnAction, which defaults on. Set on the expander,
+            so it is always every segment or none. */}
+        <Row label="expander, actions">
           <Toolbar aria-label="Drawing tools, expander closes">
             <SegmentedControl size="sm" actions aria-label="History expander closes">
               <Segment icon={<Undo />} hideLabel>Undo</Segment>
@@ -975,12 +1014,24 @@ function App() {
               <Segment icon={<Outline />} hideLabel selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
               <Segment icon={<Eye />} hideLabel selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
             </SegmentedControl>
-            <ToolbarExpander size="sm" icon={<FileGlyph />} label="File" closeOnAction>
+            <ToolbarExpander size="sm" icon={<FileGlyph />} label="File" actions>
               <Segment icon={<Save />} hideLabel>Save</Segment>
               <Segment icon={<FolderOpen />} hideLabel>Open</Segment>
               <Segment icon={<Images />} hideLabel>Export image</Segment>
               <Segment icon={<FileX />} hideLabel>Close</Segment>
               <Segment icon={<Send />} hideLabel>Send</Segment>
+            </ToolbarExpander>
+          </Toolbar>
+        </Row>
+        {/* Actions pressed in a run: closeOnAction={false} keeps the panel
+            open, so zoom in can be clicked three times without reopening it.
+            Still actions - nothing stays on. */}
+        <Row label="expander, actions, stays open">
+          <Toolbar aria-label="Drawing tools, expander stays open">
+            <ToolbarExpander size="sm" icon={<Magnifier />} label="Zoom" actions closeOnAction={false}>
+              <Segment icon={<ZoomIn />} hideLabel>Zoom in</Segment>
+              <Segment icon={<ZoomOut />} hideLabel>Zoom out</Segment>
+              <Segment icon={<Frame />} hideLabel>Fit to screen</Segment>
             </ToolbarExpander>
           </Toolbar>
         </Row>
@@ -1853,7 +1904,7 @@ function App() {
         </div>
       </Section>
 
-      <Section title="Playground" note="Toggle props against a single instance.">
+      <Section title="Playground" note="Toggle props against a single instance of each: Button, then Toolbar.">
         <div className="controls">
           <label>
             size
@@ -1861,11 +1912,15 @@ function App() {
               {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
+          <label>
+            label
+            <input type="text" value={buttonLabel} onChange={(e) => setButtonLabel(e.target.value)} />
+          </label>
           <label><input type="checkbox" checked={lead} onChange={(e) => setLead(e.target.checked)} /> icon</label>
           <label><input type="checkbox" checked={trail} onChange={(e) => setTrail(e.target.checked)} /> iconEnd</label>
           <label><input type="checkbox" checked={loading} onChange={(e) => setLoading(e.target.checked)} /> loading</label>
         </div>
-        <Row label="result">
+        <Row label="button">
           {VARIANTS.map((v) => (
             <Button
               key={v}
@@ -1875,9 +1930,91 @@ function App() {
               icon={lead ? <House /> : undefined}
               iconEnd={trail ? <Chevron /> : undefined}
             >
-              Button label
+              {buttonLabel}
             </Button>
           ))}
+        </Row>
+        <div className="controls">
+          <label>
+            tone
+            <select value={tbTone} onChange={(e) => setTbTone(e.target.value as ToolbarTone)}>
+              <option value="gray">gray</option>
+              <option value="white">white</option>
+            </select>
+          </label>
+          <label>
+            orientation
+            <select value={tbOrientation} onChange={(e) => setTbOrientation(e.target.value as ToolbarOrientation)}>
+              <option value="horizontal">horizontal</option>
+              <option value="vertical">vertical</option>
+            </select>
+          </label>
+          <label>
+            size
+            <select value={tbSize} onChange={(e) => setTbSize(e.target.value as SegmentedControlSize)}>
+              {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+          <label>
+            variant
+            <select value={tbVariant} onChange={(e) => setTbVariant(e.target.value as SegmentedControlVariant)}>
+              <option value="primary">primary</option>
+              <option value="dark">dark</option>
+            </select>
+          </label>
+          <label><input type="checkbox" checked={tbCaptions} onChange={(e) => setTbCaptions(e.target.checked)} /> captions</label>
+          <label><input type="checkbox" checked={tbIconOnly} onChange={(e) => setTbIconOnly(e.target.checked)} /> hideLabel</label>
+          <label><input type="checkbox" checked={tbHistory} onChange={(e) => setTbHistory(e.target.checked)} /> history (actions)</label>
+          <label><input type="checkbox" checked={tbExpander} onChange={(e) => setTbExpander(e.target.checked)} /> expander</label>
+          <label><input type="checkbox" checked={tbActions} disabled={!tbExpander} onChange={(e) => setTbActions(e.target.checked)} /> actions</label>
+          <label><input type="checkbox" checked={tbCloseOnAction} disabled={!tbExpander || !tbActions} onChange={(e) => setTbCloseOnAction(e.target.checked)} /> closeOnAction</label>
+        </div>
+        {/* The live instance. tone="white" is posed on the pale ground it
+            exists for; gray sits on the page. Captions wrap each choice in a
+            ToolbarGroup, whose caption then names the control. */}
+        <Row label="toolbar">
+          <div style={{ display: "flex", alignItems: "flex-start", padding: 16, borderRadius: 12, background: tbTone === "white" ? "var(--ui-surface-pale)" : undefined }}>
+            <Toolbar tone={tbTone} orientation={tbOrientation} aria-label="Drawing tools, live">
+              {tbHistory ? (
+                <SegmentedControl size={tbSize} actions aria-label="History live">
+                  <Segment icon={<Undo />} hideLabel={tbIconOnly}>Undo</Segment>
+                  <Segment icon={<Redo />} hideLabel={tbIconOnly}>Redo</Segment>
+                </SegmentedControl>
+              ) : null}
+              {(() => {
+                const view = (
+                  <SegmentedControl size={tbSize} variant={tbVariant} aria-label={tbCaptions ? undefined : "View live"}>
+                    <Segment icon={<Outline />} hideLabel={tbIconOnly} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
+                    <Segment icon={<Eye />} hideLabel={tbIconOnly} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
+                  </SegmentedControl>
+                );
+                const zoom = (
+                  <SegmentedControl size={tbSize} variant={tbVariant} aria-label={tbCaptions ? undefined : "Zoom live"}>
+                    <Segment icon={<Grid />} hideLabel={tbIconOnly} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
+                    <Segment icon={<StickyNote />} hideLabel={tbIconOnly} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
+                    <Segment icon={<Picture />} hideLabel={tbIconOnly} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+                  </SegmentedControl>
+                );
+                return tbCaptions ? (
+                  <>
+                    <ToolbarGroup label="VIEW:">{view}</ToolbarGroup>
+                    <ToolbarGroup label="ZOOM:">{zoom}</ToolbarGroup>
+                  </>
+                ) : (
+                  <>{view}{zoom}</>
+                );
+              })()}
+              {tbExpander ? (
+                /* Keyed on actions: a SETTING and ACTIONS are different
+                   panels, so switching remounts rather than morphing one. */
+                <ToolbarExpander key={String(tbActions)} size={tbSize} icon={<FileGlyph />} label="File" actions={tbActions} closeOnAction={tbActions ? tbCloseOnAction : undefined}>
+                  <Segment icon={<Save />} hideLabel={tbIconOnly} selected={!tbActions && tbFile === "save"} onClick={() => setTbFile("save")}>Save</Segment>
+                  <Segment icon={<FolderOpen />} hideLabel={tbIconOnly} selected={!tbActions && tbFile === "open"} onClick={() => setTbFile("open")}>Open</Segment>
+                  <Segment icon={<Images />} hideLabel={tbIconOnly} selected={!tbActions && tbFile === "export"} onClick={() => setTbFile("export")}>Export image</Segment>
+                </ToolbarExpander>
+              ) : null}
+            </Toolbar>
+          </div>
         </Row>
       </Section>
     </div>

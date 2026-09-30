@@ -77,7 +77,7 @@ always reads red, whatever `--ui-action` is. Each variant keeps its shape:
 | variant | rest | hover / press |
 |---|---|---|
 | primary | solid `--ui-danger`, `--ui-text-on-danger` | danger darkened 22.3% / 40.7% |
-| secondary | 15% danger tint, label halfway to Text/Default | danger darkened 22.3% / 40.7%, on-danger label |
+| secondary | 15% danger tint, `--ui-danger` label | danger darkened 22.3% / 40.7%, on-danger label |
 | tertiary | `--ui-danger` text | ghost's danger (pale tint / named pair) |
 | ghost | `--ui-danger` rule and text | ghost's danger |
 
@@ -96,7 +96,7 @@ Loading** at every Level and Size (64 cells). The grounds bind `Button/Danger/*`
 | `Button/Danger/Pressed` | raw shade (danger -40.7%) | `--ui-danger` mixed 40.7% toward black |
 | `Button/Danger/Label` | `Text/OnDanger` | `--ui-text-on-danger` |
 | `Button/Danger/Secondary Default` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
-| `Button/Danger/Secondary Label` | `Danger/Darker` | `--ui-danger` halfway toward Text/Default |
+| `Button/Danger/Secondary Label` | `Danger/Darker` (should be `Danger/Base`, #50) | `--ui-danger` |
 | `Button/Danger/Ghost Hover` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
 | `Button/Danger/Ghost Pressed` | `Danger/Lighter` | `--ui-danger-lighter` |
 | `Button/Danger/Ghost Label` | `Danger/Base` | `--ui-danger` |
@@ -134,12 +134,13 @@ Figma: `Button/Secondary/Default` -> `Action/Lighter`, `Button/Secondary/Label` 
 `Action/Darker` (see below), and a new `Button/Secondary/Label Active` -> `Text/OnAction` for
 Hover and Pressed (no other component bound these, so they were repointed).
 
-**The resting label is darker than the action colour** (since 0.64.0):
-`--ui-action` taken halfway toward `--ui-text-default` - a dark red in light,
-7.32:1 on the tint, and a light rose in dark, 4.87:1 on the dark tint. The plain
-action colour on its own tint was 3.64:1 and 2.71:1, under AA; 50% is the
-smallest round step clearing 4.5 in dark with margin. Figma binds
-`Button/Secondary/Label` to `Action/Darker`, which the mix matches in light.
+**The resting label and icon are plain `--ui-action`** (again, since 0.72.0).
+0.64.0 - 0.71.0 took it halfway toward `--ui-text-default` for contrast (7.32:1
+light, 4.87:1 dark), which read as too dark a red; it was reverted by decision,
+accepting 3.64:1 in light and 2.71:1 in dark on the tint - under AA for text.
+Don't re-darken it for contrast without asking. The danger tone follows: plain
+`--ui-danger` on the danger tint. Figma still binds `Button/Secondary/Label` to
+`Action/Darker` (divergence #50).
 
 ## Tertiary is Ghost without its rule (0.63.0)
 

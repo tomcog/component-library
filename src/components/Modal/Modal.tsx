@@ -6,10 +6,11 @@ import { assignRef } from "../../internal/assignRef";
 /**
  * The icon's colour. Figma: `Icon Color`. `default` is the muted grey
  * (`--ui-text-muted`), for a Modal that informs; `brand` takes `--ui-brand`,
- * for one that should carry the identity. Either way it is decorative chrome,
+ * for one that should carry the identity; `danger` takes `--ui-danger`, and a
+ * destructive Modal always takes it - the icon matches the red answer. It is
  * never the action colour - the icon acts on nothing.
  */
-export type ModalIconColor = "default" | "brand";
+export type ModalIconColor = "default" | "brand" | "danger";
 
 export interface ModalProps
   extends Omit<DialogHTMLAttributes<HTMLDialogElement>, "title" | "open" | "onClose"> {
@@ -29,14 +30,18 @@ export interface ModalProps
    * the kind of moment, it acts on nothing. Its colour is `iconColor`.
    */
   icon?: ReactNode;
-  /** Figma: `Icon Color`. The muted grey by default, or `brand`. */
+  /**
+   * Figma: `Icon Color`. The muted grey by default, or `brand`. A destructive
+   * Modal - one answered by a `tone="danger"` button - is always `danger`.
+   */
   iconColor?: ModalIconColor;
   /**
    * The buttons that answer it, right-aligned in the order given - dismiss
    * first, answer last, as Figma draws Tertiary then Primary. Focus starts on the
    * first, so the safe choice is the one a stray Enter presses. A destructive
    * answer is `<Button variant="primary" tone="danger">`: red at rest with a
-   * white label, and the danger colour on hover and press.
+   * white label, and the danger colour on hover and press - and the icon is
+   * then always `iconColor="danger"`.
    */
   actions?: ReactNode;
   /** Figma: `Body`. Body MD (Regular), and the dialog's accessible description. */
@@ -51,6 +56,7 @@ export interface ModalProps
  *       open={confirming}
  *       onClose={() => setConfirming(false)}
  *       icon={<Trash2 />}
+ *       iconColor="danger"
  *       title="Delete this job?"
  *       actions={<>
  *         <Button variant="tertiary" size="md" onClick={() => setConfirming(false)}>Cancel</Button>
@@ -119,7 +125,10 @@ export const Modal = forwardRef<HTMLDialogElement, ModalProps>(function Modal(
     >
       {icon != null ? (
         <span
-          className={[styles.icon, iconColor === "brand" ? styles.iconBrand : null]
+          className={[
+            styles.icon,
+            iconColor === "brand" ? styles.iconBrand : iconColor === "danger" ? styles.iconDanger : null,
+          ]
             .filter(Boolean)
             .join(" ")}
           aria-hidden="true"
