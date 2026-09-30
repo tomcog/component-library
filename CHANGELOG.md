@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Elevation: both float steps become Figma's five-layer shadows (Card, Modal, InputSelect's menu). Button: Secondary's resting label is the action colour again. Modal: `iconColor="danger"`, and an intro/exit animation. ToolbarExpander: `actions` split out of `closeOnAction`.
+**0.71.0 -> 0.72.0** - Elevation: both float steps become Figma's five-layer shadows (Card, Modal, InputSelect's menu). Button: Secondary's resting label is the action colour again. Modal: `iconColor="danger"`, and an intro/exit animation. ToolbarExpander: `actions` split out of `closeOnAction`.
 
 **`--ui-shadow-float-1` / `--ui-shadow-float-2`** change value (names unchanged),
 following Figma's new `CardLow` / `CardHigh` effect styles on Card and Modal. Each is
