@@ -596,3 +596,33 @@ Nothing here needs action.
     property links, as `docs/figma.md` warns; they were copied back by layer name
     and proved on a throwaway instance. The set's description now carries the
     rule - a destructive Modal always takes Danger - and the code-only motion.
+
+54. ~~`Button` has no `Tone=Safety`, and `ConfirmButton` is still a live set.~~
+    **Resolved 2026-09-29** for Button: `Tone=Safety` was added to the `Button` set
+    (`135:9598`) - 64 cells cloned from Danger (Default, Hover, Pressed, Loading at
+    every Level and Size), bound to ten new `Button/Safety/*` variables aliasing
+    `Safety/*` (text on light grounds `Safety/Darker`, Secondary's rest
+    `Safety/Lighter`; Hover and Pressed are the 22.3% / 40.7% darkened literals, as
+    Danger's are). Property links restored after cloning and proved on a throwaway
+    instance. `ConfirmButton` (`735:398`) was marked DEPRECATED, then DELETED
+    the same day at the user's request - no instance of it existed anywhere in this
+    file. Files using the published library keep their instances, detached from
+    updates. The `Button/Round` half is tracked with #52.
+
+52. ~~`Button/Round` does not carry Button's Levels or Tone.~~ **Resolved
+    2026-09-29.** The set (`220:11857`) was rebuilt as `Size` x `Level` x `State`
+    (Default | Hover | Pressed | Disabled) x `Tone` (Default | Danger | Safety) -
+    160 cells, Disabled at Tone=Default only, as Button draws it. The 20 existing
+    cells were RENAMED in place, not deleted, so their instances stay linked
+    (Active -> Primary/Default, Hover -> Secondary/Default, Off -> Tertiary/Default,
+    Dark -> Secondary/Pressed, Disabled -> Secondary/Disabled); the other 140 were
+    cloned from each size's Primary cell with the Icon swap link restored. Every
+    colour binds one of 36 new `Button/Round/*` variables, each aliasing the same
+    semantic (or holding the same literal) as Button's matching variable, `Label`
+    read as `Icon` - so the `Button/Tertiary/Label` binding (#47) is gone. NavSlat
+    and BottomNav/Item nest these cells with their own colour overrides, which
+    survived; only the loose FAB sketch (not in the library, #45) changed, its
+    resting glyph going from Text/Default to action. Figma lists the State options
+    Disabled-first despite the cells being ordered Default-first - cosmetic.
+    `outline-light` is still instances only (#48).
+

@@ -16,7 +16,9 @@ and Disabled were drawn on 2026-09-27.
 > `"secondary"`, `"ghost"` becomes `"tertiary"` - and warns once in dev. What moves
 > in the swap: hover and press follow Button's ladder (the fill darkening from the
 > role colour) rather than this component's own Lighter/Base/Darker steps, and the
-> `--ui-confirm-button-*` hooks and geometry tokens are gone. Everything below
+> `--ui-confirm-button-*` hooks and geometry tokens are gone. **Figma's
+> `ConfirmButton` set (`735:398`) was deleted on 2026-09-29** (it had no instances
+> in the file); the confirmation is Button / Button/Round with Tone. Everything below
 > describes the component as it was, and is kept for its reasoning.
 >
 >     <ConfirmButton tone="safety" icon={<Save />} aria-label="Save" />

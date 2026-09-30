@@ -92,8 +92,8 @@ about 2:1 on white), so wherever it sits on a light ground as text or glyph it i
 | ghost | `--ui-safety-darker` rule and text | as tertiary, the rule dropping away |
 
 White on the solid green is 2.2:1 - see `--ui-text-on-safety` in `tokens.css` for
-the cost and how an app moves it. Figma: `Tone=Safety` is not drawn yet
-(divergence #54).
+the cost and how an app moves it. Figma: `Tone=Safety` on the `Button` set,
+bound to `Button/Safety/*` (added 2026-09-29).
 
 ### `tone="danger"` is red in every state (0.65.0)
 

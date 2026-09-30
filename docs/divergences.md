@@ -119,8 +119,9 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    the drawing, as a design-shaped change arriving Figma-first) or it is
    marked deprecated; which is the user's call.
 
-47. **Button/Round, LayerController-Plot and Layer bind Button's variables.**
-   DEFECT: a binding that breaks. `Button/Round` binds `Button/Tertiary/Label`,
+47. **LayerController-Plot and Layer bind Button's variables.** (`Button/Round`
+   no longer does - its rebuild on 2026-09-29 binds only `Button/Round/*`.)
+   DEFECT: a binding that breaks. `Button/Round` bound `Button/Tertiary/Label`,
    and `LayerController-Plot` and `Layer` bind `Button/Tertiary/Default` - another
    component's tokens, which CLAUDE.md forbids. Found 2026-09-27 when Tertiary was
    restyled: repointing those variables would have silently restyled all three, so
@@ -170,16 +171,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     0.72.0. Direction: Figma - repoint them to `Action/Base` and `Danger/Base`.
     Check first that nothing else binds either variable.
 
-52. **`Button/Round` does not carry Button's Levels or Tone.** DEFECT, the whole
-    set: code 0.73.0 made ButtonRound `variant` = primary | secondary | tertiary |
-    ghost with `tone` = primary | danger, each Level Button's own states (Figma's
-    reference: `914:678`, Button's four Levels). The set (`220:11857`) is still
-    `Size` x `State` = Off | Hover | Active | Dark | Disabled, its description
-    describes an older Default/Ghost set, and `Dark` binds `Button/Tertiary/Label`
-    (another component's variable). Direction: Figma - rebuild as `Level` x `Size`
-    x `State` (Default | Hover | Pressed | Disabled) x `Tone`, as `Button` is,
-    binding `Button/Round/*` variables that alias semantics; keep outline-light.
-
 53. **`InputTextarea` is drawn three rows tall; code defaults to one.** DEFECT, the
     whole set: code 0.74.0 made `rows` default to 1 with `autoResize` on, so an
     empty field sits like an InputText, text just above the rule. The
@@ -188,12 +179,11 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     one row (`10 + 20 + 1 = 31px`, InputText's height) and say in the description
     that it grows with content.
 
-54. **`Button` has no `Tone=Safety`, and `ConfirmButton` is still a live set.**
-    DEFECT: code 0.74.0 gave Button (and ButtonRound) `tone` = default | safety |
-    danger and deprecated ConfirmButton. Figma's `Button` (`135:9598`) `Tone` is
-    Default | Danger only, and the `ConfirmButton` set (`735:398`) is still
-    published as a component in its own right. Direction: Figma - add
-    `Tone=Safety` to Button, drawn as the Danger cells are, bound to
-    `Button/Safety/*` variables aliasing `Safety/*` (text on light grounds
-    `Safety/Darker`); add it to `Button/Round` with #52; mark ConfirmButton
-    deprecated in its description (not deleted - instances exist).
+55. **Button's Danger Secondary Loading cells bind `Action/Base`.** DEFECT, 20
+    layers across the four Size=*, Level=Secondary, State=Loading, Tone=Danger
+    cells (icon, label, the three dots): they should be the danger label
+    (`Button/Danger/Secondary Label`), as the other Danger Secondary cells are.
+    Invisible today because Action and Danger resolve to the same red; wrong the
+    moment an app splits them. Found 2026-09-29 while cloning them for
+    Tone=Safety, whose copies bind `Button/Safety/Secondary Label` correctly.
+    Direction: Figma - rebind.

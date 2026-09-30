@@ -174,7 +174,10 @@ darker action fill since 0.73.0.
 
 ## Figma
 
-The `Button/Round` set (`220:11857`) is `Size` x `State` = Off | Hover | Active |
-Dark | Disabled, and does not yet carry the Levels or Tone - see
-`docs/divergences.md`. The code moved first on the user's instruction; the set
-follows.
+The `Button/Round` set (`220:11857`) is `Size` x `Level` x `State` x `Tone`, the
+same axes as `Button` (rebuilt 2026-09-29): 160 cells, Disabled at Tone=Default
+only. Colours bind `Button/Round/*` variables that alias what Button's matching
+variables alias, never `Button/*`. Its old states were renamed in place so
+instances stayed linked: Active -> Primary, Hover -> Secondary, Off -> Tertiary,
+Dark -> Secondary Pressed, Disabled -> Secondary Disabled. `outline-light` is still
+drawn only as instances (divergence #48).
