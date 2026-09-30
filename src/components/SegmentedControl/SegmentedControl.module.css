@@ -217,10 +217,12 @@
 }
 
 /* -- the selected ground ------------------------------------- */
-/* Two treatments, set on the track. Figma models them as two `State` values on
-   the segment (Active and Dark), which is the only way a variant axis can say
-   it - a modelling artefact, not drift. See the note in the .tsx. */
-.primary .selected {
+/* Three treatments, set on the track (0.78.0; `action` was `primary`, and
+   `brand` is new). ACTION and BRAND take the project's role colours, so they
+   vary by app; DARK is the near-black inverse surface and does not move with
+   either. Figma models these as `State` values on the segment (Active, Dark),
+   the only way a variant axis can say it - a modelling artefact. */
+.action .selected {
   background: var(--ui-segmented-selected-bg, var(--ui-action));
   color: var(--ui-segmented-selected-text, var(--ui-text-on-action));
 }
@@ -236,6 +238,12 @@
 .dark .selected {
   background: var(--ui-segmented-selected-bg, var(--ui-surface-inverse));
   color: var(--ui-segmented-selected-text, var(--ui-text-on-inverse));
+}
+/* BRAND: the project's brand colour and its own on-colour - for a control that
+   is part of the app's chrome rather than a call to action. */
+.brand .selected {
+  background: var(--ui-segmented-selected-bg, var(--ui-brand));
+  color: var(--ui-segmented-selected-text, var(--ui-text-on-brand));
 }
 
 /* -- the thumb: the selected ground, sliding (0.77.0) --------------------
@@ -266,7 +274,8 @@
   pointer-events: none;
   visibility: hidden;
 }
-.primary > .thumb { background: var(--ui-segmented-selected-bg, var(--ui-action)); }
+.action > .thumb { background: var(--ui-segmented-selected-bg, var(--ui-action)); }
+.brand > .thumb { background: var(--ui-segmented-selected-bg, var(--ui-brand)); }
 .dark > .thumb { background: var(--ui-segmented-selected-bg, var(--ui-surface-inverse)); }
 .track[data-thumb] > .thumb {
   visibility: visible;

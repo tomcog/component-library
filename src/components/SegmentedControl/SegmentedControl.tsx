@@ -20,8 +20,16 @@ declare const process: { env: { NODE_ENV?: string } };
 export type SegmentedControlSize = "xl" | "lg" | "md" | "sm";
 
 /**
- * Which ground the SELECTED segment takes. `primary` is the brand fill;
- * `dark` is the near-black one.
+ * Which ground the SELECTED segment takes (0.78.0):
+ *
+ * - `action` (the default) - the project's action colour, `--ui-action`.
+ * - `brand` - the project's brand colour, `--ui-brand`, for a control that is
+ *   part of the app's chrome rather than a call to action.
+ * - `dark` - the near-black inverse surface. The same in every project,
+ *   whatever action and brand are set to.
+ *
+ * `action` was called `primary` until 0.78.0; `"primary"` still works and
+ * warns in dev.
  *
  * Figma models these as two `State` values on the segment, `Active` and
  * `Dark`, which is the only way a variant axis can say it. In code it belongs
@@ -30,7 +38,7 @@ export type SegmentedControlSize = "xl" | "lg" | "md" | "sm";
  * each time. One track, one treatment - the same reasoning that puts `size` on
  * the strip in Tabs.
  */
-export type SegmentedControlVariant = "primary" | "dark";
+export type SegmentedControlVariant = "action" | "brand" | "dark";
 
 /**
  * Which ground the TRACK takes - the pill the segments sit in. Figma: the
@@ -64,8 +72,8 @@ export interface SegmentedControlProps
    * shared.
    */
   size?: SegmentedControlSize;
-  /** The selected segment's ground. Defaults to `primary`. */
-  variant?: SegmentedControlVariant;
+  /** The selected segment's ground. Defaults to `action`. `"primary"` is its pre-0.78.0 name. */
+  variant?: SegmentedControlVariant | "primary";
   /** The TRACK's ground. Defaults to `gray`. */
   tone?: SegmentedControlTone;
   /**
@@ -126,7 +134,7 @@ export interface SegmentedControlProps
  */
 export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps>(
   function SegmentedControl(
-    { children, size = "lg", variant = "primary", tone = "gray", actions = false, className, ...props },
+    { children, size = "lg", variant: variantProp = "action", tone = "gray", actions = false, className, ...props },
     ref,
   ) {
     const track = useRef<HTMLDivElement | null>(null);
@@ -146,7 +154,13 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
     // Figma draws a column track only inside that bar.
     const vertical = useContext(ToolbarOrientationContext) === "vertical";
 
+    const variant: SegmentedControlVariant = variantProp === "primary" ? "action" : variantProp;
     if (process.env.NODE_ENV !== "production") {
+      if (variantProp === "primary") {
+        console.warn(
+          '[@tomcoggia/ui] SegmentedControl: variant="primary" was renamed "action" in 0.78.0. It still works; rename it.',
+        );
+      }
       if (props["aria-label"] == null && labelledBy == null) {
         console.warn(
           "[@tomcoggia/ui] SegmentedControl: no accessible name. Pass `aria-label` - " +

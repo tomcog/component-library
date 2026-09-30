@@ -357,9 +357,17 @@ repaint the white one too.
 
 ## `variant` picks the selected ground, and sits on the TRACK
 
-`primary` fills the chosen segment with the brand colour; `dark` fills it with
-`--ui-surface-inverse`. Figma models these as two `State` values on the segment
-(`Active` and `Dark`), which is the only way a variant axis can say it - the
+Three values since 0.78.0 (decided with the user 2026-09-29):
+
+    action   --ui-action / --ui-text-on-action   the default; was `primary`
+    brand    --ui-brand / --ui-text-on-brand     new
+    dark     --ui-surface-inverse / on-inverse   unchanged
+
+`action` and `brand` take the project's own role colours, so they vary by app;
+`dark` is the near-black that stays the same whatever action and brand are set to.
+`variant="primary"` still works and warns. Figma models these as `State` values on
+the segment (`Active`, which is action, and `Dark`; there is no Brand cell yet -
+divergence #56), which is the only way a variant axis can say it - the
 same modelling difference `Tabs` has with its size, and recorded here for the
 same reason. A control whose selected segment came out red or black depending
 on which one you clicked would be a different control each time.

@@ -876,7 +876,7 @@ function App() {
           + "leads; hideLabel draws it alone and at full strength, keeping the text as the "
           + "accessible name. Every height is the control ladder \u2014 48 / 40 / 32 / 24, the same "
           + "--ui-control-* tokens Button and ButtonRound read \u2014 so an icon-only segment is the "
-          + "same circle a ButtonRound draws. The last row puts the two side by side. The second column is variant=\"dark\". "
+          + "same circle a ButtonRound draws. The last row puts the two side by side. The columns are the three variants: action (the default), brand - both the project's own colours, so they move with the pickers above - and dark, the near-black that stays put. "
           + "tone picks the track's own ground \u2014 gray is the pale surface, white the raised one, "
           + "which is what a control sitting on a pale page wants."
         }
@@ -888,6 +888,10 @@ function App() {
               <Segment selected={segMode === "all"} onClick={() => setSegMode("all")}>All</Segment>
               <Segment selected={segMode === "remote"} onClick={() => setSegMode("remote")}>Remote</Segment>
               <Segment selected={segMode === "hybrid"} onClick={() => setSegMode("hybrid")}>Hybrid</Segment>
+            </SegmentedControl>
+            <SegmentedControl size={s} variant="brand" aria-label={`${s} sort order, brand`}>
+              <Segment selected={segSort === "newest"} onClick={() => setSegSort("newest")}>Newest</Segment>
+              <Segment selected={segSort === "az"} onClick={() => setSegSort("az")}>A–Z</Segment>
             </SegmentedControl>
             <SegmentedControl size={s} variant="dark" aria-label={`${s} sort order`}>
               <Segment selected={segSort === "newest"} onClick={() => setSegSort("newest")}>Newest</Segment>

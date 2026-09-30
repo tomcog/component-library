@@ -54,13 +54,13 @@ function Check({ label, checked, onChange, disabled }: {
   );
 }
 
-function Text({ label, value, onChange, width = 140 }: {
-  label: string; value: string; onChange: (v: string) => void; width?: number;
+function Text({ label, value, onChange, width = 140, disabled }: {
+  label: string; value: string; onChange: (v: string) => void; width?: number; disabled?: boolean;
 }) {
   return (
     <label>
       {label}
-      <input type="text" value={value} style={{ width }} onChange={(e) => onChange(e.target.value)} />
+      <input type="text" value={value} disabled={disabled} style={{ width }} onChange={(e) => onChange(e.target.value)} />
     </label>
   );
 }
@@ -232,7 +232,7 @@ export function LiveToolbar() {
         <Pick label="tone" value={tone} options={["gray", "white"]} onChange={setTone} />
         <Pick label="orientation" value={orientation} options={["horizontal", "vertical"]} onChange={setOrientation} />
         <Pick label="size" value={size} options={SIZES4} onChange={setSize} />
-        <Pick label="variant" value={variant} options={["primary", "dark"]} onChange={setVariant} />
+        <Pick label="variant" value={variant} options={["action", "brand", "dark"]} onChange={setVariant} />
         <Check label="captions" checked={captions} onChange={setCaptions} />
         <Check label="hideLabel" checked={iconOnly} onChange={setIconOnly} />
         <Check label="history (actions)" checked={history} onChange={setHistory} />
@@ -273,7 +273,7 @@ export function LiveToolbar() {
 
 export function LiveSegmentedControl() {
   const [size, setSize] = useState<SegmentedControlSize>("lg");
-  const [variant, setVariant] = useState<SegmentedControlVariant>("primary");
+  const [variant, setVariant] = useState<SegmentedControlVariant>("action");
   const [tone, setTone] = useState<SegmentedControlTone>("gray");
   const [actions, setActions] = useState(false);
   const [icons, setIcons] = useState(true);
@@ -289,7 +289,7 @@ export function LiveSegmentedControl() {
     <Live
       controls={<>
         <Pick label="size" value={size} options={SIZES4} onChange={setSize} />
-        <Pick label="variant" value={variant} options={["primary", "dark"]} onChange={setVariant} />
+        <Pick label="variant" value={variant} options={["action", "brand", "dark"]} onChange={setVariant} />
         <Pick label="tone" value={tone} options={["gray", "white"]} onChange={setTone} />
         <Check label="actions" checked={actions} onChange={setActions} />
         <Check label="icon" checked={icons} onChange={(v) => { setIcons(v); if (!v) setHideLabel(false); }} />
@@ -323,6 +323,7 @@ export function LiveInputText() {
   const [size, setSize] = useState<InputTextSize>("lg");
   const [label, setLabel] = useState("Company");
   const [placeholder, setPlaceholder] = useState("Acme");
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [type, setType] = useState<"text" | "email" | "date" | "password">("text");
   const [hideLabel, setHideLabel] = useState(false);
   const [icon, setIcon] = useState(true);
@@ -334,7 +335,8 @@ export function LiveInputText() {
         <Pick label="size" value={size} options={INPUT_SIZES} onChange={setSize} />
         <Pick label="type" value={type} options={["text", "email", "date", "password"]} onChange={setType} />
         <Text label="label" value={label} onChange={setLabel} />
-        <Text label="placeholder" value={placeholder} onChange={setPlaceholder} />
+        <Check label="placeholder" checked={showPlaceholder} onChange={setShowPlaceholder} />
+        <Text label="text" value={placeholder} onChange={setPlaceholder} disabled={!showPlaceholder} />
         <Check label="hideLabel" checked={hideLabel} onChange={setHideLabel} />
         <Check label="icon" checked={icon} onChange={setIcon} />
         <Check label="iconEnd" checked={iconEnd} onChange={setIconEnd} />
@@ -346,7 +348,7 @@ export function LiveInputText() {
         size={size}
         type={type}
         label={label}
-        placeholder={placeholder}
+        placeholder={showPlaceholder ? placeholder : undefined}
         hideLabel={hideLabel}
         icon={icon ? <Layers /> : undefined}
         iconEnd={iconEnd ? <Layers /> : undefined}
@@ -385,6 +387,7 @@ export function LiveInputTextarea() {
   const [size, setSize] = useState<InputTextSize>("lg");
   const [label, setLabel] = useState("Notes");
   const [placeholder, setPlaceholder] = useState("Anything worth remembering");
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [hideLabel, setHideLabel] = useState(false);
   const [autoResize, setAutoResize] = useState(true);
   const [disabled, setDisabled] = useState(false);
@@ -393,14 +396,15 @@ export function LiveInputTextarea() {
       controls={<>
         <Pick label="size" value={size} options={INPUT_SIZES} onChange={setSize} />
         <Text label="label" value={label} onChange={setLabel} />
-        <Text label="placeholder" value={placeholder} onChange={setPlaceholder} width={200} />
+        <Check label="placeholder" checked={showPlaceholder} onChange={setShowPlaceholder} />
+        <Text label="text" value={placeholder} onChange={setPlaceholder} width={200} disabled={!showPlaceholder} />
         <Check label="hideLabel" checked={hideLabel} onChange={setHideLabel} />
         <Check label="autoResize" checked={autoResize} onChange={setAutoResize} />
         <Check label="disabled" checked={disabled} onChange={setDisabled} />
       </>}
     >
       {/* Keyed on autoResize: it is read when the field mounts. */}
-      <InputTextarea key={String(autoResize)} style={{ width: 280 }} size={size} label={label} placeholder={placeholder} hideLabel={hideLabel} autoResize={autoResize} disabled={disabled} />
+      <InputTextarea key={String(autoResize)} style={{ width: 280 }} size={size} label={label} placeholder={showPlaceholder ? placeholder : undefined} hideLabel={hideLabel} autoResize={autoResize} disabled={disabled} />
     </Live>
   );
 }
@@ -686,7 +690,7 @@ export function LiveLogo() {
       controls={<>
         <Pick label="weight" value={weight} options={["x-light", "light", "medium", "heavy", "x-heavy"]} onChange={setWeight} />
         <Num label="size" value={size} min={16} max={120} onChange={setSize} />
-        <Text label="label (empty = decorative)" value={label} onChange={setLabel} />
+        <Text label="screen-reader name (empty = hidden)" value={label} onChange={setLabel} />
       </>}
     >
       <Logo weight={weight} size={size} label={label || undefined} />
@@ -701,7 +705,7 @@ export function LiveSpinner() {
     <Live
       controls={<>
         <Num label="size" value={size} min={12} max={96} onChange={setSize} />
-        <Text label="label (empty = decorative)" value={label} onChange={setLabel} />
+        <Text label="screen-reader name (empty = hidden)" value={label} onChange={setLabel} />
       </>}
     >
       <Spinner size={size} label={label || undefined} />

@@ -9,6 +9,15 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - SegmentedControl: `variant` is `action | brand | dark`.
+
+**SegmentedControl** (and so every Toolbar control): `variant` gains `brand` - the
+selected ground in `--ui-brand` with `--ui-text-on-brand` - and `primary` is renamed
+`action`, which is what it always drew (`--ui-action`). `"primary"` still works and
+warns in dev. `dark` is unchanged: the near-black that does not follow action or
+brand. No visual change for existing code; every app passes `variant="dark"` or
+the default.
+
 **0.76.0 -> 0.77.0** - SegmentedControl: the selected ground slides to the new choice.
 
 **SegmentedControl**: the selected ground is now one element (the thumb) that
