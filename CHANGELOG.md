@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Modal: the body is one step larger (Body LG), and its Buttons go to LG.
+**0.74.0 -> 0.75.0** - Modal: the body is one step larger (Body LG), and its Buttons go to LG.
 
 **Modal**: the body text is Body LG, 14/20 Regular (was Body MD, 12/16). The
 documented action Buttons are `size="lg"` (were `"md"`) - the Modal does not size
