@@ -626,3 +626,12 @@ Nothing here needs action.
     Disabled-first despite the cells being ordered Default-first - cosmetic.
     `outline-light` is still instances only (#48).
 
+55. ~~Button's Danger Secondary Loading cells bind `Action/Base`.~~ **Resolved
+    2026-09-29, the day it was found.** The four `Level=Secondary, State=Loading,
+    Tone=Danger` cells (`875:666`, `875:680`, `875:694`, `875:708`) bound
+    `Action/Base` on 20 layers - icon, label and the three dots - where every other
+    Danger Secondary cell binds the danger label. Rebound to
+    `Button/Danger/Secondary Label` (paint opacity unchanged); a render beside the
+    Default and Safety twins shows the dots in Danger/Darker. Invisible before the
+    fix only because Action and Danger are the same red.
+

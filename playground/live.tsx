@@ -182,11 +182,11 @@ export function LiveModal() {
         iconColor={iconColor}
         title={title}
         actions={<>
-          <Button variant="tertiary" size="md" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="tertiary" size="lg" onClick={() => setOpen(false)}>Cancel</Button>
           {destructive ? (
-            <Button variant="primary" tone="danger" size="md" icon={<Trash2 />} onClick={() => setOpen(false)}>Delete</Button>
+            <Button variant="primary" tone="danger" size="lg" icon={<Trash2 />} onClick={() => setOpen(false)}>Delete</Button>
           ) : (
-            <Button size="md" onClick={() => setOpen(false)}>Save</Button>
+            <Button size="lg" onClick={() => setOpen(false)}>Save</Button>
           )}
         </>}
       >

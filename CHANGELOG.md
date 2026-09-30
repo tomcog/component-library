@@ -9,6 +9,14 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Modal: the body is one step larger (Body LG), and its Buttons go to LG.
+
+**Modal**: the body text is Body LG, 14/20 Regular (was Body MD, 12/16). The
+documented action Buttons are `size="lg"` (were `"md"`) - the Modal does not size
+the buttons you pass, so an app changes its own `actions`: Flow's `ConfirmDialog`
+and ParkPal's nearest-park dialog pass `size="md"` today. The Modal grows by about
+8px of body per two lines and 8px of button height.
+
 **0.73.0 -> 0.74.0** - Button and ButtonRound take `tone="safety"`; ConfirmButton is deprecated; the default tone is renamed `default`. InputTextarea starts one line tall and grows. **Breaking** (tokens removed).
 
 **Button** and **ButtonRound**: `tone` is now `default | safety | danger`.

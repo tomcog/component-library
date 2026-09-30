@@ -178,12 +178,3 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     placeholder two lines above the rule. Direction: Figma - redraw the cells at
     one row (`10 + 20 + 1 = 31px`, InputText's height) and say in the description
     that it grows with content.
-
-55. **Button's Danger Secondary Loading cells bind `Action/Base`.** DEFECT, 20
-    layers across the four Size=*, Level=Secondary, State=Loading, Tone=Danger
-    cells (icon, label, the three dots): they should be the danger label
-    (`Button/Danger/Secondary Label`), as the other Danger Secondary cells are.
-    Invisible today because Action and Danger resolve to the same red; wrong the
-    moment an app splits them. Found 2026-09-29 while cloning them for
-    Tone=Safety, whose copies bind `Button/Safety/Secondary Label` correctly.
-    Direction: Figma - rebind.

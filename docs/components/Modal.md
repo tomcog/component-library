@@ -14,8 +14,8 @@ Added in 0.63.0, drawn Figma-first.
   iconColor="danger"
   title="Delete this job?"
   actions={<>
-    <Button variant="tertiary" size="md" onClick={() => setConfirming(false)}>Cancel</Button>
-    <Button variant="primary" tone="danger" size="md" onClick={remove}>Delete</Button>
+    <Button variant="tertiary" size="lg" onClick={() => setConfirming(false)}>Cancel</Button>
+    <Button variant="primary" tone="danger" size="lg" onClick={remove}>Delete</Button>
   </>}
 >
   Acme's listing will be removed. This cannot be undone.
@@ -30,7 +30,8 @@ Added in 0.63.0, drawn Figma-first.
               iconColor "default" --ui-text-muted | "brand" --ui-brand
                         | "danger" --ui-danger (always, on a destructive Modal)
     title     Type/Heading - Bold 24/32, the library's one heading step
-    body      Body MD 12/16, Regular, --ui-text-default
+    body      Body LG 14/20, Regular, --ui-text-default
+    actions   LG Buttons (size="lg") - the component does not size them; this is the pattern
     surface   --ui-surface-raised, --ui-card-radius (8), --ui-shadow-float-2
     backdrop  --ui-modal-backdrop, black at 40%, both themes
     motion    in: from 150 below (--ui-modal-enter-offset), opacity 0 -> 1,
@@ -106,10 +107,10 @@ close. Code-only; see divergence 6 below.
 1. **The title is 24/32, drawn at 24/130% (31.2).** 32 puts it on the label
    ladder's own 4:3 rhythm, and px leading is what Figma can bind to a variable;
    the Figma text now uses `Type/Heading`, so the two agree. Decided with the user.
-2. **The body is Body MD - Regular 12/16 - drawn Medium at 12/130% (15.6).** 12/16
-   is the scale's step, 0.4px a line off the drawing, and the body is reading text,
-   so it takes the Regular body twin (since 0.65.0; Label MD, Medium, before). Figma
-   binds `Type/Body MD`.
+2. **The body is Body LG - Regular 14/20** (since 0.75.0, decided with the user
+   2026-09-29: one step up, and the action Buttons with it, MD -> LG). It was Body
+   MD 12/16 from 0.65.0 and Label MD before that; the original drawing was Medium
+   12/130%. Figma binds `Type/Body LG`, and its exposed Buttons are Size=LG.
 3. **The drawing's text was raw black.** Both sides now use `Text/Default`, so
    the Modal follows the theme.
 4. **The width is a maximum, not a size.** Figma poses 350; code caps at 350 and

@@ -37,14 +37,15 @@ export interface ModalProps
   iconColor?: ModalIconColor;
   /**
    * The buttons that answer it, right-aligned in the order given - dismiss
-   * first, answer last, as Figma draws Tertiary then Primary. Focus starts on the
+   * first, answer last, as Figma draws Tertiary then Primary. Pass them at
+   * `size="lg"`, one step up from the body text, as Figma draws them. Focus starts on the
    * first, so the safe choice is the one a stray Enter presses. A destructive
    * answer is `<Button variant="primary" tone="danger">`: red at rest with a
    * white label, and the danger colour on hover and press - and the icon is
    * then always `iconColor="danger"`.
    */
   actions?: ReactNode;
-  /** Figma: `Body`. Body MD (Regular), and the dialog's accessible description. */
+  /** Figma: `Body`. Body LG (Regular, 14/20), and the dialog's accessible description. */
   children?: ReactNode;
 }
 
@@ -59,8 +60,8 @@ export interface ModalProps
  *       iconColor="danger"
  *       title="Delete this job?"
  *       actions={<>
- *         <Button variant="tertiary" size="md" onClick={() => setConfirming(false)}>Cancel</Button>
- *         <Button variant="primary" tone="danger" size="md" onClick={remove}>Delete</Button>
+ *         <Button variant="tertiary" size="lg" onClick={() => setConfirming(false)}>Cancel</Button>
+ *         <Button variant="primary" tone="danger" size="lg" onClick={remove}>Delete</Button>
  *       </>}
  *     >
  *       Acme's listing will be removed. This cannot be undone.

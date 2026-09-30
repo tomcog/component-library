@@ -10,6 +10,11 @@ import { Row, Briefcase, House, Save, Trash2, PhotoGlyph, Undo, Redo, Outline, E
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
+/* The playground's starting role colours - distinct from each other and from
+   safety and danger - and TC Red, the library's own default for both. */
+const PLAYGROUND_ACTION = "#0000ff";
+const PLAYGROUND_BRAND = "#9802e8";
+const TC_RED = "#e51a38";
 const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_VARIANTS: ButtonRoundVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
@@ -49,7 +54,7 @@ const TYPE_SCALE: TypeStep[] = [
   label("lg", "Type/Label LG", "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill \u00b7 InputText value"),
   label("xl", "Type/Label XL", "Button XL"),
   ...(["sm", "md", "lg", "xl"] as const).map((k): TypeStep => ({
-    key: `body-${k}`, figma: `Type/Body ${k.toUpperCase()}`, used: k === "md" ? "Modal body \u00b7 the Regular twin of Label MD" : "Reading text - the Regular twin of the label step",
+    key: `body-${k}`, figma: `Type/Body ${k.toUpperCase()}`, used: k === "lg" ? "Modal body \u00b7 the Regular twin of Label LG" : "Reading text - the Regular twin of the label step",
     prefix: `--ui-type-body-${k}`, weight: "--ui-type-body-font-weight", sample: "Body text reads at this size",
   })),
   { key: "heading", figma: "Type/Heading", used: "Modal title", prefix: "--ui-type-heading", weight: "--ui-type-heading-font-weight", sample: "Delete this job?" },
@@ -266,10 +271,12 @@ function App() {
   }, []);
   const [shell, setShell] = useState("/settings");
   /* The two colour ROLES, settable apart - which is the whole point of their
-     names. Both default to TC Red because this library's brand is red and its
-     buttons are too; drag them apart and the split becomes visible. */
-  const [action, setAction] = useState("#e51a38");
-  const [brand, setBrand] = useState("#e51a38");
+     names. The playground opens with them blue and purple, so all four role
+     colours (action, brand, safety, danger) are distinct and a component
+     reading the wrong role shows it at a glance. The LIBRARY's tokens still
+     default both to TC Red; the TC button puts the page back on that. */
+  const [action, setAction] = useState(PLAYGROUND_ACTION);
+  const [brand, setBrand] = useState(PLAYGROUND_BRAND);
   const [face, setFace] = useState(FACES[0].value);
   const [bottomTab, setBottomTab] = useState("JOBS");
   const [buttonLabel, setButtonLabel] = useState("Button label");
@@ -349,9 +356,18 @@ function App() {
           </label>
           <button
             className="reset"
-            onClick={() => { setAction("#e51a38"); setBrand("#e51a38"); setFace(FACES[0].value); }}
+            onClick={() => { setAction(PLAYGROUND_ACTION); setBrand(PLAYGROUND_BRAND); setFace(FACES[0].value); }}
           >
             reset
+          </button>
+          {/* Both roles to TC Red - what an app gets from the library's own
+              defaults, where action, brand and danger are one red. */}
+          <button
+            className="reset"
+            title="Action and brand to TC Red, the library's own default"
+            onClick={() => { setAction(TC_RED); setBrand(TC_RED); }}
+          >
+            TC
           </button>
         </div>
       </header>
@@ -547,7 +563,7 @@ function App() {
           + "<dialog> opened with showModal() \u2014 the page behind goes inert under a 40% scrim, focus "
           + "stays inside and starts on the first action, and returns to the opener on close. Escape "
           + "closes it; a click outside does not. The title is the library's one heading step (Bold "
-          + "24/32); the body is Body MD (Regular). 350 wide at most, shrinking to the viewport less 16 a side."
+          + "24/32); the body is Body LG (Regular, 14/20), the action Buttons LG. 350 wide at most, shrinking to the viewport less 16 a side."
         }
       >
         <LiveModal />
@@ -563,8 +579,8 @@ function App() {
           iconColor="brand"
           title="Are you sure you want to do this thing?"
           actions={<>
-            <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Secondary action</Button>
-            <Button size="md" onClick={() => setModal(null)}>Primary action</Button>
+            <Button variant="tertiary" size="lg" onClick={() => setModal(null)}>Secondary action</Button>
+            <Button size="lg" onClick={() => setModal(null)}>Primary action</Button>
           </>}
         >
           Because if you do this thing, this is what will happen and you&rsquo;ll be stuck with the
@@ -577,8 +593,8 @@ function App() {
           iconColor="danger"
           title="Delete this job?"
           actions={<>
-            <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Cancel</Button>
-            <Button variant="primary" tone="danger" size="md" icon={<Trash2 />} onClick={() => setModal(null)}>Delete</Button>
+            <Button variant="tertiary" size="lg" onClick={() => setModal(null)}>Cancel</Button>
+            <Button variant="primary" tone="danger" size="lg" icon={<Trash2 />} onClick={() => setModal(null)}>Delete</Button>
           </>}
         >
           Senior Product Designer at Acme will be removed. This cannot be undone.
@@ -588,8 +604,8 @@ function App() {
           onClose={() => setModal(null)}
           title="Unsaved changes"
           actions={<>
-            <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Keep editing</Button>
-            <Button variant="secondary" tone="safety" size="md" onClick={() => setModal(null)}>Save</Button>
+            <Button variant="tertiary" size="lg" onClick={() => setModal(null)}>Keep editing</Button>
+            <Button variant="secondary" tone="safety" size="lg" onClick={() => setModal(null)}>Save</Button>
           </>}
         >
           You have edits that have not been saved yet.

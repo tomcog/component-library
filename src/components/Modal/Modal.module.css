@@ -153,11 +153,12 @@
   font-weight: var(--ui-type-heading-font-weight);
   color: var(--ui-modal-title-color, var(--ui-text-default));
 }
-/* Body MD - reading text, Regular (since 0.65.0; it was Label MD, Medium).
-   Figma: Type/Body MD. Same 12/16 box as Label MD. */
+/* Body LG - reading text, Regular, 14/20 (since 0.75.0; Body MD 12/16 from
+   0.65.0, Label MD before that). Figma: Type/Body LG. One step up so the body
+   reads comfortably under the 24/32 title and beside LG buttons. */
 .body {
-  font-size: var(--ui-type-body-md-font-size);
-  line-height: var(--ui-type-body-md-line-height);
+  font-size: var(--ui-type-body-lg-font-size);
+  line-height: var(--ui-type-body-lg-line-height);
   font-weight: var(--ui-type-body-font-weight);
   color: var(--ui-modal-body-color, var(--ui-text-default));
 }
