@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - Button and ButtonRound take `tone="safety"`; ConfirmButton is deprecated; the default tone is renamed `default`. InputTextarea starts one line tall and grows. **Breaking** (tokens removed).
+**0.73.0 -> 0.74.0** - Button and ButtonRound take `tone="safety"`; ConfirmButton is deprecated; the default tone is renamed `default`. InputTextarea starts one line tall and grows. **Breaking** (tokens removed).
 
 **Button** and **ButtonRound**: `tone` is now `default | safety | danger`.
 `safety` - the affirmative half of a decision - recolours every state of every
