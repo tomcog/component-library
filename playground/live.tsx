@@ -654,13 +654,14 @@ const BOTTOM_ITEMS = [
   { label: "Saved", icon: Save },
   { label: "Layers", icon: Layers },
   { label: "Search", icon: Magnifier },
+  { label: "Notes", icon: FileText },
 ];
 
 export function LiveBottomNav() {
   const [count, setCount] = useState(4);
   const [current, setCurrent] = useState("Jobs");
   return (
-    <Live controls={<Num label="items" value={count} min={2} max={5} onChange={setCount} />}>
+    <Live controls={<Num label="items" value={count} min={2} max={6} onChange={setCount} />}>
       <div style={{ width: 375, border: "1px solid var(--ui-neutral-150)", borderRadius: 8, overflow: "hidden" }}>
         <BottomNav aria-label="Sections, live">
           {BOTTOM_ITEMS.slice(0, count).map((t) => (

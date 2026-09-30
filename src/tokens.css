@@ -631,6 +631,13 @@
   --ui-bottom-nav-chip-size: var(--ui-button-round-md-size);
   --ui-bottom-nav-chip-icon-size: var(--ui-button-round-md-icon-size);
   --ui-bottom-nav-chip-icon-stroke: var(--ui-button-round-md-icon-stroke);
+  /* Tap feedback (0.76.0, code-only). The chip shrinks to PRESS-SCALE while a
+     finger is down, and a chip that BECOMES current pops in from POP-FROM with
+     a small overshoot - size only, never colour, so nothing lags the tap.
+     Durations are the system's: press --ui-motion-fast, pop --ui-motion-base. */
+  --ui-bottom-nav-press-scale: 0.88;
+  --ui-bottom-nav-pop-from: 0.7;
+  --ui-bottom-nav-pop-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* LeftRail. Figma: `LeftRail-NoIcons` (482:2517) and `LeftRail-Icons`
      (458:2612) - the app shell's left column: a brand slot over a NavRail.

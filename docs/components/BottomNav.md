@@ -28,6 +28,28 @@ Hover | Current).
 | `Surface/Raised` | `.bar` ground (hook `--ui-bottom-nav-bg`) |
 | `Border/Subtle` | `.bar` rule (hook `--ui-bottom-nav-rule`) |
 
+## At most six items (0.76.0)
+
+A bar holds up to **six** `BottomNavItem`s - decided with the user 2026-09-29. Past
+that a phone-width bar has no room for the captions. More are still rendered (a
+silently dropped destination would be worse) but `BottomNav` warns in dev: move the
+rest behind a More destination.
+
+## Tap feedback: press and pop (0.76.0)
+
+Asked for by the user 2026-09-29. Two motions, **size only** - the chip's colours
+still change instantly, because on a touched tab bar a colour fade only ever reads
+as lag (the reason it had no motion before):
+
+    press   while a finger is down the chip shrinks to 0.88
+            (--ui-bottom-nav-press-scale), --ui-motion-fast, and springs back
+    pop     a chip that BECOMES current grows from 0.7 (--ui-bottom-nav-pop-from)
+            to 1 with a small overshoot (--ui-bottom-nav-pop-easing), --ui-motion-base
+
+The pop runs whenever `current` is newly applied - so on the tab tapped, and also
+on the current tab when the bar first mounts. Both are removed under
+`prefers-reduced-motion`. Code-only: Figma draws no motion.
+
 ## The bar paints itself but does not place itself
 
 There is no `position: fixed` and no safe-area inset. The app pins the bar to the

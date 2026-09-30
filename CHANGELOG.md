@@ -9,6 +9,16 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - BottomNav: tap feedback (press and pop), and at most six items.
+
+**BottomNav** animates a tap: the chip shrinks while pressed and the newly current
+chip pops in with a small overshoot - size only, colours still change instantly.
+New tokens `--ui-bottom-nav-press-scale` (0.88), `--ui-bottom-nav-pop-from` (0.7),
+`--ui-bottom-nav-pop-easing`. Removed under reduced motion.
+
+**BottomNav**: at most six items. More still render, but it warns in dev. Nothing
+changes visually; no app passes more than six.
+
 **0.74.0 -> 0.75.0** - Modal: the body is one step larger (Body LG), and its Buttons go to LG.
 
 **Modal**: the body text is Body LG, 14/20 Regular (was Body MD, 12/16). The

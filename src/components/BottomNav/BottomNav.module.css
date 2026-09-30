@@ -52,9 +52,10 @@
    resizing ButtonRound carries both. Its fills are the rail's, not
    ButtonRound's: there is no transparent resting state in ButtonRound.
 
-   Deliberately NOT transitioned, where NavRail eases its chip. A tab bar is
-   touched, not hovered: the state has already changed by the time a finger
-   lifts, so the fade only ever shows as lag. */
+   Its COLOURS are deliberately not transitioned, where NavRail eases its chip.
+   A tab bar is touched, not hovered: the state has already changed by the time
+   a finger lifts, so a fade only ever shows as lag. What moves instead is
+   SIZE - see the tap feedback at the end. */
 .chip {
   flex: none;
   display: inline-flex;
@@ -123,4 +124,31 @@
   background: var(--ui-bottom-nav-chip-bg-current,
               var(--ui-brand-lighter, color-mix(in srgb, var(--ui-brand) 15%, var(--ui-white))));
   color: var(--ui-bottom-nav-chip-icon-current, var(--ui-brand));
+}
+
+/* -- tap feedback (0.76.0, code-only) -------------------------------------
+   Two size-only motions, so the colour is never late. PRESS: while a finger
+   (or the mouse) is down the chip shrinks, answering the touch at once, and
+   springs back on release. POP: a chip that becomes current grows in from
+   --ui-bottom-nav-pop-from with a small overshoot - the animation starts
+   whenever .current is newly applied, so it plays on the tab you tapped, in its
+   final colour from the first frame. The standalone `scale` property, not
+   `transform`. Decorative, so reduced motion removes both. */
+.chip {
+  transition: scale var(--ui-motion-fast) ease-out;
+}
+.item:active .chip {
+  scale: var(--ui-bottom-nav-press-scale);
+}
+.item.current .chip {
+  animation: ui-bottom-nav-pop var(--ui-motion-base) var(--ui-bottom-nav-pop-easing);
+}
+@keyframes ui-bottom-nav-pop {
+  from { scale: var(--ui-bottom-nav-pop-from); }
+  to { scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip { transition: none; }
+  .item:active .chip { scale: none; }
+  .item.current .chip { animation: none; }
 }
