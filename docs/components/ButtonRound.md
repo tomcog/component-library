@@ -4,9 +4,9 @@
 > another section, it means the old single CLAUDE.md; that section now lives in `docs/`
 > or `CHANGELOG.md` under the same heading.
 
-Circular icon-only action button: **Button's four Levels and its danger tone, on a
+Circular icon-only action button: **Button's four Levels and its tones, on a
 circle** (since 0.73.0). `variant` = primary | secondary | tertiary | ghost, plus
-`outline-light` for a button over a photo; `tone` = primary | danger; `size` =
+`outline-light` for a button over a photo; `tone` = default | safety | danger; `size` =
 xl | lg | md | sm. Each Level's rest, hover, press and disabled are Button's own,
 with the same colour expressions, so a round and a rectangular button of the same
 Level behave identically. Figma: the `Button/Round` set (`220:11857`) - see
@@ -54,9 +54,13 @@ Figma `914:678` (Button's four Levels) as the reference.
 - **The default is `secondary`, not `primary` as on Button.** A row of round
   toolbar actions rests tinted, as it always has; solid discs by default would make
   every toolbar the loudest thing on the page.
-- **`tone="danger"`** is Button's: every state of every Level moves from the action
-  colour to danger, at rest included. Disabled and the focus ring are untouched.
-  Ignored by `outline-light`.
+- **`tone`** is Button's: `danger` or `safety` moves every state of every Level from
+  the action colour to that role colour, at rest included; `default` (named
+  `primary` until 0.74.0 - still accepted, warns) is the action colour. Safety's
+  glyph on a light ground is `--ui-safety-darker`, the green itself being ~2:1 on
+  white. Disabled and the focus ring are untouched. Ignored by `outline-light`.
+  An icon-only ConfirmButton is `<ButtonRound tone>` since 0.74.0 - `filled` is
+  `secondary`, `ghost` is `tertiary`.
 - **The ghost's ring is an inset box-shadow**, as Button's is, so it costs no
   layout: every Level is exactly the size of its neighbours.
 - **Hooks** are `--ui-button-round-<variant>-<part>`, parts `bg`, `icon`,
@@ -135,11 +139,11 @@ yet a `State` in the set. That, and the raw/primitive colours, are divergence #4
 Until 0.36.0 this component had `tone="primary" | "confirm" | "danger"`, which
 recoloured the HOVER pair only; `confirm` and `danger` moved to
 [ConfirmButton](ConfirmButton.md), whose job is a confirmation coloured at rest.
-That reasoning still holds for ConfirmButton. The `tone` added in 0.73.0 is a
-different thing - Button's, colouring every state at rest included - and exists
-because the user asked for ButtonRound to follow Button's conventions (2026-09-29).
-The "do not reintroduce a tone" rule this doc carried is retired with it.
-ConfirmButton remains the component for a confirmation.
+The `tone` added in 0.73.0 is a different thing - Button's, colouring every state
+at rest included - and exists because the user asked for ButtonRound to follow
+Button's conventions (2026-09-29). The "do not reintroduce a tone" rule this doc
+carried is retired with it. In 0.74.0 `safety` joined `danger`, and ConfirmButton
+was deprecated: a confirmation is now a Button or ButtonRound with a tone.
 
 ## There are two round-button sets; only one is live
 

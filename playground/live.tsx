@@ -5,16 +5,16 @@
 import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import {
-  BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect,
+  BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect,
   InputText, InputTextarea, LayerController, LeftRail, Logo, Modal, Nav, NavDropdown,
   NavDropdownItem, NavItem, NavRail, NavSlat, Pill, Radio, RadioGroup, Segment, SegmentedControl,
   Spinner, Tab, Tabs, Tag, Toolbar, ToolbarExpander, ToolbarGroup,
 } from "../src";
 import type {
   ButtonRoundSize, ButtonRoundTone, ButtonRoundVariant, ButtonSize, ButtonTone, ButtonVariant, CardVariant,
-  CheckboxSize, ConfirmButtonSize, ConfirmButtonTone, ConfirmButtonVariant, InputTextSize,
+  CheckboxSize, InputTextSize,
   LogoWeight, ModalIconColor, NavSlatLevel, RadioSize, SegmentedControlSize,
-  SegmentedControlTone, SegmentedControlVariant, TabsSize, ToolbarOrientation, ToolbarTone,
+  SegmentedControlTone, SegmentedControlVariant, ToolbarOrientation, ToolbarTone,
 } from "../src";
 import {
   Briefcase, Eye, FileGlyph, FileText, FolderOpen, Grid, House, Images, Info, Layers,
@@ -96,7 +96,7 @@ const pale: CSSProperties = { display: "flex", alignItems: "flex-start", padding
 // The label is lifted: it also drives the Button section's variant grid.
 export function LiveButton({ label, setLabel }: { label: string; setLabel: (v: string) => void }) {
   const [variant, setVariant] = useState<ButtonVariant>("primary");
-  const [tone, setTone] = useState<ButtonTone>("primary");
+  const [tone, setTone] = useState<ButtonTone>("default");
   const [size, setSize] = useState<ButtonSize>("lg");
   const [icon, setIcon] = useState(true);
   const [iconEnd, setIconEnd] = useState(false);
@@ -107,7 +107,7 @@ export function LiveButton({ label, setLabel }: { label: string; setLabel: (v: s
       controls={<>
         <Pick label="variant" value={variant} options={["primary", "secondary", "tertiary", "ghost"]} onChange={setVariant} />
         <Pick label="size" value={size} options={SIZES4} onChange={setSize} />
-        <Pick label="tone" value={tone} options={["primary", "danger"]} onChange={setTone} />
+        <Pick label="tone" value={tone} options={["default", "safety", "danger"]} onChange={setTone} />
         <Text label="label" value={label} onChange={setLabel} />
         <Check label="icon" checked={icon} onChange={setIcon} />
         <Check label="iconEnd" checked={iconEnd} onChange={setIconEnd} />
@@ -121,7 +121,7 @@ export function LiveButton({ label, setLabel }: { label: string; setLabel: (v: s
         size={size}
         loading={loading}
         disabled={disabled}
-        icon={icon ? (tone === "danger" ? <Trash2 /> : <House />) : undefined}
+        icon={icon ? (tone === "danger" ? <Trash2 /> : tone === "safety" ? <Save /> : <House />) : undefined}
         iconEnd={iconEnd ? <Layers /> : undefined}
       >
         {label}
@@ -133,17 +133,17 @@ export function LiveButton({ label, setLabel }: { label: string; setLabel: (v: s
 export function LiveButtonRound() {
   const [variant, setVariant] = useState<ButtonRoundVariant>("secondary");
   const [size, setSize] = useState<ButtonRoundSize>("lg");
-  const [tone, setTone] = useState<ButtonRoundTone>("primary");
+  const [tone, setTone] = useState<ButtonRoundTone>("default");
   const [disabled, setDisabled] = useState(false);
   const button = (
-    <ButtonRound variant={variant} size={size} tone={tone} disabled={disabled} icon={tone === "danger" ? <Trash2 /> : <House />} aria-label={tone === "danger" ? "Delete" : "Home"} />
+    <ButtonRound variant={variant} size={size} tone={tone} disabled={disabled} icon={tone === "danger" ? <Trash2 /> : tone === "safety" ? <Save /> : <House />} aria-label={tone === "danger" ? "Delete" : tone === "safety" ? "Save" : "Home"} />
   );
   return (
     <Live
       controls={<>
         <Pick label="variant" value={variant} options={["primary", "secondary", "tertiary", "ghost", "outline-light"]} onChange={setVariant} />
         <Pick label="size" value={size} options={SIZES4} onChange={setSize} />
-        <Pick label="tone" value={tone} options={["primary", "danger"]} onChange={setTone} />
+        <Pick label="tone" value={tone} options={["default", "safety", "danger"]} onChange={setTone} />
         <Check label="disabled" checked={disabled} onChange={setDisabled} />
       </>}
     >
@@ -153,38 +153,6 @@ export function LiveButtonRound() {
           {button}
         </div>
       ) : button}
-    </Live>
-  );
-}
-
-export function LiveConfirmButton() {
-  const [tone, setTone] = useState<ConfirmButtonTone>("safety");
-  const [variant, setVariant] = useState<ConfirmButtonVariant>("filled");
-  const [size, setSize] = useState<ConfirmButtonSize>("lg");
-  const [label, setLabel] = useState("Save");
-  const [icon, setIcon] = useState(true);
-  const [disabled, setDisabled] = useState(false);
-  return (
-    <Live
-      controls={<>
-        <Pick label="tone" value={tone} options={["safety", "danger"]} onChange={setTone} />
-        <Pick label="variant" value={variant} options={["filled", "ghost"]} onChange={setVariant} />
-        <Pick label="size" value={size} options={SIZES4} onChange={setSize} />
-        <Text label="label" value={label} onChange={setLabel} />
-        <Check label="icon" checked={icon} onChange={setIcon} />
-        <Check label="disabled" checked={disabled} onChange={setDisabled} />
-      </>}
-    >
-      <ConfirmButton
-        tone={tone}
-        variant={variant}
-        size={size}
-        disabled={disabled}
-        icon={icon ? (tone === "danger" ? <Trash2 /> : <Save />) : undefined}
-        aria-label={label ? undefined : tone === "danger" ? "Delete" : "Save"}
-      >
-        {label || undefined}
-      </ConfirmButton>
     </Live>
   );
 }
@@ -539,24 +507,18 @@ const TAB_ITEMS: [string, string, ReactNode][] = [
 ];
 
 export function LiveTabs() {
-  const [size, setSize] = useState<TabsSize>("lg");
   const [icons, setIcons] = useState(true);
-  const [badge, setBadge] = useState(false);
-  const [trailing, setTrailing] = useState(false);
   const [active, setActive] = useState("details");
   return (
     <Live
       controls={<>
-        <Pick label="size" value={size} options={["xl", "lg"]} onChange={setSize} />
         <Check label="icon" checked={icons} onChange={setIcons} />
-        <Check label="badge (Brief)" checked={badge} onChange={setBadge} />
-        <Check label="trailing" checked={trailing} onChange={setTrailing} />
       </>}
     >
       <div style={{ width: 576 }}>
-        <Tabs size={size} aria-label="Job views, live" trailing={trailing ? <Button size="sm" variant="tertiary">Edit</Button> : undefined}>
+        <Tabs aria-label="Job views, live">
           {TAB_ITEMS.map(([id, label, glyph]) => (
-            <Tab key={id} icon={icons ? glyph : undefined} badge={badge && id === "brief" ? 3 : undefined} active={active === id} onClick={() => setActive(id)}>
+            <Tab key={id} icon={icons ? glyph : undefined} active={active === id} onClick={() => setActive(id)}>
               {label}
             </Tab>
           ))}

@@ -147,6 +147,32 @@
   --ui-button-round-ghost-icon-active: var(--ui-danger-darker);
 }
 
+/* -- tone="safety" --------------------------------------------------------
+   Button's safety tone (since 0.74.0; this was ConfirmButton's job). As
+   danger, but the green is light - about 2:1 on white - so a glyph on a light
+   ground (the tint, tertiary, ghost) is --ui-safety-darker, and the resting
+   tint is Safety/Lighter, what ConfirmButton rested on. */
+.safety {
+  --ui-button-round-primary-bg: var(--ui-safety);
+  --ui-button-round-primary-icon: var(--ui-text-on-safety);
+  --ui-button-round-primary-bg-hover: color-mix(in srgb, var(--ui-safety), black 22.3%);
+  --ui-button-round-primary-bg-active: color-mix(in srgb, var(--ui-safety), black 40.7%);
+
+  --ui-button-round-secondary-bg: var(--ui-safety-lighter);
+  --ui-button-round-secondary-icon: var(--ui-safety-darker);
+  --ui-button-round-secondary-bg-hover: color-mix(in srgb, var(--ui-safety), black 22.3%);
+  --ui-button-round-secondary-icon-hover: var(--ui-text-on-safety);
+  --ui-button-round-secondary-bg-active: color-mix(in srgb, var(--ui-safety), black 40.7%);
+  --ui-button-round-secondary-icon-active: var(--ui-text-on-safety);
+
+  --ui-button-round-ghost-icon: var(--ui-safety-darker);
+  --ui-button-round-ghost-border: var(--ui-safety-darker);
+  --ui-button-round-ghost-bg-hover: color-mix(in srgb, var(--ui-safety) 15%, var(--ui-surface-raised));
+  --ui-button-round-ghost-icon-hover: var(--ui-safety-darker);
+  --ui-button-round-ghost-bg-active: var(--ui-safety-lighter);
+  --ui-button-round-ghost-icon-active: var(--ui-safety-darker);
+}
+
 /* -- variant="outline-light" --------------------------------- */
 /* For a button laid over a photo or video. Figma: Button/Round instances over
    the ParkPal hero image - 890:1688 at rest, 892:1700 on hover. Not yet a

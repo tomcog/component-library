@@ -68,7 +68,34 @@ In Figma this is `State=Loading` (60 variants), **not** a boolean. A Figma boole
 - **Focus is code-only.** `.button:focus-visible` has a 2px primary outline with 2px offset. Figma models no Focus state, and the buttons carry **no strokes in any variant** — that is the design's intent. Figma also has no equivalent of `outline-offset`, so an `OUTSIDE` stroke misrepresents the ring (it reads as invisible on Primary, primary-on-primary). Don't add focus variants or strokes to the Figma file.
 - ~~Dark mode is code-only.~~ No longer true: the Figma collection has Light and Dark modes, carrying the same mapping as `tokens.css`. See "Light and dark are a semantic-tier concern" below.
 
-## `tone="danger"` is red in every state (0.65.0)
+## Tones: `default | safety | danger` (0.74.0)
+
+`tone` says what the button does. `default` (the action colour; it was named
+`primary` until 0.74.0, which clashed with `variant="primary"` - the old name still
+works and warns) · `danger`, destructive · `safety`, the affirmative half of a
+decision. Since 0.74.0 a tone is also how a confirmation is drawn: ConfirmButton is
+deprecated, and `<Button variant="secondary" tone="safety">Save</Button>` is what
+its labelled `filled` shape was (its `ghost` is `variant="tertiary"`). Decided with
+the user 2026-09-29. ButtonRound carries the same three tones.
+
+### `tone="safety"`
+
+The same structure as danger, one difference: **the green is light** (`#2aca25`,
+about 2:1 on white), so wherever it sits on a light ground as text or glyph it is
+`--ui-safety-darker`.
+
+| variant | rest | hover / press |
+|---|---|---|
+| primary | solid `--ui-safety`, `--ui-text-on-safety` | safety darkened 22.3% / 40.7% |
+| secondary | `--ui-safety-lighter` tint, `--ui-safety-darker` label | safety darkened 22.3% / 40.7%, on-safety label |
+| tertiary | `--ui-safety-darker` text | 15% safety tint / Safety/Lighter under Safety/Darker |
+| ghost | `--ui-safety-darker` rule and text | as tertiary, the rule dropping away |
+
+White on the solid green is 2.2:1 - see `--ui-text-on-safety` in `tokens.css` for
+the cost and how an app moves it. Figma: `Tone=Safety` is not drawn yet
+(divergence #54).
+
+### `tone="danger"` is red in every state (0.65.0)
 
 `tone="danger"` recolours the variant from the action role to the **danger** role
 in every state - at rest as well as on hover and press - so a destructive button
@@ -84,7 +111,7 @@ always reads red, whatever `--ui-action` is. Each variant keeps its shape:
 Disabled is untouched (grey) and the focus ring stays `--ui-action`. Before 0.65.0
 the tone touched hover and press only, so a Delete rested in the variant's action
 colour and turned red when reached for; that "quiet until reached for" contract is
-gone. ConfirmButton remains the quieter confirmation (a pale tint at rest).
+gone.
 
 Figma: `Button`'s `Tone` = Default | Danger, drawn on **Default, Hover, Pressed and
 Loading** at every Level and Size (64 cells). The grounds bind `Button/Danger/*`:

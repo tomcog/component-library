@@ -15,27 +15,34 @@ declare const process: { env: { NODE_ENV?: string } };
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 /**
- * What the button DOES, not what colour it is - the same axis `ButtonRound`
- * carries, with the same contract: it changes the HOVER and PRESSED pairs and
- * leaves the resting appearance to the variant.
+ * What the button DOES, not what colour it is. `danger` is a destructive action
+ * (Delete, Remove, Discard); `safety` the affirmative half of a decision (Save,
+ * Confirm, Keep). Either recolours EVERY state of the variant from the action
+ * colour to its role colour, at rest included, each variant keeping its shape.
  *
- * A tone, NOT a fifth variant, and the distinction is the point: danger cuts
- * ACROSS the variants rather than joining them. A destructive action can be a
- * filled button or a quiet ghost one, and both are still destructive - as a
- * fifth variant it could only ever be one of them.
+ * A tone, NOT a fifth variant: it cuts ACROSS the variants. A destructive
+ * action can be a loud primary or a quiet ghost and is destructive either way.
+ *
+ * Since 0.74.0 this is also what `ConfirmButton` was: a confirmation is a
+ * Button (or ButtonRound) with a tone - `secondary` for ConfirmButton's tinted
+ * disc, `tertiary` for its glyph alone. `default` was called `primary` until
+ * 0.74.0, which clashed with `variant="primary"`; `"primary"` still works and
+ * warns in dev.
  */
-export type ButtonTone = "primary" | "danger";
+export type ButtonTone = "default" | "safety" | "danger";
+
 export type ButtonSize = "xl" | "lg" | "md" | "sm";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Figma: Level */
   variant?: ButtonVariant;
   /**
-   * `danger` turns whichever `variant` this is red on HOVER and PRESS, leaving
-   * its resting appearance alone - the same contract `ButtonRound`'s tones
-   * carry. Defaults to `primary`, which changes nothing.
+   * Figma: Tone. `danger` or `safety` recolours every state of the variant, at
+   * rest included, into that role colour - the same tones `ButtonRound`
+   * carries. Defaults to `default`, the action colour. `"primary"` is the
+   * pre-0.74.0 name for `default`.
    */
-  tone?: ButtonTone;
+  tone?: ButtonTone | "primary";
   /** Figma: Size */
   size?: ButtonSize;
   /**
@@ -72,7 +79,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     variant = "primary",
-    tone = "primary",
+    tone: toneProp = "default",
     size = "lg",
     icon,
     iconEnd,
@@ -102,6 +109,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           'Icons are aria-hidden, so pass aria-label="…" describing the action.',
       );
     }
+    if (toneProp === "primary") {
+      console.warn(
+        '[@tomcoggia/ui] Button: tone="primary" was renamed "default" in 0.74.0. It still works; rename it.',
+      );
+    }
     if (asChild && !child) {
       console.warn(
         "[@tomcoggia/ui] Button: `asChild` expects exactly one React element child.",
@@ -118,11 +130,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       </span>
     ) : null;
 
+  const tone: ButtonTone = toneProp === "primary" ? "default" : toneProp;
   const classes = [
     styles.button,
     styles[size],
     styles[variant],
-    tone === "danger" ? styles.danger : null,
+    tone === "default" ? null : styles[tone],
     loading ? styles.loading : null,
     className,
     child ? child.props.className : null,

@@ -25,8 +25,13 @@ export type ButtonRoundSize = "xl" | "lg" | "md" | "sm";
  */
 export type ButtonRoundVariant = "primary" | "secondary" | "tertiary" | "ghost" | "outline-light";
 
-/** Button's tone, on a round button: `danger` recolours every Level's every state. */
-export type ButtonRoundTone = "primary" | "danger";
+/**
+ * Button's tone, on a round button: `danger` (destructive) or `safety` (the
+ * affirmative half of a decision) recolours every Level's every state, at rest
+ * included. An icon-only ConfirmButton is this since 0.74.0. `default` was
+ * `primary` until 0.74.0; `"primary"` still works and warns in dev.
+ */
+export type ButtonRoundTone = "default" | "safety" | "danger";
 
 export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */
@@ -42,11 +47,12 @@ export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement
    */
   variant?: ButtonRoundVariant | "filled";
   /**
-   * Figma: Tone. `danger` is the destructive action - every state of every
-   * Level moves from the action colour to danger, at rest included, exactly
-   * as on Button. Ignored by `outline-light`. Defaults to `primary`.
+   * Figma: Tone. `danger` (destructive) or `safety` (affirmative) moves every
+   * state of every Level from the action colour to that role colour, at rest
+   * included, exactly as on Button. Ignored by `outline-light`. Defaults to
+   * `default`.
    */
-  tone?: ButtonRoundTone;
+  tone?: ButtonRoundTone | "primary";
   /** Render the single child element, such as an anchor, as the control. */
   asChild?: boolean;
 }
@@ -61,7 +67,7 @@ const VARIANT_CLASS: Record<ButtonRoundVariant, string | undefined> = {
 
 export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
   function ButtonRound(
-    { icon, size = "lg", variant: variantProp = "secondary", tone = "primary", type = "button", className, asChild = false, children, ...props },
+    { icon, size = "lg", variant: variantProp = "secondary", tone: toneProp = "default", type = "button", className, asChild = false, children, ...props },
     ref,
   ) {
     const child =
@@ -87,13 +93,19 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
           "It still works; rename it.",
       );
     }
+    if (process.env.NODE_ENV !== "production" && toneProp === "primary") {
+      console.warn(
+        '[@tomcoggia/ui] ButtonRound: tone="primary" was renamed "default" in 0.74.0. It still works; rename it.',
+      );
+    }
     const variant: ButtonRoundVariant = variantProp === "filled" ? "secondary" : variantProp;
+    const tone: ButtonRoundTone = toneProp === "primary" ? "default" : toneProp;
 
     const classes = [
       styles.button,
       styles[size],
       VARIANT_CLASS[variant],
-      tone === "danger" && variant !== "outline-light" ? styles.danger : null,
+      tone !== "default" && variant !== "outline-light" ? styles[tone] : null,
       className,
       child?.props.className,
     ]

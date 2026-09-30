@@ -9,6 +9,21 @@ Ghost | Disabled (80 cells), plus an `Icon` instance swap and, for Label, a `Lab
 text and an `Icon Start?` boolean. Added in 0.36.0; the labelled shape, the sizes
 and Disabled were drawn on 2026-09-27.
 
+> **Deprecated in 0.74.0.** A confirmation is now a `Button` or `ButtonRound` with
+> `tone="safety"` or `tone="danger"` (decided with the user 2026-09-29). The
+> component still exists for one release as a wrapper that renders exactly that -
+> a label means `Button`, none means `ButtonRound`; `variant="filled"` becomes
+> `"secondary"`, `"ghost"` becomes `"tertiary"` - and warns once in dev. What moves
+> in the swap: hover and press follow Button's ladder (the fill darkening from the
+> role colour) rather than this component's own Lighter/Base/Darker steps, and the
+> `--ui-confirm-button-*` hooks and geometry tokens are gone. Everything below
+> describes the component as it was, and is kept for its reasoning.
+>
+>     <ConfirmButton tone="safety" icon={<Save />} aria-label="Save" />
+>     -> <ButtonRound tone="safety" icon={<Save />} aria-label="Save" />
+>     <ConfirmButton tone="danger" variant="ghost">Remove</ConfirmButton>
+>     -> <Button tone="danger" variant="tertiary">Remove</Button>
+
 ```tsx
 <ConfirmButton tone="safety" icon={<Check />} aria-label="Save changes" />
 <ConfirmButton tone="danger" icon={<Trash2 />} aria-label="Delete job" />

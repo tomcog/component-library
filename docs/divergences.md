@@ -179,3 +179,21 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     (another component's variable). Direction: Figma - rebuild as `Level` x `Size`
     x `State` (Default | Hover | Pressed | Disabled) x `Tone`, as `Button` is,
     binding `Button/Round/*` variables that alias semantics; keep outline-light.
+
+53. **`InputTextarea` is drawn three rows tall; code defaults to one.** DEFECT, the
+    whole set: code 0.74.0 made `rows` default to 1 with `autoResize` on, so an
+    empty field sits like an InputText, text just above the rule. The
+    `InputTextarea` set (`638:2383`) still draws `rows={3}` (71px) with the
+    placeholder two lines above the rule. Direction: Figma - redraw the cells at
+    one row (`10 + 20 + 1 = 31px`, InputText's height) and say in the description
+    that it grows with content.
+
+54. **`Button` has no `Tone=Safety`, and `ConfirmButton` is still a live set.**
+    DEFECT: code 0.74.0 gave Button (and ButtonRound) `tone` = default | safety |
+    danger and deprecated ConfirmButton. Figma's `Button` (`135:9598`) `Tone` is
+    Default | Danger only, and the `ConfirmButton` set (`735:398`) is still
+    published as a component in its own right. Direction: Figma - add
+    `Tone=Safety` to Button, drawn as the Danger cells are, bound to
+    `Button/Safety/*` variables aliasing `Safety/*` (text on light grounds
+    `Safety/Darker`); add it to `Button/Round` with #52; mark ConfirmButton
+    deprecated in its description (not deleted - instances exist).

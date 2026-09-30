@@ -325,9 +325,7 @@
    and press follow each variant's own ladder in the danger colour.
 
    Before 0.65.0 the tone touched hover and press only, so a Delete rested in
-   the variant's action colour and turned red when reached for. That is what
-   ConfirmButton's pale-at-rest confirmation and this tone are now kept apart
-   by: this one is loud about being destructive from the start.
+   the variant's action colour and turned red when reached for.
 
    Everything goes through the component's own override hooks, which is what
    lets one tone reach all four variants, and each mix mirrors the one the
@@ -375,4 +373,43 @@
 .danger.secondary:hover:not(:disabled),
 .danger.secondary:active:not(:disabled) {
   color: var(--ui-button-danger-text-on-fill, var(--ui-text-on-danger));
+}
+
+/* -- tone="safety" ------------------------------------------- */
+/* The affirmative half of a decision - Save, Confirm, Keep - in whichever
+   variant it is drawn as (since 0.74.0; this was ConfirmButton's job). The
+   same structure as danger: every state of every variant, through the same
+   hooks, each keeping its own ladder.
+
+   One real difference, which is contrast: --ui-safety is a LIGHT green
+   (#2aca25), about 2:1 on white - unreadable as text. So wherever the green
+   sits on a light ground as text or glyph (Secondary's label on its tint,
+   Tertiary and Ghost at rest and on hover) it is --ui-safety-darker, as
+   ConfirmButton's resting glyph was. Fills keep --ui-safety itself. The
+   resting tint is Safety/Lighter (the named literal), which is what
+   ConfirmButton rested on, rather than a 15% mix. White on the solid green is
+   2.2:1; --ui-text-on-safety records that cost and how an app can move it. */
+.safety {
+  --ui-button-primary-bg: var(--ui-safety);
+  --ui-button-primary-text: var(--ui-text-on-safety);
+  --ui-button-primary-bg-hover: color-mix(in srgb, var(--ui-safety), black 22.3%);
+  --ui-button-primary-bg-active: color-mix(in srgb, var(--ui-safety), black 40.7%);
+
+  --ui-button-secondary-bg: var(--ui-safety-lighter);
+  --ui-button-secondary-text: var(--ui-safety-darker);
+  --ui-button-secondary-bg-hover: color-mix(in srgb, var(--ui-safety), black 22.3%);
+  --ui-button-secondary-bg-active: color-mix(in srgb, var(--ui-safety), black 40.7%);
+
+  --ui-button-ghost-text: var(--ui-safety-darker);
+  --ui-button-ghost-border: var(--ui-safety-darker);
+  --ui-button-ghost-bg-hover: color-mix(in srgb, var(--ui-safety) 15%, var(--ui-surface-raised));
+  --ui-button-ghost-text-hover: var(--ui-safety-darker);
+  /* Press: Lighter under Darker, as danger's ghost press is - a pair that
+     holds in both themes. */
+  --ui-button-ghost-bg-active: var(--ui-safety-lighter);
+  --ui-button-ghost-text-active: var(--ui-safety-darker);
+}
+.safety.secondary:hover:not(:disabled),
+.safety.secondary:active:not(:disabled) {
+  color: var(--ui-button-safety-text-on-fill, var(--ui-text-on-safety));
 }

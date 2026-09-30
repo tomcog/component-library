@@ -27,8 +27,11 @@ export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaE
    */
   label?: ReactNode;
   /**
-   * Grow the box to fit its content instead of scrolling, and drop the resize
-   * grabber. `rows` still sets the starting height, so it is the minimum.
+   * Grow the box to fit its content instead of scrolling. `rows` still sets
+   * the starting height, so it is the minimum. Defaults to `true` (since
+   * 0.74.0): with the default single row, an empty field looks exactly like an
+   * InputText - its text just above the rule - and each new line grows it.
+   * Pass `false` for a fixed box that scrolls.
    */
   autoResize?: boolean;
   /**
@@ -40,8 +43,12 @@ export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaE
 }
 
 /**
- * A multi-line field: InputText's underlined box with its label beneath it,
- * made as tall as its `rows`.
+ * A multi-line field: InputText's underlined box with its label beneath it.
+ * It starts one line tall - identical to an InputText while empty, its text
+ * just above the rule - and grows a line at a time as content arrives
+ * (`rows` = 1 and `autoResize` by default, since 0.74.0). A textarea lays its
+ * text out from the TOP, so a taller empty box would leave blank lines between
+ * the text and the rule; pass `rows` only where that starting height is wanted.
  *
  * There are deliberately NO icon slots, unlike InputText and InputSelect. A
  * leading glyph is anchored to a single line of text; beside a three-line box
@@ -55,7 +62,7 @@ export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaE
  */
 export const InputTextarea = forwardRef<HTMLTextAreaElement, InputTextareaProps>(
   function InputTextarea(
-    { label, hideLabel = false, size = "lg", autoResize = false, id, rows = 3, className, ...props },
+    { label, hideLabel = false, size = "lg", autoResize = true, id, rows = 1, className, ...props },
     ref,
   ) {
     const autoId = useId();

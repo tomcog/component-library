@@ -2,18 +2,16 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
 import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
-import type { ButtonVariant, ButtonSize, ButtonRoundSize, ButtonRoundVariant, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, ButtonRoundVariant, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
-import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveConfirmButton, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToolbar } from "./live";
+import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToolbar } from "./live";
 import { Row, Briefcase, House, Save, Trash2, PhotoGlyph, Undo, Redo, Outline, Eye, Frame, Magnifier, ZoomIn, ZoomOut, FileGlyph, FolderOpen, Images, FileX, Send, Grid, StickyNote, Picture, Info, Sparkle, FileText, Scale, Chevron, Layers } from "./shared";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_VARIANTS: ButtonRoundVariant[] = ["primary", "secondary", "tertiary", "ghost"];
-const CONFIRM_SIZES: ConfirmButtonSize[] = ["xl", "lg", "md", "sm"];
-const CONFIRM_TONES: ConfirmButtonTone[] = ["safety", "danger"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
 const SEGMENTED_SIZES: SegmentedControlSize[] = ["xl", "lg", "md", "sm"];
 const LOGO_WEIGHTS: LogoWeight[] = ["x-light", "light", "medium", "heavy", "x-heavy"];
@@ -434,14 +432,13 @@ function App() {
       <Section
         title="Button"
         note={
-          "Every variant at every size. Hover and press to see the interaction states. The last "
-          + "row is tone=\"danger\", which is not a fifth variant: danger cuts across the variants "
-          + "rather than joining them \u2014 a destructive action can be loud or quiet and is "
-          + "destructive either way. Hover and press each one: like ButtonRound's tones it changes "
-          + "those pairs ONLY, so at rest a danger button is indistinguishable from its variant. "
-          + "The red answers the pointer arriving rather than competing as a second resting style. "
-          + "On a palette that splits --ui-action from --ui-danger that means a Delete rests in "
-          + "the CTA colour \u2014 the cost of one resting rhythm."
+          "Every variant at every size. Hover and press to see the interaction states. The last two "
+          + "rows are the tones: tone=\"safety\" (the affirmative half of a decision - Save, Keep) and "
+          + "tone=\"danger\" (the destructive one - Delete, Remove). A tone is not a fifth variant: "
+          + "it cuts across all four, recolouring every state from the action colour to its role "
+          + "colour, at rest included, each variant keeping its shape. Since 0.74.0 this is also "
+          + "what ConfirmButton was. Safety's text and glyphs on light grounds are Safety/Darker - "
+          + "the green itself is ~2:1 on white."
         }
       >
         <LiveButton label={buttonLabel} setLabel={setButtonLabel} />
@@ -457,6 +454,13 @@ function App() {
             </Button>
           </Row>
         ))}
+        <Row label="safety">
+          {VARIANTS.map((v) => (
+            <Button key={v} variant={v} tone="safety" size="lg" icon={<Save />}>
+              Save
+            </Button>
+          ))}
+        </Row>
         <Row label="danger">
           {VARIANTS.map((v) => (
             <Button key={v} variant={v} tone="danger" size="lg" icon={<Trash2 />}>
@@ -472,8 +476,8 @@ function App() {
           "Button's four Levels and its danger tone, on a circle (since 0.73.0): primary is solid, "
           + "secondary (the default) the pale tint, tertiary the glyph alone, ghost a 1px ring - each "
           + "with Button's own hover, press and disabled, so a round and a rectangular button of the "
-          + "same Level behave identically. The last row is tone=\"danger\", which recolours every "
-          + "Level at rest as well. variant=\"outline-light\" is the one Button has no twin of: a "
+          + "same Level behave identically. The last two rows are the tones, safety and danger, which "
+          + "recolour every Level at rest as well - an icon-only ConfirmButton is one of these since 0.74.0. variant=\"outline-light\" is the one Button has no twin of: a "
           + "button over a photo - a 40% black ground, a ring and glyph in 80% / 75% white, the whole "
           + "button at 75% opacity, identical in both themes; hover and press stay neutral (Figma "
           + "892:1700); disabled drops to 40%."
@@ -489,6 +493,11 @@ function App() {
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
           </Row>
         ))}
+        <Row label="safety">
+          {ROUND_VARIANTS.map((v) => (
+            <ButtonRound key={v} size="lg" variant={v} tone="safety" icon={<Save />} aria-label={`Save, ${v}`} />
+          ))}
+        </Row>
         <Row label="danger">
           {ROUND_VARIANTS.map((v) => (
             <ButtonRound key={v} size="lg" variant={v} tone="danger" icon={<Trash2 />} aria-label={`Delete, ${v}`} />
@@ -509,49 +518,26 @@ function App() {
       <Section
         title="ConfirmButton"
         note={
-          "The two halves of \u201Care you sure?\u201D. Figma: ConfirmButton (735:398), lifted out of "
-          + "Button/Round's Confirm and Danger cells. Unlike the tones it replaces, this one is "
-          + "coloured AT REST \u2014 tone=\"safety\" on --ui-safety-lighter, tone=\"danger\" on "
-          + "--ui-danger-lighter \u2014 because a confirmation has to be read before it is pressed, "
-          + "not after the pointer lands. Hover fills the base colour and press goes to the darker "
-          + "one, which is the other break from ButtonRound: its press drops to ink, meaning \u201Cthe "
-          + "pointer is down\u201D, while these keep the role colour through the last frame of a "
-          + "decision already made. The third and fourth in each row are variant=\"ghost\": the disc "
-          + "goes and the glyph keeps its colour, where a ghost ButtonRound rests muted. Disabled "
-          + "(last two) takes the disc in both variants \u2014 this control is never the quiet one, so "
-          + "an unavailable confirmation should still be visible. All four sizes alias ButtonRound's, "
-          + "so the two sit level in a row. Give it a label and it takes Button's box instead "
-          + "(Figma Shape=Label) \u2014 the confirm in a dialog footer, standing level with a Cancel."
+          "DEPRECATED in 0.74.0. A confirmation is now a Button or ButtonRound with tone=\"safety\" or "
+          + "tone=\"danger\"; this component renders exactly that (a label means Button, none means "
+          + "ButtonRound; filled -> secondary, ghost -> tertiary) and warns once in dev. Each pair "
+          + "below is the old call and its replacement, which render identically."
         }
       >
-        <LiveConfirmButton />
-        {CONFIRM_SIZES.map((s) => (
-          <Row key={s} label={s}>
-            {CONFIRM_TONES.map((t) => (
-              <ConfirmButton key={t} size={s} tone={t} icon={t === "safety" ? <Save /> : <Trash2 />}
-                aria-label={`${s} ${t === "safety" ? "save" : "delete"}`} />
-            ))}
-            {CONFIRM_TONES.map((t) => (
-              <ConfirmButton key={`${t}-ghost`} size={s} tone={t} variant="ghost" icon={t === "safety" ? <Save /> : <Trash2 />}
-                aria-label={`${s} ghost ${t === "safety" ? "save" : "delete"}`} />
-            ))}
-            <ConfirmButton size={s} tone="safety" icon={<Save />} aria-label={`${s} save unavailable`} disabled />
-            <ConfirmButton size={s} tone="danger" variant="ghost" icon={<Trash2 />} aria-label={`${s} ghost delete unavailable`} disabled />
-          </Row>
-        ))}
-        {/* The labelled shape: Button's geometry with the confirmation colours.
-            Posed beside a secondary Button, the Cancel it usually stands with. */}
-        {CONFIRM_SIZES.map((s) => (
-          <Row key={`label-${s}`} label={`label ${s}`}>
-            <Button size={s} variant="tertiary">Cancel</Button>
-            <ConfirmButton size={s} tone="safety" icon={<Save />}>Save</ConfirmButton>
-            <ConfirmButton size={s} tone="danger" icon={<Trash2 />}>Delete</ConfirmButton>
-            <ConfirmButton size={s} tone="danger">Discard</ConfirmButton>
-            <ConfirmButton size={s} tone="safety" variant="ghost">Keep</ConfirmButton>
-            <ConfirmButton size={s} tone="danger" variant="ghost">Remove</ConfirmButton>
-            <ConfirmButton size={s} tone="danger" disabled>Delete</ConfirmButton>
-          </Row>
-        ))}
+        <Row label="icon-only">
+          <ConfirmButton tone="safety" icon={<Save />} aria-label="Save, old" />
+          <ButtonRound tone="safety" icon={<Save />} aria-label="Save, new" />
+          <span style={{ width: 16 }} />
+          <ConfirmButton tone="danger" variant="ghost" icon={<Trash2 />} aria-label="Delete, old" />
+          <ButtonRound tone="danger" variant="tertiary" icon={<Trash2 />} aria-label="Delete, new" />
+        </Row>
+        <Row label="labelled">
+          <ConfirmButton tone="safety" icon={<Save />}>Save</ConfirmButton>
+          <Button variant="secondary" tone="safety" icon={<Save />}>Save</Button>
+          <span style={{ width: 16 }} />
+          <ConfirmButton tone="danger" variant="ghost">Remove</ConfirmButton>
+          <Button variant="tertiary" tone="danger">Remove</Button>
+        </Row>
       </Section>
 
       <Section
@@ -603,7 +589,7 @@ function App() {
           title="Unsaved changes"
           actions={<>
             <Button variant="tertiary" size="md" onClick={() => setModal(null)}>Keep editing</Button>
-            <ConfirmButton tone="safety" size="md" onClick={() => setModal(null)}>Save</ConfirmButton>
+            <Button variant="secondary" tone="safety" size="md" onClick={() => setModal(null)}>Save</Button>
           </>}
         >
           You have edits that have not been saved yet.
@@ -979,8 +965,9 @@ function App() {
         note={
           "InputText's field made multi-line, and the third member of the same family: every "
           + "measurement reads InputText's token behind an --ui-input-textarea-* hook, so the three "
-          + "cannot drift. The one real departure is height \u2014 a single-line field is 32px because a "
-          + "line is 32px, while this is as tall as its `rows`. No resize grabber: on an underline-only "
+          + "cannot drift. It starts one line tall, identical to an InputText while empty \u2014 its text "
+          + "just above the rule \u2014 and grows a line at a time as you type (rows=1, autoResize, the "
+          + "defaults since 0.74.0). autoResize={false} gives a fixed box that scrolls. No resize grabber: on an underline-only "
           + "field the handle lands on the rule. A box dragged "
           + "wider would break out of the column it sits in, and autoResize covers the case anyway. No icon "
           + "slots, deliberately \u2014 a leading "
@@ -998,25 +985,26 @@ function App() {
           />
         </Row>
         <Row label="size md">
-          <InputTextarea size="md" style={{ width: 260 }} label="Notes" rows={3} placeholder="Anything worth remembering…" />
-          <InputTextarea size="md" style={{ width: 260 }} label="Grows to fit" autoResize rows={1} defaultValue="Type to grow" />
+          <InputTextarea size="md" style={{ width: 260 }} label="Notes" placeholder="Anything worth remembering…" />
+          <InputText size="md" style={{ width: 160 }} label="Company" defaultValue="Acme" />
         </Row>
         <Row label="beside a field">
           <InputText style={{ width: 160 }} label="Company" defaultValue="Acme" />
-          <InputTextarea style={{ width: 260 }} label="Description" rows={2} />
+          <InputTextarea style={{ width: 260 }} label="Description" placeholder="Lines up with the field while empty" />
         </Row>
         <Row label="hideLabel">
-          <InputTextarea style={{ width: 260 }} label="Description" hideLabel rows={2} placeholder="label hidden, still named" />
+          <InputTextarea style={{ width: 260 }} label="Description" hideLabel placeholder="label hidden, still named" />
         </Row>
-        <Row label="auto-resize">
+        <Row label="grows">
           <InputTextarea
             style={{ width: 260 }}
             label="Grows to fit"
-            autoResize
-            rows={2}
             value={grow}
             onChange={(e) => setGrow(e.target.value)}
           />
+        </Row>
+        <Row label="fixed, scrolls">
+          <InputTextarea style={{ width: 260 }} label="Notes" rows={3} autoResize={false} placeholder="rows={3} autoResize={false}" />
         </Row>
         <Row label="disabled">
           <InputTextarea style={{ width: 260 }} label="Notes" value="Unavailable" disabled readOnly />

@@ -155,7 +155,7 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   size, so a UI pattern built at LG lines up without anyone checking. Only the characters,
   whether label or icon shows, and the colours differ. A new component with a size axis
   **aliases** these — it does not restate the number, which is how SegmentedControl spent
-  five releases at 44/34/26. `Button`, `ButtonRound`, `ConfirmButton` and `SegmentedControl`
+  five releases at 44/34/26. `Button`, `ButtonRound` and `SegmentedControl`
   all read them. A component that genuinely cannot take these heights keeps its own and says
   why in its doc.
   There are **two icon ladders** and picking the wrong one is visible from LG down.

@@ -9,6 +9,45 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - Button and ButtonRound take `tone="safety"`; ConfirmButton is deprecated; the default tone is renamed `default`. InputTextarea starts one line tall and grows. **Breaking** (tokens removed).
+
+**Button** and **ButtonRound**: `tone` is now `default | safety | danger`.
+`safety` - the affirmative half of a decision - recolours every state of every
+variant into the green, as `danger` does into the red. Because the green is light
+(~2:1 on white), its text and glyphs on light grounds are `--ui-safety-darker`, and
+the resting tint is `--ui-safety-lighter`. The default tone is renamed
+`"primary"` -> `"default"` (it clashed with `variant="primary"`); `"primary"` still
+works and warns in dev.
+
+**ConfirmButton** is deprecated: a confirmation is a Button (labelled) or
+ButtonRound (icon-only) with `tone`. The component remains for this release as a
+wrapper that renders exactly that and warns once in dev:
+
+    <ConfirmButton tone="safety" icon={<Save />} aria-label="Save" />
+        -> <ButtonRound tone="safety" icon={<Save />} aria-label="Save" />
+    <ConfirmButton tone="danger" variant="ghost">Remove</ConfirmButton>
+        -> <Button tone="danger" variant="tertiary">Remove</Button>
+    variant "filled" -> "secondary", "ghost" -> "tertiary"
+
+Resting looks are unchanged; hover and press follow Button's ladder (the fill
+darkening from the role colour) instead of ConfirmButton's Base/Darker grounds.
+**Removed** with its styles - nothing in the apps read them:
+
+    --ui-confirm-button-{xl,lg,md,sm}-size
+    --ui-confirm-button-{xl,lg,md,sm}-icon-size
+    --ui-confirm-button-{xl,lg,md,sm}-icon-stroke
+    and every --ui-confirm-button-* colour hook
+
+The apps were migrated in the same release.
+
+**InputTextarea**: `rows` now defaults to `1` (was `3`) and `autoResize` to `true`
+(was `false`). An empty field looks exactly like an InputText, its text just above
+the rule, and grows a line at a time; before, an empty three-row box put two blank
+lines between its placeholder and its rule. Every app call site passes `rows`, so
+none changes height. One does change behaviour: a field with `rows` but no
+`autoResize` now grows instead of scrolling - NextJob's `SmartCapture.tsx` (the
+8-row box) - pass `autoResize={false}` to keep it fixed.
+
 **0.72.0 -> 0.73.0** - ButtonRound takes Button's Levels and tone. **Breaking.**
 
 **ButtonRound** now follows Button's styling and naming (Figma `914:678`):

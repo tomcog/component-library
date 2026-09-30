@@ -21,28 +21,27 @@ Four roles, settable apart:
 |---|---|---|---|
 | `--ui-action` | the **CTA** colour | `--ui-tc-red` | nearly every component - every interactive control |
 | `--ui-brand` | the **brand/chrome** colour — headers, rules, borders, dividers | `--ui-tc-red` | LayerController's layer number |
-| `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | `Button tone="danger"`, `ConfirmButton tone="danger"` |
-| `--ui-safety` | the **affirmative** action — Save, Apply, Accept, Done | `#2aca25`, its own value (no primitive) | `ConfirmButton tone="safety"`, LayerController's printer icon |
+| `--ui-danger` | **destructive actions and error states** — Delete, Remove, an invalid field | `--ui-tc-red` | `Button` / `ButtonRound` `tone="danger"` |
+| `--ui-safety` | the **affirmative** action — Save, Apply, Accept, Done | `#2aca25`, its own value (no primitive) | `Button` / `ButtonRound` `tone="safety"`, LayerController's printer icon |
 
 `--ui-safety` was `--ui-confirm` until 0.36.0. `confirm` is also the name of the
 *act* of pressing either button in a yes/no dialog, so the old pair read as "the
 confirm one" and "the other one" rather than as opposites; Figma's group has
-been `Safety/*` throughout. The `ConfirmButton` component keeps its name — the
-component *is* the confirmation, and its tones are its two answers.
+been `Safety/*` throughout. Since 0.74.0 the two answers are tones on `Button` and
+`ButtonRound` (`ConfirmButton`, the component that carried them, is deprecated).
 
-**Danger and safety each carry two tints as well as a base**, because
-`ConfirmButton` draws three grounds per tone:
+**Danger and safety each carry two tints as well as a base** (hand-drawn, first
+for `ConfirmButton`'s three grounds per tone). Today the tones use them as:
 
 | token | default | drawn as |
 |---|---|---|
-| `--ui-danger-lighter` / `--ui-safety-lighter` | `#f7dce0` / `#cafac8` | the resting disc |
-| `--ui-danger-darker` / `--ui-safety-darker` | `#a31c30` / `#378f34` | the pressed disc |
+| `--ui-danger-lighter` / `--ui-safety-lighter` | `#f7dce0` / `#cafac8` | the ghost/tertiary press ground; safety's resting tint |
+| `--ui-danger-darker` / `--ui-safety-darker` | `#a31c30` / `#378f34` | the ghost/tertiary press label; safety's text on light grounds |
 
 These alias primitives rather than being mixed from the base — they are
 hand-drawn and no percentage reproduces them, least of all the green, whose
 drawn tint is more saturated than any mix with white can be. So **repointing a
-role means repointing its trio**, not just its base; see
-[ConfirmButton](components/ConfirmButton.md). An app that sets only the base
+role means repointing its trio**, not just its base. An app that sets only the base
 still gets a coherent button, it just does not carry the whole component.
 
 Each carries its own **on** colour — `--ui-text-on-action`,
@@ -128,12 +127,12 @@ Declare them unlayered on `:root` (the library's defaults live inside
   --ui-text-on-brand:       /* text on an accent fill                */;
   --ui-danger:               /* destructive actions, error states     */;
   --ui-text-on-danger:       /* text on a danger fill                 */;
-  --ui-danger-lighter:       /* ConfirmButton's resting disc          */;
-  --ui-danger-darker:        /* ConfirmButton's pressed disc          */;
+  --ui-danger-lighter:       /* the danger tone's ghost press ground  */;
+  --ui-danger-darker:        /* the danger tone's ghost press label   */;
   --ui-safety:               /* the affirmative action                */;
   --ui-text-on-safety:       /* text on a safety fill                 */;
-  --ui-safety-lighter:       /* ConfirmButton's resting disc          */;
-  --ui-safety-darker:        /* ConfirmButton's pressed disc          */;
+  --ui-safety-lighter:       /* the safety tone's resting tint        */;
+  --ui-safety-darker:        /* safety text on light grounds          */;
 
   --ui-surface-inverse:      /* secondary: dark fill                  */;
   --ui-text-on-inverse:      /* text on that dark fill                */;

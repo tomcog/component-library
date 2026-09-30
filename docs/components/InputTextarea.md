@@ -15,7 +15,21 @@ Disabled. **This one went code → Figma**, not the other way: it was built from
 InputText's spec applied to a `<textarea>`, and the Figma set was drawn from the
 component afterwards rather than the component from a design. The drawn cells
 are `rows={3}`, so the field is `10 + 3×20 + 1 = 71px`; the 260px width is the
-pose, not a property.
+pose, not a property. Code's default is now one row - see below.
+
+## One line by default, growing (since 0.74.0)
+
+`rows` defaults to **1** and `autoResize` to **true**. Empty, the field is
+identical to an InputText - its text sits just above the rule - and each new line
+grows the box. A textarea lays its text out from the top, so the old default of
+three rows left two blank lines between an empty field's placeholder and its rule,
+where InputText's sits right on it. Decided with the user 2026-09-29, over keeping
+three rows with the text pinned to the bottom (which would mean faking the layout
+around a content-sized textarea).
+
+`rows` still sets the starting height and is the minimum; `autoResize={false}`
+gives a fixed box that scrolls. Figma's cells are still drawn at `rows={3}` -
+divergence #53.
 
 ## `size="md"` is code-only
 
