@@ -4,13 +4,19 @@
 > another section, it means the old single CLAUDE.md; that section now lives in `docs/`
 > or `CHANGELOG.md` under the same heading.
 
-Circular icon-only action button. Figma: the `Button/Round` set (`220:11857`),
-axes `Size` = XL | LG | MD | SM and `State` = Default | Hover | Active |
-Disabled | Ghost.
+Circular icon-only action button: **Button's four Levels and its danger tone, on a
+circle** (since 0.73.0). `variant` = primary | secondary | tertiary | ghost, plus
+`outline-light` for a button over a photo; `tone` = primary | danger; `size` =
+xl | lg | md | sm. Each Level's rest, hover, press and disabled are Button's own,
+with the same colour expressions, so a round and a rectangular button of the same
+Level behave identically. Figma: the `Button/Round` set (`220:11857`) - see
+"Figma" below for where it stands.
 
-`State` also carried `Confirm` and `Danger` until 0.36.0. Both moved out into
-[ConfirmButton](ConfirmButton.md), on both sides — see "The tones moved out"
-below before reaching for them here.
+```tsx
+<ButtonRound icon={<Pencil />} aria-label="Edit" />                  // secondary
+<ButtonRound variant="tertiary" icon={<X />} aria-label="Dismiss" />
+<ButtonRound variant="primary" tone="danger" icon={<Trash2 />} aria-label="Delete" />
+```
 
     size   box    icon   stroke
     xl     48     28     2.5
@@ -29,48 +35,51 @@ inherited from its parent — an svg-only rule loses to those silently.
 whatever the icon's viewBox, so a 24-viewBox glyph drawn at 12px does not
 halve its stroke.
 
-## `variant="ghost"` drops the fill
+## The Levels (since 0.73.0)
 
-Figma: `Button/Round` `State=Ghost`, drawn at **all four sizes** (`220:11857`).
-No fill, no stroke, and the glyph on `Text/Muted`. The geometry is untouched,
-so a ghost lines up with a filled button standing beside it.
+Decided with the user 2026-09-29: standardise on Button's styling and naming,
+Figma `914:678` (Button's four Levels) as the reference.
 
-```tsx
-<ButtonRound variant="ghost" icon={<X />} aria-label="Dismiss" />
-```
+    variant     rest                         hover                     press
+    primary     --ui-action / on-action      action 22.3% darker       40.7% darker
+    secondary*  action tint / --ui-action    22.3% darker / on-action  40.7% darker / on-action
+    tertiary    none / --ui-action           action tint               48% tint / glyph 25% to Text/Default
+    ghost       1px --ui-action ring         tint, ring transparent    as tertiary
+    * the default
 
-**Only the resting pair is declared. Hover and press fall through to the base
-rules**, so a ghost fills `--ui-action` under the pointer exactly as a filled
-one does — transparent at rest, weight arriving with the cursor. That is not
-invention: `NavRail` and `BottomNav` both hand-roll this exact chip today, and
-the reason their comments give is that ButtonRound "has no transparent resting
-state". Now it does, and those two are the obvious candidates to move onto it.
+    disabled    primary, secondary: --ui-surface-disabled / --ui-text-disabled
+                tertiary: unfilled, --ui-text-disabled glyph
+                ghost: unfilled, --ui-text-disabled glyph and ring
 
-Specificity does the sequencing on its own — `.ghost` is one class, so
-`.button:hover:not(:disabled)` outranks it whatever the source order.
-`:disabled` is the exception: it matches at the same weight, so `.ghost:disabled`
-is written below the base rule rather than left to it.
+- **The default is `secondary`, not `primary` as on Button.** A row of round
+  toolbar actions rests tinted, as it always has; solid discs by default would make
+  every toolbar the loudest thing on the page.
+- **`tone="danger"`** is Button's: every state of every Level moves from the action
+  colour to danger, at rest included. Disabled and the focus ring are untouched.
+  Ignored by `outline-light`.
+- **The ghost's ring is an inset box-shadow**, as Button's is, so it costs no
+  layout: every Level is exactly the size of its neighbours.
+- **Hooks** are `--ui-button-round-<variant>-<part>`, parts `bg`, `icon`,
+  `bg-hover`, `icon-hover`, `bg-active`, `icon-active`, and for ghost `border`,
+  `border-hover`, `border-active`, `border-disabled`; `--ui-button-round-disabled-bg`
+  / `-icon`. Tertiary reads its own hooks and then Ghost's, as Button's Tertiary
+  does, so the danger tone and a retuned ghost reach it for free.
 
-**A disabled ghost stays unfilled**, which is code-only — Figma draws no Ghost
-Disabled cell. The base rule would paint it `--ui-surface-disabled`, making
-*switching a button off* the thing that gives it a visible disc: louder off
-than on.
+### Migrating from 0.72.0 and earlier
 
-**The prop is `variant`, taking `filled | ghost` — deliberately not `primary`,**
-though that is what `Button` calls its filled variant. The departed `tone` prop
-also accepted `"primary"` on this same component, and one component with two
-props that both take that word, meaning different things, is a lookup table
-nobody should have to hold in their head. Not a boolean either, so a third
-weight can join without reshaping the API.
+    variant="filled" (or none)   -> "secondary" (the default; "filled" still works, warns)
+    variant="ghost"  (no fill)   -> "tertiary"  - "ghost" now means the ring
+    --ui-button-round-bg / -icon / -bg-hover / -icon-hover / -bg-active /
+      -icon-active                -> --ui-button-round-secondary-*
+    --ui-button-round-bg-disabled / -icon-disabled
+                                  -> --ui-button-round-disabled-bg / -icon
+    --ui-button-round-ghost-bg / -icon / -bg-disabled / -icon-disabled
+                                  -> --ui-button-round-tertiary-*
 
-**The name outlives the clash on purpose.** `tone` is gone, so `primary` is now
-free — but [ConfirmButton](ConfirmButton.md) calls the same axis `variant` with
-the same two values, and the two round buttons reading alike is worth more than
-recovering a name nothing needs.
-
-**Figma models `variant` as a `State`**, which cannot express two independent
-axes without multiplying the set. That modelling difference is the one thing
-this component still diverges on.
+What changes to look at, for a button migrated like-for-like: a secondary's
+**press** is the darker action fill, where it was the near-black inverse surface;
+a tertiary (old ghost) **hovers** to the pale tint, where it filled solid action.
+Both are Button's.
 
 ## `variant="outline-light"` sits on a photo
 
@@ -101,11 +110,11 @@ same photo in either mode, and a glyph that turned dark in dark mode would vanis
 against a shadowed rock. Neither is redeclared in the dark block. The ring and glyph
 tints are mixed from `--ui-text-on-media` at the element, not declared as colours.
 
-**The ring is an inset box-shadow**, so the button is exactly the size of a
-filled or ghost one beside it.
+**The ring is an inset box-shadow**, so the button is exactly the size of any
+other Level beside it.
 
-**Hover and press stay neutral - only transparency moves.** They do **not** fall
-through to the primary fill the way ghost's do: over a photo a coloured disc reads
+**Hover and press stay neutral - only transparency moves.** They never take the
+action fill the way the other Levels do: over a photo a coloured disc reads
 as a different control. Decided with the user; don't restore the fall-through
 (0.67.0 shipped it).
 
@@ -121,64 +130,16 @@ yet a `State` in the set. That, and the raw/primitive colours, are divergence #4
   loudest thing on a dark photo.
 - **XL, MD and SM** share LG's 1.5px ring.
 
-## The tones moved out into ConfirmButton
+## History: the tones that moved out, and why `tone` is back
 
-**This component has no `tone` prop.** It had `tone="primary" | "confirm" |
-"danger"` until 0.36.0; `confirm` and `danger` now live in
-[ConfirmButton](ConfirmButton.md), and `primary` went with them because a
-one-value enum is not an axis.
-
-Figma made the call: `Button/Round` (`220:11857`) now draws `State` =
-Default | Hover | Active | Disabled | Ghost, and the `Confirm` and `Danger`
-cells were lifted into the `ConfirmButton` set (`735:398`). Code followed.
-
-**The reason is worth keeping, because it is the reason the two components are
-different and not a rename.** The old tones recoloured the HOVER pair and
-nothing else — `--ui-confirm` / `--ui-text-on-confirm` or `--ui-danger` /
-`--ui-text-on-danger` under the pointer, with the resting disc left on
-`--ui-action-lighter` and the press left on `--ui-surface-inverse`. So a Save,
-a Delete and a Back button in one row were identical until the pointer was
-already on one.
-
-That is right for a toolbar and wrong for a confirmation:
-
-- **In a row, one resting rhythm is the point.** A delete button that RESTS red
-  is the most coloured thing on the screen, which is exactly backwards — the
-  destructive action should be the quiet one until you reach for it. NextJob
-  had precisely that on its task Delete, a permanent red-50 wash, and it came
-  off.
-- **In a confirmation, being read before it is pressed is the whole job.** A
-  hover-only colour tells the user what the button does at the moment it is too
-  late to matter.
-
-ConfirmButton takes the second case and colours the control at rest. This one
-keeps the first. Neither is the other with a different value passed to it,
-which is why the split is two components rather than one prop.
-
-### Do not reintroduce them here
-
-`--ui-danger` and `--ui-safety` (formerly `--ui-confirm`) both still exist and
-both still resolve exactly as they did. Adding a `tone` back to this component
-would put two answers to "what colour is a destructive round button?" in the
-library, and would disagree with Figma. If a toolbar genuinely needs a
-hover-only recolour, set the override hooks on the instance —
-`--ui-button-round-bg-hover` and `--ui-button-round-icon-hover` are still there
-and still win, which is what they are for.
-
-### Migrating
-
-    <ButtonRound tone="confirm" icon={<Save />} … />
-    -> <ConfirmButton tone="safety" icon={<Save />} … />
-
-    <ButtonRound tone="danger" icon={<Trash2 />} … />
-    -> <ConfirmButton tone="danger" icon={<Trash2 />} … />
-
-**This is not a like-for-like swap and should not be applied blindly.** The
-replacement rests in its role colour where the original rested in the brand, so
-every migrated button becomes louder in its row. Where the button lives in a
-toolbar rather than at the end of a decision, dropping the prop and leaving a
-plain `ButtonRound` is usually the right answer. NextJob has both kinds.
-
+Until 0.36.0 this component had `tone="primary" | "confirm" | "danger"`, which
+recoloured the HOVER pair only; `confirm` and `danger` moved to
+[ConfirmButton](ConfirmButton.md), whose job is a confirmation coloured at rest.
+That reasoning still holds for ConfirmButton. The `tone` added in 0.73.0 is a
+different thing - Button's, colouring every state at rest included - and exists
+because the user asked for ButtonRound to follow Button's conventions (2026-09-29).
+The "do not reintroduce a tone" rule this doc carried is retired with it.
+ConfirmButton remains the component for a confirmation.
 
 ## There are two round-button sets; only one is live
 
@@ -188,9 +149,8 @@ component models. Beside it sits `Button/Round-Deprecated` (`66:2077`,
 
 **That one is deliberately not in the library.** It is used by the file's own
 screens — ~247 instances against the live set's 9 — and the user has said it
-will not be part of the library, so there is nothing to model in code and no
-divergence to close. Do not build a `Level`-based round button to "match" it,
-and do not delete it: those instances are real, and it is the set that carries
+will not be part of the library. The code now has Levels too (0.73.0), but they
+are Button's, not that set's - don't read it as the spec, and do not delete it: those instances are real, and it is the set that carries
 the `Level=Ghost` variant a previous session destroyed by assuming exactly
 this kind of thing was leftover scaffolding.
 
@@ -201,16 +161,16 @@ published. Re-check a consumer after any publish rather than assuming it took.
 
 ## Every colour is on the semantic tier, deliberately
 
-    Default   --ui-action-lighter  / --ui-action
-    Hover     --ui-action          / --ui-text-on-action
-    Active    --ui-surface-inverse  / --ui-text-on-inverse
-    Disabled  --ui-surface-disabled / --ui-text-disabled
+Every Level reads semantics (`--ui-action`, `--ui-action-lighter`,
+`--ui-text-on-action`, `--ui-danger`, …) and derives its tints at the element with
+`color-mix()`, so a scoped theme or an app's own action colour moves all of it.
+The old default's press used `--ui-surface-inverse` rather than `--ui-ink` for the
+same reason - a primitive does not move with the theme; that press is Button's
+darker action fill since 0.73.0.
 
-Active used to be `--ui-ink` / `--ui-white`, and Figma likewise bound it to
-`Color/Ink` / `Color/White`. The two sides agreed, so it did not read as
-drift — but both skipped the semantic tier, and a primitive does not move with
-the theme. In dark mode that put a `#262626` circle on a `#2e2e2e` panel:
-present, and invisible. `--ui-surface-inverse` is `--ui-ink` in light, so the
-swap changed nothing there, and flips to `--ui-neutral-150` in dark. Don't
-reintroduce the primitives; the same reasoning is why Button's `secondary`
-uses this pair.
+## Figma
+
+The `Button/Round` set (`220:11857`) is `Size` x `State` = Off | Hover | Active |
+Dark | Disabled, and does not yet carry the Levels or Tone - see
+`docs/divergences.md`. The code moved first on the user's instruction; the set
+follows.

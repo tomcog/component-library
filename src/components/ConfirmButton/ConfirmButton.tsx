@@ -28,12 +28,11 @@ export type ConfirmButtonTone = "safety" | "danger";
  * disc - `--ui-safety-lighter` or `--ui-danger-lighter`; `ghost` drops the
  * disc and rests as the coloured glyph alone.
  *
- * Same two names, and the same axis, as `ButtonRound`'s `variant`, so the two
- * round buttons read alike. What differs is the resting COLOUR: a ghost
- * ButtonRound rests `--ui-text-muted`, because it is a toolbar control with
- * nothing to say until you reach for it, while a ghost ConfirmButton keeps its
- * role colour, because the whole reason this component exists is that a
- * confirmation must be readable before the pointer arrives.
+ * These were `ButtonRound`'s two names until 0.73.0, when ButtonRound took
+ * Button's four Levels instead (its `filled` is now `secondary`, its no-fill
+ * `ghost` now `tertiary`, and `ghost` there means Button's 1px ring). Here
+ * `ghost` still means the glyph alone, in its role colour - a confirmation
+ * must be readable before the pointer arrives.
  */
 export type ConfirmButtonVariant = "filled" | "ghost";
 

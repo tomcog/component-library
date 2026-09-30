@@ -1,7 +1,7 @@
 # Modal
 
 A dialog that interrupts: an icon, a title, a body and the actions that answer it.
-Figma: the `Modal` set (`877:641`, `Icon Color` = Default | Brand, Danger code-only for now; the Default
+Figma: the `Modal` set (`877:641`, `Icon Color` = Default | Brand | Danger; the Default
 variant is the original component `853:583`), in the Overlays section, with `Title`
 and `Body` text properties, `Icon?` and an `Icon` swap, and its two Buttons exposed.
 Added in 0.63.0, drawn Figma-first.
@@ -62,7 +62,7 @@ so this is the consumer's rule to follow, not something it enforces.
 
 It names the kind of moment and acts on nothing, so it is never the action colour.
 `--ui-modal-icon-color` overrides all three. Figma: `Icon Color` = Default
-(`Text/Muted`) | Brand (`Brand/Base`); Danger is not in Figma yet (`docs/divergences.md`).
+(`Text/Muted`) | Brand (`Brand/Base`) | Danger (`Danger/Base`, `911:651`, since 2026-09-29).
 Brand was the only colour until 0.65.0; Danger was added in 0.72.0.
 
 ## A native `<dialog>`

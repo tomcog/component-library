@@ -7,47 +7,61 @@ declare const process: { env: { NODE_ENV?: string } };
 
 export type ButtonRoundSize = "xl" | "lg" | "md" | "sm";
 /**
- * How much weight the button carries. `filled` is the tinted disc; `ghost`
- * drops the fill and rests as a muted glyph alone.
+ * How much weight the button carries - Button's four Levels, on a circle
+ * (since 0.73.0), plus `outline-light` for a button over a photo:
  *
- * NOT named `primary`, though that is what `Button` calls its filled variant.
- * This component carried a `tone` prop until 0.36.0 that also took the value
- * `"primary"`, and one component holding two props that both accept that word -
- * meaning different things - is a lookup table nobody should have to keep in
- * their head. The name outlives the clash on purpose: `ConfirmButton` uses
- * `variant` for the same axis, so the two round buttons read alike. Not a
- * boolean either, so a third weight can join without changing the API shape.
+ * - `primary`: a solid action disc with a white glyph.
+ * - `secondary` (the default): the pale action tint with an action glyph,
+ *   filling solid when reached for. What `filled` was.
+ * - `tertiary`: the glyph alone; a pale tint arrives on hover. What `ghost`
+ *   was.
+ * - `ghost`: a 1px action ring around the glyph, dropping away as the tint
+ *   arrives - Button's Ghost.
+ * - `outline-light`: a translucent dark ground, a light ring and glyph, the
+ *   same in either theme - for a button over a photo or video.
+ *
+ * Each Level's rest, hover, press and disabled are Button's own, so a round
+ * and a rectangular button of the same Level behave identically.
  */
-export type ButtonRoundVariant = "filled" | "ghost" | "outline-light";
+export type ButtonRoundVariant = "primary" | "secondary" | "tertiary" | "ghost" | "outline-light";
+
+/** Button's tone, on a round button: `danger` recolours every Level's every state. */
+export type ButtonRoundTone = "primary" | "danger";
+
 export interface ButtonRoundProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Decorative icon rendered inside the round button, e.g. any Lucide React icon. */
   icon: ReactNode;
   /** Figma: Size */
   size?: ButtonRoundSize;
   /**
-   * Figma: the `Ghost` state, drawn at all four sizes (`220:11857`).
-   * `ghost` removes the fill and rests as a `--ui-text-muted` glyph on
-   * nothing; the geometry is untouched, so it lines up with a filled button
-   * beside it. Defaults to `filled`.
+   * Figma: Level. Defaults to `secondary` - not `primary` as on Button - so a
+   * row of round toolbar actions rests tinted rather than as solid discs.
    *
-   * It answers the pointer with the SAME primary fill a filled button does -
-   * transparent resting, primary on hover - which is what `NavRail` and
-   * `BottomNav` already hand-roll for their chips, because until now this
-   * library had no round button with a transparent resting state.
-   *
-   * `outline-light` is for a button laid over a photo or video: a
-   * translucent dark ground, a white ring and a white glyph, the same in
-   * either theme. Figma: `Button/Round` instances over the ParkPal hero image
-   * (890:1695, 890:1688) - not yet a State in the set.
+   * `"filled"` is the pre-0.73.0 name for `secondary`; it still works, and
+   * warns in dev.
    */
-  variant?: ButtonRoundVariant;
+  variant?: ButtonRoundVariant | "filled";
+  /**
+   * Figma: Tone. `danger` is the destructive action - every state of every
+   * Level moves from the action colour to danger, at rest included, exactly
+   * as on Button. Ignored by `outline-light`. Defaults to `primary`.
+   */
+  tone?: ButtonRoundTone;
   /** Render the single child element, such as an anchor, as the control. */
   asChild?: boolean;
 }
 
+const VARIANT_CLASS: Record<ButtonRoundVariant, string | undefined> = {
+  primary: styles.primary,
+  secondary: styles.secondary,
+  tertiary: styles.tertiary,
+  ghost: styles.ghost,
+  "outline-light": styles.outlineLight,
+};
+
 export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
   function ButtonRound(
-    { icon, size = "lg", variant = "filled", type = "button", className, asChild = false, children, ...props },
+    { icon, size = "lg", variant: variantProp = "secondary", tone = "primary", type = "button", className, asChild = false, children, ...props },
     ref,
   ) {
     const child =
@@ -67,11 +81,19 @@ export const ButtonRound = forwardRef<HTMLButtonElement, ButtonRoundProps>(
       );
     }
 
+    if (process.env.NODE_ENV !== "production" && variantProp === "filled") {
+      console.warn(
+        '[@tomcoggia/ui] ButtonRound: variant="filled" was renamed "secondary" in 0.73.0. ' +
+          "It still works; rename it.",
+      );
+    }
+    const variant: ButtonRoundVariant = variantProp === "filled" ? "secondary" : variantProp;
+
     const classes = [
       styles.button,
       styles[size],
-      variant === "ghost" ? styles.ghost : null,
-      variant === "outline-light" ? styles.outlineLight : null,
+      VARIANT_CLASS[variant],
+      tone === "danger" && variant !== "outline-light" ? styles.danger : null,
       className,
       child?.props.className,
     ]

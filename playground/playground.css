@@ -55,6 +55,9 @@ section {
 .controls label { display: inline-flex; align-items: center; gap: 6px; color: #686868; }
 [data-theme="dark"] .controls label { color: #b8b8b8; }
 .controls select, .controls input[type="color"] { font: inherit; }
+/* Between the demos that share the Playground section. */
+.demoRule { border: 0; border-top: 1px solid #e5e5e5; margin: 24px 0; }
+[data-theme="dark"] .demoRule { border-top-color: #333; }
 .reset { font: inherit; border: 1px solid #d4d4d4; background: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
 
 /* -- token swatches ----------------------------------------- */

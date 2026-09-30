@@ -2,13 +2,16 @@ import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
 import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
-import type { ButtonVariant, ButtonSize, ButtonRoundSize, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize, SegmentedControlVariant, ToolbarOrientation, ToolbarTone } from "../src";
+import type { ButtonVariant, ButtonSize, ButtonRoundSize, ButtonRoundVariant, ConfirmButtonSize, ConfirmButtonTone, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
+import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveConfirmButton, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToolbar } from "./live";
+import { Row, Briefcase, House, Save, Trash2, PhotoGlyph, Undo, Redo, Outline, Eye, Frame, Magnifier, ZoomIn, ZoomOut, FileGlyph, FolderOpen, Images, FileX, Send, Grid, StickyNote, Picture, Info, Sparkle, FileText, Scale, Chevron, Layers } from "./shared";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
 const ROUND_SIZES: ButtonRoundSize[] = ["xl", "lg", "md", "sm"];
+const ROUND_VARIANTS: ButtonRoundVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const CONFIRM_SIZES: ConfirmButtonSize[] = ["xl", "lg", "md", "sm"];
 const CONFIRM_TONES: ConfirmButtonTone[] = ["safety", "danger"];
 const CARDS: CardVariant[] = ["flat", "float1", "float2"];
@@ -124,174 +127,6 @@ const SHELL = [
   { href: "/analytics", label: "Analytics" },
 ];
 
-const Briefcase = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
-    <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-  </svg>
-);
-
-const House = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-    <path d="M9 22V12h6v10" />
-  </svg>
-);
-// lucide `save`, the affirmative glyph - ConfirmButton's tone="safety".
-const Save = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
-    <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
-    <path d="M7 3v4a1 1 0 0 0 1 1h7" />
-  </svg>
-);
-// lucide `trash-2`, the destructive glyph - ConfirmButton's tone="danger".
-const Trash2 = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-    <path d="M10 11v6" /><path d="M14 11v6" />
-  </svg>
-);
-// lucide `image`, LayerController's icon example - a photo among drawn layers.
-const PhotoGlyph = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" />
-    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-  </svg>
-);
-// lucide `undo-2` / `redo-2`, and the three the Figma toolbar poses.
-const Undo = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M9 14 4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11" />
-  </svg>
-);
-const Redo = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="m15 14 5-5-5-5" /><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13" />
-  </svg>
-);
-const Outline = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <rect x="3" y="3" width="18" height="18" rx="2" />
-  </svg>
-);
-const Eye = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" />
-  </svg>
-);
-const Frame = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M4 8h16M4 16h16M8 4v16M16 4v16" />
-  </svg>
-);
-// lucide `file` / `folder-open` / `images` / `file-x` / `send`, the Figma
-// expander sketch's (814:963) - `save` is above.
-const Magnifier = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <circle cx="11" cy="11" r="7" />
-    <path d="m20 20-4-4" />
-  </svg>
-);
-const ZoomIn = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <circle cx="11" cy="11" r="7" />
-    <path d="m20 20-4-4M11 8v6M8 11h6" />
-  </svg>
-);
-const ZoomOut = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <circle cx="11" cy="11" r="7" />
-    <path d="m20 20-4-4M8 11h6" />
-  </svg>
-);
-const FileGlyph = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
-  </svg>
-);
-const FolderOpen = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2" />
-  </svg>
-);
-const Images = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" />
-    <circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" />
-  </svg>
-);
-const FileX = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
-    <path d="m14.5 12.5-5 5" /><path d="m9.5 12.5 5 5" />
-  </svg>
-);
-const Send = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-    <path d="m21.854 2.147-10.94 10.939" />
-  </svg>
-);
-// lucide `grid-3x3` / `sticky-note` / `image`, the NextDraw toolbar's zoom glyphs.
-const Grid = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
-  </svg>
-);
-const StickyNote = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z" /><path d="M15 3v4a2 2 0 0 0 2 2h4" />
-  </svg>
-);
-const Picture = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <rect width="18" height="18" x="3" y="3" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-  </svg>
-);
-const Info = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
-  </svg>
-);
-const Sparkle = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
-  </svg>
-);
-const FileText = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />
-    <path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />
-  </svg>
-);
-const Scale = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
-    <path d="M7 21h10" /><path d="M12 3v18" /><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
-  </svg>
-);
-const Chevron = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
-    <path d="M9 18l6-6-6-6" />
-  </svg>
-);
-const ChevronDown = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-);
-const Layers = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
-    <path d="M12 2 2 7l10 5 10-5-10-5z" />
-    <path d="m2 17 10 5 10-5" />
-    <path d="m2 12 10 5 10-5" />
-  </svg>
-);
-
-/* The playground draws its own icons rather than taking a dependency, so all
-   five tabs share the two that exist. */
 const BOTTOM_TABS = [
   { href: "/", label: "JOBS", icon: Briefcase },
   { href: "/resources", label: "RESOURCES", icon: House },
@@ -392,14 +227,6 @@ function Swatch({ name, value }: { name: string; value?: string }) {
   );
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="row">
-      <span className="rowLabel">{label}</span>
-      <div className="rowItems">{children}</div>
-    </div>
-  );
-}
 
 /* The jump menu addresses sections by this, and reads its labels back off the
    DOM - so a new Section joins the menu by existing, with no list to keep in
@@ -426,18 +253,6 @@ function App() {
   const [segSort, setSegSort] = useState("newest");
   const [tbView, setTbView] = useState("preview");
   const [tbZoom, setTbZoom] = useState("plot");
-  // The Toolbar section's live instance: one bar, every prop a control.
-  const [tbTone, setTbTone] = useState<ToolbarTone>("gray");
-  const [tbOrientation, setTbOrientation] = useState<ToolbarOrientation>("horizontal");
-  const [tbSize, setTbSize] = useState<SegmentedControlSize>("sm");
-  const [tbVariant, setTbVariant] = useState<SegmentedControlVariant>("dark");
-  const [tbCaptions, setTbCaptions] = useState(false);
-  const [tbIconOnly, setTbIconOnly] = useState(false);
-  const [tbHistory, setTbHistory] = useState(true);
-  const [tbExpander, setTbExpander] = useState(true);
-  const [tbActions, setTbActions] = useState(false);
-  const [tbCloseOnAction, setTbCloseOnAction] = useState(true);
-  const [tbFile, setTbFile] = useState("save");
   const [modal, setModal] = useState<null | "drawn" | "danger" | "plain">(null);
   const [radios, setRadios] = useState<Record<string, string>>({ xl: "in", lg: "in", md: "in" });
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
@@ -459,9 +274,6 @@ function App() {
   const [brand, setBrand] = useState("#e51a38");
   const [face, setFace] = useState(FACES[0].value);
   const [bottomTab, setBottomTab] = useState("JOBS");
-  const [size, setSize] = useState<ButtonSize>("lg");
-  const [loading, setLoading] = useState(false);
-  const [lead, setLead] = useState(true);
   const [buttonLabel, setButtonLabel] = useState("Button label");
   const [page, setPage] = useState("/");
   const semantic = useTokenValues(SEMANTIC_TOKENS, [theme, action, brand]);
@@ -478,7 +290,6 @@ function App() {
   const [view, setView] = useState("details");
   const [boxes, setBoxes] = useState<Record<string, boolean>>({ xl: true, lg: false, md: true });
   const [grow, setGrow] = useState("This one grows as you type. Add a few lines and the box follows, and the resize grabber is gone because two things setting the height is one too many.");
-  const [trail, setTrail] = useState(false);
   const [pill, setPill] = useState("All");
   const [rail, setRail] = useState("/work");
 
@@ -633,12 +444,7 @@ function App() {
           + "the CTA colour \u2014 the cost of one resting rhythm."
         }
       >
-        <div className="controls">
-          <label>
-            label
-            <input type="text" value={buttonLabel} onChange={(e) => setButtonLabel(e.target.value)} />
-          </label>
-        </div>
+        <LiveButton label={buttonLabel} setLabel={setButtonLabel} />
         {SIZES.map((s) => (
           <Row key={s} label={s}>
             {VARIANTS.map((v) => (
@@ -663,31 +469,31 @@ function App() {
       <Section
         title="ButtonRound"
         note={
-          "Figma sizes and interaction states. Hover and press each icon button. The toolbar " +
-          "round button, and only that: its tone=\"confirm\" and tone=\"danger\" moved out into " +
-          "ConfirmButton below in 0.36.0, following Figma, where Button/Round now draws " +
-          "Default, Hover, Active, Disabled and Ghost and nothing else. They were hover-only " +
-          "recolours, so a Delete and a Back button here were indistinguishable until the " +
-          "pointer was already on one \u2014 right for a row that wants one resting rhythm, wrong " +
-          "for a confirmation. Pressed is the inverse surface, which means \"the pointer is down " +
-          "on this\" and says nothing about what the button does. " +
-          "The last two are variant=\"ghost\": no fill and a muted glyph at rest, then the same " +
-          "primary fill as the first on hover \u2014 weight arriving with the pointer rather than a " +
-          "second resting style. Disabled, a ghost stays unfilled, so switching a button off never " +
-          "makes it louder than leaving it on. " +
-          "variant=\"outline-light\" is for a button over a photo: a 40% black ground, a ring " +
-          "and glyph in 80% / 75% white, the whole button at 75% opacity, identical in both themes. Hover and press stay " +
-          "neutral - 60% ground, 90% ring and glyph, 90% opacity (Figma 892:1700); disabled drops to 40%."
+          "Button's four Levels and its danger tone, on a circle (since 0.73.0): primary is solid, "
+          + "secondary (the default) the pale tint, tertiary the glyph alone, ghost a 1px ring - each "
+          + "with Button's own hover, press and disabled, so a round and a rectangular button of the "
+          + "same Level behave identically. The last row is tone=\"danger\", which recolours every "
+          + "Level at rest as well. variant=\"outline-light\" is the one Button has no twin of: a "
+          + "button over a photo - a 40% black ground, a ring and glyph in 80% / 75% white, the whole "
+          + "button at 75% opacity, identical in both themes; hover and press stay neutral (Figma "
+          + "892:1700); disabled drops to 40%."
         }
       >
+        <LiveButtonRound />
         {ROUND_SIZES.map((s) => (
           <Row key={s} label={s}>
-            <ButtonRound size={s} icon={<House />} aria-label={`${s} home action`} />
+            {ROUND_VARIANTS.map((v) => (
+              <ButtonRound key={v} size={s} variant={v} icon={<House />} aria-label={`${s} ${v} home action`} />
+            ))}
             <ButtonRound size={s} icon={<House />} aria-label={`${s} disabled action`} disabled />
-            <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost home action`} />
             <ButtonRound size={s} variant="ghost" icon={<House />} aria-label={`${s} ghost disabled action`} disabled />
           </Row>
         ))}
+        <Row label="danger">
+          {ROUND_VARIANTS.map((v) => (
+            <ButtonRound key={v} size="lg" variant={v} tone="danger" icon={<Trash2 />} aria-label={`Delete, ${v}`} />
+          ))}
+        </Row>
         <Row label="outline-light, over a photo">
           {/* A stand-in photo: a sky-to-rock gradient, bright at the top so the
               scrim has to earn its keep. */}
@@ -718,6 +524,7 @@ function App() {
           + "(Figma Shape=Label) \u2014 the confirm in a dialog footer, standing level with a Cancel."
         }
       >
+        <LiveConfirmButton />
         {CONFIRM_SIZES.map((s) => (
           <Row key={s} label={s}>
             {CONFIRM_TONES.map((t) => (
@@ -757,6 +564,7 @@ function App() {
           + "24/32); the body is Body MD (Regular). 350 wide at most, shrinking to the viewport less 16 a side."
         }
       >
+        <LiveModal />
         <Row label="open">
           <Button size="md" onClick={() => setModal("drawn")}>As drawn</Button>
           <Button size="md" variant="secondary" onClick={() => setModal("danger")}>Destructive</Button>
@@ -819,6 +627,7 @@ function App() {
           + "(\"VIEW:\"), and the caption becomes that control's accessible name."
         }
       >
+        <LiveToolbar />
         <Row label="tone=&quot;gray&quot;">
           <Toolbar aria-label="Drawing tools, gray">
             {/* `actions`: undo and redo are things you DO, not one-of-N. The
@@ -1070,6 +879,7 @@ function App() {
           + "which is what a control sitting on a pale page wants."
         }
       >
+        <LiveSegmentedControl />
         {SEGMENTED_SIZES.map((s) => (
           <Row key={s} label={s}>
             <SegmentedControl size={s} aria-label={`${s} work mode`}>
@@ -1177,6 +987,7 @@ function App() {
           + "glyph is anchored to one line of text and has nowhere to sit beside three."
         }
       >
+        <LiveInputTextarea />
         <Row label="default">
           <InputTextarea
             style={{ width: 260 }}
@@ -1228,6 +1039,7 @@ function App() {
           + "so the keyboard and screen-reader behaviour is the browser's."
         }
       >
+        <LiveCheckbox />
         {(["xl", "lg", "md"] as const).map((s) => (
           <Row key={s} label={s}>
             <Checkbox
@@ -1256,6 +1068,7 @@ function App() {
           + "question as a track of segments."
         }
       >
+        <LiveRadio />
         {(["xl", "lg", "md"] as const).map((s) => (
           <Row key={s} label={s}>
             <RadioGroup aria-label={`Units ${s}`} size={s} value={radios[s]} onValueChange={(v) => setRadios((p) => ({ ...p, [s]: v }))}>
@@ -1278,6 +1091,7 @@ function App() {
           + "it can't be picked. The label can be a string or a borderless input, and handleProps turns the grip into a button."
         }
       >
+        <LiveLayerController />
         <Row label="group">
           <div style={{ display: "flex", flexDirection: "column", gap: 4, width: 200 }}>
             {[
@@ -1343,6 +1157,7 @@ function App() {
           + "the selected rule slides to the new tab rather than jumping."
         }
       >
+        <LiveTabs />
         {(["lg", "xl"] as const).map((size) => (
           <Row key={size} label={size === "lg" ? "lg \u2014 14/21, icon 18" : "xl \u2014 18/24, icon 20"}>
             <div style={{ width: 576 }} data-tabs-size={size}>
@@ -1410,7 +1225,8 @@ function App() {
         title="Nav"
         note="Figma: Nav + Nav/Item. Hover a resting item to draw the 4px rule; the current page is red and carries aria-current=page."
       >
-        <Row label="live">
+        <LiveNav />
+        <Row label="example">
           <Nav aria-label="Example">
             {PAGES.map((p) => (
               <NavItem
@@ -1466,6 +1282,7 @@ function App() {
         title="NavDropdown"
         note="Hover or tab to the trigger to open. On a sub item the label indents and the red pipe is drawn top to bottom; the current page is red text only."
       >
+        <LiveNavDropdown />
         <Row label="dropdown">
           <NavDropdown label="My Work">
             {SUB_PAGES.map((sp) => (
@@ -1489,6 +1306,7 @@ function App() {
         title="NavRail"
         note="Left rail, text only. Figma: the NavSlat set at Level=Primary. Hover a row - the pipe draws top to bottom and the label indents past it. The current page is red, with no pipe and no indent, and hovering it adds neither."
       >
+        <LiveNavRail />
         <Row label="rail">
           <NavRail aria-label="Sections" style={{ width: 218 }}>
             {RAIL.map((r) => (
@@ -1530,6 +1348,7 @@ function App() {
         title="LeftRail"
         note="The app shell's left column - a brand slot over a NavRail. Figma: LeftRail-NoIcons (482:2517) and LeftRail-Icons (458:2612). Sub items sit flush under their parent and indent to line up with its label, which is 16 text-only and 40 once icons are on. Click a row to move the current page."
       >
+        <LiveLeftRail />
         <Row label="text only">
           <LeftRail
             brand={<Logo weight="medium" size={50} label="Acme" />}
@@ -1627,6 +1446,7 @@ function App() {
         title="BottomNav"
         note="The mobile counterpart to NavRail - the same destinations and the same chip, stacked with a caption. The bar paints itself but does not place itself, so it is shown docked in a 375-wide frame rather than pinned. Tap a tab to move the current page."
       >
+        <LiveBottomNav />
         <Row label="tab bar">
           <div style={{ width: 375, border: "1px solid var(--ui-neutral-150)", borderRadius: 8, overflow: "hidden" }}>
             <BottomNav aria-label="Sections">
@@ -1650,6 +1470,7 @@ function App() {
         title="Logo"
         note="The brand mark at five weights. It defaults to --ui-tc-red - the fixed personal brand, not --ui-action: change the primary above and the mark stays TC red while everything else follows. Override it with --ui-logo-color, which inherits, so an ancestor can set it. Note an ancestor's plain `color` does NOT reach the mark: .logo declares its own colour, and its declaration beats inheritance."
       >
+        <LiveLogo />
         <Row label="weights">
           {LOGO_WEIGHTS.map((w) => (
             <div key={w} style={{ textAlign: "center" }}>
@@ -1682,6 +1503,7 @@ function App() {
         title="Spinner"
         note="The brand mark as a loading indicator - the ring turns, the T stays put. Medium weight only: a spinner is one thing an app shows while it waits, not a choice to make. Shares Logo's artwork rather than a copy of it. This is the page-level loader; Button's inline one is three pulsing dots, because a ring has too few pixels to read at button sizes."
       >
+        <LiveSpinner />
         <Row label="sizes">
           {[24, 40, 64, 96].map((n) => (
             <div key={n} style={{ textAlign: "center" }}>
@@ -1696,6 +1518,7 @@ function App() {
         title="Pill"
         note="Filter toggle. Figma: State = On | Off. Click to toggle - aria-pressed follows, and Off darkens its label on hover."
       >
+        <LivePill />
         <Row label="filters">
           {["All", "Remote", "Hybrid", "On-site"].map((f) => (
             <Pill key={f} selected={pill === f} onClick={() => setPill(f)}>{f}</Pill>
@@ -1720,6 +1543,7 @@ function App() {
           + "context, so it is quieter than the thing it qualifies."
         }
       >
+        <LiveTag />
         <Row label="labels">
           <Tag>Applied</Tag>
           <Tag>Remote</Tag>
@@ -1767,6 +1591,7 @@ function App() {
           "its empty `mm/dd/yyyy` printed in the hint colour rather than at full value-black."
         }
       >
+        <LiveInputText />
         <Row label="as drawn">
           <InputText
             style={{ width: 220 }}
@@ -1836,6 +1661,7 @@ function App() {
           "there is more here, which makes it a call to action rather than chrome."
         }
       >
+        <LiveInputSelect />
         <Row label="default">
           <InputSelect
             style={{ width: 220 }}
@@ -1894,6 +1720,7 @@ function App() {
         className="cardSection"
         note="Container only - fill, radius and elevation. No padding and no internal layout: what goes inside has not been designed yet. Sized by its parent, so these are stretched by the grid rather than fixed at Figma's 350x200."
       >
+        <LiveCard />
         <div className="cards">
           {CARDS.map((v) => (
             <div key={v}>
@@ -1904,119 +1731,6 @@ function App() {
         </div>
       </Section>
 
-      <Section title="Playground" note="Toggle props against a single instance of each: Button, then Toolbar.">
-        <div className="controls">
-          <label>
-            size
-            <select value={size} onChange={(e) => setSize(e.target.value as ButtonSize)}>
-              {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </label>
-          <label>
-            label
-            <input type="text" value={buttonLabel} onChange={(e) => setButtonLabel(e.target.value)} />
-          </label>
-          <label><input type="checkbox" checked={lead} onChange={(e) => setLead(e.target.checked)} /> icon</label>
-          <label><input type="checkbox" checked={trail} onChange={(e) => setTrail(e.target.checked)} /> iconEnd</label>
-          <label><input type="checkbox" checked={loading} onChange={(e) => setLoading(e.target.checked)} /> loading</label>
-        </div>
-        <Row label="button">
-          {VARIANTS.map((v) => (
-            <Button
-              key={v}
-              variant={v}
-              size={size}
-              loading={loading}
-              icon={lead ? <House /> : undefined}
-              iconEnd={trail ? <Chevron /> : undefined}
-            >
-              {buttonLabel}
-            </Button>
-          ))}
-        </Row>
-        <div className="controls">
-          <label>
-            tone
-            <select value={tbTone} onChange={(e) => setTbTone(e.target.value as ToolbarTone)}>
-              <option value="gray">gray</option>
-              <option value="white">white</option>
-            </select>
-          </label>
-          <label>
-            orientation
-            <select value={tbOrientation} onChange={(e) => setTbOrientation(e.target.value as ToolbarOrientation)}>
-              <option value="horizontal">horizontal</option>
-              <option value="vertical">vertical</option>
-            </select>
-          </label>
-          <label>
-            size
-            <select value={tbSize} onChange={(e) => setTbSize(e.target.value as SegmentedControlSize)}>
-              {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </label>
-          <label>
-            variant
-            <select value={tbVariant} onChange={(e) => setTbVariant(e.target.value as SegmentedControlVariant)}>
-              <option value="primary">primary</option>
-              <option value="dark">dark</option>
-            </select>
-          </label>
-          <label><input type="checkbox" checked={tbCaptions} onChange={(e) => setTbCaptions(e.target.checked)} /> captions</label>
-          <label><input type="checkbox" checked={tbIconOnly} onChange={(e) => setTbIconOnly(e.target.checked)} /> hideLabel</label>
-          <label><input type="checkbox" checked={tbHistory} onChange={(e) => setTbHistory(e.target.checked)} /> history (actions)</label>
-          <label><input type="checkbox" checked={tbExpander} onChange={(e) => setTbExpander(e.target.checked)} /> expander</label>
-          <label><input type="checkbox" checked={tbActions} disabled={!tbExpander} onChange={(e) => setTbActions(e.target.checked)} /> actions</label>
-          <label><input type="checkbox" checked={tbCloseOnAction} disabled={!tbExpander || !tbActions} onChange={(e) => setTbCloseOnAction(e.target.checked)} /> closeOnAction</label>
-        </div>
-        {/* The live instance. tone="white" is posed on the pale ground it
-            exists for; gray sits on the page. Captions wrap each choice in a
-            ToolbarGroup, whose caption then names the control. */}
-        <Row label="toolbar">
-          <div style={{ display: "flex", alignItems: "flex-start", padding: 16, borderRadius: 12, background: tbTone === "white" ? "var(--ui-surface-pale)" : undefined }}>
-            <Toolbar tone={tbTone} orientation={tbOrientation} aria-label="Drawing tools, live">
-              {tbHistory ? (
-                <SegmentedControl size={tbSize} actions aria-label="History live">
-                  <Segment icon={<Undo />} hideLabel={tbIconOnly}>Undo</Segment>
-                  <Segment icon={<Redo />} hideLabel={tbIconOnly}>Redo</Segment>
-                </SegmentedControl>
-              ) : null}
-              {(() => {
-                const view = (
-                  <SegmentedControl size={tbSize} variant={tbVariant} aria-label={tbCaptions ? undefined : "View live"}>
-                    <Segment icon={<Outline />} hideLabel={tbIconOnly} selected={tbView === "outline"} onClick={() => setTbView("outline")}>Outline</Segment>
-                    <Segment icon={<Eye />} hideLabel={tbIconOnly} selected={tbView === "preview"} onClick={() => setTbView("preview")}>Preview</Segment>
-                  </SegmentedControl>
-                );
-                const zoom = (
-                  <SegmentedControl size={tbSize} variant={tbVariant} aria-label={tbCaptions ? undefined : "Zoom live"}>
-                    <Segment icon={<Grid />} hideLabel={tbIconOnly} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
-                    <Segment icon={<StickyNote />} hideLabel={tbIconOnly} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
-                    <Segment icon={<Picture />} hideLabel={tbIconOnly} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
-                  </SegmentedControl>
-                );
-                return tbCaptions ? (
-                  <>
-                    <ToolbarGroup label="VIEW:">{view}</ToolbarGroup>
-                    <ToolbarGroup label="ZOOM:">{zoom}</ToolbarGroup>
-                  </>
-                ) : (
-                  <>{view}{zoom}</>
-                );
-              })()}
-              {tbExpander ? (
-                /* Keyed on actions: a SETTING and ACTIONS are different
-                   panels, so switching remounts rather than morphing one. */
-                <ToolbarExpander key={String(tbActions)} size={tbSize} icon={<FileGlyph />} label="File" actions={tbActions} closeOnAction={tbActions ? tbCloseOnAction : undefined}>
-                  <Segment icon={<Save />} hideLabel={tbIconOnly} selected={!tbActions && tbFile === "save"} onClick={() => setTbFile("save")}>Save</Segment>
-                  <Segment icon={<FolderOpen />} hideLabel={tbIconOnly} selected={!tbActions && tbFile === "open"} onClick={() => setTbFile("open")}>Open</Segment>
-                  <Segment icon={<Images />} hideLabel={tbIconOnly} selected={!tbActions && tbFile === "export"} onClick={() => setTbFile("export")}>Export image</Segment>
-                </ToolbarExpander>
-              ) : null}
-            </Toolbar>
-          </div>
-        </Row>
-      </Section>
     </div>
   );
 }

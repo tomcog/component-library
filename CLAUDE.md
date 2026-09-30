@@ -219,7 +219,7 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
   than `transform`.
 
 When a component is added: its directory with `index.ts`, the barrel export, a playground
-section, a `docs/components/<Name>.md` (usage, geometry, token and Figma mapping, and a
+section opening with a live demo (a `Live*` in `playground/live.tsx`, a control per prop), a `docs/components/<Name>.md` (usage, geometry, token and Figma mapping, and a
 "Divergences - do not fix these" list), and a `CHANGELOG.md` entry.
 
 ## Figma sync

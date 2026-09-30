@@ -587,3 +587,12 @@ Nothing here needs action.
    in dark, against 4.5:1 for text. Options: a darker label at rest
    (`--ui-action` mixed toward `--ui-text-default`, as the ghost press does), a
    stronger tint, or accept it for this variant. Design call; ask.
+
+51. ~~Modal has no `Icon Color` = Danger in Figma.~~ **Resolved 2026-09-29.** Code
+    added `iconColor="danger"` in 0.72.0; the `Modal` set (`877:641`) now has
+    `Icon Color=Danger` (`911:651`), cloned from Brand with the glyph's stroke
+    rebound to `Danger/Base` (which aliases `Color/TC Red` in both modes, not the
+    primitive directly). Cloning dropped the `Icon?`, `Icon`, `Title` and `Body`
+    property links, as `docs/figma.md` warns; they were copied back by layer name
+    and proved on a throwaway instance. The set's description now carries the
+    rule - a destructive Modal always takes Danger - and the code-only motion.

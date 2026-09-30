@@ -170,9 +170,12 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     0.72.0. Direction: Figma - repoint them to `Action/Base` and `Danger/Base`.
     Check first that nothing else binds either variable.
 
-51. **Modal has no `Icon Color` = Danger in Figma.** DEFECT, a missing variant:
-    code added `iconColor="danger"` (`--ui-danger`) in 0.72.0 - a destructive
-    Modal's icon is always Danger - and the `Modal` set (`877:641`) still has
-    only Default | Brand. Direction: Figma - add a Danger variant beside Brand,
-    icon bound to `Danger/Base` (not `Color/TC Red`), and add the rule to the
-    set's description.
+52. **`Button/Round` does not carry Button's Levels or Tone.** DEFECT, the whole
+    set: code 0.73.0 made ButtonRound `variant` = primary | secondary | tertiary |
+    ghost with `tone` = primary | danger, each Level Button's own states (Figma's
+    reference: `914:678`, Button's four Levels). The set (`220:11857`) is still
+    `Size` x `State` = Off | Hover | Active | Dark | Disabled, its description
+    describes an older Default/Ghost set, and `Dark` binds `Button/Tertiary/Label`
+    (another component's variable). Direction: Figma - rebuild as `Level` x `Size`
+    x `State` (Default | Hover | Pressed | Disabled) x `Tone`, as `Button` is,
+    binding `Button/Round/*` variables that alias semantics; keep outline-light.

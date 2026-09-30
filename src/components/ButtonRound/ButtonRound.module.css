@@ -1,3 +1,19 @@
+/* ButtonRound - Button's four Levels and its danger tone, on a circle.
+
+   Since 0.73.0 the variants ARE Button's: primary | secondary | tertiary |
+   ghost, each with Button's own rest / hover / press / disabled ladder and the
+   same colour expressions, so a round button and a rectangular one of the
+   same Level answer the pointer identically. `outline-light` is the one
+   variant Button has no equivalent of - a button over a photo - and is below.
+   Before 0.73.0 the variants were `filled` (now `secondary`) and a no-fill
+   `ghost` (now `tertiary`; `ghost` is now Button's 1px-ring Level).
+
+   Every colour reads the component's own hook first -
+   --ui-button-round-<variant>-<part> - then the shared fallback. Tertiary
+   falls back through Ghost's hooks after its own, as Button's does, so
+   retuning the ghost retunes both. `.danger` sets the hooks, which is how one
+   tone reaches all four Levels. */
+
 .button {
   display: inline-flex;
   flex: none;
@@ -5,84 +21,130 @@
   justify-content: center;
   border: none;
   border-radius: 50%;
-  background: var(--ui-button-round-bg, var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-white))));
-  color: var(--ui-button-round-icon, var(--ui-action));
   cursor: pointer;
   transition:
     background-color var(--ui-motion-fast) ease,
-    color var(--ui-motion-fast) ease;
+    color var(--ui-motion-fast) ease,
+    box-shadow var(--ui-motion-fast) ease;
 }
-
-.button:hover:not(:disabled) {
-  background: var(--ui-button-round-bg-hover, var(--ui-action));
-  color: var(--ui-button-round-icon-hover, var(--ui-text-on-action));
-}
-
-/* The pressed state is the inverse surface, not raw ink. Identical in light
-   (--ui-surface-inverse IS --ui-ink there), but it flips with the theme:
-   ink-on-dark would be #262626 sitting on a #2e2e2e panel, which is all but
-   invisible. Same pair Button's secondary variant uses. */
-.button:active:not(:disabled) {
-  background: var(--ui-button-round-bg-active, var(--ui-surface-inverse));
-  color: var(--ui-button-round-icon-active, var(--ui-text-on-inverse));
-}
-
-/* The `Confirm` and `Danger` states this component used to carry were lifted
-   out into `ConfirmButton` in 0.36.0, matching Figma, where `Button/Round`
-   (220:11857) now has State=Default|Hover|Active|Disabled|Ghost and nothing
-   else. They were never really tones of THIS button: they recoloured hover and
-   left the resting disc primary, so a Delete and a Back button were
-   indistinguishable until the pointer was already on one. ConfirmButton draws
-   the whole control in its role colour instead - see its doc for why that was
-   the right call for a confirmation and the wrong one for a toolbar. */
-
 .button:focus-visible {
   outline: 2px solid var(--ui-action);
   outline-offset: 2px;
 }
 
-/* Figma binds this to Button/Disabled/Label, which resolves through
-   Text/Disabled - the same token Button's disabled label uses. It briefly
-   pointed at Surface/Muted Hover (#b8b8b8) instead, which is why this once
-   read --ui-neutral-350.
- */
+/* -- primary: solid action, darkening under the pointer ------------------ */
+.primary {
+  background: var(--ui-button-round-primary-bg, var(--ui-action));
+  color: var(--ui-button-round-primary-icon, var(--ui-text-on-action));
+}
+.primary:hover:not(:disabled) {
+  background: var(--ui-button-round-primary-bg-hover, color-mix(in srgb, var(--ui-action), black 22.3%));
+}
+.primary:active:not(:disabled) {
+  background: var(--ui-button-round-primary-bg-active, color-mix(in srgb, var(--ui-action), black 40.7%));
+}
+
+/* -- secondary (the default): the pale tint, filling solid when reached for */
+.secondary {
+  background: var(--ui-button-round-secondary-bg,
+              var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
+  color: var(--ui-button-round-secondary-icon, var(--ui-action));
+}
+.secondary:hover:not(:disabled) {
+  background: var(--ui-button-round-secondary-bg-hover, color-mix(in srgb, var(--ui-action), black 22.3%));
+  color: var(--ui-button-round-secondary-icon-hover, var(--ui-text-on-action));
+}
+.secondary:active:not(:disabled) {
+  background: var(--ui-button-round-secondary-bg-active, color-mix(in srgb, var(--ui-action), black 40.7%));
+  color: var(--ui-button-round-secondary-icon-active, var(--ui-text-on-action));
+}
+
+/* -- tertiary: the glyph alone; from there on it IS the ghost ------------- */
+.tertiary {
+  background: var(--ui-button-round-tertiary-bg, transparent);
+  color: var(--ui-button-round-tertiary-icon, var(--ui-button-round-ghost-icon, var(--ui-action)));
+}
+.tertiary:hover:not(:disabled) {
+  background: var(--ui-button-round-tertiary-bg-hover,
+              var(--ui-button-round-ghost-bg-hover,
+              var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised)))));
+  color: var(--ui-button-round-tertiary-icon-hover, var(--ui-button-round-ghost-icon-hover, var(--ui-action)));
+}
+.tertiary:active:not(:disabled) {
+  background: var(--ui-button-round-tertiary-bg-active,
+              var(--ui-button-round-ghost-bg-active,
+              color-mix(in srgb, var(--ui-action) 48%, var(--ui-surface-raised))));
+  color: var(--ui-button-round-tertiary-icon-active,
+         var(--ui-button-round-ghost-icon-active,
+         color-mix(in srgb, var(--ui-action), var(--ui-text-default) 25%)));
+}
+
+/* -- ghost: a 1px action ring that drops away as the fill arrives ---------
+   An inset box-shadow rather than a border, so the ring costs no layout and
+   a ghost is the size of its neighbours - Button's reason exactly. */
+.ghost {
+  background: transparent;
+  color: var(--ui-button-round-ghost-icon, var(--ui-action));
+  box-shadow: inset 0 0 0 1px var(--ui-button-round-ghost-border, var(--ui-action));
+}
+.ghost:hover:not(:disabled) {
+  background: var(--ui-button-round-ghost-bg-hover,
+              var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
+  color: var(--ui-button-round-ghost-icon-hover, var(--ui-action));
+  box-shadow: inset 0 0 0 1px var(--ui-button-round-ghost-border-hover, transparent);
+}
+.ghost:active:not(:disabled) {
+  background: var(--ui-button-round-ghost-bg-active, color-mix(in srgb, var(--ui-action) 48%, var(--ui-surface-raised)));
+  color: var(--ui-button-round-ghost-icon-active, color-mix(in srgb, var(--ui-action), var(--ui-text-default) 25%));
+  box-shadow: inset 0 0 0 1px var(--ui-button-round-ghost-border-active, transparent);
+}
+
+/* -- disabled, per Level, as Button draws it ------------------------------
+   The filled Levels take the disabled disc; the unfilled ones stay unfilled
+   (a disc appearing only when switched OFF would make off louder than on),
+   and the ghost keeps its ring in the disabled grey. */
 .button:disabled {
-  background: var(--ui-button-round-bg-disabled, var(--ui-surface-disabled));
-  color: var(--ui-button-round-icon-disabled, var(--ui-text-disabled));
+  background: var(--ui-button-round-disabled-bg, var(--ui-surface-disabled));
+  color: var(--ui-button-round-disabled-icon, var(--ui-text-disabled));
   cursor: not-allowed;
 }
-
-/* -- variant="ghost" ----------------------------------------- */
-/* Figma: `Button/Round` State=Ghost, drawn at all four sizes (220:11857).
-   No fill, no stroke, and the glyph on `Text/Muted` - which is what the
-   variants bind, so this reads the matching semantic token rather than a
-   value of its own.
-
-   Only the RESTING pair is declared. Hover and press deliberately fall
-   through to the base rules above, so a ghost button fills primary under the
-   pointer exactly as a filled one does: transparent at rest, weight on hover.
-   That is not invention - `NavRail` and `BottomNav` both hand-roll this
-   exact chip today, and the reason their comments give is that ButtonRound
-   "has no transparent resting state". Now it does.
-
-   Specificity does the sequencing on its own: `.ghost` is one class, so
-   `.button:hover:not(:disabled)` and `.button:active:not(:disabled)` both
-   outrank it whatever the source order. `:disabled` is the one that has to be
-   restated - it matches at the same weight, so it is written below rather
-   than left to the base rule. */
-.ghost {
-  background: var(--ui-button-round-ghost-bg, transparent);
-  color: var(--ui-button-round-ghost-icon, var(--ui-text-muted));
+.tertiary:disabled {
+  background: transparent;
+  color: var(--ui-button-round-tertiary-icon-disabled, var(--ui-text-disabled));
+}
+.ghost:disabled {
+  background: transparent;
+  color: var(--ui-button-round-ghost-icon-disabled, var(--ui-text-disabled));
+  box-shadow: inset 0 0 0 1px var(--ui-button-round-ghost-border-disabled, var(--ui-text-disabled));
 }
 
-/* A disabled ghost stays unfilled. The base rule would paint it
-   --ui-surface-disabled, which makes turning a button OFF the thing that
-   gives it a visible disc - louder switched off than on. Figma draws no
-   Ghost Disabled cell, so this is the library's call, the same way
-   ButtonRound's disabled state was before it. */
-.ghost:disabled {
-  background: var(--ui-button-round-ghost-bg-disabled, transparent);
-  color: var(--ui-button-round-ghost-icon-disabled, var(--ui-text-disabled));
+/* -- tone="danger" --------------------------------------------------------
+   Button's danger tone: every state of every Level moves from the action role
+   to danger, at rest included, each keeping its own ladder. Set through the
+   hooks, so the Level rules above need no danger copies. Disabled and the
+   focus ring are untouched. Ignored by outline-light. */
+.danger {
+  --ui-button-round-primary-bg: var(--ui-danger);
+  --ui-button-round-primary-icon: var(--ui-text-on-danger);
+  --ui-button-round-primary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  --ui-button-round-primary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
+
+  --ui-button-round-secondary-bg: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
+  --ui-button-round-secondary-icon: var(--ui-danger);
+  --ui-button-round-secondary-bg-hover: color-mix(in srgb, var(--ui-danger), black 22.3%);
+  --ui-button-round-secondary-icon-hover: var(--ui-text-on-danger);
+  --ui-button-round-secondary-bg-active: color-mix(in srgb, var(--ui-danger), black 40.7%);
+  --ui-button-round-secondary-icon-active: var(--ui-text-on-danger);
+
+  /* Tertiary reaches these through its fallback to the ghost hooks. The
+     press is Danger/Lighter under Danger/Darker, as Button's - a pair that
+     holds in both themes. */
+  --ui-button-round-ghost-icon: var(--ui-danger);
+  --ui-button-round-ghost-border: var(--ui-danger);
+  --ui-button-round-ghost-bg-hover: color-mix(in srgb, var(--ui-danger) 15%, var(--ui-surface-raised));
+  --ui-button-round-ghost-icon-hover: var(--ui-danger);
+  --ui-button-round-ghost-bg-active: var(--ui-danger-lighter);
+  --ui-button-round-ghost-icon-active: var(--ui-danger-darker);
 }
 
 /* -- variant="outline-light" --------------------------------- */
@@ -104,7 +166,7 @@
    for the same reason.
 
    Hover and press stay NEUTRAL: only transparency moves, never colour. Unlike
-   ghost they do not fall through to the primary fill - a coloured disc over a
+   the other Levels they never take the action fill - a coloured disc over a
    photo reads as a different control. Press is the hover look (code-only;
    Figma draws no pressed cell). Written as `.button.outlineLight` so they
    outrank the base hover/active rules whatever the source order. */

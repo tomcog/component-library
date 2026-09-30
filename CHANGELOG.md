@@ -9,6 +9,32 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - ButtonRound takes Button's Levels and tone. **Breaking.**
+
+**ButtonRound** now follows Button's styling and naming (Figma `914:678`):
+`variant` = `primary | secondary | tertiary | ghost` (plus `outline-light`, which
+is unchanged), and a new `tone` = `primary | danger`. Each Level's rest, hover,
+press and disabled are Button's own, colour for colour. The default is
+`secondary`, which is the old default look.
+
+    variant="filled" (or none)  -> "secondary"   ("filled" still works and warns in dev)
+    variant="ghost"             -> "tertiary"    ("ghost" now draws Button's 1px ring)
+
+Renamed hooks - an app setting the old names loses the override silently:
+
+    --ui-button-round-bg, -icon, -bg-hover, -icon-hover, -bg-active, -icon-active
+        -> --ui-button-round-secondary-<same part>
+    --ui-button-round-bg-disabled, -icon-disabled
+        -> --ui-button-round-disabled-bg, -disabled-icon
+    --ui-button-round-ghost-bg, -ghost-icon, -ghost-bg-disabled, -ghost-icon-disabled
+        -> --ui-button-round-tertiary-<same part>
+
+Visible even when migrated like-for-like: a **secondary's press** is the darker
+action fill (was the near-black inverse surface); a **tertiary's hover** is the
+pale tint (the old ghost filled solid action), and its resting glyph is the action
+colour (was `--ui-text-muted`). `tone="danger"` is new: every state in the danger
+colour, at rest included. The apps were migrated in the same release.
+
 **0.71.0 -> 0.72.0** - Elevation: both float steps become Figma's five-layer shadows (Card, Modal, InputSelect's menu). Button: Secondary's resting label is the action colour again. Modal: `iconColor="danger"`, and an intro/exit animation. ToolbarExpander: `actions` split out of `closeOnAction`.
 
 **`--ui-shadow-float-1` / `--ui-shadow-float-2`** change value (names unchanged),
