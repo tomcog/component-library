@@ -635,3 +635,14 @@ Nothing here needs action.
     Default and Safety twins shows the dots in Danger/Darker. Invisible before the
     fix only because Action and Danger are the same red.
 
+56. ~~The `Segment` set has no Brand selected state.~~ **Resolved 2026-09-29.**
+    `State=Brand` added to the `Segment` set (`555:14966`) at all four sizes
+    (`927:774`, `927:778`, `927:782`, `927:786`), cloned from each Active cell with
+    `Action/Base` -> `Brand/Base` and `Text/OnAction` -> `Text/OnBrand` (label and
+    glyph). Bound to the semantics directly, as Active and Dark already are - the
+    set has no `Segment/*` variables, so the component variable this entry first
+    proposed would have been the only one. Property links (label, Label?, Icon?,
+    SegmentIcon) restored after cloning and proved on a throwaway instance. The
+    cells sit in their own row under Dark, Disabled and Pressed moved down a row;
+    the set's description names Brand and the action | brand | dark variants.
+

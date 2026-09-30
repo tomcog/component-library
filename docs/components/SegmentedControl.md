@@ -366,8 +366,7 @@ Three values since 0.78.0 (decided with the user 2026-09-29):
 `action` and `brand` take the project's own role colours, so they vary by app;
 `dark` is the near-black that stays the same whatever action and brand are set to.
 `variant="primary"` still works and warns. Figma models these as `State` values on
-the segment (`Active`, which is action, and `Dark`; there is no Brand cell yet -
-divergence #56), which is the only way a variant axis can say it - the
+the segment (`Active`, which is action, `Brand` - added 2026-09-29 - and `Dark`), which is the only way a variant axis can say it - the
 same modelling difference `Tabs` has with its size, and recorded here for the
 same reason. A control whose selected segment came out red or black depending
 on which one you clicked would be a different control each time.

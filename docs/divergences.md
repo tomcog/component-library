@@ -178,11 +178,3 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     placeholder two lines above the rule. Direction: Figma - redraw the cells at
     one row (`10 + 20 + 1 = 31px`, InputText's height) and say in the description
     that it grows with content.
-
-56. **The `Segment` set has no Brand selected state.** DEFECT, a missing cell per
-    size: code 0.78.0 gave SegmentedControl `variant` = action | brand | dark. The
-    `Segment` set (`555:14966`) draws the selected ground as `State` = Active
-    (action) and Dark, with nothing for brand. Direction: Figma - add
-    `State=Brand` at every size, bound through a `Segment/*` variable to
-    `Brand/Base` and `Text/OnBrand`, and name it in the set's description.
-
