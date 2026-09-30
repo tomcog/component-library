@@ -164,12 +164,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     Card's Figma description still describes the two-layer pair; update it
     with the fix. Code took the values in 0.72.0.
 
-50. **Button Secondary's resting label is darker in Figma than in code.**
-    DEFECT, visible on every Secondary Default cell: `Button/Secondary/Label`
-    aliases `Action/Darker` and `Button/Danger/Secondary Label` aliases
-    `Danger/Darker`; code went back to plain `--ui-action` / `--ui-danger` in
-    0.72.0. Direction: Figma - repoint them to `Action/Base` and `Danger/Base`.
-    Check first that nothing else binds either variable.
 
 53. **`InputTextarea` is drawn three rows tall; code defaults to one.** DEFECT, the
     whole set: code 0.74.0 made `rows` default to 1 with `autoResize` on, so an

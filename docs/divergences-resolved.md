@@ -646,3 +646,15 @@ Nothing here needs action.
     cells sit in their own row under Dark, Disabled and Pressed moved down a row;
     the set's description names Brand and the action | brand | dark variants.
 
+50. ~~Button Secondary's resting label is darker in Figma than in code.~~
+    **Resolved 2026-09-30.** `Button/Secondary/Label` now aliases `Action/Base` and
+    `Button/Danger/Secondary Label` aliases `Danger/Base` in both modes; only the
+    `Button` set (`135:9598`) bound either. Every Secondary Default cell renders
+    `#E51A38` for Default and Danger tone, matching code; the icon stays at 65%
+    opacity on both sides. The set's description was updated with it.
+
+    Original entry: DEFECT, visible on every Secondary Default cell: `Button/Secondary/Label`
+    aliases `Action/Darker` and `Button/Danger/Secondary Label` aliases
+    `Danger/Darker`; code went back to plain `--ui-action` / `--ui-danger` in
+    0.72.0. Direction: Figma - repoint them to `Action/Base` and `Danger/Base`.
+    Check first that nothing else binds either variable.

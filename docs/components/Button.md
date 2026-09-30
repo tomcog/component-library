@@ -123,7 +123,7 @@ Loading** at every Level and Size (64 cells). The grounds bind `Button/Danger/*`
 | `Button/Danger/Pressed` | raw shade (danger -40.7%) | `--ui-danger` mixed 40.7% toward black |
 | `Button/Danger/Label` | `Text/OnDanger` | `--ui-text-on-danger` |
 | `Button/Danger/Secondary Default` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
-| `Button/Danger/Secondary Label` | `Danger/Darker` (should be `Danger/Base`, #50) | `--ui-danger` |
+| `Button/Danger/Secondary Label` | `Danger/Base` | `--ui-danger` |
 | `Button/Danger/Ghost Hover` | `Danger/Lighter` | 15% `--ui-danger` on the raised surface |
 | `Button/Danger/Ghost Pressed` | `Danger/Lighter` | `--ui-danger-lighter` |
 | `Button/Danger/Ghost Label` | `Danger/Base` | `--ui-danger` |
@@ -158,7 +158,7 @@ from it - and fills solid when reached for: hover and press are unchanged (the
 darker action shades with a white label), as are disabled and the danger tone.
 Before 0.63.0 it rested near-black (`--ui-surface-inverse`) with a light label.
 Figma: `Button/Secondary/Default` -> `Action/Lighter`, `Button/Secondary/Label` ->
-`Action/Darker` (see below), and a new `Button/Secondary/Label Active` -> `Text/OnAction` for
+`Action/Base` (see below), and a new `Button/Secondary/Label Active` -> `Text/OnAction` for
 Hover and Pressed (no other component bound these, so they were repointed).
 
 **The resting label and icon are plain `--ui-action`** (again, since 0.72.0).
@@ -166,8 +166,9 @@ Hover and Pressed (no other component bound these, so they were repointed).
 light, 4.87:1 dark), which read as too dark a red; it was reverted by decision,
 accepting 3.64:1 in light and 2.71:1 in dark on the tint - under AA for text.
 Don't re-darken it for contrast without asking. The danger tone follows: plain
-`--ui-danger` on the danger tint. Figma still binds `Button/Secondary/Label` to
-`Action/Darker` (divergence #50).
+`--ui-danger` on the danger tint. Figma matches since 2026-09-30:
+`Button/Secondary/Label` -> `Action/Base`, `Button/Danger/Secondary Label` ->
+`Danger/Base` (was `Action/Darker` / `Danger/Darker`, divergence #50).
 
 ## Tertiary is Ghost without its rule (0.63.0)
 
