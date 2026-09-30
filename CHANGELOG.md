@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - BottomNav: tap feedback (press and pop), and at most six items.
+**0.75.0 -> 0.76.0** - BottomNav: tap feedback (press and pop), and at most six items.
 
 **BottomNav** animates a tap: the chip shrinks while pressed and the newly current
 chip pops in with a small overshoot - size only, colours still change instantly.
