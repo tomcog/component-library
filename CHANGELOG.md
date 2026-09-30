@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - SegmentedControl: the selected ground slides to the new choice.
+**0.76.0 -> 0.77.0** - SegmentedControl: the selected ground slides to the new choice.
 
 **SegmentedControl**: the selected ground is now one element (the thumb) that
 slides and resizes to the newly checked segment over `--ui-motion-base`, as Tabs'
