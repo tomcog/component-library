@@ -1,11 +1,11 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, Fab, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ButtonRoundVariant, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
-import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToolbar } from "./live";
+import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveFab, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToolbar } from "./live";
 import { Row, Briefcase, House, Save, Trash2, PhotoGlyph, Undo, Redo, Outline, Eye, Frame, Magnifier, ZoomIn, ZoomOut, FileGlyph, FolderOpen, Images, FileX, Send, Grid, StickyNote, Picture, Info, Sparkle, FileText, Scale, Chevron, Layers } from "./shared";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
@@ -528,6 +528,31 @@ function App() {
             ))}
             <ButtonRound size="lg" variant="outline-light" icon={<House />} aria-label="lg outline-light disabled action" disabled />
           </div>
+        </Row>
+      </Section>
+
+      <Section
+        title="Fab"
+        note={
+          "Figma: FAB (703:513). ButtonRound's LG primary disc with its label beside it, 8px apart, "
+          + "as ONE control - the label is the accessible name, and the whole thing is the hit area. "
+          + "The disc carries --ui-shadow-float-1. Hover and press darken the disc as ButtonRound's "
+          + "primary does; the label stays put (code-only - Figma draws no states). hideLabel keeps "
+          + "the name but shows only the disc. Positioning (fixed, the corner) is the app's."
+        }
+      >
+        <LiveFab />
+        <Row label="default">
+          <Fab icon={<House />}>Fab button text</Fab>
+        </Row>
+        <Row label="hideLabel">
+          <Fab icon={<House />} hideLabel>Home</Fab>
+        </Row>
+        <Row label="disabled">
+          <Fab icon={<House />} disabled>Fab button text</Fab>
+        </Row>
+        <Row label="asChild link">
+          <Fab icon={<House />} asChild><a href="#fab">Go home</a></Fab>
         </Row>
       </Section>
 

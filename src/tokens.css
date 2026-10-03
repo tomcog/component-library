@@ -535,6 +535,11 @@
   --ui-button-round-outline-light-icon-strength: 75%;
   --ui-button-round-outline-light-icon-strength-hover: 90%;
 
+  /* Fab. Figma: FAB (703:513), FAB/Gap. The disc is ButtonRound LG Primary
+     and reads ButtonRound's tokens as fallbacks, so the only geometry of
+     its own is the disc -> label gap. The shadow is --ui-shadow-float-1. */
+  --ui-fab-gap: 8px;
+
   /* ConfirmButton's --ui-confirm-button-* geometry aliases were removed in
      0.74.0 with the component's own styles: a confirmation is a Button or
      ButtonRound with a tone, on their geometry. */

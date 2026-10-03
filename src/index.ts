@@ -4,6 +4,7 @@ export * from "./components/BottomNav";
 export * from "./components/Card";
 export * from "./components/Checkbox";
 export * from "./components/ConfirmButton";
+export * from "./components/Fab";
 export * from "./components/InputSelect";
 export * from "./components/InputText";
 export * from "./components/InputTextarea";

@@ -9,6 +9,14 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - New component: Fab.
+
+**Fab** (new): a primary round disc with its label beside it, as one control -
+`<Fab icon={<Plus />}>New job</Fab>`. The disc is ButtonRound's LG primary with the
+`--ui-shadow-float-1` shadow; `hideLabel` shows the disc alone and keeps the label as
+the accessible name; `asChild` for a link. New token `--ui-fab-gap` (8px). The app
+positions it. Figma: `FAB` (`703:513`).
+
 **0.77.0 -> 0.78.0** - SegmentedControl: `variant` is `action | brand | dark`.
 
 **SegmentedControl** (and so every Toolbar control): `variant` gains `brand` - the

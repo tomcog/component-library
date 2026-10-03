@@ -1,0 +1,105 @@
+/* Fab - a primary round disc with its label beside it, as one control.
+   Figma: FAB (703:513) - a Button/Round at Size=LG, Level=Primary with an
+   action-coloured Label LG 8px away.
+
+   The disc IS ButtonRound's LG primary: its size, icon box, stroke and
+   colours are read from ButtonRound's tokens and hooks as fallbacks, so
+   retuning the round button retunes this. The whole thing - disc and label -
+   is the hit area; the label is the accessible name.
+
+   Hover and press darken the disc exactly as ButtonRound's primary does, and
+   the label stays put - code-only: Figma draws no states for FAB. Disabled is
+   ButtonRound's disabled disc with a disabled label, also code-only.
+
+   Positioning is the app's: "floating" (position: fixed, the corner, the
+   offset above a bottom nav) differs in every consumer, so it is not here. */
+
+.fab {
+  position: relative; /* contains the visually-hidden label */
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--ui-fab-gap);
+  padding: 0;
+  border: none;
+  /* Rounds the focus ring to the disc's ends. */
+  border-radius: calc(var(--ui-fab-size, var(--ui-button-round-lg-size)) / 2);
+  background: none;
+  color: var(--ui-fab-label, var(--ui-action));
+  font-family: var(--ui-font-family, var(--ui-font-primary), var(--ui-font-fallback));
+  font-size: var(--ui-type-label-lg-font-size);
+  line-height: var(--ui-type-label-lg-line-height);
+  font-weight: var(--ui-type-label-font-weight);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--ui-motion-fast) ease;
+}
+.fab:focus-visible {
+  outline: 2px solid var(--ui-action);
+  outline-offset: 2px;
+}
+
+.disc {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--ui-fab-size, var(--ui-button-round-lg-size));
+  height: var(--ui-fab-size, var(--ui-button-round-lg-size));
+  border-radius: 50%;
+  background: var(--ui-fab-bg, var(--ui-button-round-primary-bg, var(--ui-action)));
+  color: var(--ui-fab-icon, var(--ui-button-round-primary-icon, var(--ui-text-on-action)));
+  box-shadow: var(--ui-fab-shadow, var(--ui-shadow-float-1));
+  transition:
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+.fab:hover:not(:disabled) .disc {
+  background: var(--ui-fab-bg-hover,
+              var(--ui-button-round-primary-bg-hover, color-mix(in srgb, var(--ui-action), black 22.3%)));
+}
+.fab:active:not(:disabled) .disc {
+  background: var(--ui-fab-bg-active,
+              var(--ui-button-round-primary-bg-active, color-mix(in srgb, var(--ui-action), black 40.7%)));
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.fab:disabled {
+  color: var(--ui-fab-label-disabled, var(--ui-text-disabled));
+  cursor: not-allowed;
+}
+.fab:disabled .disc {
+  background: var(--ui-fab-disabled-bg, var(--ui-button-round-disabled-bg, var(--ui-surface-disabled)));
+  color: var(--ui-fab-disabled-icon, var(--ui-button-round-disabled-icon, var(--ui-text-disabled)));
+}
+
+/* The glyph: ButtonRound LG's icon box and stroke - see ButtonRound.module.css
+   for why the stroke is set on the shapes with non-scaling-stroke. */
+.icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--ui-fab-icon-size, var(--ui-button-round-lg-icon-size));
+  height: var(--ui-fab-icon-size, var(--ui-button-round-lg-icon-size));
+  overflow: hidden;
+}
+.icon svg * { vector-effect: non-scaling-stroke; }
+.icon svg,
+.icon svg * { stroke-width: var(--ui-fab-icon-stroke, var(--ui-button-round-lg-icon-stroke)); }
+.fab .icon > *,
+.fab .icon svg,
+.fab .icon img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab,
+  .disc { transition: none; }
+}

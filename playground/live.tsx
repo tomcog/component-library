@@ -5,7 +5,7 @@
 import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import {
-  BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, InputSelect,
+  BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, Fab, InputSelect,
   InputText, InputTextarea, LayerController, LeftRail, Logo, Modal, Nav, NavDropdown,
   NavDropdownItem, NavItem, NavRail, NavSlat, Pill, Radio, RadioGroup, Segment, SegmentedControl,
   Spinner, Tab, Tabs, Tag, Toolbar, ToolbarExpander, ToolbarGroup,
@@ -153,6 +153,23 @@ export function LiveButtonRound() {
           {button}
         </div>
       ) : button}
+    </Live>
+  );
+}
+
+export function LiveFab() {
+  const [label, setLabel] = useState("New job");
+  const [hideLabel, setHideLabel] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  return (
+    <Live
+      controls={<>
+        <Text label="label" value={label} onChange={setLabel} />
+        <Check label="hideLabel" checked={hideLabel} onChange={setHideLabel} />
+        <Check label="disabled" checked={disabled} onChange={setDisabled} />
+      </>}
+    >
+      <Fab icon={<House />} hideLabel={hideLabel} disabled={disabled}>{label}</Fab>
     </Live>
   );
 }

@@ -658,3 +658,19 @@ Nothing here needs action.
     `Danger/Darker`; code went back to plain `--ui-action` / `--ui-danger` in
     0.72.0. Direction: Figma - repoint them to `Action/Base` and `Danger/Base`.
     Check first that nothing else binds either variable.
+
+45. ~~`FAB` is in Figma and absent from code.~~ **Resolved 2026-10-03.** Built in
+    code as `Fab` from the drawing (design-shaped, Figma-first). Two of the
+    drawing's values were off-system and were brought onto it on both sides, by
+    the user's call: the disc's own five-layer literal shadow became `CardLow`
+    (`--ui-shadow-float-1`), and the SemiBold label became Medium, the system
+    label weight. The 8px gap, raw until then, is bound to the new `FAB/Gap`
+    (`--ui-fab-gap`). The component got its first description. Its canvas
+    section, "Figma only - not in code", was renamed `FAB` (`834:380`).
+
+    Original entry: A component (`703:513`) of a `Button/Round` beside a text label,
+    with no description and no instances in the file. No `FAB` exists in `src/`, and
+    no doc mentions it. It sits in its own "Figma only - not in code" section on the
+    canvas so its placement does not suggest it is in the library. Either it is
+    built in code (from the drawing, as a design-shaped change arriving Figma-first)
+    or it is marked deprecated; which is the user's call.

@@ -111,14 +111,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
    session. (The select half closed on 2026-09-27: `Input-Select`, `837:463`,
    wraps `Input-Text` at LG and MD.)
 
-45. **`FAB` is in Figma and absent from code.** A component (`703:513`) of a
-   `Button/Round` beside a text label, with no description and no instances
-   in the file. No `FAB` exists in `src/`, and no doc mentions it. It sits in
-   its own "Figma only - not in code" section on the canvas so its placement
-   does not suggest it is in the library. Either it is built in code (from
-   the drawing, as a design-shaped change arriving Figma-first) or it is
-   marked deprecated; which is the user's call.
-
 47. **LayerController-Plot and Layer bind Button's variables.** (`Button/Round`
    no longer does - its rebuild on 2026-09-29 binds only `Button/Round/*`.)
    DEFECT: a binding that breaks. `Button/Round` bound `Button/Tertiary/Label`,
@@ -160,7 +152,7 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     (spreading each effect, colour bound to `Shadow/Color` at the same
     opacity as the code's mix - a bound colour carries the variable's alpha,
     so a 90% layer may need the variable split or the opacity accepted as
-    100%), repoint Card and Modal at them, and retire `CardLow` / `CardHigh`.
+    100%), repoint Card, Modal and FAB's disc at them, and retire `CardLow` / `CardHigh`.
     Card's Figma description still describes the two-layer pair; update it
     with the fix. Code took the values in 0.72.0.
 
