@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - New component: Fab.
+**0.78.0 -> 0.79.0** - New component: Fab.
 
 **Fab** (new): a primary round disc with its label beside it, as one control -
 `<Fab icon={<Plus />}>New job</Fab>`. The disc is ButtonRound's LG primary with the
