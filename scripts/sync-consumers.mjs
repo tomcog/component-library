@@ -4,16 +4,23 @@
 //   npm run sync-consumers -- 0.35.0    # a specific release
 //   npm run sync-consumers -- --push    # also push each app's commit
 //
-// For each app: reinstall the tag, check the installed package really is that
+// For each app: repoint any `allowScripts` approval of @tomcoggia/ui to the new
+// version, reinstall the tag, check the installed package really is that
 // version WITH a built dist/ (npm 11 warns about git-dependency `prepare`
 // scripts, and a blocked prepare installs an empty package without failing),
 // then commit package.json + package-lock.json - and nothing else - on
 // whatever branch the app is on. Pushing is opt-in, because pushing an app can
 // deploy it.
 //
-// An app is committed only when the ONLY change in its package.json is the
-// @tomcoggia/ui line, so dependency edits in progress are never swept into the
-// commit; those apps are updated and left for you to commit.
+// The allowScripts approval is per version ("@tomcoggia/ui@0.78.0": true). Left
+// on the old version, the local install can still pass - the old build is on
+// disk - while a fresh install on the host skips prepare and the deploy breaks.
+// So it moves with the dependency, before the install.
+//
+// An app is committed only when the ONLY changes in its package.json are the
+// @tomcoggia/ui lines (the dependency and its allowScripts approval), so
+// dependency edits in progress are never swept into the commit; those apps are
+// updated and left for you to commit.
 //
 // --push applies the same rule to what leaves the machine: an app is pushed
 // only when every unpushed commit on its branch is one of these "Move to"
@@ -21,7 +28,7 @@
 // ship never rides out with a version bump. Anything else is reported, not
 // pushed.
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -69,6 +76,24 @@ function findConsumers() {
   return found;
 }
 
+// An allowScripts key approving one version of this package, e.g. "@tomcoggia/ui@0.78.0"
+const APPROVAL = new RegExp(`"${PKG.replace(/[/.]/g, "\\$&")}@\\d+\\.\\d+\\.\\d+"`, "g");
+
+/**
+ * Repoint the app's allowScripts approval of this package at `version`, editing
+ * the text so the file's formatting is untouched. Returns true if it changed.
+ * Apps with no allowScripts entry for the package are left alone.
+ */
+function syncAllowScripts(dir) {
+  const file = join(dir, "package.json");
+  const text = readFileSync(file, "utf8");
+  if (!JSON.parse(text).allowScripts) return false;
+  const next = text.replace(APPROVAL, `"${PKG}@${version}"`);
+  if (next === text) return false;
+  writeFileSync(file, next);
+  return true;
+}
+
 function gitRoot(dir) {
   try { return git(dir, "rev-parse", "--show-toplevel"); } catch { return null; }
 }
@@ -107,6 +132,10 @@ for (const { dir, ref } of consumers) {
     const installed = join(dir, "node_modules", PKG, "package.json");
     const current = existsSync(installed) ? JSON.parse(readFileSync(installed, "utf8")).version : null;
 
+    // Before installing, or npm 11 may skip the new version's prepare build
+    const approvalMoved = syncAllowScripts(dir);
+    if (approvalMoved) console.log(`${name}: allowScripts now approves ${PKG}@${version}`);
+
     if (ref !== spec || current !== version) {
       process.stdout.write(`${name}: installing ${tag}... `);
       run("npm", ["install", `${PKG}@${spec}`, "--no-audit", "--no-fund"], dir);
@@ -134,10 +163,11 @@ for (const { dir, ref } of consumers) {
       // the case a later `--push` exists for.
       row.status = `already on ${tag}, committed`;
     } else {
-      // Only commit when the package.json change is this dependency and nothing else.
+      // Only commit when the package.json changes are this dependency (and its
+      // allowScripts approval) and nothing else.
       const diff = git(root, "diff", "-U0", "--", rel("package.json"));
       const edits = diff.split("\n").filter((l) => /^[+-](?![+-])/.test(l));
-      const onlyOurs = edits.every((l) => l.includes(`"${PKG}"`));
+      const onlyOurs = edits.every((l) => l.includes(`"${PKG}"`) || l.includes(`"${PKG}@`));
       if (!onlyOurs) {
         row.status = `updated, NOT committed - package.json has other uncommitted changes`;
         continue;
