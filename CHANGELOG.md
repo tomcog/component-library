@@ -9,6 +9,8 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**0.80.0 -> 0.81.0** - LayerController: noun, for the eye's tooltip - "Hide path" on a row that is a path.
+
 **0.79.0 -> 0.80.0** - LayerController: the layer to print is a target, not a printer.
 
 **LayerController**: the picked layer's glyph in a `print` row is lucide/target, in the
