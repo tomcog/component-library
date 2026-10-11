@@ -149,6 +149,18 @@ withholds `data-ui-picker-aligned` when `options.length * row > innerHeight`,
 and Chrome's own placement - which shows the most rows - takes over. The
 overflow itself is Chrome's and predates the alignment.
 
+**Nor is a menu that would land off screen.** Since 0.82.0 the test is where the
+ALIGNED menu would actually sit, not just its height: the chosen row's centre on
+the field's, the rows above it reaching up, the rest down. A short list whose
+chosen row is far down, opened from a field near the top of the window, used to
+pass the height test and then hang off the top - NextDraw's pen pickers (15
+options, Black last) lost their top rows out of reach. Flipping upward does not
+rescue it, because the flipped menu lines up the same row in the same place, and
+Chrome neither shrinks nor slides an overflowing picker. Measured in the
+playground: a 15-option select at 200px with the last row chosen now opens below
+the field, every row on screen; with the first rows chosen, or the field lower,
+it still aligns.
+
 **The menu can open upward**, and since 0.28.1 that case aligns too:
 `margin-block-end` is set beside `margin-block-start`, only the one facing the
 anchor applies, and the component publishes `--ui-input-select-picker-count`

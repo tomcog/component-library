@@ -100,41 +100,49 @@ export const InputSelect = forwardRef<HTMLSelectElement, InputSelectProps>(funct
       return;
     }
 
-    // The row height, read through the same fallback chain the CSS uses so an
-    // app that retunes either token is measured on its own terms.
-    const rowHeight = () => {
-      const cs = getComputedStyle(el);
-      const px = (v: string) => Number.parseFloat(v) || 0;
-      return (
-        px(cs.getPropertyValue("--ui-input-select-option-height")) ||
-        px(cs.getPropertyValue("--ui-input-select-height")) ||
-        px(cs.getPropertyValue("--ui-input-text-height")) ||
-        32
-      );
-    };
+    // The row height and the menu's border and padding, read through the same
+    // fallback chains the CSS uses so an app that retunes a token is measured
+    // on its own terms.
+    const px = (v: string) => Number.parseFloat(v) || 0;
+    const rowHeight = (cs: CSSStyleDeclaration) =>
+      px(cs.getPropertyValue("--ui-input-select-option-height")) ||
+      px(cs.getPropertyValue("--ui-input-select-height")) ||
+      px(cs.getPropertyValue("--ui-input-text-height")) ||
+      32;
+    const menuEdge = (cs: CSSStyleDeclaration) =>
+      (px(cs.getPropertyValue("--ui-input-select-menu-border-width")) || 1) +
+      (px(cs.getPropertyValue("--ui-input-select-menu-padding")) || 4);
 
     const sync = () => {
       if (el.matches(":open")) return;
 
-      // Align only when the menu FITS. Chrome does not shrink an oversized
-      // picker - it pins it to the viewport edge and lets the rest hang off -
-      // so shifting a very long list up by index*row just buries more of it.
-      // NextJob has a 165-option company select where aligning cut the visible
-      // rows from ~31 to ~12. Falling back to Chrome's own placement shows the
-      // most options, which is what matters once the list stops fitting.
-      const fits = el.options.length * rowHeight() <= window.innerHeight;
-      if (!fits) {
+      // selectedIndex is -1 when nothing is selected; the first row is the
+      // sensible thing to line up with then.
+      const index = Math.max(0, el.selectedIndex);
+
+      // Align only when the ALIGNED menu fits on screen where it would land.
+      // Chrome does not shrink or slide a picker that overflows - it pins it
+      // to the viewport edge and lets the rest hang off - and flipping it
+      // upward is no help, since the flipped menu lines up the same row and
+      // lands in the same place. So a menu taller than the window (NextJob's
+      // 165-option company select, where aligning cut the visible rows from
+      // ~31 to ~12) and a short menu whose chosen row is far down, opened from
+      // a field near the top of the window (NextDraw's pen pickers, whose top
+      // rows went off the screen and could not be reached) both fall back to
+      // Chrome's own placement, which keeps every row in reach.
+      const cs = getComputedStyle(el);
+      const row = rowHeight(cs);
+      const edge = menuEdge(cs);
+      const box = el.getBoundingClientRect();
+      const top = box.top + box.height / 2 - edge - (index + 0.5) * row;
+      const bottom = top + 2 * edge + el.options.length * row;
+      if (top < 0 || bottom > window.innerHeight) {
         el.removeAttribute("data-ui-picker-aligned");
         return;
       }
       el.setAttribute("data-ui-picker-aligned", "");
 
-      // selectedIndex is -1 when nothing is selected; the first row is the
-      // sensible thing to line up with then.
-      el.style.setProperty(
-        "--ui-input-select-picker-index",
-        String(Math.max(0, el.selectedIndex)),
-      );
+      el.style.setProperty("--ui-input-select-picker-index", String(index));
       // The COUNT is needed as well as the index: Chrome opens the picker
       // above the field as readily as below it, and the flipped case measures
       // from the menu's far edge, so it depends on how tall the menu is.
