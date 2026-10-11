@@ -25,7 +25,8 @@ the number, a colour swatch, the name and a grip. Figma: `LayerController`
               Label MD's own 16px leading would burst it (719:337)
     swatch    16px circle, the caller's colour; `swatchCut` strikes it through
               with Figma's 3px rule, overhanging it at both ends (741:386)
-    icons     16px lucide/printer (Confirm stroke) and lucide/printed;
+    icons     lucide/target (Confirm stroke) at 24px/1.5 stroke - lucide/printer
+              until 0.80 - and 16px lucide/printed;
               lucide/pen-tool at 24px/1.5 stroke for purpose="draw" - same weight
               `icon`: the caller's glyph at 16px, stroke 1.5 on lucide's 24 box
               (the same weight); Text/Muted at rest, Confirm when picked,
@@ -59,7 +60,7 @@ look with checkbox semantics would let two layers claim the printer.
 
 ## States are what the box holds
 
-`checked` shows the green printer; `printed` shows the grey printer with a
+`checked` shows the green target; `printed` shows the grey printer with a
 green tick; **checked wins** when both are true, because which layer prints
 next matters more than what printed last. Figma's `printStatus` boolean plus an
 instance swap is two properties for one three-way state, so code has one
@@ -68,7 +69,7 @@ visible outcome per combination instead.
 ## `purpose` is what picking a layer means
 
 `print` is the default and is a plotter's: the picked layer is the one that
-will be printed, the box is a printer, and `printed` marks the ones already
+will be printed, the box is a target, and `printed` marks the ones already
 done. `draw` is an editor's: the picked layer is the one being drawn on, so the
 box is lucide/pen-tool and `printed` is ignored - nothing has been "already drawn
 on", so there is no third state for it to show. The accessible name follows,

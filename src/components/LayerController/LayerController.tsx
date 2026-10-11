@@ -29,14 +29,14 @@ export interface LayerControllerProps
   label: ReactNode;
   /**
    * Printed this session. Draws the grey printer with a green tick in the box
-   * while the layer is not the chosen one; the chosen layer's green printer
+   * while the layer is not the chosen one; the chosen layer's green target
    * always wins.
    */
   printed?: boolean;
   /**
    * What picking a layer means, which is not the same in every app. `print` is
    * the default and is a plotter's: the picked layer is the one that will be
-   * printed, so the box is a printer and `printed` marks the ones already done.
+   * printed, so the box is a target and `printed` marks the ones already done.
    * `draw` is an editor's: the picked layer is the one being drawn on, so the
    * box is a pen nib and `printed` means nothing. The row is otherwise identical
    * - same geometry, same swatch, same eye - because it is the same layer.
@@ -98,7 +98,7 @@ export interface LayerControllerProps
  *
  * **The box is a radio, drawn like a checkbox.** Only one layer prints at a
  * time, so rows sharing a `name` are one radio group: picking a layer moves the
- * green printer to it, and arrow keys move it along the group. It is a real
+ * green target to it, and arrow keys move it along the group. It is a real
  * `<input type="radio">` at 1px behind the icon - the Checkbox pattern - so
  * focus, keyboard, forms and the screen-reader contract are the browser's. An
  * empty box is the resting state; there is no "none of them" once one is picked,
@@ -134,7 +134,7 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
           <span className={styles.kind} aria-hidden>{icon}</span>
         ) : (
           <>
-            {state === "target" && (purpose === "draw" ? <PenToolIcon className={styles.icon} /> : <PrinterIcon className={styles.icon} />)}
+            {state === "target" && (purpose === "draw" ? <PenToolIcon className={styles.icon} /> : <TargetIcon className={styles.icon} />)}
             {state === "printed" && <PrintedIcon className={styles.icon} />}
           </>
         )}
@@ -202,17 +202,19 @@ function CutMark() {
   );
 }
 
-/* The three glyphs are Figma's exported vectors (lucide/printer, lucide/printed
-   and icon-end), with their fills and strokes moved onto currentColor and
+/* The printed glyph and icon-end are Figma's exported vectors (lucide/printed and icon-end), with their fills and strokes moved onto currentColor and
    tokens so they theme. */
 
-function PrinterIcon({ className }: { className?: string }) {
+/* lucide/target, at its 24-unit box with the 1.5 stroke, as pen-tool below: the layer the plotter
+   aims at next. It replaced lucide/printer in 0.80. */
+function TargetIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path
-        className={styles.strokeConfirm}
-        d="M4 12H2.66667C2.31304 12 1.97391 11.8595 1.72386 11.6095C1.47381 11.3594 1.33333 11.0203 1.33333 10.6667V7.33333C1.33333 6.97971 1.47381 6.64057 1.72386 6.39052C1.97391 6.14048 2.31304 6 2.66667 6H13.3333C13.687 6 14.0261 6.14048 14.2761 6.39052C14.5262 6.64057 14.6667 6.97971 14.6667 7.33333V10.6667C14.6667 11.0203 14.5262 11.3594 14.2761 11.6095C14.0261 11.8595 13.687 12 13.3333 12H12M4 6V2C4 1.82319 4.07024 1.65362 4.19526 1.5286C4.32029 1.40357 4.48986 1.33333 4.66667 1.33333H11.3333C11.5101 1.33333 11.6797 1.40357 11.8047 1.5286C11.9298 1.65362 12 1.82319 12 2V6M4.66667 9.33333H11.3333C11.7015 9.33333 12 9.63181 12 10V14C12 14.3682 11.7015 14.6667 11.3333 14.6667H4.66667C4.29848 14.6667 4 14.3682 4 14V10C4 9.63181 4.29848 9.33333 4.66667 9.33333Z"
-      />
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <g className={styles.strokeConfirm} strokeWidth={1.5}>
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+      </g>
     </svg>
   );
 }

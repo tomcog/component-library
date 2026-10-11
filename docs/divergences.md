@@ -164,3 +164,8 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     placeholder two lines above the rule. Direction: Figma - redraw the cells at
     one row (`10 + 20 + 1 = 31px`, InputText's height) and say in the description
     that it grows with content.
+
+57. **In code, not yet in Figma:** LayerController's picked-to-print glyph is
+    lucide/target (24-unit box, 1.5 stroke, Confirm) since 0.80; the Figma set
+    (719:555) still swaps in lucide/printer. Asked for in NextDraw Plot's layer
+    list on 2026-10-10. Figma's instance swap wants the target.

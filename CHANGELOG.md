@@ -9,6 +9,12 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased** - LayerController: the layer to print is a target, not a printer.
+
+**LayerController**: the picked layer's glyph in a `print` row is lucide/target, in the
+same Confirm green, at the 24-unit box with the 1.5 stroke, as the pen nib is. The grey
+printed-with-a-tick glyph is unchanged. Figma still draws the printer (divergence 57).
+
 **0.78.0 -> 0.79.0** - New component: Fab.
 
 **Fab** (new): a primary round disc with its label beside it, as one control -
