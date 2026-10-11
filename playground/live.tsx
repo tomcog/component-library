@@ -478,6 +478,7 @@ export function LiveLayerController() {
   const [icon, setIcon] = useState(false);
   const [visible, setVisible] = useState(true);
   const [hideVisibility, setHideVisibility] = useState(false);
+  const [noun, setNoun] = useState("layer");
   const [hideHandle, setHideHandle] = useState(false);
   const [checked, setChecked] = useState(true);
   return (
@@ -492,6 +493,7 @@ export function LiveLayerController() {
         <Check label="icon" checked={icon} onChange={setIcon} />
         <Check label="visible" checked={visible} onChange={setVisible} />
         <Check label="hideVisibility" checked={hideVisibility} onChange={setHideVisibility} />
+        <Text label="noun" value={noun} onChange={setNoun} width={70} />
         <Check label="hideHandle" checked={hideHandle} onChange={setHideHandle} />
       </>}
     >
@@ -507,6 +509,7 @@ export function LiveLayerController() {
           icon={icon ? <Picture /> : undefined}
           visible={visible}
           onVisibleChange={setVisible}
+          noun={noun}
           hideVisibility={hideVisibility}
           hideHandle={hideHandle}
           checked={checked}

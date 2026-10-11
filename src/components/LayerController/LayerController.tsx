@@ -63,6 +63,11 @@ export interface LayerControllerProps
    */
   onVisibleChange?: (visible: boolean) => void;
   /**
+   * What the row is called in the eye's tooltip: "Hide layer", or "Hide path" for a row that is a
+   * path rather than a layer. The accessible name still uses `label`. Defaults to `"layer"`.
+   */
+  noun?: string;
+  /**
    * Leave the eye off the row, for views where visibility isn't something to
    * change. Defaults to `false`: the eye shows.
    */
@@ -108,7 +113,7 @@ export interface LayerControllerProps
  * pass `aria-label` when the label is a control.
  */
 export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps>(function LayerController(
-  { number, color, swatchProps, swatchCut = false, label, printed = false, purpose = "print", icon, visible = true, onVisibleChange, hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
+  { number, color, swatchProps, swatchCut = false, label, printed = false, purpose = "print", icon, visible = true, onVisibleChange, noun = "layer", hideVisibility = false, handleProps, hideHandle = false, className, checked, disabled, ...props },
   ref,
 ) {
   const verb = purpose === "draw" ? "Draw on" : "Print";
@@ -165,7 +170,7 @@ export const LayerController = forwardRef<HTMLInputElement, LayerControllerProps
             className={styles.eye}
             aria-pressed={!visible}
             aria-label={visible ? `Hide ${labelText}` : `Show ${labelText}`}
-            title={visible ? "Hide layer" : "Show layer"}
+            title={visible ? `Hide ${noun}` : `Show ${noun}`}
             onClick={() => onVisibleChange(!visible)}
           >
             {visible ? <EyeIcon /> : <EyeOffIcon />}

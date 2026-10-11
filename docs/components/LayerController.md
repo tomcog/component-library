@@ -92,6 +92,12 @@ printer or nib; the box's colour is still what says "picked". `printed` shows
 nothing on a row with an icon - the kind is the more lasting fact. Pass an icon
 that draws in `currentColor`; the row sizes it and sets its stroke.
 
+## The eye can name what the row is
+
+The eye's tooltip says "Hide layer" / "Show layer". A row that stands for something else - a path
+in a layer's list of paths - passes `noun="path"` and the tooltip says "Hide path". The accessible
+name comes from `label` either way ("Hide Pink"). Code-only: Figma's eye has no tooltip.
+
 ## Hidden layers can't be picked
 
 `visible={false}` disables the radio and draws the box empty even if
