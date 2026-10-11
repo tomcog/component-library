@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased** - LayerController: the layer to print is a target, not a printer.
+**0.79.0 -> 0.80.0** - LayerController: the layer to print is a target, not a printer.
 
 **LayerController**: the picked layer's glyph in a `print` row is lucide/target, in the
 same Confirm green, at the 24-unit box with the 1.5 stroke, as the pen nib is. The grey
