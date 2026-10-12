@@ -916,6 +916,9 @@
   --ui-layer-controller-cut-color: #ffffff;
   --ui-layer-controller-cut-width: 3px;
   --ui-layer-controller-handle-size: 12px;
+  /* The eye and eye-off are drawn as lines, this thick on screen whatever their
+     size - lucide's eye geometry stroked rather than filled outlines (0.83). */
+  --ui-layer-controller-eye-stroke-width: 1px;
 
   /* -- Tabs ----------------------------------------------------
      Figma: `PageTabs` (364:420), measured off the running app rather than the

@@ -9,6 +9,14 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**LayerController**: the eye and eye-off are drawn as lines - lucide/eye and
+lucide/eye-off at the 12px handle size, stroked 1px on screen - where they were
+filled outlines 0.75px thick. New token `--ui-layer-controller-eye-stroke-width`
+(1px). Asked for in NextDraw's layer list on 2026-10-12. Figma still draws the
+filled glyphs (divergence 58).
+
 **0.81.0 -> 0.82.0** - InputSelect: line the menu up only where it lands on screen.
 
 **0.80.0 -> 0.81.0** - LayerController: noun, for the eye's tooltip - "Hide path" on a row that is a path.

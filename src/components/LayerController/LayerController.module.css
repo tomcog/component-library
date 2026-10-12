@@ -209,8 +209,16 @@ button.eye {
   display: block;
   width: var(--ui-layer-controller-handle-size);
   height: var(--ui-layer-controller-handle-size);
-  fill: currentColor;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 0.65;
+}
+/* Lines of one width on screen, not scaled with the 24-unit box to the 12px glyph. */
+.eyeGlyph > * {
+  stroke-width: var(--ui-layer-controller-eye-stroke-width);
+  vector-effect: non-scaling-stroke;
 }
 
 /* Hidden: the rules go and the number and name grey to Text/Disabled. The

@@ -32,7 +32,10 @@ the number, a colour swatch, the name and a grip. Figma: `LayerController`
               (the same weight); Text/Muted at rest, Confirm when picked,
               Text/Disabled when hidden - not in Figma
               (Text/Muted with a Confirm tick); 12px eye (Text/Muted) and
-              grip (Surface Muted), both at 65%, gap 4
+              grip (Surface Muted), both at 65%, gap 4. The eye and eye-off
+              are lucide/eye and lucide/eye-off stroked at 1px on screen
+              (--ui-layer-controller-eye-stroke-width) since 0.83 - filled
+              0.75px outlines before; Figma still draws those (divergence 58)
     hidden    (719:567) no rules on box or row; number and name
               Text/Disabled; swatch unchanged; eye-off in Accent at 65%
 

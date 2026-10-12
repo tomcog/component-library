@@ -169,3 +169,9 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     lucide/target (24-unit box, 1.5 stroke, Confirm) since 0.80; the Figma set
     (719:555) still swaps in lucide/printer. Asked for in NextDraw Plot's layer
     list on 2026-10-10. Figma's instance swap wants the target.
+
+58. **In code, not yet in Figma:** LayerController's eye and eye-off are lucide/eye
+    and lucide/eye-off stroked at 1px (`--ui-layer-controller-eye-stroke-width`)
+    since 0.83; the Figma set (719:555, hidden 719:567) still draws the filled
+    0.75px outlines. Asked for in NextDraw's layer list on 2026-10-12. Direction:
+    Figma - swap in the stroked lucide glyphs at a 1px stroke.
