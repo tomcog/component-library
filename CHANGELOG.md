@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased**
+**0.82.0 -> 0.83.0**
 
 **LayerController**: the eye and eye-off are drawn as lines - lucide/eye and
 lucide/eye-off at the 12px handle size, stroked 1px on screen - where they were
