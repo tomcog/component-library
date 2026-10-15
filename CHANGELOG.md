@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased**
+**0.85.0 -> 0.86.0**
 
 **Toolbar**: the gap between the controls in a bar is 12, down from 16
 (`--ui-toolbar-gap`). Asked for from NextDraw's tool bars on 2026-10-15.
