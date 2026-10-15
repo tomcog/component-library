@@ -17,7 +17,7 @@ Gray | White and an `Orientation` axis of Horizontal | Vertical.
 </Toolbar>
 ```
 
-    bar      radius 99, padding 4, gap 16 between controls
+    bar      radius 99, padding 4, gap 12 between controls
              tone="gray"   bar Surface/Sunken, tracks Surface/Raised  (default)
              tone="white"  bar Surface/Raised, tracks Surface/Sunken
     height   DERIVED: padding + the tallest control, so 32 with SM, 48 with LG
@@ -211,7 +211,7 @@ the set's description. `Motion/Stagger` (30, both modes) carries
 
 ## The gap is the argument
 
-16 between controls against 4 between segments (16 until 0.59.0, 20 until 0.85.0). Segments crowd together
+12 between controls against 4 between segments (16 until 0.59.0, 20 until 0.85.0, 16 until 0.86.0). Segments crowd together
 because they answer one question; controls stand apart because they answer
 several. That ratio is the only thing stopping a toolbar from reading as one
 long row of options, and it is why `--ui-toolbar-gap` is its own token rather

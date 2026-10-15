@@ -175,3 +175,8 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     since 0.83; the Figma set (719:555, hidden 719:567) still draws the filled
     0.75px outlines. Asked for in NextDraw's layer list on 2026-10-12. Direction:
     Figma - swap in the stroked lucide glyphs at a 1px stroke.
+
+59. **In code, not yet in Figma:** `--ui-toolbar-gap` is 12 since 0.86.0; Figma's
+    `Toolbar/Gap` variable (both modes) and the Toolbar set's description still say 16.
+    Asked for from NextDraw's tool bars on 2026-10-15. Direction: Figma - set
+    `Toolbar/Gap` to 12 and update the description.
