@@ -12,7 +12,7 @@
   align-items: center;
   border-radius: var(--ui-toolbar-radius);
   padding: var(--ui-toolbar-padding);
-  /* Five times the gap inside a track. That ratio is the whole visual
+  /* Four times the gap inside a track. That ratio is the whole visual
      argument: segments crowd together because they are one question, and the
      controls stand apart because they are several. */
   gap: var(--ui-toolbar-gap);

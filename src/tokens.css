@@ -1092,10 +1092,11 @@
      controls stands 48 without anything here changing. */
   --ui-toolbar-radius: 99px;
   --ui-toolbar-padding: 4px;
-  /* Between two segmented controls, NOT between two segments: 20 against the
+  /* Between two segmented controls, NOT between two segments: 16 against the
      4 inside a track. The one number that says "these are separate
-     controls" rather than one long row of options. 16 until 0.59.0. */
-  --ui-toolbar-gap: 20px;
+     controls" rather than one long row of options. 16 until 0.59.0, 20 from
+     then until 0.85.0, when it came back down - 20 read as two toolbars. */
+  --ui-toolbar-gap: 16px;
   /* Between a ToolbarGroup's caption ("VIEW:") and the track it names. Its
      own number rather than the track's 4: that one spaces options, this one
      ties a caption to its control. */
