@@ -256,6 +256,7 @@ function App() {
   const [segSort, setSegSort] = useState("newest");
   const [tbView, setTbView] = useState("preview");
   const [tbZoom, setTbZoom] = useState("plot");
+  const [tbTool, setTbTool] = useState("");
   const [modal, setModal] = useState<null | "drawn" | "danger" | "plain">(null);
   const [radios, setRadios] = useState<Record<string, string>>({ xl: "in", lg: "in", md: "in" });
   /* Read off the rendered DOM rather than kept as a constant beside the JSX.
@@ -775,6 +776,20 @@ function App() {
                 <Segment icon={<Grid />} selected={tbZoom === "plot"} onClick={() => setTbZoom("plot")}>Print area</Segment>
                 <Segment icon={<StickyNote />} selected={tbZoom === "paper"} onClick={() => setTbZoom("paper")}>Paper</Segment>
                 <Segment icon={<Picture />} selected={tbZoom === "drawing"} onClick={() => setTbZoom("drawing")}>Drawing</Segment>
+              </SegmentedControl>
+            </Toolbar>
+          </div>
+        </Row>
+        {/* Nothing selected until a tool is picked, and picking it again puts
+            it down - NextDraw's tool bars. The thumb grows out of the middle
+            of the first pick rather than the track's corner (0.84.0). */}
+        <Row label="none selected">
+          <div style={{ display: "flex", gap: 24, alignItems: "flex-start", padding: 16, borderRadius: 12, background: "var(--ui-surface-pale)" }}>
+            <Toolbar orientation="vertical" tone="white" aria-label="Tools, none selected">
+              <SegmentedControl size="sm" aria-label="Tool">
+                {([["grid", "Grid", <Grid key="g" />], ["note", "Note", <StickyNote key="n" />], ["picture", "Picture", <Picture key="p" />]] as const).map(([id, label, glyph]) => (
+                  <Segment key={id} icon={glyph} hideLabel selected={tbTool === id} onClick={() => setTbTool(tbTool === id ? "" : id)}>{label}</Segment>
+                ))}
               </SegmentedControl>
             </Toolbar>
           </div>

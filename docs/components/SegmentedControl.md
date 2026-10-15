@@ -118,6 +118,12 @@ segment itself, over `--ui-motion-fast`.
 - **Only the track's own segments.** A choice panel nested inside a track -
   ToolbarExpander's - keeps each segment's own ground. A row of `actions` has no
   selection and no thumb.
+- **From nothing selected it grows out of the segment's middle** (0.84.0), and a
+  cleared selection shrinks back into the middle of where it stood. With nothing
+  selected the thumb is 0x0 at its last position - the track's corner before it has
+  ever been placed - so `place()` first parks it, untransitioned, as a point at the
+  new segment's centre and flushes that before setting the full box. Reported from
+  NextDraw's tool bars, which start with no tool picked.
 - Placement is `src/internal/useSlidingIndicator.ts`, which re-measures on a
   selection change, a font load or a resize. Tabs carries its own horizontal-only
   version of the same idea.

@@ -9,6 +9,15 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**SegmentedControl**: the selected ground grows out of the middle of a segment when it is
+picked in a track that had nothing selected, and shrinks back into its middle when the
+selection is cleared. It grew out of the track's top-left corner on a first pick, and
+out of wherever it last stood after that. A change from one segment to another still
+slides as before. Reported from NextDraw's tool bars, which start with no tool picked,
+on 2026-10-14. Code-only: Figma draws no motion.
+
 **0.82.0 -> 0.83.0**
 
 **LayerController**: the eye and eye-off are drawn as lines - lucide/eye and

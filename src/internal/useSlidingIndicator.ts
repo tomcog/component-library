@@ -32,6 +32,13 @@ export function useSlidingIndicator(
     if (!box || !mark) return;
     const selected = box.querySelector<HTMLElement>(selector);
     if (!selected) {
+      // Shrink into the middle of where it stands, the reverse of growing out
+      // of it below - not towards its own top-left corner.
+      if (mark.offsetWidth > 0 || mark.offsetHeight > 0) {
+        const from = box.getBoundingClientRect();
+        const at = mark.getBoundingClientRect();
+        mark.style.transform = `translate(${at.left - from.left - box.clientLeft + at.width / 2}px, ${at.top - from.top - box.clientTop + at.height / 2}px)`;
+      }
       mark.style.width = "0px";
       mark.style.height = "0px";
       return;
@@ -40,9 +47,25 @@ export function useSlidingIndicator(
     // rarely is one, so the indicator would overhang by a fraction.
     const from = box.getBoundingClientRect();
     const to = selected.getBoundingClientRect();
+    const x = to.left - from.left - box.clientLeft;
+    const y = to.top - from.top - box.clientTop;
+    // Coming from nothing selected, the indicator is 0x0 wherever it last was -
+    // the corner, if it has never been placed - and would grow out of there.
+    // Park it, untransitioned, as a point at the middle of the new child and
+    // flush that, so it grows from the centre instead. Selected to selected
+    // still slides; the first placement is untransitioned anyway.
+    const empty = mark.offsetWidth === 0 && mark.offsetHeight === 0;
+    if (empty) {
+      mark.style.transition = "none";
+      mark.style.width = "0px";
+      mark.style.height = "0px";
+      mark.style.transform = `translate(${x + to.width / 2}px, ${y + to.height / 2}px)`;
+      void mark.offsetWidth;
+      mark.style.transition = "";
+    }
     mark.style.width = `${to.width}px`;
     mark.style.height = `${to.height}px`;
-    mark.style.transform = `translate(${to.left - from.left - box.clientLeft}px, ${to.top - from.top - box.clientTop}px)`;
+    mark.style.transform = `translate(${x}px, ${y}px)`;
   }
 
   useLayoutEffect(() => {
