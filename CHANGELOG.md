@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased**
+**0.83.0 -> 0.84.0**
 
 **SegmentedControl**: the selected ground grows out of the middle of a segment when it is
 picked in a track that had nothing selected, and shrinks back into its middle when the
