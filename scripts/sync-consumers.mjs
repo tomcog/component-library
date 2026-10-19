@@ -4,11 +4,13 @@
 //   npm run sync-consumers -- 0.35.0    # a specific release
 //   npm run sync-consumers -- --push    # also push each app's commit
 //
+// Apps with a pnpm-lock.yaml are installed with pnpm, everything else with npm.
+//
 // For each app: repoint any `allowScripts` approval of @tomcoggia/ui to the new
 // version, reinstall the tag, check the installed package really is that
 // version WITH a built dist/ (npm 11 warns about git-dependency `prepare`
 // scripts, and a blocked prepare installs an empty package without failing),
-// then commit package.json + package-lock.json - and nothing else - on
+// then commit package.json + its lockfile - and nothing else - on
 // whatever branch the app is on. Pushing is opt-in, because pushing an app can
 // deploy it.
 //
@@ -129,6 +131,7 @@ for (const { dir, ref } of consumers) {
   const row = { name, from: ref.split("#")[1] ?? ref, status: "" };
   results.push(row);
   try {
+    const usesPnpm = existsSync(join(dir, "pnpm-lock.yaml"));
     const installed = join(dir, "node_modules", PKG, "package.json");
     const current = existsSync(installed) ? JSON.parse(readFileSync(installed, "utf8")).version : null;
 
@@ -138,7 +141,11 @@ for (const { dir, ref } of consumers) {
 
     if (ref !== spec || current !== version) {
       process.stdout.write(`${name}: installing ${tag}... `);
-      run("npm", ["install", `${PKG}@${spec}`, "--no-audit", "--no-fund"], dir);
+      // pnpm apps (Traxxx) must stay on pnpm: `npm install` there would write a
+      // package-lock.json beside pnpm-lock.yaml. pnpm fails loudly instead of
+      // skipping prepare when the app's pnpm-workspace.yaml lacks `allowBuilds`.
+      if (usesPnpm) run("pnpm", ["add", `${PKG}@${spec}`], dir);
+      else run("npm", ["install", `${PKG}@${spec}`, "--no-audit", "--no-fund"], dir);
       console.log("done");
     }
 
@@ -154,7 +161,7 @@ for (const { dir, ref } of consumers) {
     const root = gitRoot(dir);
     if (!root) { row.status = `updated (not a git repo, nothing committed)`; continue; }
     const rel = (f) => relative(root, join(dir, f));
-    const files = ["package.json", "package-lock.json"].filter((f) => existsSync(join(dir, f))).map(rel);
+    const files = ["package.json", "package-lock.json", "pnpm-lock.yaml"].filter((f) => existsSync(join(dir, f))).map(rel);
 
     const branch = git(root, "rev-parse", "--abbrev-ref", "HEAD");
     const changed = git(root, "status", "--porcelain", "--", ...files);

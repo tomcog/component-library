@@ -47,7 +47,9 @@ primary-colour controls. Every component gets a section there; verify visual wor
 measuring the rendered playground, not by reading the CSS.
 
 There is no test or lint setup; don't reference scripts that aren't in `package.json`.
-Consuming apps use npm and React 18.3.1 — don't introduce another package manager.
+The library itself uses npm — don't introduce another package manager here. Consuming apps
+use npm and React 18.3.1, except Traxxx (pnpm, React 19): `sync-consumers` installs it with
+pnpm, and its `pnpm-workspace.yaml` must keep `@tomcoggia/ui` in `allowBuilds`.
 
 ### Releasing
 
