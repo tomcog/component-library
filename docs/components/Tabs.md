@@ -75,7 +75,12 @@ Three different gaps live here and they must not be confused:
 Not `currentColor`. An idle tab is a **dark label beside a muted glyph** — the
 label holds the weight, the icon stays quiet — so the two cannot inherit
 together the way they do in `NavSlat` and `Button`. `--ui-tabs-icon` is muted,
-and goes primary on hover and when selected.
+and goes brand only when selected.
+
+**Hover moves the label, not the icon** (0.87.0). Until then the glyph went
+`--ui-action` with the label; now it stays muted, so hover is a quieter preview
+and only the selected tab carries a coloured icon. The `--ui-tabs-icon-hover`
+hook went with it.
 
 ## Current is brand, hover is action (0.63.0)
 

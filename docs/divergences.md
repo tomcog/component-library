@@ -180,3 +180,9 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     `Toolbar/Gap` variable (both modes) and the Toolbar set's description still say 16.
     Asked for from NextDraw's tool bars on 2026-10-15. Direction: Figma - set
     `Toolbar/Gap` to 12 and update the description.
+
+60. **In code, not yet in Figma:** a hovered tab turns only its label `--ui-action`
+    since Unreleased (after 0.86.0); the icon stays `--ui-tabs-icon` (muted). Figma's
+    `Tabs/Item` Hover cells still bind the icon to `Action/Base`. Asked for on
+    2026-11-06. Direction: Figma - rebind the Hover cells' icon to the idle icon
+    colour, and update the set's description.

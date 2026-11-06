@@ -98,8 +98,9 @@
   height: var(--ui-tabs-xl-icon-size);
 }
 
-/* An idle tab previews where it would take you. The icon needs no rule of its
-   own - its stroke is currentColor, so it follows the label. */
+/* An idle tab previews where it would take you. Only the LABEL moves: the icon
+   carries its own colour (see .icon below) and stays muted on hover, so a
+   hovered tab still reads as idle until it is picked. */
 .tab:hover:not(:disabled) {
   color: var(--ui-tabs-text-hover, var(--ui-action));
 }
@@ -163,9 +164,6 @@
      two cannot simply inherit together the way they do elsewhere here. */
   color: var(--ui-tabs-icon, var(--ui-text-muted));
   transition: color var(--ui-motion-fast) ease;
-}
-.tab:hover:not(:disabled) .icon {
-  color: var(--ui-tabs-icon-hover, var(--ui-action));
 }
 .current .icon {
   color: var(--ui-tabs-icon-current, var(--ui-brand));
