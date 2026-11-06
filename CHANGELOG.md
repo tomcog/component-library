@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased**
+**0.86.0 -> 0.87.0**
 
 **Tabs**: hovering a tab turns only its label `--ui-action`; the icon stays muted
 (`--ui-tabs-icon`). It used to turn with the label. The `--ui-tabs-icon-hover` hook is
