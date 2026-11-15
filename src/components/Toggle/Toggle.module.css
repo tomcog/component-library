@@ -1,9 +1,11 @@
 /* Toggle - a Button/Round disc travelling inside a SegmentedTrack.
 
    The geometry is stated once, as a knob and an inset: the track is two knobs
-   and three insets wide, stands one knob and two insets tall, and the knob
-   travels one knob plus one inset. Only the knob changes between sizes and
-   everything else follows, which is what keeps the three honest.
+   and two insets wide, stands one knob and two insets tall, and the knob
+   travels EXACTLY ONE KNOB - so the disc's two seats are adjacent and the
+   inset is equal at both ends in both states. Only the knob changes between
+   sizes and everything else follows, which is what keeps the three honest.
+   Figma: 72 x 40 at Size=MD, the knob at x=4 off and x=36 on (60:2080).
 
    The GROUND carries the state as much as the knob does: the action tint
    while there is still something to do, the safety tint once there is not -
@@ -21,7 +23,7 @@
   position: relative;
   display: inline-block;
   flex: none;
-  inline-size: calc(var(--toggle-knob) * 2 + var(--ui-toggle-inset) * 3);
+  inline-size: calc(var(--toggle-knob) * 2 + var(--ui-toggle-inset) * 2);
   block-size: calc(var(--toggle-knob) + var(--ui-toggle-inset) * 2);
   padding: 0;
   border: 0;
@@ -64,7 +66,7 @@
 }
 
 .root[aria-checked="true"] .knob {
-  transform: translateX(calc(var(--toggle-knob) + var(--ui-toggle-inset)));
+  transform: translateX(var(--toggle-knob));
   background: var(--ui-toggle-knob-on, var(--ui-safety));
   color: var(--ui-toggle-knob-icon-on, var(--ui-text-on-safety));
 }

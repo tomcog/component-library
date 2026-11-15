@@ -9,6 +9,15 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**Toggle**: the track is 4px NARROWER — two knobs and two insets, not three
+(LG 72x40, was 76x40) — and the knob now travels exactly one knob, so its two
+seats are adjacent and the inset is equal at both ends in both states. 0.88.0
+shipped the geometry the app had carried locally; the Figma set (`60:2080`)
+draws 72 with the knob at 4 and 36, and this is that. No API or token change:
+the width is derived from `--ui-toggle-*-knob` and `--ui-toggle-inset`.
+
 **0.87.0 -> 0.88.0**
 
 **Toggle** (new): a two-state switch — a Button/Round disc travelling inside a

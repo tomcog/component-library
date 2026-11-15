@@ -11,10 +11,17 @@ where it is a goal's completion switch.
 
 ## It is a disc inside a track, and that is the whole geometry
 
-The track is **two knobs and three insets** wide, stands **one knob and two
-insets** tall, and the knob travels **one knob plus one inset**. Everything is
-stated from `--toggle-knob` and `--ui-toggle-inset` (4px), so a size is one
-number changed and the rest follows — which is what keeps the three honest.
+The track is **two knobs and two insets** wide, stands **one knob and two
+insets** tall, and the knob travels **exactly one knob**. The two seats are
+therefore adjacent and the inset is equal at both ends in both states — 4px of
+track showing on the near side, 4px on the far. Everything is stated from
+`--toggle-knob` and `--ui-toggle-inset` (4px), so a size is one number changed
+and the rest follows, which is what keeps the three honest.
+
+    size   track     knob at off / on
+    xl     88 x 48   4 / 44
+    lg     72 x 40   4 / 36
+    md     56 x 32   4 / 28
 
 The ladder it sits on is the control ladder: the **track** takes the standard
 height (48 / 40 / 32) and the **knob is the Button/Round disc one step below
