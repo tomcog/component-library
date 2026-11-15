@@ -721,3 +721,24 @@ Nothing here needs action.
     `CardHigh`. Card's Figma description still describes the two-layer pair;
     update it with the fix. Code took the values in 0.72.0.
 
+61. ~~**In Figma, absent from code:** `Input-Text` has a **Size=XL** cell and the
+    code has only LG and MD.~~ **Resolved** in Unreleased (after 0.89.0), the day it
+    was raised. `size="xl"` ships, measured off the library's own cell
+    (`1055:2245`): value 18/20, caption 12/12, caption gap 4, and LG's box around
+    them — height 32, padding 8/3, inline 4, gap 8, icon 16, radius 2, the same 20
+    line box. Three new `--ui-input-text-xl-*` tokens and a three-declaration `.xl`
+    block; nothing renamed. The stack is 48 where Figma's cell is 46 - the same 2px
+    LG is out by, since Figma fixes both field frames at 30 while their own padding
+    and line box add up to 32.
+
+    Two decisions worth keeping. The block lives in `InputText.module.css`, not in
+    the shared `internal/inputSize.module.css` beside `.md`, because the set draws
+    the XL cell for `Input-Text` alone — a class in the shared module would say all
+    three components had it. And `InputSelectSize` / `InputTextareaSize` were
+    repointed off `InputTextSize` onto a new `InputFieldSize` (`"lg" | "md"`): they
+    had aliased InputText's type, so adding a size to one component silently
+    widened the other two to a value they do not implement.
+
+    Raised from GTD's step cards (67:3673) on 2026-11-15, where every row in a
+    step's panel is drawn at XL. The app had stated the step locally through the
+    field's own tokens for one session; it now passes `size="xl"`.

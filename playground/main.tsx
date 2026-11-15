@@ -50,9 +50,9 @@ const label = (key: string, figma: string, used: string): TypeStep =>
   ({ key, figma, used, prefix: `--ui-type-label-${key}`, weight: TYPE_WEIGHT, sample: "Navigation label" });
 const TYPE_SCALE: TypeStep[] = [
   label("sm", "Type/Label SM", "Button Small \u00b7 BottomNav caption \u00b7 InputText label"),
-  label("md", "Type/Label MD", "Button Medium"),
+  label("md", "Type/Label MD", "Button Medium \u00b7 InputText XL label"),
   label("lg", "Type/Label LG", "Button Large \u00b7 Nav item \u00b7 Nav dropdown item \u00b7 NavSlat \u00b7 Pill \u00b7 InputText value"),
-  label("xl", "Type/Label XL", "Button XL"),
+  label("xl", "Type/Label XL", "Button XL \u00b7 InputText XL value"),
   ...(["sm", "md", "lg", "xl"] as const).map((k): TypeStep => ({
     key: `body-${k}`, figma: `Type/Body ${k.toUpperCase()}`, used: k === "lg" ? "Modal body \u00b7 the Regular twin of Label LG" : "Reading text - the Regular twin of the label step",
     prefix: `--ui-type-body-${k}`, weight: "--ui-type-body-font-weight", sample: "Body text reads at this size",
@@ -1665,7 +1665,11 @@ function App() {
           "on both sides so the pair can be compared. Figma's instance draws a chevron in the " +
           "trailing slot, but a text field is not a select, so nothing is baked in. The date row " +
           "carries the two things a date input needs on top: a red calendar-plus indicator, and " +
-          "its empty `mm/dd/yyyy` printed in the hint colour rather than at full value-black."
+          "its empty `mm/dd/yyyy` printed in the hint colour rather than at full value-black. "
+          + "XL is the text field's own size \u2014 Figma draws that cell for this component alone \u2014 and "
+          + "it is LG's BOX with a bigger value and caption in it, so an XL field beside a "
+          + "top-aligned LG one puts its rule on the same pixel \u2014 the 2px the stack gains is all "
+          + "below the rule, in the caption."
         }
       >
         <LiveInputText />
@@ -1678,6 +1682,17 @@ function App() {
             value={where}
             onChange={(e) => setWhere(e.target.value)}
           />
+        </Row>
+        {/* XL is LG's box with bigger type: put the two side by side and the
+            rules land on the same pixel. */}
+        <Row label="size xl">
+          <InputText size="xl" style={{ width: 220 }} label="Input label" icon={<Layers />} iconEnd={<Layers />} defaultValue="Home" />
+          <InputText size="xl" style={{ width: 200 }} label="Add a task to this step" placeholder="Anything to do" />
+          <InputText size="xl" style={{ width: 180 }} label="Due date" type="date" />
+        </Row>
+        <Row label="xl beside lg">
+          <InputText size="xl" style={{ width: 200 }} label="XL" defaultValue="Same rule" />
+          <InputText style={{ width: 200 }} label="LG" defaultValue="Same rule" />
         </Row>
         <Row label="size md">
           <InputText size="md" style={{ width: 180 }} label="Input label" icon={<Layers />} iconEnd={<Layers />} defaultValue="Home" />

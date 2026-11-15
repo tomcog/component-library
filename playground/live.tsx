@@ -12,7 +12,7 @@ import {
 } from "../src";
 import type {
   ButtonRoundSize, ButtonRoundTone, ButtonRoundVariant, ButtonSize, ButtonTone, ButtonVariant, CardVariant,
-  CheckboxSize, InputTextSize,
+  CheckboxSize, InputSelectSize, InputTextSize, InputTextareaSize,
   LogoWeight, ModalIconColor, NavSlatLevel, RadioSize, SegmentedControlSize,
   SegmentedControlTone, SegmentedControlVariant, ToggleSize, ToolbarOrientation, ToolbarTone,
 } from "../src";
@@ -24,6 +24,8 @@ import {
 const SIZES4 = ["xl", "lg", "md", "sm"] as const;
 const SIZES3 = ["xl", "lg", "md"] as const;
 const INPUT_SIZES = ["lg", "md"] as const;
+// InputText alone has XL; the select and the textarea have the shared two.
+const INPUT_TEXT_SIZES = ["xl", "lg", "md"] as const;
 
 /* -- controls ------------------------------------------------------------ */
 
@@ -349,7 +351,7 @@ export function LiveInputText() {
   return (
     <Live
       controls={<>
-        <Pick label="size" value={size} options={INPUT_SIZES} onChange={setSize} />
+        <Pick label="size" value={size} options={INPUT_TEXT_SIZES} onChange={setSize} />
         <Pick label="type" value={type} options={["text", "email", "date", "password"]} onChange={setType} />
         <Text label="label" value={label} onChange={setLabel} />
         <Check label="placeholder" checked={showPlaceholder} onChange={setShowPlaceholder} />
@@ -376,7 +378,7 @@ export function LiveInputText() {
 }
 
 export function LiveInputSelect() {
-  const [size, setSize] = useState<InputTextSize>("lg");
+  const [size, setSize] = useState<InputSelectSize>("lg");
   const [label, setLabel] = useState("Work mode");
   const [hideLabel, setHideLabel] = useState(false);
   const [icon, setIcon] = useState(true);
@@ -401,7 +403,7 @@ export function LiveInputSelect() {
 }
 
 export function LiveInputTextarea() {
-  const [size, setSize] = useState<InputTextSize>("lg");
+  const [size, setSize] = useState<InputTextareaSize>("lg");
   const [label, setLabel] = useState("Notes");
   const [placeholder, setPlaceholder] = useState("Anything worth remembering");
   const [showPlaceholder, setShowPlaceholder] = useState(true);

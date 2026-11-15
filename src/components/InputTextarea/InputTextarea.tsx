@@ -4,7 +4,7 @@ import styles from "./InputTextarea.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
 import { assignRef } from "../../internal/assignRef";
 import sizes from "../../internal/inputSize.module.css";
-import type { InputTextSize } from "../InputText/InputText";
+import type { InputFieldSize } from "../InputText/InputText";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
@@ -15,7 +15,7 @@ declare const process: { env: { NODE_ENV?: string } };
  * yet, so `md` is InputText's MD applied to a textarea: 12/18 type, the 8px
  * label, and 4/1 padding around `rows` lines.
  */
-export type InputTextareaSize = InputTextSize;
+export type InputTextareaSize = InputFieldSize;
 
 export interface InputTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** Defaults to `lg`. */

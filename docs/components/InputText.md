@@ -5,8 +5,8 @@
 > or `CHANGELOG.md` under the same heading.
 
 A single-line text field: an underlined box with its label beneath it. Figma:
-the `Input-Text` set (`725:702`, named `Button` until 2026-09-27), `Size` = LG
-(`553:5455`) | MD (`725:703`), each drawn as one state.
+the `Input-Text` set (`725:702`, named `Button` until 2026-09-27), `Size` = XL
+(`1055:2245`) | LG (`553:5455`) | MD (`725:703`), each drawn as one state.
 `State` = Default | Disabled (added 2026-09-27). `Icon End?` (a boolean, off by
 default, added the same day) shows the trailing
 glyph - `iconEnd` here. It used to be always on, drawing a chevron, which made
@@ -15,6 +15,7 @@ the text field indistinguishable from `Input-Select`.
 ```tsx
 <InputText label="Input label" icon={<Layers />} value={v} onChange={…} />
 <InputText size="md" label="Input label" icon={<Layers />} value={v} onChange={…} />
+<InputText size="xl" label="Input label" icon={<Layers />} value={v} onChange={…} />
 ```
 
 `className` lands on the outer wrapper — the component's root box — while every
@@ -31,17 +32,19 @@ focus.
 **No width token.** Figma hugs the field to 95px; that is the component posed
 on the canvas, not a property of it. Same call as Card's 350x200 frame.
 
-## Two sizes: `lg` (default) and `md`
+## Three sizes: `xl`, `lg` (default) and `md`
 
-    size  field  pad (top/bottom)  value         icon  gap  label
-    lg    32     8 / 3             14/20 Regular 16    8    10/12 Medium
-    md    24     4 / 1             12/18 Regular 12    6    8/12 Medium
+    size  field  pad (top/bottom)  value         icon  gap  label      label gap
+    xl    32     8 / 3             18/20 Regular 16    8    12/12 Medium   4
+    lg    32     8 / 3             14/20 Regular 16    8    10/12 Medium   2
+    md    24     4 / 1             12/18 Regular 12    6    8/12 Medium    2
 
-Inline padding 4, radius 2, the 1px rule, label gap 2, label inset 4 and the
-label's 0.02em uppercase tracking are shared. `size` is on InputText,
-InputSelect and InputTextarea alike, so fields of one size line up - measured in
-the playground: an MD text field, select and textarea put their values on the
-same pixel row.
+Inline padding 4, radius 2, the 1px rule, label inset 4 and the label's 0.02em
+uppercase tracking are shared by all three. `size` is on InputText, InputSelect
+and InputTextarea alike for LG and MD, so fields of one size line up - measured
+in the playground: an MD text field, select and textarea put their values on the
+same pixel row. **XL is InputText's alone**, because that is how Figma draws it;
+see below.
 
 **The unsized tokens are LG, and MD remaps them.** `--ui-input-text-height` and
 friends kept their names because apps override them (NextJob's CRM,
@@ -62,6 +65,37 @@ Two consequences worth knowing:
 
 **The native `size` attribute is omitted** from the props (a character width on
 `<input>`, an always-open listbox on `<select>`), the same trade Checkbox makes.
+
+### XL is LG's box with bigger type in it
+
+XL changes THREE numbers and nothing else: the value is 18 rather than 14, the
+caption 12 rather than 10, and the caption sits 4 below the rule rather than 2.
+The field itself does not move - height 32, padding 8/3, inline 4, gap 8, icon
+16, radius 2, and the same 20px line box. So an XL field standing beside an LG
+one puts its rule on the same pixel - top-aligned, which is how a form row
+stacks them - and only the glyphs are bigger. The STACK is 2px taller (48
+against 46), all of it below the rule, so a row that centres its fields instead
+will sit them 1px apart. The 20 box
+holds 18 comfortably; at 14 it already has barely a pixel of half-leading under
+the glyphs (see the padding note above), and 18 inks into the same box without
+reflowing it.
+
+The stack is therefore 32 + 4 + 12 = **48**, where Figma's cell is 46 - the
+same 2px the LG cell is out by, for the same reason as MD below: Figma fixes
+every field frame at its drawn height while its own padding and line box add up
+to more. Reconciled the way LG already was rather than a second way.
+
+`.xl` lives in `InputText.module.css`, not in `src/internal/inputSize.module.css`
+beside `.md`. That module is the SHARED step, and XL is not shared: the Figma set
+draws an XL cell for `Input-Text` only, and InputSelect and InputTextarea have LG
+and MD. A class in the shared module would say all three had it. If the design
+ever draws an XL select, move the block there and the other two pick it up
+unchanged - every rule in all three already reads the unsized names. Retune it
+through `--ui-input-text-xl-*`, the same rule MD follows.
+
+Figma draws no `State=Disabled` cell at XL (it has one at LG and MD). Nothing is
+missing in code: the disabled treatment is the library's own and reads no sized
+token, so it renders at XL exactly as it does at LG.
 
 ### MD is the rendered Figma geometry, not its padding values
 

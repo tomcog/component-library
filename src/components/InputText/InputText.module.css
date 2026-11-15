@@ -128,6 +128,24 @@
   opacity: 1;
 }
 
+/* -- sizes ---------------------------------------------------- */
+/* XL lives HERE rather than in `internal/inputSize.module.css` with `.md`,
+   because it is not shared: Figma draws an XL cell for `Input-Text` alone, and
+   InputSelect and InputTextarea have LG and MD only. A class in the shared
+   module would say all three had it. If the design ever draws an XL select,
+   move this block there and the other two pick it up unchanged - every rule in
+   all three already reads the unsized names.
+
+   Three declarations, because three numbers differ - see tokens.css. The box
+   is LG's, so an XL field and an LG field standing side by side, aligned at
+   the top, put their rules on the same pixel; only the caption below is
+   taller. */
+.xl {
+  --ui-input-text-font-size: var(--ui-input-text-xl-font-size);
+  --ui-input-text-label-font-size: var(--ui-input-text-xl-label-font-size);
+  --ui-input-text-label-gap: var(--ui-input-text-xl-label-gap);
+}
+
 /* -- the number spinner -------------------------------------- */
 /* Stripped. A number field is drawn here as an underlined text box, and the
    UA's spin buttons put a raised grey control inside it - a second visual

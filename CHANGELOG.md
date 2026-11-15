@@ -9,6 +9,28 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**InputText**: a third size, `size="xl"` — Figma's `Size=XL` cell
+(`1055:2245`), which the code had never carried. Drawn for GTD's step cards,
+where a field has to read at the card's own title size. It is LG's BOX with
+bigger type in it, not a bigger field: three numbers move (value 14 -> 18,
+caption 10 -> 12, caption gap 2 -> 4) and the height, both vertical paddings,
+the inline padding, the gap, the radius, the icon and the 20px line box stay
+LG's — so an XL field beside a top-aligned LG one puts its rule on the same
+pixel. The stack is 2px taller (48 against 46), all of it under the rule. New
+tokens: `--ui-input-text-xl-font-size`, `-xl-label-font-size`,
+`-xl-label-gap`. Nothing renamed, and LG and MD are untouched.
+
+XL is InputText's alone, because that is how the set draws it: `.xl` is in
+`InputText.module.css` rather than in the shared `internal/inputSize.module.css`
+beside `.md`. With it, **`InputSelectSize` and `InputTextareaSize` now alias the
+new `InputFieldSize` (`"lg" | "md"`) instead of `InputTextSize`** — otherwise
+adding a size to the text field would have silently widened the other two's API
+to a value they do not implement. Only code that passes a variable *typed*
+`InputTextSize` into an InputSelect or InputTextarea has to change; a literal
+`size="md"` is unaffected.
+
 **0.88.0 -> 0.89.0**
 
 **Toggle**: the track is 4px NARROWER — two knobs and two insets, not three

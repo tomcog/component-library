@@ -819,6 +819,30 @@
      needs it; letterforms set for lowercase run tight in caps. */
   --ui-input-text-label-letter-spacing: 0.02em;
 
+  /* XL: the big field. Figma: `Size=XL`, the third cell in the same set,
+     drawn for the step cards in GTD (67:3673) where the value has to read at
+     the card's own title size.
+
+     It differs from LG in THREE numbers and no others: the value is 18 rather
+     than 14, the caption 12 rather than 10, and the caption sits 4 below the
+     rule rather than 2. The box does not move with them - the height, both
+     vertical paddings, the inline padding, the gap, the radius, the icon and
+     the LINE BOX are LG's, which is what lets an XL field stand in a row of
+     LG ones with its rule on the same pixel - top-aligned, that is: the BOX is
+     identical, and it is the taller caption below that makes the XL stack 48
+     against LG's 46, so a row that centres them puts the rules 1px apart. The
+     20 line box holds 18 as
+     comfortably as it holds 14 (DM Sans Regular inks 18.5 of it at 14), so
+     only the glyphs grow.
+
+     So the stack is 32 + 4 + 12 = 48, against Figma's cell at 46 - the same
+     2px the LG cell is out by, and for the same reason: Figma fixes both
+     field frames at 30 while their own padding and line box add up to 32.
+     Reconciled the way LG already was rather than twice differently. */
+  --ui-input-text-xl-font-size: var(--ui-type-label-xl-font-size);
+  --ui-input-text-xl-label-font-size: var(--ui-type-label-md-font-size);
+  --ui-input-text-xl-label-gap: 4px;
+
   /* MD: the compact field. Figma: `Size=MD` (725:703), beside `Size=LG`
      (553:5455) in the same set. Shared by InputText, InputSelect and
      InputTextarea exactly as the unsized tokens above are.

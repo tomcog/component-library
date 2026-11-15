@@ -9,10 +9,20 @@ import sizes from "../../internal/inputSize.module.css";
 declare const process: { env: { NODE_ENV?: string } };
 
 /**
- * Figma: Size. `lg` is the 32px field; `md` is the compact 24px one. Shared by
- * InputText, InputSelect and InputTextarea, so fields of one size line up.
+ * The two steps the whole input family shares. `lg` is the 32px field; `md` is
+ * the compact 24px one. InputSelect and InputTextarea are typed on THIS rather
+ * than on `InputTextSize`, so that adding a size to one component cannot
+ * silently widen the other two's API to a value they do not implement.
  */
-export type InputTextSize = "lg" | "md";
+export type InputFieldSize = "lg" | "md";
+
+/**
+ * Figma: Size. The shared steps, plus `xl`, which is this component's alone -
+ * Figma draws the XL cell for `Input-Text` only (`1055:2245`). XL is LG's box
+ * with a bigger value and caption, not a bigger field: top-aligned beside an
+ * LG field, the rule lands on the same pixel. See InputText.module.css.
+ */
+export type InputTextSize = InputFieldSize | "xl";
 
 /**
  * The native `size` attribute (a width in characters) is omitted so `size`
@@ -116,8 +126,12 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
       </span>
     ) : null;
 
+  // MD comes from the shared module and XL from this component's own; see the
+  // note on `InputTextSize` for why they live apart.
+  const sizeClass = size === "md" ? sizes.md : size === "xl" ? styles.xl : null;
+
   return (
-    <div className={[styles.root, size === "md" ? sizes.md : null, className].filter(Boolean).join(" ")}>
+    <div className={[styles.root, sizeClass, className].filter(Boolean).join(" ")}>
       <div className={styles.field}>
         {slot(icon)}
         <input

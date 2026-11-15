@@ -4,14 +4,16 @@ import { assignRef } from "../../internal/assignRef";
 import styles from "./InputSelect.module.css";
 import hidden from "../../internal/visuallyHidden.module.css";
 import sizes from "../../internal/inputSize.module.css";
-import type { InputTextSize } from "../InputText/InputText";
+import type { InputFieldSize } from "../InputText/InputText";
 
 // Same literal-expression note as Button: bundlers substitute this exact
 // string, and an optional chain silently never fires.
 declare const process: { env: { NODE_ENV?: string } };
 
-/** Figma: Size - the same two steps as InputText, so a select lines up with the field beside it. */
-export type InputSelectSize = InputTextSize;
+/** Figma: Size - the input family's two shared steps, so a select lines up with
+ *  the field beside it. InputText's XL is not among them: Figma draws that cell
+ *  for the text field alone. */
+export type InputSelectSize = InputFieldSize;
 
 /**
  * The native `size` attribute is omitted so `size` can be the design's size
