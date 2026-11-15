@@ -140,23 +140,6 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     `Hover`/`Active` cells of the new State when it is added. (`888:1673`, an earlier draft - 40% white ground, 1px ring - was
     superseded by these two.)
 
-49. **Card's new effect styles break the name transform and are not bound to
-    `Shadow/Color`.** DEFECT, visible only in Dark: `CardLow` (Card Float1)
-    and `CardHigh` (Card Float2, both Modal variants) hold literal alphas
-    (0.10 / 0.09 / 0.05 / 0.01 / 0), so Figma's Dark mode keeps a 10% black
-    halo where code deepens it to 50% (code mixes every layer from
-    `--ui-shadow-color`: 100 / 90 / 50 / 10%). TIDYING alongside it: the
-    names don't derive to `--ui-shadow-float-1` / `-2`, and the old
-    `Shadow/Float 1` / `Shadow/Float 2` styles are now used by nothing.
-    Direction: Figma - write the five layers into `Shadow/Float 1` / `2`
-    (spreading each effect, colour bound to `Shadow/Color` at the same
-    opacity as the code's mix - a bound colour carries the variable's alpha,
-    so a 90% layer may need the variable split or the opacity accepted as
-    100%), repoint Card, Modal and FAB's disc at them, and retire `CardLow` / `CardHigh`.
-    Card's Figma description still describes the two-layer pair; update it
-    with the fix. Code took the values in 0.72.0.
-
-
 53. **`InputTextarea` is drawn three rows tall; code defaults to one.** DEFECT, the
     whole set: code 0.74.0 made `rows` default to 1 with `autoResize` on, so an
     empty field sits like an InputText, text just above the rule. The

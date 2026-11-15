@@ -674,3 +674,50 @@ Nothing here needs action.
     canvas so its placement does not suggest it is in the library. Either it is
     built in code (from the drawing, as a design-shaped change arriving Figma-first)
     or it is marked deprecated; which is the user's call.
+
+49. ~~Card's new effect styles break the name transform and are not bound to
+    `Shadow/Color`.~~ **Resolved 2026-11-15.** Done in the direction the entry
+    gave: `Shadow/Float 1` and `Shadow/Float 2` now hold the four layers the
+    code has carried since 0.72.0, Card, Modal and FAB's disc point at them,
+    and `CardLow` / `CardHigh` are deleted. The name transform holds again —
+    `Shadow/Float 1` -> `--ui-shadow-float-1` — and Dark is fixed, because
+    every layer's colour is bound rather than literal.
+
+    The entry flagged the hard part and it was the hard part: a bound colour
+    carries the variable's OWN alpha, so one variable cannot serve layers the
+    code mixes at 100 / 90 / 50 / 10%. The variable was split —
+    `Shadow/Color 90`, `/50`, `/10` were created beside `Shadow/Color`, each
+    holding that fraction of the base in BOTH modes (Light .09 / .05 / .01,
+    Dark .45 / .25 / .05), scoped to `EFFECT_COLOR`. The alternative the entry
+    allowed, accepting 100% on every layer, would have made the faint long
+    layer ten times too strong in Light.
+
+    The fifth layer of each old style was dropped rather than carried over: it
+    sat at alpha 0 and drew nothing, and binding it to a variable would have
+    made it visible. Four layers is what the code has.
+
+    One consequence worth knowing. The two style names were still in use
+    OUTSIDE this file — GTD's goal cards and its `duedate-small` chip were
+    bound to `Shadow/Float 2`, which until now held the pre-0.72.0 two-layer
+    pair. Rewriting the style changed what those nodes draw, so all 14 of them
+    were repointed to `Shadow/Float 1`, Card's own step, which is what the app
+    renders (`<Card variant="float1">`). The lesson: these styles are
+    published, so a value written here lands in every consuming file at once —
+    check the consumers before rewriting a shared style, not after.
+
+    Card's description was updated with the fix, as the entry asked.
+
+    Original entry: **Card's new effect styles break the name transform and
+    are not bound to `Shadow/Color`.** DEFECT, visible only in Dark: `CardLow` (Card Float1)
+    and `CardHigh` (Card Float2, both Modal variants) hold literal alphas
+    (0.10 / 0.09 / 0.05 / 0.01 / 0), so Figma's Dark mode keeps a 10% black
+    halo where code deepens it to 50% (code mixes every layer from
+    `--ui-shadow-color`: 100 / 90 / 50 / 10%). TIDYING alongside it: the
+    names don't derive to `--ui-shadow-float-1` / `-2`, and the old
+    `Shadow/Float 1` / `Shadow/Float 2` styles are now used by nothing.
+
+    Direction: Figma — write the five layers into `Shadow/Float 1` / `2`,
+    repoint Card, Modal and FAB's disc at them, and retire `CardLow` /
+    `CardHigh`. Card's Figma description still describes the two-layer pair;
+    update it with the fix. Code took the values in 0.72.0.
+
