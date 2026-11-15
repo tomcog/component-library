@@ -9,6 +9,19 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**Toggle** (new): a two-state switch — a Button/Round disc travelling inside a
+SegmentedTrack, the ground tinted to the half it is in. Sizes XL / LG / MD, named
+for the track (48 / 40 / 32) with the knob one step below on the same ladder, so
+`--ui-toggle-*-knob` aliases `--ui-button-round-*-size`. Glyphs are `offIcon` /
+`onIcon` props, as on ButtonRound. New tokens: `--ui-toggle-inset` and the nine
+size aliases. The six colour hooks (`--ui-toggle-track-off` / `-track-on` /
+`-knob-off` / `-knob-on` / `-knob-icon-off` / `-knob-icon-on`) are NOT declared at
+`:root` — the module composes them from `--ui-action` and `--ui-safety` at the
+element, so a section with its own action colour is followed. Set any of the six
+to override. Built from GTD's goal cards, which had a local copy of it.
+
 **0.86.0 -> 0.87.0**
 
 **Tabs**: hovering a tab turns only its label `--ui-action`; the icon stays muted

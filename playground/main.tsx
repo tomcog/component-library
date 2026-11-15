@@ -1,12 +1,12 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // Import from source, not dist, so edits hot-reload.
-import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, Fab, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag } from "../src";
+import { Modal, Radio, RadioGroup, Toolbar, ToolbarExpander, ToolbarGroup, BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, ConfirmButton, Fab, InputSelect, InputText, InputTextarea, LayerController, LeftRail, Logo, Nav, NavDropdown, NavDropdownItem, NavItem, NavRail, NavSlat, NavSlatGroup, Pill, Segment, SegmentedControl, Spinner, Tab, Tabs, Tag, Toggle } from "../src";
 import type { ButtonVariant, ButtonSize, ButtonRoundSize, ButtonRoundVariant, CardVariant, LogoWeight, SegmentedControlSize } from "../src";
 import "../src/fonts/fonts.css";
 import "./playground.css";
-import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveFab, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToolbar } from "./live";
-import { Row, Briefcase, House, Save, Trash2, PhotoGlyph, Undo, Redo, Outline, Eye, Frame, Magnifier, ZoomIn, ZoomOut, FileGlyph, FolderOpen, Images, FileX, Send, Grid, StickyNote, Picture, Info, Sparkle, FileText, Scale, Chevron, Layers } from "./shared";
+import { LiveBottomNav, LiveButton, LiveButtonRound, LiveCard, LiveCheckbox, LiveFab, LiveInputSelect, LiveInputText, LiveInputTextarea, LiveLayerController, LiveLeftRail, LiveLogo, LiveModal, LiveNav, LiveNavDropdown, LiveNavRail, LivePill, LiveRadio, LiveSegmentedControl, LiveSpinner, LiveTabs, LiveTag, LiveToggle, LiveToolbar } from "./live";
+import { Row, Briefcase, House, Save, Trash2, PhotoGlyph, Undo, Redo, Outline, Eye, Frame, Magnifier, ZoomIn, ZoomOut, FileGlyph, FolderOpen, Images, FileX, Send, Grid, StickyNote, Picture, Info, Sparkle, FileText, Scale, Chevron, Layers, Target, Check } from "./shared";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 const SIZES: ButtonSize[] = ["xl", "lg", "md", "sm"];
@@ -295,6 +295,7 @@ function App() {
   const [notes, setNotes] = useState("");
   const [view, setView] = useState("details");
   const [boxes, setBoxes] = useState<Record<string, boolean>>({ xl: true, lg: false, md: true });
+  const [toggles, setToggles] = useState<Record<string, boolean>>({ xl: true, lg: false, md: true });
   const [grow, setGrow] = useState("This one grows as you type. Add a few lines and the box follows, and the resize grabber is gone because two things setting the height is one too many.");
   const [pill, setPill] = useState("All");
   const [rail, setRail] = useState("/work");
@@ -1100,6 +1101,34 @@ function App() {
             <Checkbox size={s} label="Disabled" disabled />
             <Checkbox size={s} label="Disabled checked" disabled defaultChecked />
             <Checkbox size={s} label="Hidden label" hideLabel defaultChecked />
+          </Row>
+        ))}
+      </Section>
+
+      <Section
+        title="Toggle"
+        note={
+          "Figma: Toggle (60:2027 / 60:2031), sizes XL / LG / MD. A Button/Round disc "
+          + "travelling inside a SegmentedTrack: the track stands at the control ladder's "
+          + "height \u2014 48 / 40 / 32 \u2014 and the knob is the disc ONE STEP BELOW it, which is "
+          + "what leaves the 4px inset all round. The GROUND carries the state with the knob: "
+          + "the action tint while there is still something to do, the safety tint once there "
+          + "is not \u2014 the two grounds ButtonRound Secondary rests on at Tone=Default and "
+          + "Tone=Safety, under Primary's solid disc. Both glyphs stay mounted in one grid "
+          + "cell, so the swap is a cross-fade and the knob never reflows; they are props, "
+          + "like ButtonRound's icon, so the library takes no icon dependency. It is a "
+          + "role=\"switch\" button, not a checkbox: the control IS the state."
+        }
+      >
+        <LiveToggle />
+        {(["xl", "lg", "md"] as const).map((s) => (
+          <Row key={s} label={s}>
+            <Toggle size={s} checked={toggles[s]} label="Washed the car" offIcon={<Target />} onIcon={<Check />} onChange={(next) => setToggles((p) => ({ ...p, [s]: next }))} />
+            <Toggle size={s} checked={false} label="Off" offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
+            <Toggle size={s} checked label="On" offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
+            <Toggle size={s} checked={false} label="No glyphs" onChange={() => {}} />
+            <Toggle size={s} checked={false} label="Disabled" disabled offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
+            <Toggle size={s} checked label="Disabled on" disabled offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
           </Row>
         ))}
       </Section>

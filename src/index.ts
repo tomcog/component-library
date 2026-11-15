@@ -20,6 +20,7 @@ export * from "./components/SegmentedControl";
 export * from "./components/Spinner";
 export * from "./components/Tabs";
 export * from "./components/Tag";
+export * from "./components/Toggle";
 export * from "./components/Toolbar";
 import "./tokens.css";
 import "./typography.css";

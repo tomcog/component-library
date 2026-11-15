@@ -8,17 +8,17 @@ import {
   BottomNav, BottomNavItem, Button, ButtonRound, Card, Checkbox, Fab, InputSelect,
   InputText, InputTextarea, LayerController, LeftRail, Logo, Modal, Nav, NavDropdown,
   NavDropdownItem, NavItem, NavRail, NavSlat, Pill, Radio, RadioGroup, Segment, SegmentedControl,
-  Spinner, Tab, Tabs, Tag, Toolbar, ToolbarExpander, ToolbarGroup,
+  Spinner, Tab, Tabs, Tag, Toggle, Toolbar, ToolbarExpander, ToolbarGroup,
 } from "../src";
 import type {
   ButtonRoundSize, ButtonRoundTone, ButtonRoundVariant, ButtonSize, ButtonTone, ButtonVariant, CardVariant,
   CheckboxSize, InputTextSize,
   LogoWeight, ModalIconColor, NavSlatLevel, RadioSize, SegmentedControlSize,
-  SegmentedControlTone, SegmentedControlVariant, ToolbarOrientation, ToolbarTone,
+  SegmentedControlTone, SegmentedControlVariant, ToggleSize, ToolbarOrientation, ToolbarTone,
 } from "../src";
 import {
   Briefcase, Eye, FileGlyph, FileText, FolderOpen, Grid, House, Images, Info, Layers,
-  Magnifier, Outline, Picture, Redo, Save, Scale, Sparkle, StickyNote, Trash2, Undo, Row,
+  Check as CheckGlyph, Magnifier, Outline, Picture, Redo, Save, Scale, Sparkle, StickyNote, Target, Trash2, Undo, Row,
 } from "./shared";
 
 const SIZES4 = ["xl", "lg", "md", "sm"] as const;
@@ -443,6 +443,33 @@ export function LiveCheckbox() {
       </>}
     >
       <Checkbox size={size} label={label} hideLabel={hideLabel} checked={checked} disabled={disabled} onChange={(e) => setChecked(e.target.checked)} />
+    </Live>
+  );
+}
+
+export function LiveToggle() {
+  const [size, setSize] = useState<ToggleSize>("lg");
+  const [checked, setChecked] = useState(false);
+  const [glyphs, setGlyphs] = useState(true);
+  const [disabled, setDisabled] = useState(false);
+  return (
+    <Live
+      controls={<>
+        <Pick label="size" value={size} options={SIZES3} onChange={setSize} />
+        <Check label="checked" checked={checked} onChange={setChecked} />
+        <Check label="glyphs" checked={glyphs} onChange={setGlyphs} />
+        <Check label="disabled" checked={disabled} onChange={setDisabled} />
+      </>}
+    >
+      <Toggle
+        size={size}
+        checked={checked}
+        disabled={disabled}
+        label="Washed the car"
+        offIcon={glyphs ? <Target /> : undefined}
+        onIcon={glyphs ? <CheckGlyph /> : undefined}
+        onChange={setChecked}
+      />
     </Live>
   );
 }

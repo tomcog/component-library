@@ -1,0 +1,164 @@
+/* Toggle - a Button/Round disc travelling inside a SegmentedTrack.
+
+   The geometry is stated once, as a knob and an inset: the track is two knobs
+   and three insets wide, stands one knob and two insets tall, and the knob
+   travels one knob plus one inset. Only the knob changes between sizes and
+   everything else follows, which is what keeps the three honest.
+
+   The GROUND carries the state as much as the knob does: the action tint
+   while there is still something to do, the safety tint once there is not -
+   the same two tints ButtonRound's Secondary rests on at Tone=Default and
+   Tone=Safety. The knob is those tones solid, so the pair reads as one
+   control changing its mind rather than as a lamp going out.
+
+   Every colour reads its own hook first - --ui-toggle-<part> - then those
+   ButtonRound expressions, composed HERE rather than in tokens.css: a
+   var(--ui-action) inside a custom property resolves where it is DECLARED,
+   so a tint written at :root would freeze against :root's action and ignore
+   a section that sets its own. */
+
+.root {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  inline-size: calc(var(--toggle-knob) * 2 + var(--ui-toggle-inset) * 3);
+  block-size: calc(var(--toggle-knob) + var(--ui-toggle-inset) * 2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ui-segmented-track-radius);
+  background: var(--ui-toggle-track-off,
+              var(--ui-action-lighter, color-mix(in srgb, var(--ui-action) 15%, var(--ui-surface-raised))));
+  cursor: pointer;
+  appearance: none;
+  transition: background-color var(--ui-motion-fast) ease;
+}
+
+.root[aria-checked="true"] {
+  background: var(--ui-toggle-track-on, var(--ui-safety-lighter));
+}
+
+.root:focus-visible {
+  outline: 2px solid var(--ui-action);
+  outline-offset: 2px;
+}
+
+/* -- the disc ------------------------------------------------------------ */
+
+.knob {
+  position: absolute;
+  inset-block-start: var(--ui-toggle-inset);
+  inset-inline-start: var(--ui-toggle-inset);
+  inline-size: var(--toggle-knob);
+  block-size: var(--toggle-knob);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ui-toggle-knob-off, var(--ui-action));
+  color: var(--ui-toggle-knob-icon-off, var(--ui-text-on-action));
+  /* The travel is the slow token and the colour the fast one: the disc
+     arrives at the far end about when it finishes changing tone. */
+  transition:
+    transform var(--ui-motion-base) ease,
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease;
+}
+
+.root[aria-checked="true"] .knob {
+  transform: translateX(calc(var(--toggle-knob) + var(--ui-toggle-inset)));
+  background: var(--ui-toggle-knob-on, var(--ui-safety));
+  color: var(--ui-toggle-knob-icon-on, var(--ui-text-on-safety));
+}
+
+/* -- the glyphs ---------------------------------------------------------- */
+
+.glyph {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--toggle-glyph);
+  block-size: var(--toggle-glyph);
+  transition:
+    opacity var(--ui-motion-fast) ease,
+    transform var(--ui-motion-fast) ease;
+}
+
+/* Off: the "off" glyph stands and the "on" one waits turned a little out of
+   true, so the swap is a small arrival rather than a dissolve. */
+.on {
+  opacity: 0;
+  transform: scale(0.6) rotate(-30deg);
+}
+
+.root[aria-checked="true"] .off {
+  opacity: 0;
+  transform: scale(0.6) rotate(30deg);
+}
+
+.root[aria-checked="true"] .on {
+  opacity: 1;
+  transform: none;
+}
+
+/* ButtonRound's icon rules, for the same reason: without non-scaling-stroke
+   the weight would depend on the icon's viewBox as well as its size, and a
+   presentation attribute on a <path> beats a value inherited from the <svg>,
+   so the token has to reach the descendants to be authoritative. */
+.glyph svg * { vector-effect: non-scaling-stroke; }
+.glyph svg,
+.glyph svg * { stroke-width: var(--toggle-stroke); }
+
+.root .glyph > *,
+.root .glyph svg {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* -- sizes --------------------------------------------------------------- */
+
+.xl {
+  --toggle-knob: var(--ui-toggle-xl-knob);
+  --toggle-glyph: var(--ui-toggle-xl-icon-size);
+  --toggle-stroke: var(--ui-toggle-xl-icon-stroke);
+}
+
+.lg {
+  --toggle-knob: var(--ui-toggle-lg-knob);
+  --toggle-glyph: var(--ui-toggle-lg-icon-size);
+  --toggle-stroke: var(--ui-toggle-lg-icon-stroke);
+}
+
+.md {
+  --toggle-knob: var(--ui-toggle-md-knob);
+  --toggle-glyph: var(--ui-toggle-md-icon-size);
+  --toggle-stroke: var(--ui-toggle-md-icon-stroke);
+}
+
+/* -- disabled ------------------------------------------------------------ */
+
+/* A switch that cannot be flipped takes the disabled surface for its track as
+   well as its knob, so the whole control reads as inert rather than as a live
+   track with a grey knob sitting in it. */
+.root:disabled,
+.root:disabled[aria-checked="true"] {
+  background: var(--ui-surface-disabled);
+  cursor: not-allowed;
+}
+
+.root:disabled .knob,
+.root:disabled[aria-checked="true"] .knob {
+  background: var(--ui-surface-disabled);
+  color: var(--ui-text-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .knob,
+  .glyph {
+    transition: none;
+  }
+}

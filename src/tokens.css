@@ -540,6 +540,32 @@
      its own is the disc -> label gap. The shadow is --ui-shadow-float-1. */
   --ui-fab-gap: 8px;
 
+  /* Toggle. Figma: Toggle (60:2027 / 60:2031). The track stands at the
+     control ladder's height - 48 / 40 / 32 - and the knob is the
+     Button/Round disc ONE STEP BELOW that, which is what leaves the 4px
+     inset all round: a Toggle LG is a 40-high track around a 32 disc. So
+     the sizes alias ButtonRound's own ladder rather than restating it, and
+     retuning a disc retunes the switch with it. */
+  --ui-toggle-inset: 4px;
+  --ui-toggle-xl-knob: var(--ui-button-round-lg-size);
+  --ui-toggle-lg-knob: var(--ui-button-round-md-size);
+  --ui-toggle-md-knob: var(--ui-button-round-sm-size);
+  --ui-toggle-xl-icon-size: var(--ui-button-round-lg-icon-size);
+  --ui-toggle-lg-icon-size: var(--ui-button-round-md-icon-size);
+  --ui-toggle-md-icon-size: var(--ui-button-round-sm-icon-size);
+  --ui-toggle-xl-icon-stroke: var(--ui-button-round-lg-icon-stroke);
+  --ui-toggle-lg-icon-stroke: var(--ui-button-round-md-icon-stroke);
+  --ui-toggle-md-icon-stroke: var(--ui-button-round-sm-icon-stroke);
+  /* The two halves - --ui-toggle-track-off / -track-on / -knob-off /
+     -knob-on / -knob-icon-off / -knob-icon-on - are NOT declared here, and
+     deliberately so: each side is ButtonRound Secondary's ground under
+     ButtonRound Primary's disc, at Tone=Default and Tone=Safety, and those
+     are composed from --ui-action AT THE ELEMENT, for the reason
+     --ui-action-lighter documents at the top of this file. A tint written
+     here would resolve against :root's action and ignore a section that
+     sets its own. The module holds them as hooks with those expressions as
+     fallbacks, so an app can still name any of the six. */
+
   /* ConfirmButton's --ui-confirm-button-* geometry aliases were removed in
      0.74.0 with the component's own styles: a confirmation is a Button or
      ButtonRound with a tone, on their geometry. */

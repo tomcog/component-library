@@ -169,6 +169,17 @@ export const ChevronDown = () => (
     <path d="M6 9l6 6 6-6" />
   </svg>
 );
+// lucide `target` / `check`, the two faces of Toggle's knob.
+export const Target = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
+  </svg>
+);
+export const Check = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
+    <path d="M20 6 9 17l-5-5" />
+  </svg>
+);
 export const Layers = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="100%" height="100%">
     <path d="M12 2 2 7l10 5 10-5-10-5z" />
