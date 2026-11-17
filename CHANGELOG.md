@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased**
+**0.90.0 -> 0.91.0**
 
 **Toggle**: a glyph in the far seat, and a hover state. `trackIcon` fills the
 half of the track the knob is not in while off — Figma `1039:2175`, a Tertiary
