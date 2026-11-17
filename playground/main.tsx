@@ -1116,16 +1116,22 @@ function App() {
           + "is not \u2014 the two grounds ButtonRound Secondary rests on at Tone=Default and "
           + "Tone=Safety, under Primary's solid disc. Both glyphs stay mounted in one grid "
           + "cell, so the swap is a cross-fade and the knob never reflows; they are props, "
-          + "like ButtonRound's icon, so the library takes no icon dependency. It is a "
+          + "like ButtonRound's icon, so the library takes no icon dependency. trackIcon "
+          + "fills the seat the knob is NOT in while off (1039:2175) \u2014 the glyph alone, in "
+          + "the action colour \u2014 so the empty half says what pressing would do; it fades as "
+          + "the knob lands on it. Hover any of them: the disc darkens by the 22.3% of black "
+          + "Button/Round's Primary takes, and the track stays put. It is a "
           + "role=\"switch\" button, not a checkbox: the control IS the state."
         }
       >
         <LiveToggle />
         {(["xl", "lg", "md"] as const).map((s) => (
           <Row key={s} label={s}>
-            <Toggle size={s} checked={toggles[s]} label="Washed the car" offIcon={<Target />} onIcon={<Check />} onChange={(next) => setToggles((p) => ({ ...p, [s]: next }))} />
+            <Toggle size={s} checked={toggles[s]} label="Washed the car" offIcon={<Target />} onIcon={<Check />} trackIcon={<Check />} onChange={(next) => setToggles((p) => ({ ...p, [s]: next }))} />
             <Toggle size={s} checked={false} label="Off" offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
             <Toggle size={s} checked label="On" offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
+            <Toggle size={s} checked={false} label="Seat glyph" offIcon={<Target />} onIcon={<Check />} trackIcon={<Check />} onChange={() => {}} />
+            <Toggle size={s} checked={false} label="Seat glyph, no knob glyph" trackIcon={<Check />} onChange={() => {}} />
             <Toggle size={s} checked={false} label="No glyphs" onChange={() => {}} />
             <Toggle size={s} checked={false} label="Disabled" disabled offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />
             <Toggle size={s} checked label="Disabled on" disabled offIcon={<Target />} onIcon={<Check />} onChange={() => {}} />

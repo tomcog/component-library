@@ -9,6 +9,25 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**Toggle**: a glyph in the far seat, and a hover state. `trackIcon` fills the
+half of the track the knob is not in while off — Figma `1039:2175`, a Tertiary
+Button/Round in that seat: the glyph alone, in the action colour, at the size
+the knob's own glyph takes. On a completion switch it is a tick, so the empty
+half says what pressing would do. It is positioned on the knob's own two
+numbers, drawn before the knob so the knob paints over it on the way past,
+faded once the knob arrives, and takes no pointer events. Passing no
+`trackIcon` is the old drawing, unchanged.
+
+`:hover` now darkens the knob by the 22.3% of black Button/Round's Primary
+takes, in both states; the track does not move. Composed on the knob's own
+hooks, so an app that repaints the knob gets its own colour darkened.
+
+New tokens, all optional hooks with the expressions above as fallbacks:
+`--ui-toggle-seat-icon`, `--ui-toggle-knob-off-hover`,
+`--ui-toggle-knob-on-hover`. Nothing renamed or removed.
+
 **0.89.0 -> 0.90.0**
 
 **InputText**: a third size, `size="xl"` — Figma's `Size=XL` cell

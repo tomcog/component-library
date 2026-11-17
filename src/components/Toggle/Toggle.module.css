@@ -71,6 +71,24 @@
   color: var(--ui-toggle-knob-icon-on, var(--ui-text-on-safety));
 }
 
+/* The disc darkens under the pointer, by the same 22.3% of black that
+   Button/Round's Primary takes - a Toggle's knob IS that disc, so it answers
+   the pointer the way one does, in both states.
+
+   Composed on the knob's OWN hook rather than on the raw semantic, so an app
+   that repaints the knob gets its own colour darkened rather than the action
+   red it replaced. The track does not move: the ground says which half you
+   are in, and dimming it as well would say it twice. */
+.root:hover:not(:disabled) .knob {
+  background: var(--ui-toggle-knob-off-hover,
+              color-mix(in srgb, var(--ui-toggle-knob-off, var(--ui-action)), black 22.3%));
+}
+
+.root:hover:not(:disabled)[aria-checked="true"] .knob {
+  background: var(--ui-toggle-knob-on-hover,
+              color-mix(in srgb, var(--ui-toggle-knob-on, var(--ui-safety)), black 22.3%));
+}
+
 /* -- the glyphs ---------------------------------------------------------- */
 
 .glyph {
@@ -120,6 +138,37 @@
   min-height: 0;
 }
 
+/* -- the far seat -------------------------------------------------------- */
+
+/* The glyph in the seat the knob is not in: the empty half of the track
+   saying what flipping the switch would do. Figma: 1039:2175, where it is a
+   Tertiary Button/Round in the far seat - the glyph alone, in the action
+   colour, at the size the knob's own glyph takes.
+
+   Positioned rather than laid out, on the knob's own two numbers: the seat is
+   exactly where the knob is about to be, so the two cannot drift apart when a
+   size changes. Drawn BEFORE the knob in the markup so the knob paints over
+   it on the way past, and faded out once it has arrived.
+
+   It takes no pointer events: the whole track is the switch, and a glyph that
+   swallowed the press would leave a dead spot in the half you are aiming at. */
+.seat {
+  position: absolute;
+  inset-block-start: var(--ui-toggle-inset);
+  inset-inline-start: calc(var(--ui-toggle-inset) + var(--toggle-knob));
+  inline-size: var(--toggle-knob);
+  block-size: var(--toggle-knob);
+  display: grid;
+  place-items: center;
+  color: var(--ui-toggle-seat-icon, var(--ui-action));
+  pointer-events: none;
+  transition: opacity var(--ui-motion-fast) ease;
+}
+
+.root[aria-checked="true"] .seat {
+  opacity: 0;
+}
+
 /* -- sizes --------------------------------------------------------------- */
 
 .xl {
@@ -157,10 +206,15 @@
   color: var(--ui-text-disabled);
 }
 
+.root:disabled .seat {
+  color: var(--ui-text-disabled);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .root,
   .knob,
-  .glyph {
+  .glyph,
+  .seat {
     transition: none;
   }
 }

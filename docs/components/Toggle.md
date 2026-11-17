@@ -1,6 +1,7 @@
 # Toggle
 
 Figma: `Toggle` — `State` = Toggle off (`60:2027`) | Toggle on (`60:2031`),
+the far-seat glyph `1039:2175`,
 `Size` = MD, `Theme` = Color. Added in 0.88.0, from the goal cards in GTD,
 where it is a goal's completion switch.
 
@@ -62,6 +63,38 @@ Stroke weight and `vector-effect: non-scaling-stroke` are handled as on
 ButtonRound, on the `<svg>` **and** its descendants: a `stroke-width`
 presentation attribute on a `<path>` beats a value inherited from the root,
 and plenty of lucide icons set one.
+
+## The far seat says what pressing would do
+
+`trackIcon` fills the half of the track the knob is **not** in while off —
+Figma `1039:2175`, where it is a Tertiary Button/Round in that seat: the glyph
+alone, in the action colour, at the size the knob's own glyph takes. On a
+completion switch it is a tick, so the empty half reads as "press here and
+this is done".
+
+It is positioned on the knob's own two numbers rather than laid out, so the
+seat is exactly where the knob is about to be and the two cannot drift apart
+when a size changes. It is drawn *before* the knob so the knob paints over it
+on the way past, and it fades once the knob has arrived — there is nothing to
+say about a seat that is occupied. It takes no pointer events: the whole track
+is the switch, and a glyph that swallowed the press would leave a dead spot in
+the half you are aiming at.
+
+Its colour is `--ui-toggle-seat-icon`, falling back to the action colour.
+Passing no `trackIcon` is the old drawing, unchanged.
+
+## The disc darkens under the pointer
+
+`:hover` darkens the knob by the same **22.3% of black** Button/Round's
+Primary takes, in both states — the knob *is* that disc, so it answers the
+pointer the way one does. The track does not move: the ground already says
+which half you are in, and dimming it as well would say it twice.
+
+The darkening is composed on the knob's own hook —
+`--ui-toggle-knob-off-hover` and `--ui-toggle-knob-on-hover`, each falling
+back to a `color-mix` of `--ui-toggle-knob-off` / `-on` — so an app that
+repaints the knob gets *its* colour darkened rather than the action red it
+replaced.
 
 ## It is a switch, not a checkbox
 

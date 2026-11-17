@@ -31,6 +31,15 @@ export interface ToggleProps
   offIcon?: ReactNode;
   /** The glyph on the knob while on. */
   onIcon?: ReactNode;
+  /**
+   * The glyph in the seat the knob is NOT in, while off: the empty half of
+   * the track, saying what flipping the switch would do. Figma: 1039:2175,
+   * where it is a Tertiary Button/Round in the far seat - the glyph alone,
+   * in the action colour, at the size the knob's own glyph takes.
+   *
+   * It fades as the knob travels, because the knob lands on top of it.
+   */
+  trackIcon?: ReactNode;
 }
 
 /**
@@ -45,9 +54,23 @@ export interface ToggleProps
  *
  * Both glyphs stay mounted and share one grid cell, so the swap is a
  * cross-fade rather than a pop and the knob never reflows.
+ *
+ * `trackIcon` fills the seat the knob is not in, so the empty half of the
+ * track says what pressing would do. Figma: 1039:2175.
  */
 export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
-  { checked, onChange, label, size = "lg", offIcon, onIcon, className, onClick, ...props },
+  {
+    checked,
+    onChange,
+    label,
+    size = "lg",
+    offIcon,
+    onIcon,
+    trackIcon,
+    className,
+    onClick,
+    ...props
+  },
   ref,
 ) {
   if (process.env.NODE_ENV !== "production") {
@@ -77,6 +100,12 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
       onClick={handleClick}
       {...props}
     >
+      {trackIcon != null ? (
+        <span className={styles.seat} aria-hidden="true">
+          <span className={styles.glyph}>{trackIcon}</span>
+        </span>
+      ) : null}
+
       <span className={styles.knob} aria-hidden="true">
         {offIcon != null ? <span className={`${styles.glyph} ${styles.off}`}>{offIcon}</span> : null}
         {onIcon != null ? <span className={`${styles.glyph} ${styles.on}`}>{onIcon}</span> : null}
