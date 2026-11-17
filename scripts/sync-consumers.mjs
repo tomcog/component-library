@@ -7,9 +7,10 @@
 // Apps with a pnpm-lock.yaml are installed with pnpm, everything else with npm.
 //
 // For each app: repoint any `allowScripts` approval of @tomcoggia/ui to the new
-// version, reinstall the tag, check the installed package really is that
-// version WITH a built dist/ (npm 11 warns about git-dependency `prepare`
-// scripts, and a blocked prepare installs an empty package without failing),
+// version, repoint the dependency itself, reinstall, check the installed
+// package really is that version WITH a built dist/ (npm 11 warns about
+// git-dependency `prepare` scripts, and a blocked prepare installs an empty
+// package without failing),
 // then commit package.json + its lockfile - and nothing else - on
 // whatever branch the app is on. Pushing is opt-in, because pushing an app can
 // deploy it.
@@ -81,6 +82,38 @@ function findConsumers() {
 // An allowScripts key approving one version of this package, e.g. "@tomcoggia/ui@0.78.0"
 const APPROVAL = new RegExp(`"${PKG.replace(/[/.]/g, "\\$&")}@\\d+\\.\\d+\\.\\d+"`, "g");
 
+// The package's own entry, wherever it is declared AS A GIT SPEC. Only values
+// already pointing at this repo match, so a `peerDependencies` range is never
+// rewritten - which is the whole point of doing this by hand.
+const DEP_SPEC = new RegExp(
+  `("${PKG.replace(/[/.]/g, "\\$&")}"\\s*:\\s*")${REPO.replace(/[/.]/g, "\\$&")}#[^"]*(")`,
+  "g",
+);
+
+/**
+ * Repoint the app's dependency on this package at `tag`, editing the text so
+ * the file's formatting is untouched. Returns true if it changed.
+ *
+ * Why this rather than `npm install <pkg>@<spec>`: npm updates EVERY
+ * declaration of a package when it saves, and an app that also names this one
+ * in `peerDependencies` holds a semver RANGE there. Writing a git spec into a
+ * range field throws "Invalid comparator" - and npm throws it AFTER it has
+ * already written node_modules, which leaves the app installed at the new
+ * version with its package.json and lockfile still on the old one. The two
+ * then disagree silently: the app builds here against the new library and a
+ * fresh clone gets the old one. ProjectBuilder hit exactly that on 0.91.0.
+ *
+ * A plain install of an already-edited package.json never takes that path.
+ */
+function syncDependencySpec(dir) {
+  const file = join(dir, "package.json");
+  const text = readFileSync(file, "utf8");
+  const next = text.replace(DEP_SPEC, `$1${spec}$2`);
+  if (next === text) return false;
+  writeFileSync(file, next);
+  return true;
+}
+
 /**
  * Repoint the app's allowScripts approval of this package at `version`, editing
  * the text so the file's formatting is untouched. Returns true if it changed.
@@ -141,11 +174,15 @@ for (const { dir, ref } of consumers) {
 
     if (ref !== spec || current !== version) {
       process.stdout.write(`${name}: installing ${tag}... `);
+      // The spec goes in by hand first, then a PLAIN install - see
+      // syncDependencySpec for why naming the package on the command line is
+      // what broke ProjectBuilder.
+      syncDependencySpec(dir);
       // pnpm apps (Traxxx) must stay on pnpm: `npm install` there would write a
       // package-lock.json beside pnpm-lock.yaml. pnpm fails loudly instead of
       // skipping prepare when the app's pnpm-workspace.yaml lacks `allowBuilds`.
-      if (usesPnpm) run("pnpm", ["add", `${PKG}@${spec}`], dir);
-      else run("npm", ["install", `${PKG}@${spec}`, "--no-audit", "--no-fund"], dir);
+      if (usesPnpm) run("pnpm", ["install"], dir);
+      else run("npm", ["install", "--no-audit", "--no-fund"], dir);
       console.log("done");
     }
 
