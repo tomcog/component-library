@@ -169,3 +169,16 @@ pending. Numbers are stable IDs, not an order. When one is closed, move it to
     `Tabs/Item` Hover cells still bind the icon to `Action/Base`. Asked for on
     2026-11-06. Direction: Figma - rebind the Hover cells' icon to the idle icon
     colour, and update the set's description.
+
+61. **In Figma, absent from code:** Toggle's `Theme=Light` cells (`1039:2193`,
+    `1039:2196`, `1039:2230`) - a solid action/safety track under a plain white
+    disc. The code has one appearance and no `theme` prop. The cells also break
+    the tier rule (`Color/White` primitive, `Button/Safety/Default` on the on
+    track, a raw ellipse instead of the Button/Round disc) and the disabled cell
+    is 73x41 at sub-pixel offsets. Left untouched on 2026-11-16 pending the
+    user's call: either the code grows a variant or the cells go.
+
+62. **In code, not yet in Figma:** a disabled Toggle that is ON (knob in the far
+    seat, both greyed). Figma's `State=Disabled` poses only the off side, and the
+    `State` axis has no way to say "disabled and on". Direction: Figma, if wanted -
+    a `Toggle on disabled` state beside the two hover states.

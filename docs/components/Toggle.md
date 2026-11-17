@@ -1,8 +1,12 @@
 # Toggle
 
-Figma: `Toggle` — `State` = Toggle off (`60:2027`) | Toggle on (`60:2031`),
-the far-seat glyph `1039:2175`,
-`Size` = MD, `Theme` = Color. Added in 0.88.0, from the goal cards in GTD,
+Figma: `Toggle` set `1039:2177` — `State` = Toggle off | Toggle off hover |
+Toggle on | Toggle on hover | Disabled, `Size` = XL | LG | MD (named for the
+track, as in code), `Theme` = Color, and a `Track Icon?` boolean for
+`trackIcon`. Reconciled to the code on 2026-11-16 (it had named sizes for the
+knob, one step low). The knob is a Button/Round instance (Primary, at
+Tone=Safety when on); the seat glyph is a Tertiary one. `Theme=Light` has no
+code counterpart — divergence #61. Added in 0.88.0, from the goal cards in GTD,
 where it is a goal's completion switch.
 
     track (h)   knob   glyph   stroke
