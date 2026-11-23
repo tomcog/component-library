@@ -180,8 +180,18 @@ export const ToolbarGroup = forwardRef<HTMLDivElement, ToolbarGroupProps>(functi
 
 export interface ToolbarExpanderProps
   extends Omit<SegmentedControlProps, "actions" | "variant" | "children"> {
-  /** The trigger's glyph. The trigger is always icon-only. */
+  /** The trigger's glyph while the panel is folded. The trigger is always icon-only. */
   icon: ReactNode;
+  /**
+   * The glyph while the panel is open. Defaults to a close mark (lucide's
+   * `circle-x`, drawn here so no icon set is needed): open, the trigger's job
+   * is no longer "show me these" but "put them away", and it says so. Figma:
+   * the open bar (1076:2568), where the red head carries the close mark.
+   *
+   * Pass your own to say it differently; pass `icon` back to keep the one
+   * glyph in both states.
+   */
+  closeIcon?: ReactNode;
   /**
    * The trigger's name - visually hidden, announced as the button's name with
    * its expanded state ("File, collapsed"). Also names the group when no
@@ -244,8 +254,10 @@ export interface ToolbarExpanderProps
  * **It is a `SegmentedControl` in `actions` mode with a disclosure button at
  * its head**, so the track, sizes, grounds and segments are exactly the ones
  * beside it and nothing is restated. Closed it is one icon-only segment; open,
- * the trigger takes the action ground and goes flat on the side facing what it
- * revealed, and the track runs on around them.
+ * the trigger takes the action ground, goes flat on the side facing what it
+ * revealed, and **changes to a close button** - its glyph becomes a close mark,
+ * since open there is one thing left to do with it. The track runs on around
+ * them. `closeIcon` says it differently where that reads better.
  *
  * **A disclosure, not a menu.** The trigger carries `aria-expanded` and
  * `aria-controls`. Escape inside the panel closes it and returns focus to the
@@ -270,10 +282,24 @@ export interface ToolbarExpanderProps
  * instantly - the motion is decoration, the open state is not. Chosen over a
  * plain wipe and a slide-out drawer, tried side by side in the playground.
  */
+/**
+ * The close mark the trigger wears while its panel is open - lucide's
+ * `circle-x`, drawn inline at the proportions a consumer's lucide icon has
+ * (24 viewBox, 2 stroke, rounded ends), so the two sit together.
+ */
+const CloseMark = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="10" />
+    <path d="m15 9-6 6" />
+    <path d="m9 9 6 6" />
+  </svg>
+);
+
 export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
   function ToolbarExpander(
     {
       icon,
+      closeIcon = CloseMark,
       label,
       children,
       open: openProp,
@@ -407,7 +433,9 @@ export const ToolbarExpander = forwardRef<HTMLDivElement, ToolbarExpanderProps>(
         <Segment
           ref={trigger}
           id={triggerId}
-          icon={icon}
+          // Open, it is the way out of what it opened: the close mark, not the
+          // glyph that named the panel.
+          icon={open ? closeIcon : icon}
           hideLabel
           aria-expanded={open}
           aria-controls={panelId}
