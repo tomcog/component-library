@@ -118,6 +118,40 @@
   border-end-start-radius: 0;
 }
 
+/* ...and so is the BAR around it. A bar whose expander is folded is itself the cap: the flat side
+   runs through the bar, its track and the trigger together, which is what makes the three read as
+   one object with more folded under it (Figma 1075:2488, where the bar is square on that side too).
+   Open, the bar is a full pill again with the strip inside it (1076:2568). Only an expander does
+   this to a bar - a toolbar of plain controls keeps its ends. */
+.toolbar:has(.expander:not(.open)) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+.toolbar.vertical:has(.expander:not(.open)) {
+  border-start-end-radius: var(--ui-toolbar-radius);
+  border-end-start-radius: 0;
+}
+
+/* CLOSED, the trigger is a cap, not a pill: flat on the side the panel will open from, so its
+   shape says there is more folded under it before anything is revealed - and opening unfolds that
+   side rather than changing the object. Figma: the closed trigger (1075:2488), whose bar and track
+   are both square on the side the strip comes from. The track it sits in follows, since a round
+   track round a flat trigger would draw the corner back in. */
+.expander:not(.open) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+.expander:not(.open) .trigger {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+/* In a vertical bar the panel opens downward, so the flat side is the foot. */
+.vertical .expander:not(.open),
+.vertical .expander:not(.open) .trigger {
+  border-start-end-radius: var(--ui-segmented-radius);
+  border-end-start-radius: 0;
+}
+
 /* The panel. A one-track grid animating 0fr -> 1fr is how a box grows to its
    content's own width without anyone measuring it - `width: auto` cannot be
    transitioned. It sits in the track's flex row, so the track's gap stands
