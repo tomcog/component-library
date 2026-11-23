@@ -9,6 +9,8 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**0.92.0 -> 0.93.0** - ToolbarExpander: closed, it is a cap rather than a pill.
+
 **0.91.0 -> 0.92.0** - ToolbarExpander: open, the trigger is a close button; Toggle: the drawing and the code agree on what a size is called; sync-consumers: write the spec, then install plainly.
 
 **0.90.0 -> 0.91.0**
