@@ -9,7 +9,7 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
-**Unreleased**
+**0.93.0 -> 0.94.0**
 
 **Baselines**: a control's first baseline is now the baseline of the text its
 user reads, so a row of same-size controls lines up on `align-items: baseline`.
