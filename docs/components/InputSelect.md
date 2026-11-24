@@ -178,3 +178,13 @@ Verify alignment on a select low in the viewport as well as a high one.
   already occupies that slot and is the one the design specifies.
 - **Focus turns the rule primary, with no ring**, matching InputText — see that
   component's note for why the ring is deliberately absent.
+
+## Baseline
+
+Added 0.94.0. A leading icon takes the first place in the field, so a select
+WITH an icon hung its value 3.50px high at LG and 2.00 at MD, while the same
+select without one was already right. Checkbox's strut on `.icon::before`
+fixes it, reading the value's font size through this component's own hook. See
+`docs/components/Checkbox.md` for the full note and CLAUDE.md for the rule: a
+control's first baseline is the baseline of the text its user reads, so a row
+of same-size controls lines up on `align-items: baseline`.

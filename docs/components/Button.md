@@ -249,3 +249,15 @@ that hex in Light and carries `#e74f65` in Dark, and
 `--ui-button-ghost-text-active` pins the exact value if fidelity ever beats
 legibility. Both are still under the 4.5:1 text floor — this is a transient
 press state on a control the pointer is already on, not a resting string.
+
+## Baseline
+
+Added 0.94.0. A leading icon takes the first place in the row, and a slot
+holding one SVG has no text to take a baseline from - so a Button WITH an icon
+hung its label 6.00px high at XL, 5.50 at LG, 4.00 at MD and 2.50 at SM, while
+the same button without one was already right. Checkbox's strut on
+`.icon::before` fixes it; it needs no font size of its own, since the slot
+already inherits the button's. See `docs/components/Checkbox.md` for the full
+note and CLAUDE.md for the rule: a control's first baseline is the baseline of
+the text its user reads, so a row of same-size controls lines up on
+`align-items: baseline`.

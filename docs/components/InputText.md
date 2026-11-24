@@ -261,3 +261,14 @@ content the user typed, not a label naming a control, so
   padding. When one is drawn, colour it with `--ui-danger` (which exists now,
   for Button's and ButtonRound's `tone`), not `--ui-action`: primary is red by
   default, so a red underline on primary would read as focus.
+
+## Baseline
+
+Added 0.94.0. A leading icon takes the first place in the field, so a field
+WITH an icon hung its value 2.00px high at XL, 3.50 at LG and 2.00 at MD,
+while the same field without one was already right. Checkbox's strut on
+`.icon::before` fixes it, reading the value's own font-size token since the
+field itself sets none. See `docs/components/Checkbox.md` for the full note
+and CLAUDE.md for the rule: a control's first baseline is the baseline of the
+text its user reads, so a row of same-size controls lines up on `align-items:
+baseline`.

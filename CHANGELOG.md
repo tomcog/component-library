@@ -9,6 +9,50 @@ every entry between an app's current ref and the one it is moving to - token ren
 fail silently rather than erroring. Versions 0.9.0 -> 0.21.0 were not written up here;
 `git log` has them.
 
+**Unreleased**
+
+**Baselines**: a control's first baseline is now the baseline of the text its
+user reads, so a row of same-size controls lines up on `align-items: baseline`.
+Tom's rule: *"when input elements of the same size (XL, MD...) are used, and on
+the same row, the input values should be aligned ... as they share a baseline.
+This is a component level rule."*
+
+A flex container with no baseline-aligned items takes its baseline from its
+FIRST flex item, so every control whose row starts with a graphic was offering
+a baseline the browser had synthesised from that box's bottom edge. Measured in
+a mixed `baseline` row against an `InputText`'s value, the text hung high by:
+
+| | XL | LG | MD | SM |
+|---|---|---|---|---|
+| Checkbox, Radio | 4.00 | 3.50 | 3.00 | - |
+| Button with an icon | 6.00 | 5.50 | 4.00 | 2.50 |
+| Segment with an icon | 8.00 | 7.50 | 6.00 | 4.50 |
+| InputText with an icon | 2.00 | 3.50 | 2.00 | - |
+| InputSelect with an icon | - | 3.50 | 2.00 | - |
+| Toggle (no text; box centre) | 18.00 | 15.50 | 12.00 | - |
+
+All of them now measure **0.00**. The same controls without an icon, plus
+`InputTextarea`, `Pill` and `Tag`, were already right and are untouched.
+
+The fix is a **strut** on the graphic slot's `::before` - a zero-width space,
+`align-self: center`, `inline-size: 0`, `line-height: 0`, at the text's own
+font size. Centred and sizeless, it reports the text's baseline and costs the
+layout nothing: with it toggled off and on across the whole playground, **4,387
+elements, none moved**. `Checkbox.module.css` carries the full note and
+CLAUDE.md the rule. `Toggle`, which reads no text, takes the type its size step
+sets so it sits on the line beside it, and its `.root` became `inline-flex`
+purely to centre the strut - nothing is laid out by it, the knob and the seat
+being positioned.
+
+**Still unfixed, deliberately**: `ButtonRound` and `Fab` carry no text either,
+and hang 8.00 / 7.50 / 6.00 / 4.50px (XL/LG/MD/SM) above a baseline row. They
+are icon-only chrome rather than controls with values, so what their baseline
+should be is a design call, not a defect - raise it if a row needs one.
+
+**Apps**: a row of controls that was aligned by `flex-end` to line up the
+captions, or by `center` to line up the boxes, should move to `baseline`. No
+token was renamed or removed.
+
 **0.92.0 -> 0.93.0** - ToolbarExpander: closed, it is a cap rather than a pill.
 
 **0.91.0 -> 0.92.0** - ToolbarExpander: open, the trigger is a close button; Toggle: the drawing and the code agree on what a size is called; sync-consumers: write the spec, then install plainly.

@@ -419,3 +419,14 @@ break again:
 - **`tone` is a prop on the track; Figma's `Color` is a variant axis.** The
   same shape `variant` already has, and for a weaker reason: an axis is simply
   how Figma says a choice. No open question here.
+
+## Baseline
+
+Added 0.94.0. A segment's leading icon takes the first place in the row, so a
+segment WITH an icon hung its label 8.00px high at XL, 7.50 at LG, 6.00 at MD
+and 4.50 at SM, while the same segment without one was already right.
+Checkbox's strut on `.icon::before` fixes it; the slot already inherits the
+segment's font size. See `docs/components/Checkbox.md` for the full note and
+CLAUDE.md for the rule: a control's first baseline is the baseline of the text
+its user reads, so a row of same-size controls lines up on `align-items:
+baseline`.

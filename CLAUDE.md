@@ -219,6 +219,24 @@ For local work: `npm link` here, `npm link @tomcoggia/ui` in the app, and `npm r
 - **Keep layout stable across states**: hide with `visibility`/opacity, keep borders
   transparent rather than absent, and use the standalone `scale`/`rotate` properties rather
   than `transform`.
+- **A control's first baseline is the baseline of its own value or label text**, so that
+  a row of same-size controls can be lined up with `align-items: baseline`. Tom's rule, in
+  his words: *"when input elements of the same size (XL, MD...) are used, and on the same
+  row, the input values should be aligned ... as they share a baseline. This is a component
+  level rule."* An app aligns such a row by `baseline`, never by `flex-end` (which lines up
+  the captions) or `center` (which lines up the boxes).
+  It is not free. A flex container with no baseline-aligned items takes its baseline from
+  its FIRST flex item, so any control whose row starts with a graphic — a checkbox's glyph
+  slot, a leading icon — offers a baseline the browser synthesised from that box's bottom
+  edge, and its text hangs 2–8px high. The fix is a **strut**, added in 0.94.0 to Checkbox,
+  Radio, Toggle, Button, Segment, InputText and InputSelect: a zero-width space on the
+  graphic slot's `::before`, `align-self: center`, `inline-size: 0`, `line-height: 0`, at
+  the text's own font size. Centred and sizeless, it reports the text's baseline and costs
+  the layout nothing. Checkbox's module carries the full note. A control carrying NO text
+  (Toggle) takes the type its size step sets, so it sits on the line beside it; `ButtonRound`
+  and `Fab` are still unfixed, and hang half their height above a baseline row.
+  **A new component with a graphic before its text needs this strut**, and a mixed row in
+  the playground is how you check it — measure, don't read the CSS.
 
 When a component is added: its directory with `index.ts`, the barrel export, a playground
 section opening with a live demo (a `Live*` in `playground/live.tsx`, a control per prop), a `docs/components/<Name>.md` (usage, geometry, token and Figma mapping, and a

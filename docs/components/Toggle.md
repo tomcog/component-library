@@ -119,3 +119,19 @@ is how a confirmation step gets in front of it.
 - **No uncontrolled mode.** A switch with no `checked` has nothing to say.
 - **Disabled greys the track as well as the knob.** A live track with a grey
   knob in it reads as a control mid-flight rather than one switched off.
+
+## Baseline
+
+Added 0.94.0. A switch reads no text at all, which is the one case the rule
+does not answer outright - and the browser's answer was the worst available:
+with nothing in flow it synthesised a baseline from the bottom margin edge,
+hanging the whole track 18.00px above the row's text at XL, 15.50 at LG and
+12.00 at MD. The answer taken here is that a switch sits ON the line beside
+it, centre on the text's centre, which is where a Checkbox's glyph sits.
+`.root` became `inline-flex` purely so Checkbox's strut can be centred in the
+track (nothing is laid out by it - the knob and the seat are positioned), and
+the strut reads the font SIZE its size step sets, so a Toggle MD beside a
+Checkbox MD lands on the same line. See `docs/components/Checkbox.md` for the
+full note and CLAUDE.md for the rule: a control's first baseline is the
+baseline of the text its user reads, so a row of same-size controls lines up
+on `align-items: baseline`.

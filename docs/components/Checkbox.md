@@ -188,3 +188,36 @@ Fourth and fifth time this has come up in this file.
 The label is DM Sans **Regular**, not the Label scale's Medium: the design sets
 it as body text beside a control, which is also why its 20px and 18px line
 heights are its own numbers rather than `--ui-type-label-*` aliases.
+
+## The control's baseline is the LABEL's baseline
+
+Added 0.94.0. A row of same-size controls is lined up with
+`align-items: baseline`, and for that to work each control has to offer the
+baseline of the text its user reads. This one did not.
+
+A flex container with no baseline-aligned items takes its baseline from its
+FIRST flex item, which here is the **slot** - a box holding one SVG and no
+text, so the browser can only synthesise a baseline from its bottom margin
+edge. (The input is `position: absolute`, so it is not a flex item at all and
+is skipped.) The label never got a say. Measured against an `InputText`'s value
+in a `baseline` row, this label sat **4.00px high at XL, 3.50 at LG, 3.00 at
+MD**; all three now measure 0.00.
+
+The fix is a **strut** on `.slot::before`: a zero-width space - a text run that
+inks nothing - carrying the LABEL's font size, `align-self: center`,
+`inline-size: 0`, `line-height: 0`. Centred in the slot, which is centred in
+the row beside a label centred the same way, its baseline falls exactly where
+the label's does, so the slot reports the label's baseline and the control does
+too.
+
+Two things make it safe to leave in. `line-height: 0` gives it no height and
+the zero-width space no advance, so it cannot grow the slot, the gap or the
+row: with the strut toggled off and on across the whole playground, **4,387
+elements, none moved**. And only the font SIZE is read, never the leading - a
+centred strut's baseline sits `(ascent - descent) / 2` below the centre, and
+that distance rides the size alone.
+
+The same strut is on the leading-icon slot of `Button`, `Segment`, `InputText`
+and `InputSelect`, which had the identical fault whenever an icon led the row,
+and on `Toggle`, which carries no text and so takes its size step's type. See
+CLAUDE.md.

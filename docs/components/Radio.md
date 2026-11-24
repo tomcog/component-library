@@ -61,3 +61,14 @@ options.
 3. **The glyph is drawn shapes in Figma, one SVG in code.** Figma's cells hold a
    ring (stroked ellipse), dot and disc bound to variables; code draws the same
    geometry as filled paths in `currentColor`.
+
+## Baseline
+
+Added 0.94.0. The slot leads the row and has no text in it, so the control was
+offering a baseline synthesised from the slot's bottom edge - the label sat
+4.00px high at XL, 3.50 at LG and 3.00 at MD. Checkbox's strut on
+`.slot::before`, reading Radio's own font size, fixes it; all three now
+measure 0.00. See `docs/components/Checkbox.md` for the full note and
+CLAUDE.md for the rule: a control's first baseline is the baseline of the text
+its user reads, so a row of same-size controls lines up on `align-items:
+baseline`.

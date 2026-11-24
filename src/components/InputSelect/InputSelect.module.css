@@ -232,6 +232,27 @@
   height: var(--ui-input-select-icon-size, var(--ui-input-text-icon-size));
   color: var(--ui-input-select-icon, var(--ui-text-muted));
 }
+
+/* The icon slot LEADS the row, so it is what this control offers as its
+   first baseline - and a box holding one SVG has no text to take a
+   baseline from, so the browser synthesises one from its bottom margin
+   edge. A select with an icon therefore hung its own text 3.50px at LG
+   and 2.00 at MD above the row's baseline, while the same control WITHOUT
+   an icon was already right.
+
+   The strut is Checkbox's, where the full note lives: a text run with no
+   advance and no height, centred in the slot, so the slot reports the
+   baseline of the text beside it rather than its own bottom edge. It
+   reads the value's font size through this component's own hook, as every
+   other measurement here does. */
+.icon::before {
+  content: "\200B"; /* zero-width space - a text run that inks nothing */
+  align-self: center;
+  flex: none;
+  inline-size: 0;
+  line-height: 0;
+  font-size: var(--ui-input-select-font-size, var(--ui-input-text-font-size));
+}
 .icon > svg,
 .icon > img {
   width: 100%;

@@ -21,7 +21,10 @@
 
 .root {
   position: relative;
-  display: inline-block;
+  /* inline-FLEX, not inline-block, only so the strut below can be centred in
+     the track - see "the baseline". Nothing is laid out by it: the knob and
+     the seat are both positioned, and the track's two sizes are its own. */
+  display: inline-flex;
   flex: none;
   inline-size: calc(var(--toggle-knob) * 2 + var(--ui-toggle-inset) * 2);
   block-size: calc(var(--toggle-knob) + var(--ui-toggle-inset) * 2);
@@ -42,6 +45,38 @@
 .root:focus-visible {
   outline: 2px solid var(--ui-action);
   outline-offset: 2px;
+}
+
+/* -- the baseline ------------------------------------------------------- */
+
+/* A control's first baseline is the baseline of the text the user reads,
+   so that a row of same-size controls can be lined up with `align-items:
+   baseline` - see CLAUDE.md. A switch reads no text at all, which is the
+   one case the rule does not answer outright, and the browser's own
+   answer is the worst one available: with nothing in flow it synthesises
+   a baseline from the bottom margin edge, so the whole track hung above
+   the row's text by 18.00px at XL, 15.50 at LG and 12.00 at MD.
+
+   The answer taken here is that a switch sits ON the line of text beside
+   it: its centre on the text's centre, which is where a Checkbox's glyph
+   sits and what a reader expects of a control standing in a sentence.
+   Checkbox's strut does it - a text run with no advance and no height,
+   centred, so the track reports a baseline (ascent - descent) / 2 below
+   its own centre, exactly as a line of that type would.
+
+   The type is the one its SIZE STEP sets rather than any text of this
+   component's: everything at a step shares the label ladder, so a Toggle
+   MD beside a Checkbox MD lands on the same line because both are reading
+   Label MD. Only the font SIZE is read - a centred strut's baseline rides
+   the size alone, which is why there is no line height here and why
+   `line-height: 0` costs the track nothing. */
+.root::before {
+  content: "\200B"; /* zero-width space - a text run that inks nothing */
+  align-self: center;
+  flex: none;
+  inline-size: 0;
+  line-height: 0;
+  font-size: var(--toggle-type);
 }
 
 /* -- the disc ------------------------------------------------------------ */
@@ -173,18 +208,21 @@
 
 .xl {
   --toggle-knob: var(--ui-toggle-xl-knob);
+  --toggle-type: var(--ui-type-label-xl-font-size);
   --toggle-glyph: var(--ui-toggle-xl-icon-size);
   --toggle-stroke: var(--ui-toggle-xl-icon-stroke);
 }
 
 .lg {
   --toggle-knob: var(--ui-toggle-lg-knob);
+  --toggle-type: var(--ui-type-label-lg-font-size);
   --toggle-glyph: var(--ui-toggle-lg-icon-size);
   --toggle-stroke: var(--ui-toggle-lg-icon-stroke);
 }
 
 .md {
   --toggle-knob: var(--ui-toggle-md-knob);
+  --toggle-type: var(--ui-type-label-md-font-size);
   --toggle-glyph: var(--ui-toggle-md-icon-size);
   --toggle-stroke: var(--ui-toggle-md-icon-stroke);
 }

@@ -38,6 +38,19 @@
   height: var(--ui-radio-slot-size);
 }
 
+/* The control's first baseline is its LABEL's baseline, not the slot's
+   synthesised one - Checkbox's module carries the full note, and this is the
+   same strut reading Radio's own font size. Measured the same amounts out
+   before the fix: 4.00px at XL, 3.50 at LG, 3.00 at MD. */
+.slot::before {
+  content: "\200B"; /* zero-width space - a text run that inks nothing */
+  align-self: center;
+  flex: none;
+  inline-size: 0;
+  line-height: 0;
+  font-size: var(--ui-radio-font-size);
+}
+
 .glyph {
   display: block;
   width: var(--ui-radio-glyph-size);
